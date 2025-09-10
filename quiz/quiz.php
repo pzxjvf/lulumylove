@@ -57,7 +57,7 @@
             INSTRUÇÕES:          
     </p>
     </div>
-    <button onclick="startQuiz()">Inicfiar Quiz</button>
+    <button onclick="startQuiz()">Iniciar Quiz</button>
 
     <script>
         function startQuiz() {
