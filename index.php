@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Para Meu Amor 💜</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(to bottom, #f3e8ff, #e9d5ff); /* tons lilás */
+            color: #333;
+            text-align: center;
+            overflow-x: hidden;
+        }
+
+        .container {
+            margin-top: 20%;
+            z-index: 2;
+            position: relative;
+        }
+
+        h1 {
+            font-family: 'Brush Script MT', cursive;
+            font-size: 3em;
+            color: #7b2cbf; /* roxo mais intenso */
+        }
+
+        p {
+            font-size: 1.2em;
+            margin-bottom: 20px;
+        }
+
+        .btn {
+            background-color: #9d4edd; /* roxo vibrante */
+            color: white;
+            padding: 10px 20px;
+            border-radius: 30px;
+            text-decoration: none;
+            font-weight: bold;
+            transition: background 0.3s ease;
+        }
+
+        .btn:hover {
+            background-color: #7b2cbf; /* tom mais escuro */
+        }
+
+        /* Corações caindo */
+        .heart {
+            position: fixed;
+            top: -20px;
+            font-size: 24px;
+            animation: fall linear forwards;
+            z-index: 1;
+        }
+
+        @keyframes fall {
+            to {
+                transform: translateY(100vh);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Para o amor da minha vida 💜</h1>
+        <p>Um lugar especial só para você.</p>
+        <a href="login.php" class="btn">Entrar</a>
+    </div>
+
+    <script>
+        function createHeart() {
+            const heart = document.createElement('div');
+            heart.innerHTML = '💜'; // coração roxo
+            heart.classList.add('heart');
+            heart.style.left = Math.random() * 100 + 'vw';
+            heart.style.animationDuration = (Math.random() * 2 + 3) + 's';
+            document.body.appendChild(heart);
+
+            setTimeout(() => {
+                heart.remove();
+            }, 5000);
+        }
+
+        setInterval(createHeart, 300);
+    </script>
+</body>
+</html>
