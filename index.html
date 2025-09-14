@@ -1,89 +1,106 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Para Meu Amor 💜</title>
-    <style>
-        body {
-            margin: 0;
-            padding: 0;
-            font-family: 'Arial', sans-serif;
-            background: linear-gradient(to bottom, #f3e8ff, #e9d5ff); /* tons lilás */
-            color: #333;
-            text-align: center;
-            overflow-x: hidden;
-        }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Para Meu Amor 💜</title>
+<style>
+  body {
+    margin: 0;
+    padding: 0;
+    font-family: 'Arial', sans-serif;
+    background: linear-gradient(to bottom right, #f3e8ff, #e9d5ff);
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+  }
 
-        .container {
-            margin-top: 20%;
-            z-index: 2;
-            position: relative;
-        }
+  .container {
+    text-align: center;
+    background: rgba(255, 255, 255, 0.85);
+    padding: 50px 40px;
+    border-radius: 20px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+    position: relative;
+    z-index: 2;
+    animation: fadeIn 1s ease;
+  }
 
-        h1 {
-            font-family: 'Brush Script MT', cursive;
-            font-size: 3em;
-            color: #7b2cbf; /* roxo mais intenso */
-        }
+  h1 {
+    font-family: 'Brush Script MT', cursive;
+    font-size: 3rem;
+    color: #7b2cbf;
+    margin-bottom: 10px;
+  }
 
-        p {
-            font-size: 1.2em;
-            margin-bottom: 20px;
-        }
+  p {
+    font-size: 1.2rem;
+    margin-bottom: 25px;
+    color: #444;
+  }
 
-        .btn {
-            background-color: #9d4edd; /* roxo vibrante */
-            color: white;
-            padding: 10px 20px;
-            border-radius: 30px;
-            text-decoration: none;
-            font-weight: bold;
-            transition: background 0.3s ease;
-        }
+  .btn {
+    display: inline-block;
+    padding: 14px 32px;
+    background: linear-gradient(to right, #9d4edd, #7b2cbf);
+    color: #fff;
+    font-weight: bold;
+    text-decoration: none;
+    border-radius: 40px;
+    transition: transform 0.2s, box-shadow 0.2s;
+  }
 
-        .btn:hover {
-            background-color: #7b2cbf; /* tom mais escuro */
-        }
+  .btn:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 6px 15px rgba(123,44,191,0.3);
+  }
 
-        /* Corações caindo */
-        .heart {
-            position: fixed;
-            top: -20px;
-            font-size: 24px;
-            animation: fall linear forwards;
-            z-index: 1;
-        }
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
 
-        @keyframes fall {
-            to {
-                transform: translateY(100vh);
-            }
-        }
-    </style>
+  /* Corações */
+  .heart {
+    position: fixed;
+    top: -20px;
+    font-size: 20px;
+    animation: fall linear forwards;
+    color: #9d4edd;
+    opacity: 0.8;
+    pointer-events: none;
+    z-index: 1;
+  }
+
+  @keyframes fall {
+    to {
+      transform: translateY(110vh);
+      opacity: 0;
+    }
+  }
+</style>
 </head>
 <body>
-    <div class="container">
-        <h1>Para o amor da minha vida 💜</h1>
-        <p>Um lugar especial só para você.</p>
-        <a href="login.html" class="btn">Entrar</a>
-    </div>
+  <div class="container">
+    <h1>Para o amor da minha vida 💜</h1>
+    <p>Um cantinho especial feito só para você.</p>
+    <a href="login.html" class="btn">Entrar</a>
+  </div>
 
-    <script>
-        function createHeart() {
-            const heart = document.createElement('div');
-            heart.innerHTML = '💜'; // coração roxo
-            heart.classList.add('heart');
-            heart.style.left = Math.random() * 100 + 'vw';
-            heart.style.animationDuration = (Math.random() * 2 + 3) + 's';
-            document.body.appendChild(heart);
-
-            setTimeout(() => {
-                heart.remove();
-            }, 5000);
-        }
-
-        setInterval(createHeart, 300);
-    </script>
+  <script>
+    function createHeart() {
+      const heart = document.createElement('div');
+      heart.className = 'heart';
+      heart.textContent = '💜';
+      heart.style.left = Math.random() * 100 + 'vw';
+      heart.style.fontSize = (Math.random() * 15 + 15) + 'px';
+      heart.style.animationDuration = (Math.random() * 3 + 4) + 's';
+      document.body.appendChild(heart);
+      setTimeout(() => heart.remove(), 7000);
+    }
+    setInterval(createHeart, 400);
+  </script>
 </body>
 </html>
