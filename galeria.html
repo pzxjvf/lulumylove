@@ -12,6 +12,7 @@
         overflow: hidden;
         font-family: 'Arial', sans-serif;
         color: white;
+        position: relative;
     }
 
     h1 {
@@ -23,71 +24,83 @@
         color: #e9d5ff;
         text-shadow: 0 0 15px #9d4edd, 0 0 30px #7b2cbf;
         animation: fadeIn 2s ease;
+        z-index: 2;
     }
 
-    /* estrelas */
+    /* estrelas brilhantes */
     .star {
         position: absolute;
-        width: 6px;
-        height: 6px;
-        background: white;
         border-radius: 50%;
-        box-shadow: 0 0 10px white;
         cursor: pointer;
+        background: white; /* deixa a estrela bem clara */
+        box-shadow: 0 0 15px white, 0 0 30px #e9d5ff, 0 0 45px #7b2cbf;
+        animation: twinkle 2s infinite;
         transition: transform 0.3s, box-shadow 0.3s;
+        z-index: 1;
     }
 
     .star:hover {
         transform: scale(1.8);
-        box-shadow: 0 0 20px #9d4edd, 0 0 40px #7b2cbf;
+        box-shadow: 0 0 25px white, 0 0 50px #e9d5ff, 0 0 70px #7b2cbf;
     }
 
-    /* animação de brilho */
     @keyframes twinkle {
         0%, 100% { opacity: 0.8; }
-        50% { opacity: 0.2; }
+        50% { opacity: 0.3; }
     }
 
-    .star {
-        animation: twinkle 3s infinite;
-    }
-
-    /* mensagem quando clicar */
+    /* popup */
     .popup {
         position: fixed;
         top: 50%;
         left: 50%;
         transform: translate(-50%, -50%) scale(0.8);
-        background: rgba(255, 255, 255, 0.9);
+        background: rgba(255, 255, 255, 0.95);
         color: #4b006e;
         padding: 20px;
-        border-radius: 20px;
+        border-radius: 25px;
         text-align: center;
-        width: 300px;
+        width: 350px;
         max-width: 90%;
-        box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        box-shadow: 0 15px 40px rgba(0,0,0,0.5);
         display: none;
         animation: popIn 0.5s ease forwards;
+        z-index: 3;
     }
 
-    .popup h2 {
-        margin-top: 0;
+    .popup img {
+        max-width: 100%;
+        border-radius: 15px;
+        margin-bottom: 10px;
+    }
+
+    .popup .caption {
+        font-size: 1em;
         color: #7b2cbf;
+        margin-bottom: 5px;
+        font-weight: bold;
+    }
+
+    .popup .date {
+        font-size: 0.9em;
+        color: #333;
+        margin-bottom: 15px;
     }
 
     .popup button {
-        background: #9d4edd;
+        background: linear-gradient(to right, #9d4edd, #7b2cbf);
         color: white;
         border: none;
-        padding: 10px 20px;
-        margin-top: 15px;
-        border-radius: 15px;
+        padding: 10px 25px;
+        border-radius: 20px;
+        font-weight: bold;
         cursor: pointer;
         transition: 0.3s;
     }
 
     .popup button:hover {
-        background: #7b2cbf;
+        transform: scale(1.05);
+        box-shadow: 0 5px 20px rgba(123,44,191,0.5);
     }
 
     @keyframes popIn {
@@ -104,22 +117,38 @@
 <body>
     <h1>O Céu das Nossas Memórias 💜</h1>
 
-    <!-- Estrelas -->
-    <div class="star" style="top: 30%; left: 20%;" onclick="showPopup('o começo de tudo')"></div>
-    <div class="star" style="top: 50%; left: 40%;" onclick="showPopup('A viagem inesquecível 💜')"></div>
-    <div class="star" style="top: 70%; left: 60%;" onclick="showPopup('Aquele dia especial 🌹')"></div>
-    <div class="star" style="top: 40%; left: 80%;" onclick="showPopup('O começo de tudo 💫')"></div>
-    <div class="star" style="top: 90%; left: 30%;" onclick="showPopup('O começo de d 💫')"></div>
-
     <!-- Popup -->
     <div id="popup" class="popup">
-        <h2 id="popupText"></h2>
+        <img id="popupImg" src="" alt="Memória">
+        <div class="caption" id="popupCaption"></div>
+        <div class="date" id="popupDate"></div>
         <button onclick="closePopup()">Fechar</button>
     </div>
 
     <script>
-        function showPopup(text) {
-            document.getElementById('popupText').innerText = text;
+        const memories = [
+            {top:'30%', left:'20%', size:8, img:'img1.jpg', caption:'Nosso primeiro encontro ✨', date:'14/02/2022'},
+            {top:'50%', left:'40%', size:10, img:'img2.jpg', caption:'A viagem inesquecível 💜', date:'01/05/2022'},
+            {top:'70%', left:'60%', size:7, img:'img3.jpg', caption:'Aquele dia especial 🌹', date:'12/09/2022'},
+            {top:'40%', left:'80%', size:9, img:'img4.jpg', caption:'O começo de tudo 💫', date:'20/11/2021'},
+            {top:'90%', left:'30%', size:8, img:'img5.jpg', caption:'Primeiro abraço 💖', date:'05/03/2022'}
+        ];
+
+        memories.forEach(mem => {
+            const star = document.createElement('div');
+            star.className = 'star';
+            star.style.top = mem.top;
+            star.style.left = mem.left;
+            star.style.width = mem.size + 'px';
+            star.style.height = mem.size + 'px';
+            star.onclick = () => showPopup(mem.img, mem.caption, mem.date);
+            document.body.appendChild(star);
+        });
+
+        function showPopup(img, caption, date) {
+            document.getElementById('popupImg').src = img;
+            document.getElementById('popupCaption').innerText = caption;
+            document.getElementById('popupDate').innerText = date;
             document.getElementById('popup').style.display = 'block';
         }
 
