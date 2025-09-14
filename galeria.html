@@ -3,91 +3,129 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Nossas Memórias 💜</title>
+<title>Céu das Nossas Memórias 💜</title>
 <style>
-  body {
-    margin: 0;
-    font-family: 'Arial', sans-serif;
-    background: linear-gradient(135deg, #f3e8ff, #e9d5ff);
-    color: #4b006e;
-    height: 100vh;
-    display: flex;
-    align-items: center;
-    justify-content: flex-start;
-    padding: 50px;
-    overflow: hidden;
-    position: relative;
-  }
+    body {
+        margin: 0;
+        height: 100vh;
+        background: radial-gradient(ellipse at bottom, #1b0033 0%, #000 100%);
+        overflow: hidden;
+        font-family: 'Arial', sans-serif;
+        color: white;
+    }
 
-  /* coração de fundo */
-  .bg-heart {
-    position: absolute;
-    right: -50px;
-    bottom: -50px;
-    font-size: 40vw;
-    color: rgba(123,44,191,0.05);
-    z-index: 0;
-    transform: rotate(-15deg);
-  }
+    h1 {
+        position: absolute;
+        top: 10%;
+        width: 100%;
+        text-align: center;
+        font-size: 2.5em;
+        color: #e9d5ff;
+        text-shadow: 0 0 15px #9d4edd, 0 0 30px #7b2cbf;
+        animation: fadeIn 2s ease;
+    }
 
-  .intro-box {
-    max-width: 450px;
-    background: rgba(255, 255, 255, 0.85);
-    padding: 40px;
-    border-radius: 25px;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.15);
-    position: relative;
-    z-index: 1;
-    animation: slideIn 1s ease;
-  }
+    /* estrelas */
+    .star {
+        position: absolute;
+        width: 6px;
+        height: 6px;
+        background: white;
+        border-radius: 50%;
+        box-shadow: 0 0 10px white;
+        cursor: pointer;
+        transition: transform 0.3s, box-shadow 0.3s;
+    }
 
-  h1 {
-    font-family: 'Brush Script MT', cursive;
-    font-size: 2.8em;
-    color: #7b2cbf;
-    margin-bottom: 15px;
-  }
+    .star:hover {
+        transform: scale(1.8);
+        box-shadow: 0 0 20px #9d4edd, 0 0 40px #7b2cbf;
+    }
 
-  p {
-    font-size: 1.1em;
-    line-height: 1.6;
-    margin-bottom: 25px;
-    color: #333;
-  }
+    /* animação de brilho */
+    @keyframes twinkle {
+        0%, 100% { opacity: 0.8; }
+        50% { opacity: 0.2; }
+    }
 
-  .btn {
-    display: inline-block;
-    padding: 14px 28px;
-    background: linear-gradient(to right, #9d4edd, #7b2cbf);
-    color: #fff;
-    font-weight: bold;
-    text-decoration: none;
-    border-radius: 40px;
-    transition: transform 0.2s, box-shadow 0.2s;
-  }
+    .star {
+        animation: twinkle 3s infinite;
+    }
 
-  .btn:hover {
-    transform: scale(1.08);
-    box-shadow: 0 6px 15px rgba(123, 44, 191, 0.4);
-  }
+    /* mensagem quando clicar */
+    .popup {
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%) scale(0.8);
+        background: rgba(255, 255, 255, 0.9);
+        color: #4b006e;
+        padding: 20px;
+        border-radius: 20px;
+        text-align: center;
+        width: 300px;
+        max-width: 90%;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        display: none;
+        animation: popIn 0.5s ease forwards;
+    }
 
-  @keyframes slideIn {
-    from { opacity: 0; transform: translateX(-50px); }
-    to { opacity: 1; transform: translateX(0); }
-  }
+    .popup h2 {
+        margin-top: 0;
+        color: #7b2cbf;
+    }
+
+    .popup button {
+        background: #9d4edd;
+        color: white;
+        border: none;
+        padding: 10px 20px;
+        margin-top: 15px;
+        border-radius: 15px;
+        cursor: pointer;
+        transition: 0.3s;
+    }
+
+    .popup button:hover {
+        background: #7b2cbf;
+    }
+
+    @keyframes popIn {
+        from { opacity: 0; transform: translate(-50%, -50%) scale(0.5); }
+        to { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+    }
+
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(-20px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
 </style>
 </head>
 <body>
-  <div class="intro-box">
-    <h1>Nossas Memórias 💜</h1>
-    <p>
-      Cada momento contigo é único, e eu quis guardar alguns deles aqui.<br><br>
-      Vamos relembrar juntos? 💕
-    </p>
-    <a href="galeriaLugar.html" class="btn">Ver Memórias</a>
-  </div>
+    <h1>O Céu das Nossas Memórias 💜</h1>
 
-  <!-- coração grande no fundo -->
-  <div class="bg-heart">💜</div>
+    <!-- Estrelas -->
+    <div class="star" style="top: 30%; left: 20%;" onclick="showPopup('o começo de tudo')"></div>
+    <div class="star" style="top: 50%; left: 40%;" onclick="showPopup('A viagem inesquecível 💜')"></div>
+    <div class="star" style="top: 70%; left: 60%;" onclick="showPopup('Aquele dia especial 🌹')"></div>
+    <div class="star" style="top: 40%; left: 80%;" onclick="showPopup('O começo de tudo 💫')"></div>
+    <div class="star" style="top: 90%; left: 30%;" onclick="showPopup('O começo de d 💫')"></div>
+
+    <!-- Popup -->
+    <div id="popup" class="popup">
+        <h2 id="popupText"></h2>
+        <button onclick="closePopup()">Fechar</button>
+    </div>
+
+    <script>
+        function showPopup(text) {
+            document.getElementById('popupText').innerText = text;
+            document.getElementById('popup').style.display = 'block';
+        }
+
+        function closePopup() {
+            document.getElementById('popup').style.display = 'none';
+        }
+    </script>
 </body>
 </html>
