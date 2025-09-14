@@ -121,12 +121,12 @@
 <body>
     <h1>Quiz do Amor 💜💚</h1>
     <div class="quiz-container">
-        <div class="question">Qual foi a data que nos conhecemos?</div>
+        <div class="question">Qual apelido usamos na primeira vez?</div>
         <div class="options">
-            <button onclick="checkAnswer(false, 'NOO, O ANO AMOR!!')">29/01/2022</button>
-            <button onclick="checkAnswer(true)">29/01/2023</button>
-            <button onclick="checkAnswer(false, 'NÃO, MILACATEIA')">10/01/2023</button>
-            <button onclick="checkAnswer(false, 'AMOR????')">05/02/2023</button>
+            <button onclick="checkAnswer(false, 'ESSE FOI APÓS O PRIMEIRO APELIDO')">vida</button>
+            <button onclick="checkAnswer(true)">vd</button>
+            <button onclick="checkAnswer(true)">amr</button>
+            <button onclick="checkAnswer(false, 'Dica: não tinha pipoca 🍿')">momo</button>
         </div>
     </div>
 
@@ -148,12 +148,12 @@
 
             if (isCorrect) {
                 modalContent.className = "modal-content correct";
-                modalText.textContent = "💜 Acertou, meu amor! 💚";
+                modalText.textContent = "💜 Acertou, meu amor! 💚 TERMINOU O QUIZ, PARABÉNS AMOR!";
                 document.querySelector(".close-btn").style.display = "none";
 
                 setTimeout(() => {
                     modal.style.display = "none";
-                    window.location.href = "perguntaDois.html"; 
+                    window.location.href = "../galeria.html"; 
                 }, 2000);
 
             } else {

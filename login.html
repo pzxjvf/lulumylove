@@ -102,9 +102,9 @@
 <body>
     <div class="login-container">
         <h1>Cantinho da lulu 💜</h1>
-        <div class="hint">DICA!<br>💌 Username: para onde eu vou te levar<br>📅 Senha: a data em que nos conhecemos</div>
-        <input type="text" id="username" placeholder="Digite o destino">
-        <input type="password" id="password" placeholder="Digite a data (dd/mm/aaaa)">
+        <div class="hint">DICA!<br>💌 Login: Qual é o lugar que eu vou te levar?<br>📅 Senha: Quando nos conhecemos?</div>
+        <input type="text" id="username" placeholder="Digita aqui o lugar">
+        <input type="password" id="password" placeholder="Digita aqui a data">
         <button class="btn" onclick="login()">Entrar</button>
         <p>Feito com amor 💜</p>
         <div class="error" id="errorMsg">Ops... tente lembrar com carinho 💜</div>
@@ -144,7 +144,7 @@
             } else {
                 const errorMsg = document.getElementById("errorMsg");
                 errorMsg.style.display = "block";
-                errorMsg.textContent = "Ops... tente lembrar com carinho 💜";
+                errorMsg.textContent = "NOOOO, try again, momo!!    ";
             }
         }
     </script>
