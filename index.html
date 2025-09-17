@@ -1,109 +1,321 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
+
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Para Meu Amor 💜</title>
-<style>
-  body {
-    margin: 0;
-    padding: 0;
-    font-family: 'Arial', sans-serif;
-    background: linear-gradient(to bottom right, #f3e8ff, #e9d5ff);
-    min-height: 100vh;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    overflow: hidden;
-  }
-
-  .container {
-    text-align: center;
-    background: rgba(255, 255, 255, 0.85);
-    padding: 50px 40px;
-    border-radius: 20px;
-    box-shadow: 0 10px 25px rgba(0,0,0,0.15);
-    position: relative;
-    z-index: 2;
-    animation: fadeIn 1s ease;
-  }
-
-  h1 {
-    font-family: 'Brush Script MT', cursive;
-    font-size: 3rem;
-    color: #7b2cbf;
-    margin-bottom: 10px;
-  }
-
-  p {
-    font-size: 1.2rem;
-    margin-bottom: 25px;
-    color: #444;
-  }
-
-  .btn {
-    display: inline-block;
-    padding: 14px 32px;
-    background: linear-gradient(to right, #9d4edd, #7b2cbf);
-    color: #fff;
-    font-weight: bold;
-    text-decoration: none;
-    border-radius: 40px;
-    transition: transform 0.2s, box-shadow 0.2s;
-  }
-
-  .btn:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 6px 15px rgba(123,44,191,0.3);
-  }
-
-  @keyframes fadeIn {
-    from { opacity: 0; transform: translateY(20px); }
-    to { opacity: 1; transform: translateY(0); }
-  }
-
-  /* Corações */
-  .heart {
-    position: fixed;
-    top: -20px;
-    font-size: 20px;
-    animation: fall linear forwards;
-    color: #9d4edd;
-    opacity: 0.8;
-    pointer-events: none;
-    z-index: 1;
-  }
-
-  @keyframes fall {
-    to {
-      transform: translateY(110vh);
-      opacity: 0;
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Céu das Nossas Memórias 💜</title>
+  <style>
+    body {
+      margin: 0;
+      height: 100vh;
+      background: radial-gradient(ellipse at bottom, #1b0033 0%, #000 100%);
+      overflow: hidden;
+      font-family: 'Arial', sans-serif;
+      color: white;
+      position: relative;
     }
-  }
-</style>
+
+    /* título com gradiente verde+roxo */
+    h1 {
+      position: absolute;
+      top: 8%;
+      width: 100%;
+      text-align: center;
+      font-size: 2.6em;
+      background: linear-gradient(to right, #38b000, #7b2cbf);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      text-shadow: 0 0 20px rgba(123, 44, 191, 0.6), 0 0 30px rgba(56, 176, 0, 0.6);
+      animation: fadeIn 2s ease;
+      z-index: 2;
+      font-family: 'Poppins', sans-serif;
+      font-weight: bold;
+    }
+
+    /* estrelas */
+    #starsLayer {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+    }
+
+    .star-wrapper {
+      position: absolute;
+      transform: translate(-50%, -50%);
+      text-align: center;
+    }
+
+    .star {
+      border-radius: 50%;
+      cursor: pointer;
+      background: white;
+      box-shadow: 0 0 12px white;
+      animation: twinkle 3s infinite;
+      transition: transform 0.3s, box-shadow 0.3s;
+    }
+
+    .star:hover {
+      transform: scale(1.8);
+      box-shadow: 0 0 20px #9d4edd, 0 0 40px #38b000;
+    }
+
+    .new-label {
+      margin-top: 5px;
+      font-size: 0.75em;
+      background: linear-gradient(to right, #38b000, #9d4edd);
+      color: white;
+      padding: 4px 10px;
+      border-radius: 15px;
+      display: inline-block;
+      box-shadow: 0 3px 12px rgba(0, 0, 0, 0.6);
+      font-weight: bold;
+    }
+
+    @keyframes twinkle {
+      0%, 100% { opacity: 0.9; }
+      50% { opacity: 0.4; }
+    }
+
+    /* balão inicial */
+    .intro-popup {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%) scale(0.8);
+      background: rgba(255, 255, 255, 0.97);
+      color: #4b006e;
+      padding: 25px;
+      border-radius: 25px;
+      text-align: center;
+      width: 400px;
+      max-width: 90%;
+      box-shadow: 0 20px 40px rgba(123, 44, 191, 0.6), 0 0 40px rgba(56, 176, 0, 0.6);
+      animation: popIn .5s ease forwards;
+      z-index: 10;
+    }
+
+    .intro-popup h2 {
+      margin-top: 0;
+      background: linear-gradient(to right, #38b000, #7b2cbf);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .intro-popup button {
+      background: linear-gradient(to right, #38b000, #7b2cbf);
+      color: white;
+      border: none;
+      padding: 12px 25px;
+      border-radius: 20px;
+      cursor: pointer;
+      margin-top: 15px;
+      font-weight: bold;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+      transition: 0.3s;
+    }
+
+    .intro-popup button:hover {
+      transform: scale(1.05);
+      box-shadow: 0 6px 18px rgba(123,44,191,0.6);
+    }
+
+    /* popup memória */
+    .popup {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%) scale(0.8);
+      background: rgba(255, 255, 255, 0.97);
+      color: #4b006e;
+      padding: 20px;
+      border-radius: 25px;
+      text-align: center;
+      width: 350px;
+      max-width: 90%;
+      box-shadow: 0 15px 40px rgba(123, 44, 191, 0.6), 0 0 30px rgba(56, 176, 0, 0.5);
+      display: none;
+      animation: popIn 0.5s ease forwards;
+      z-index: 20;
+    }
+
+    .popup img {
+      max-width: 100%;
+      max-height: 300px;
+      border-radius: 15px;
+      margin-bottom: 10px;
+      object-fit: cover;
+    }
+
+    .popup .caption {
+      font-size: 1em;
+      background: linear-gradient(to right, #38b000, #7b2cbf);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 5px;
+      font-weight: bold;
+    }
+
+    .popup .date {
+      font-size: 0.9em;
+      color: #444;
+      margin-bottom: 15px;
+    }
+
+    .popup button {
+      background: linear-gradient(to right, #38b000, #7b2cbf);
+      color: white;
+      border: none;
+      padding: 10px 25px;
+      border-radius: 20px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+
+    .popup button:hover {
+      transform: scale(1.05);
+      box-shadow: 0 5px 20px rgba(56, 176, 0, 0.5);
+    }
+
+    @keyframes popIn {
+      from { opacity: 0; transform: translate(-50%, -50%) scale(0.5); }
+      to { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(-20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+  </style>
 </head>
+
 <body>
-  <div class="container">
-    <h1>Para minha princesinha 💜</h1>
-    <p>Um cantinho especial feito só para você. 
-        <br> com muito amor, o teu pra sempre. <br>
-        SERÃO 3 FASES ATÉ CHEGAR NO FINAL PARA TU, MEU AMOR,<BR></BR> CHEGAR NO FINAL, TE ESPERO LA MOMO!!!   
+  <h1>Memórias do nosso para sempre. 💜</h1>
+
+  <div id="starsLayer"></div>
+
+  <!-- balão inicial -->
+  <div id="introPopup" class="intro-popup">
+    <h2>Bem-vinda, meu amor!</h2>
+    <p>Esse é o nosso cantinho, onde todas as memórias<br>
+      estão guardadas, todas as lembranças especiais,<br>
+      fiz com muito amor, apesar de não ter sido super<br>
+      profissional, ou algo assim, fiz com meu coração.<br>
+      Espero que goste, e que nós continue criando memórias.<br>
+      Para sempre, eu e tu.
     </p>
-    <a href="login.html" class="btn">Entrar</a>
+    <button id="introCloseBtn">Entrar</button>
+  </div>
+
+  <!-- popup memória -->
+  <div id="memoryPopup" class="popup">
+    <img id="memImg" src="" alt="Memória">
+    <div class="caption" id="memCaption"></div>
+    <div class="date" id="memDate"></div>
+    <button id="closeMemBtn">Fechar</button>
   </div>
 
   <script>
-    function createHeart() {
-      const heart = document.createElement('div');
-      heart.className = 'heart';
-      heart.textContent = '💜';
-      heart.style.left = Math.random() * 100 + 'vw';
-      heart.style.fontSize = (Math.random() * 15 + 15) + 'px';
-      heart.style.animationDuration = (Math.random() * 3 + 4) + 's';
-      document.body.appendChild(heart);
-      setTimeout(() => heart.remove(), 7000);
+    /* ---------- Memórias ---------- */
+    const memories = [
+      { top: '30%', left: '20%', size: 10, img: 'img/Screenshot_2023-02-01-12-18-03-774_com.whatsapp.jpg', caption: 'nossa primeira conversa engraçada, esse dia foi na madrugada e tu não podia rir.', date: '01/02/2023' },
+      { top: '55%', left: '48%', size: 12, img: 'img/Screenshot_2023-02-01-21-21-33-015_com.whatsapp.jpg', caption: 'nossa primeira boiolice, mal sabíamos que 4 dias depois, iríamos ter um dia inesquecível entre eu e tu. ', date: '01/02/2023' },
+      { top: '72%', left: '62%', size: 9, img: 'img/Screenshot_2023-02-03-19-24-33-210_com.whatsapp.jpg', caption: 'quando nós estavamos jogando hayday e eu vendi coisinhas pra ti de graça.', date: '03/02/2023' },
+      { top: '42%', left: '42%', size: 8, img: 'img/Screenshot_2023-02-04-20-37-31-649_com.whatsapp.jpg', caption: 'o nosso dia, a primeira vez que se declaramos um pro outro, o dia que eu comecei a gostar de ti, sorrimos para o celular que nem bobo nesse dia.', date: '04-05/02/2023' },
+      { top: '33%', left: '60%', size: 6, img: 'img/Screenshot_2025-08-30-17-50-37-770_com.mojang.minecraftpe.jpg', caption: 'Primeira vez que jogamos minecraft juntos, e tu com o burro que eu tanto odeio.', date: '30/08/2025' },
+      { top: '60%', left: '60%', size: 7, img: 'img/Screenshot_2025-09-08-15-05-00-627_com.mojang.minecraftpe.jpg', caption: 'Primeira selfie juntos, e tinha que ser justo com o animal mais rápido que existe KKKKKKK.', date: '80/09/2025' },// QUALQUER memória adicionada depois da 3ª vai ganhar a etiqueta "Nova ✨"
+      // { top:'40%', left:'70%', size:11, img:'img4.jpg', caption:'Nova surpresa 🎁', date:'17/09/2025' },
+    ];
+
+    /* refs DOM */
+    const starsLayer = document.getElementById('starsLayer');
+    const introPopup = document.getElementById('introPopup');
+    const introCloseBtn = document.getElementById('introCloseBtn');
+    const memoryPopup = document.getElementById('memoryPopup');
+    const memImg = document.getElementById('memImg');
+    const memCaption = document.getElementById('memCaption');
+    const memDate = document.getElementById('memDate');
+    const closeMemBtn = document.getElementById('closeMemBtn');
+
+    /* placeholder caso img não exista */
+    const placeholderSVG = 'data:image/svg+xml;utf8,' + encodeURIComponent(
+      `<svg xmlns="http://www.w3.org/2000/svg" width="600" height="400">
+  <rect width="100%" height="100%" fill="#f8f4ff"/>
+  <text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" fill="#7b2cbf" font-size="28">Foto não encontrada</text>
+</svg>`
+    );
+
+    /* balão inicial fecha */
+    introCloseBtn.addEventListener('click', () => {
+      introPopup.style.display = 'none';
+      initStars();
+    });
+
+    /* ESC também fecha o balão inicial */
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && introPopup.style.display !== 'none') {
+        introPopup.style.display = 'none';
+        initStars();
+      }
+    });
+
+    /* cria estrelas */
+    function initStars() {
+      memories.forEach((m, i) => {
+        const isNew = i >= 6; // tudo depois das 3 primeiras é "Nova"
+        setTimeout(() => addStar(m, isNew), i * 120);
+      });
     }
-    setInterval(createHeart, 400);
+
+    function addStar(mem, isNew) {
+      const wrap = document.createElement('div');
+      wrap.className = 'star-wrapper';
+      wrap.style.top = mem.top;
+      wrap.style.left = mem.left;
+
+      const star = document.createElement('div');
+      star.className = 'star';
+      star.style.width = mem.size + 'px';
+      star.style.height = mem.size + 'px';
+      wrap.appendChild(star);
+
+      let label = null;
+      if (isNew) {
+        label = document.createElement('div');
+        label.className = 'new-label';
+        label.innerText = 'Nova ✨';
+        wrap.appendChild(label);
+      }
+
+      star.addEventListener('click', () => {
+        if (label && label.parentNode) label.remove();
+        showMemory(mem);
+      });
+
+      starsLayer.appendChild(wrap);
+    }
+
+    /* abre popup da memória */
+    function showMemory(mem) {
+      memImg.onerror = () => { memImg.src = placeholderSVG; };
+      memImg.src = mem.img || placeholderSVG;
+
+      memCaption.innerText = mem.caption || '';
+      memDate.innerText = mem.date || '';
+      memoryPopup.style.display = 'block';
+    }
+
+    /* fecha popup da memória */
+    closeMemBtn.addEventListener('click', () => memoryPopup.style.display = 'none');
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && memoryPopup.style.display === 'block') {
+        memoryPopup.style.display = 'none';
+      }
+    });
   </script>
 </body>
+
 </html>
