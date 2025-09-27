@@ -228,6 +228,7 @@
       { top: '33%', left: '60%', size: 6, img: 'img/Screenshot_2025-08-30-17-50-37-770_com.mojang.minecraftpe.jpg', caption: 'Primeira vez que jogamos minecraft juntos, e tu com o burro que eu tanto odeio.', date: '30/08/2025' },
       { top: '60%', left: '60%', size: 7, img: 'img/Screenshot_2025-09-08-15-05-00-627_com.mojang.minecraftpe.jpg', caption: 'Primeira selfie juntos, e tinha que ser justo com o animal mais rápido que existe KKKKKKK.', date: '08/09/2025' },// QUALQUER memória adicionada depois da 3ª vai ganhar a etiqueta "Nova ✨"
       { top: '30%', left: '50%', size: 5, img: 'img/Gemini_Generated_Image_3r8ad53r8ad53r8a.png', caption: 'nossa fotinha juntos no NOSSO dia, houve boatos que após essa foto, nós demos o nosso primeiro beijo. vão dizer que é IA, mas é 100% verídico.', date: '29/01/2012' },
+      { top: '40%', left: '60%', size: 9, img: 'img/enrolados.jpg', caption: 'Primeira tentativa de fazer a casa da rapunzel, pelo menos tentamos, né?', date: '22/09/2025' },
       // { top:'40%', left:'70%', size:11, img:'img4.jpg', caption:'Nova surpresa 🎁', date:'17/09/2025' },
     ];
 
@@ -266,7 +267,7 @@
     /* cria estrelas */
     function initStars() {
       memories.forEach((m, i) => {
-        const isNew = i >= 6; // tudo depois das 3 primeiras é "Nova"
+        // const isNew = i >= 7; // tudo depois das 3 primeiras é "Nova"
         setTimeout(() => addStar(m, isNew), i * 120);
       });
     }
