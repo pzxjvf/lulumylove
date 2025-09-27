@@ -267,7 +267,7 @@
     /* cria estrelas */
     function initStars() {
       memories.forEach((m, i) => {
-        // const isNew = i >= 7; // tudo depois das 3 primeiras é "Nova"
+        const isNew = i >= 7; // tudo depois das 3 primeiras é "Nova"
         setTimeout(() => addStar(m, isNew), i * 120);
       });
     }
