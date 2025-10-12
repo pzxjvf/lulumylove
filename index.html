@@ -229,7 +229,9 @@
       { top: '60%', left: '60%', size: 7, img: 'img/Screenshot_2025-09-08-15-05-00-627_com.mojang.minecraftpe.jpg', caption: 'Primeira selfie juntos, e tinha que ser justo com o animal mais rápido que existe KKKKKKK.', date: '08/09/2025' },// QUALQUER memória adicionada depois da 3ª vai ganhar a etiqueta "Nova ✨"
       { top: '30%', left: '50%', size: 5, img: 'img/Gemini_Generated_Image_3r8ad53r8ad53r8a.png', caption: 'nossa fotinha juntos no NOSSO dia, houve boatos que após essa foto, nós demos o nosso primeiro beijo. vão dizer que é IA, mas é 100% verídico.', date: '29/01/2012' },
       { top: '40%', left: '60%', size: 9, img: 'img/enrolados.jpg', caption: 'Primeira tentativa de fazer a casa da rapunzel, pelo menos tentamos, né?', date: '22/09/2025' },
+      { top: '40%', left: '80%', size: 11, img: 'img/Imagem do WhatsApp de 2025-10-12 à(s) 01.57.11_1dca1990.jpg', caption: 'Nosso dia perfeito, onde nós dois se declaramos um para o outro pela primeira vez em ligação, foi tipo o nosso 05 de fevereiro, simplesmente incrível, eu amo te amar.', date: '07/10/2025' },
       // { top:'40%', left:'70%', size:11, img:'img4.jpg', caption:'Nova surpresa 🎁', date:'17/09/2025' },
+
     ];
 
     /* refs DOM */
@@ -267,7 +269,7 @@
     /* cria estrelas */
     function initStars() {
       memories.forEach((m, i) => {
-        const isNew = i >= 7; // tudo depois das 3 primeiras é "Nova"
+        const isNew = i >= 8; // tudo depois das 3 primeiras é "Nova"
         setTimeout(() => addStar(m, isNew), i * 120);
       });
     }
