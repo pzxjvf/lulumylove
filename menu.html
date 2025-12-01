@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cantinho da Gente</title>
+
+<!-- Fonte Opção B -->
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@300;400;700&display=swap" rel="stylesheet">
+
+<style>
+    body {
+        margin: 0;
+        background: linear-gradient(135deg, #7a00ff, #00b667);
+        font-family: "Nunito", sans-serif;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        color: #fff;
+        animation: fadeIn 1s ease-in-out;
+    }
+
+    .container {
+        text-align: center;
+    }
+
+    h1 {
+        font-weight: 800;
+        font-size: 2.6rem;
+        margin-bottom: 35px;
+        text-shadow: 0 0 12px rgba(255,255,255,0.6);
+        letter-spacing: 1px;
+    }
+
+    .cards {
+        display: flex;
+        gap: 25px;
+        justify-content: center;
+    }
+
+    .card {
+        width: 160px;
+        height: 160px;
+        background: rgba(255,255,255,0.12);
+        backdrop-filter: blur(12px);
+        border-radius: 22px;
+        border: 2px solid rgba(255,255,255,0.25);
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        font-weight: 700;
+        cursor: pointer;
+        transition: 0.3s ease;
+        text-shadow: 0 0 10px rgba(255,255,255,0.3);
+    }
+
+    .card:hover {
+        transform: scale(1.12);
+        background: rgba(255,255,255,0.22);
+        box-shadow: 0 8px 25px rgba(0,0,0,0.25);
+    }
+
+    .icon {
+        font-size: 2.6rem;
+        margin-bottom: 8px;
+    }
+
+    @keyframes fadeIn {
+        0% { opacity: 0; transform: translateY(20px); }
+        100% { opacity: 1; transform: translateY(0); }
+    }
+</style>
+</head>
+
+<body>
+
+<div class="container">
+    <h1>💜 Nosso cantinho 💚</h1>
+
+    <div class="cards">
+        <div class="card" onclick="openPage('memorias.html')">
+            <div class="icon">📸</div>
+            <span>Memórias</span>
+        </div>
+
+        <div class="card" onclick="openPage('cartinhas.html')">
+            <div class="icon">💌</div>
+            <span>Cartinhas</span>
+        </div>
+    </div>
+</div>
+
+<script>
+function openPage(page) {
+    window.location.href = page;
+}
+</script>
+
+</body>
+</html>
