@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Nossa Trilha 💜</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+
+<style>
+body {
+    margin: 0;
+    font-family: 'Poppins', sans-serif;
+    background: linear-gradient(180deg, #1b0033, #000);
+    color: #fff;
+    padding: 40px 0;
+}
+
+.container {
+    width: 90%;
+    max-width: 650px;
+    margin: auto;
+}
+
+h1 {
+    text-align: center;
+    margin-bottom: 40px;
+    font-size: 2.3rem;
+    background: linear-gradient(to right, #38b000, #7b2cbf);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+/* CARD */
+.music-card {
+    background: rgba(255,255,255,0.08);
+    border-radius: 20px;
+    padding: 20px;
+    margin-bottom: 25px;
+}
+
+.music-title {
+    font-size: 1.1rem;
+    font-weight: 600;
+}
+
+.music-artist {
+    font-size: 0.85rem;
+    opacity: 0.7;
+    margin-bottom: 10px;
+}
+
+.music-note {
+    font-size: 0.95rem;
+    margin-bottom: 15px;
+    line-height: 1.4rem;
+}
+
+/* PLAYER */
+.player {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.play-btn {
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
+    border: none;
+    background: linear-gradient(to right, #38b000, #7b2cbf);
+    color: white;
+    font-size: 1rem;
+    cursor: pointer;
+}
+
+.progress {
+    flex: 1;
+}
+
+.progress input {
+    width: 100%;
+    appearance: none;
+    height: 6px;
+    border-radius: 10px;
+    background: rgba(255,255,255,0.3);
+    outline: none;
+}
+
+.progress input::-webkit-slider-thumb {
+    appearance: none;
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    background: #7b2cbf;
+    cursor: pointer;
+}
+
+.time {
+    font-size: 0.75rem;
+    opacity: 0.8;
+    min-width: 65px;
+    text-align: right;
+}
+
+.new-tag {
+    display: inline-block;
+    margin-top: 10px;
+    font-size: 0.7rem;
+    padding: 4px 10px;
+    border-radius: 20px;
+    background: linear-gradient(to right, #38b000, #7b2cbf);
+    font-weight: 600;
+}
+</style>
+</head>
+<body>
+
+<div class="container">
+    <h1>Dedicado pelo teu joão</h1>
+
+    <!-- MÚSICA 1 -->
+    <div class="music-card">
+        <div class="music-title">Sera que é amor</div>
+        <div class="music-artist">Arlindo cruz</div>
+        <div class="music-note">
+            essa música tem teu nome e sobrenome.
+        </div>
+
+        <div class="player">
+            <button class="play-btn" onclick="togglePlay(0)">▶</button>
+            <div class="progress">
+                <input type="range" min="0" value="0" step="1" oninput="seek(0)">
+            </div>
+            <div class="time" id="time-0">0:00</div>
+        </div>
+
+        <div class="new-tag">Nova 💜</div>
+        <audio src="Arlindo_Cruz_-_Sera_que_e_amor_(mp3.pm).mp3"></audio>
+    </div>
+
+    <!-- MÚSICA 2 -->
+    <div class="music-card">
+        <div class="music-title">Espaçosa demais</div>
+        <div class="music-artist">Felipe araújo</div>
+        <div class="music-note">
+            essa me lembra o quão tu ocupa no meu coração, no meu corpo, é incrível!!!.
+        </div>
+
+        <div class="player">
+            <button class="play-btn" onclick="togglePlay(1)">▶</button>
+            <div class="progress">
+                <input type="range" min="0" value="0" step="1" oninput="seek(1)">
+            </div>
+            <div class="time" id="time-1">0:00</div>
+        </div>
+        <div class="new-tag">Nova 💜</div>
+        <audio src="felipearaujo-espacosa-demais-ao-vivo-b4898215.mp3"></audio>
+        
+    </div>
+
+
+    <!-- MÚSICA 3 -->
+      <div class="music-card">
+        <div class="music-title">Eu juro</div>
+        <div class="music-artist">Armandinho</div>
+        <div class="music-note">
+            a música que assumi ti no insta.
+        </div>
+
+        <div class="player">
+            <button class="play-btn" onclick="togglePlay(2)">▶</button>
+            <div class="progress">
+                <input type="range" min="0" value="0" step="1" oninput="seek(2)">
+            </div>
+            <div class="time" id="time-2">0:00</div>
+        </div>
+
+        <div class="new-tag">Nova 💜</div>
+        <audio src="05 - EU JURO.mp3"></audio>
+    </div>
+
+
+    <!-- MÚSICA 4 -->
+    <div class="music-card">
+        <div class="music-title">Amor vem cá</div>
+        <div class="music-artist">Armandinho</div>
+        <div class="music-note">
+            tu ama essa música, eu só consigo lembrar de ti, que não é uma novidade rs.
+        </div>
+
+        <div class="player">
+            <button class="play-btn" onclick="togglePlay(3)">▶</button>
+            <div class="progress">
+                <input type="range" min="0" value="0" step="1" oninput="seek(3)">
+            </div>
+            <div class="time" id="time-3">0:00</div>
+        </div>
+
+        <div class="new-tag">Nova 💜</div>
+        <audio src="Armandinho_-_Amor_Vem_C_(mp3.pm).mp3"></audio>
+    </div>
+</div>
+
+<script>
+const audios = document.querySelectorAll("audio");
+const buttons = document.querySelectorAll(".play-btn");
+const sliders = document.querySelectorAll("input[type=range]");
+const times = document.querySelectorAll(".time");
+
+function togglePlay(index) {
+    audios.forEach((audio, i) => {
+        if (i !== index) {
+            audio.pause();
+            buttons[i].innerText = "▶";
+        }
+    });
+
+    if (audios[index].paused) {
+        audios[index].play();
+        buttons[index].innerText = "⏸";
+    } else {
+        audios[index].pause();
+        buttons[index].innerText = "▶";
+    }
+}
+
+audios.forEach((audio, index) => {
+    audio.addEventListener("loadedmetadata", () => {
+        sliders[index].max = Math.floor(audio.duration);
+    });
+
+    audio.addEventListener("timeupdate", () => {
+        sliders[index].value = Math.floor(audio.currentTime);
+        times[index].innerText = formatTime(audio.currentTime);
+    });
+
+    audio.addEventListener("ended", () => {
+        buttons[index].innerText = "▶";
+    });
+});
+
+function seek(index) {
+    audios[index].currentTime = sliders[index].value;
+}
+
+function formatTime(seconds) {
+    const min = Math.floor(seconds / 60);
+    const sec = Math.floor(seconds % 60).toString().padStart(2, "0");
+    return `${min}:${sec}`;
+}
+</script>
+
+</body>
+</html>
