@@ -6,7 +6,15 @@
 <title>Cartinhas 💜</title>
 
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js"></script>
 
+<script>
+(function(){
+  emailjs.init("1nYxrbfEm0rZgBIXk"); // essa chave você pode trocar depois
+})();
+</script>
+
+<script src="app.js"></script>
 <style>
 body {
     margin: 0;
@@ -239,10 +247,17 @@ const cartas = [
     {
         data:"18/12/2025",
         texto: "o maior sonho é ver meu sonho realizando os sonhos dela, tu realizar teus sonhos é a mesma coisa de eu realizar também, eu vibro, fico feliz, comemoro contigo, esse é meu maior sonho, além de qualquer outra coisa, te ver conquistando tuas coisas é minha realização, eu não digo da boca pra fora quando eu falo que tu é meu maior sonho, de fato, tu é meu maior sonho",
+        nova:false
+    },
+
+    {
+         data:"25/12/2025",
+        texto: "Feliz natal, minha princesa! agradeço a Deus pela tua existência, tu faz meus dias melhores, eu amo estar contigo, para ti, to muito feliz com tu, obrigado por tudo que tu vem fazendo, eu te amo muito, eu te respiro, tu meu ar e uma parte de mim, to contigo sempre, minha princesinha! beijo do teu joao.",
         nova:true
     }
 
     ];
+
 
 const timeline = document.getElementById("timeline");
 const modalOverlay = document.getElementById("modalOverlay");
