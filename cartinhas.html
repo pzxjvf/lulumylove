@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cartinhas 💜</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js"></script>
+
+<script>
+(function(){
+  emailjs.init("1nYxrbfEm0rZgBIXk"); // essa chave você pode trocar depois
+})();
+</script>
+
+<script src="app.js"></script>
+<style>
+body {
+    margin: 0;
+    font-family: 'Poppins', sans-serif;
+    background: linear-gradient(180deg, #1b0033, #000);
+    color: #fff;
+    padding: 40px 0;
+}
+
+/* container */
+.container {
+    width: 90%;
+    max-width: 600px;
+    margin: auto;
+}
+
+h1 {
+    text-align: center;
+    margin-bottom: 40px;
+    font-size: 2.2rem;
+    background: linear-gradient(to right, #38b000, #7b2cbf);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+/* timeline */
+.timeline {
+    position: relative;
+    padding-left: 30px;
+}
+
+.timeline::before {
+    content: '';
+    position: absolute;
+    left: 10px;
+    top: 0;
+    bottom: 0;
+    width: 2px;
+    background: linear-gradient(#38b000, #7b2cbf);
+}
+
+/* entrada */
+.entry {
+    position: relative;
+    margin-bottom: 30px;
+    animation: fadeUp 0.6s ease;
+}
+
+.entry::before {
+    content: '';
+    position: absolute;
+    left: -2px;
+    top: 14px;
+    width: 16px;
+    height: 16px;
+    background: #7b2cbf;
+    border-radius: 50%;
+    box-shadow: 0 0 10px #38b000;
+}
+
+.card {
+    background: rgba(255,255,255,0.08);
+    border-radius: 16px;
+    padding: 16px 18px;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.card:hover {
+    background: rgba(255,255,255,0.14);
+    transform: translateY(-3px);
+}
+
+.date {
+    font-size: 0.85rem;
+    opacity: 0.8;
+}
+
+.preview {
+    margin-top: 8px;
+    font-size: 1rem;
+}
+
+.new-tag {
+    display: inline-block;
+    margin-top: 8px;
+    font-size: 0.75rem;
+    padding: 4px 12px;
+    border-radius: 20px;
+    background: linear-gradient(to right, #38b000, #7b2cbf);
+    font-weight: 600;
+}
+
+/* ================= MODAL ================= */
+
+.modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.7);
+    display: none;
+    justify-content: center;
+    align-items: center;
+    z-index: 50;
+}
+
+.modal {
+    background: rgba(255,255,255,0.97);
+    color: #3a004f;
+    padding: 26px;
+    border-radius: 22px;
+    width: 92%;
+    max-width: 480px;
+
+    max-height: 85vh;          /* 👈 ocupa quase a tela */
+    display: flex;
+    flex-direction: column;
+
+    animation: popIn 0.4s ease forwards;
+    box-shadow: 0 20px 40px rgba(123,44,191,0.6),
+                0 0 30px rgba(56,176,0,0.4);
+}
+
+
+.modal h2 {
+    margin-top: 0;
+    margin-bottom: 10px;
+    font-size: 1.3rem;
+    background: linear-gradient(to right, #38b000, #7b2cbf);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.modal p {
+    font-size: 1rem;
+    line-height: 1.6rem;
+    margin: 16px 0 20px;
+
+    overflow-y: auto;     /* 👈 scroll */
+    max-height: 50vh;     /* 👈 área do texto */
+    padding-right: 6px;
+}
+
+
+.modal button {
+    background: linear-gradient(to right, #38b000, #7b2cbf);
+    color: white;
+    border: none;
+    padding: 10px 26px;
+    border-radius: 20px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: 0.3s;
+}
+
+.modal button:hover {
+    transform: scale(1.05);
+}
+
+/* animações */
+@keyframes fadeUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes popIn {
+    from { opacity: 0; transform: scale(0.7); }
+    to { opacity: 1; transform: scale(1); }
+}
+.modal p::-webkit-scrollbar {
+    width: 6px;
+}
+
+.modal p::-webkit-scrollbar-thumb {
+    background: linear-gradient(#38b000, #7b2cbf);
+    border-radius: 10px;
+}
+
+</style>
+</head>
+<body>
+
+<div class="container">
+    <h1>Cartinhas 💜</h1>
+    <div class="timeline" id="timeline"></div>
+</div>
+
+<!-- MODAL -->
+<div class="modal-overlay" id="modalOverlay">
+    <div class="modal">
+        <h2 id="modalDate"></h2>
+        <p id="modalText"></p>
+        <button onclick="closeModal()">Fechar</button>
+    </div>
+</div>
+
+<script>
+const cartas = [
+    {
+        data: "13/12/2025",
+        texto: "obrigado por organizar esse mês todinho, por ter tido essa iniciativa e ideia pra termos um mês natalino juntos, eu nem imagino o quão ruim seria sem ti, tu é o amor da minha vida, eu agradeço a Deus por ter me dado esse presente, que é tu, sou muito feliz e muito grato pelas coisas que tu faz, estamos numa fase perfeita, e o mais engraçado é que sempre estivemos nessa fase KKKKKKKKK, obrigado por ser tu, tinha que ser tu, e vou aproveitar muito desde esse dia 01 de dezembro, temos muitos Natal pra passar juntos, e muito obrigado, eu tô muito feliz e muito animado pela primeira vez na minha vida, eu te amo muito, luiza, tu é um presente de Deus, de verdade, eu choro de felicidade por causa de ti, igual agora, tu é indescritível. meus sinceros obrigado, eu sou completamente apaixonado por ti, completamente obcecado, eu amo me declarar, eu amo te mostrar o quão tu me faz bem, e eu espero que seja pra ti também, tu é o meu pra sempre, e a minha maior certeza é que eu te quero ao meu lado ate o resto da minha vida.",
+        nova: false
+    },
+    
+    {
+        data: "13/12/2025",
+        texto: "tu é a mulher da minha vida, tu é pra mim, por favor, seja pra mim, vamos ir juntos, segura minha mão e não larga, eu afirmo mil vezes que eu te amo, todas as coisas que aconteceram me dói, tu não tinha que lutar sozinha, eu mudei por ti, por nós, eu quero ser um homem melhor pra ti, pra nossa futura família, pq eu preciso de ti, tu completa meus dias.",
+        nova: false
+    },
+    {
+
+    data: "13/12/2025",
+        texto: "se procurar um pouco mais sobre a palavra obsessão, vemos que OBSESSÃO sf Preocupação exagerada com alguma coisa apego excessivo a uma mesma ideia ideia fixa. A obsessão por algo bom, pode ser descrita como uma forte paixão ou fixação por algo que traz satisfação e prazer. ser obcecado por ti, querer estar disposto a o que tu tiver precisando, poder fazer tudo por ti. sexualmente tu me excita da forma que ninguém nunca conseguiu, gozar uma vez é pouco pra o tesão que eu sinto por ti. gozar uma vez é já querer de novo, teu corpo, tu, qualquer coisa que vem de tu me excita de uma forma inexplicável, e puta que pariu, que tesão gostoso, ser sortudo é difícil, mas alguns tem sorte de ser, milionário, rico, ou sorte em vários fatores. eu me sinto um, mas além de qualquer fator material, a sorte vem por alguém que muda a minha vida, causa um impacto tão grande e positivo, seja mais pra mim. e eu peço isso pelo simples fato de ser obsessivo por ti.  eu quero ser o primeiro em tudo, ser pra ti é o que eu quero, ser digno de tudo que tu tem a me dar. aprendi muito nesse ano, mas aprendi a de fato ser um homem pra minha mulher, pra o que tu precisa, pra o que tu espera de mim, e eu espero que esteja conseguindo isso, tenho muito a melhorar, mas posso te garantir que tu me motiva todos os dias, a ser um homem próximo a perfeição, que é isso que tu merece, só vejo o amor da minha vida que me chama de amor, diz que me ama todos os dias e que um dia, tenho certeza que irá está do meu lado quando eu tiver velhinho, isso foi apenas uma declaração pelo que eu sinto por ti, inacreditável é a palavra que mais gosto de falar, pq me lembra ti, INACREDITÁVEL tu ser tão perfeita assim, inacreditável, apenas. e novamente, eu tenho muita sorte em te ter.. e definitivamente eu sou rico, rico em poder vê que, quem está do meu lado é a maior jóia que existe no mundo inteiro e é única.",
+        nova: false
+    },
+{
+     data:"13/12/2025",
+        texto: "te amar é muito bom, e principalmente ser amado por ti é mais ainda, eu tenho uma sorte absurda em te ter, eu respiro tu em cada hora, cada segundo, cada momento, EM TODOS OS LUGARES, EM QUALQUER COISA QUE EU ESTEjA FAZENDO, eu amo te amar, luiza. eu preciso do teu sobrenome no meu nome, preciso ter uma cria contigo com teus olhinhos, puta que pariu, é contigo que eu quero passar minha vida junto e ponto final. minha maior certeza!",
+        nova:false
+},
+  {
+    data:"16/12/2025",
+        texto: "minha motivação tá sendo eu ver tua foto ali na minha mesa e ter vontade de ir atrás, de investir em ti, de ver teu sorriso, quando eu digo que eu te respiro, é pq literalmente eu te respiro",
+        nova:false
+  },  
+    {
+        data:"16/12/2025",
+        texto: "o melhor sentimento que eu tive em toda minha vida, desde quando nasci, foi poder amar ti, eu respirar, saber tudo sobre a mulher dos meus sonhos, saber que ela me ama, é tão INCRÍVEL. é surreal amar ti, eu aprendi tanto e aprendo cada dia mais, poder saber tudo de ti, cada palavra, cada olhada pra mim, isso me deixa abismado e sinceramente, eu sou obcecado para um caralho por ti, e eu fico só querendo mais, mais de ti, só pra mim, e é muito gostoso, eu te amo muito, de mãozinha. ATS, teu joão, teu pra sempre!",
+        nova:false
+    },
+    {
+        data:"18/12/2025",
+        texto: "o maior sonho é ver meu sonho realizando os sonhos dela, tu realizar teus sonhos é a mesma coisa de eu realizar também, eu vibro, fico feliz, comemoro contigo, esse é meu maior sonho, além de qualquer outra coisa, te ver conquistando tuas coisas é minha realização, eu não digo da boca pra fora quando eu falo que tu é meu maior sonho, de fato, tu é meu maior sonho",
+        nova:false
+    },
+
+    {
+         data:"25/12/2025",
+        texto: "Feliz natal, minha princesa! agradeço a Deus pela tua existência, tu faz meus dias melhores, eu amo estar contigo, para ti, to muito feliz com tu, obrigado por tudo que tu vem fazendo, eu te amo muito, eu te respiro, tu meu ar e uma parte de mim, to contigo sempre, minha princesinha! beijo do teu joao.",
+        nova:false
+    },
+
+    {
+        data:"31/12/2025",
+        texto: "obrigado por estar comigo, por me apoiar, e me acolher, compreender, quero pedir perdão pelas coisas que fiz este ano, eu amadureci, e entendi que eu tinha que ser um homem, e hoje eu sou teu homem, tu sempre foi perfeita, sempre me amou, sempre se jogou de cabeça, e eu tô fazendo o mesmo, independente do que aconteceu ou aconteça, eu estarei contigo, precisamos de um ao outro, e eu tô muito feliz que, hoje, sendo o último dia do ano, eu e tu estamos bem, agradeço a Deus por tu ser minha, e agradeço a ti pela chance, por mais difícil que seja, tu confiou e acreditou em mim, e hoje estamos muito bem",
+        nova:true
+    }
+    ];
+
+
+const timeline = document.getElementById("timeline");
+const modalOverlay = document.getElementById("modalOverlay");
+const modalDate = document.getElementById("modalDate");
+const modalText = document.getElementById("modalText");
+
+function renderCartas() {
+    timeline.innerHTML = "";
+
+    cartas.forEach((carta, index) => {
+        const preview = carta.texto.substring(0, 60) + "...";
+
+        const entry = document.createElement("div");
+        entry.className = "entry";
+
+        entry.innerHTML = `
+            <div class="card" onclick="openCarta(${index})">
+                <div class="date">${carta.data}</div>
+                <div class="preview">${preview}</div>
+                ${carta.nova ? `<div class="new-tag">Nova 💜</div>` : ""}
+            </div>
+        `;
+
+        timeline.appendChild(entry);
+    });
+}
+
+function openCarta(index) {
+    const carta = cartas[index];
+
+    modalDate.innerText = carta.data;
+    modalText.innerText = carta.texto;
+    modalOverlay.style.display = "flex";
+
+    if (carta.nova) {
+        carta.nova = false;
+        setTimeout(renderCartas, 300);
+    }
+}
+
+function closeModal() {
+    modalOverlay.style.display = "none";
+}
+
+/* fechar clicando fora */
+modalOverlay.addEventListener("click", (e) => {
+    if (e.target === modalOverlay) closeModal();
+});
+
+renderCartas();
+</script>
+
+</body>
+</html>

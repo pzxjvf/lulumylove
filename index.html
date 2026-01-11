@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nosso Login 💜</title>
+
+    <!-- Fonte Nunito -->
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@300;400;700&display=swap" rel="stylesheet">
+
+    <style>
+        body {
+            margin: 0;
+            font-family: "Nunito", sans-serif;
+            background: linear-gradient(135deg, #7a00ff, #00b667);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .login-container {
+            background: rgba(255, 255, 255, 0.20);
+            backdrop-filter: blur(12px);
+            padding: 35px;
+            border-radius: 18px;
+            color: #fff;
+            text-align: center;
+            width: 340px;
+            border: 2px solid rgba(255, 255, 255, 0.25);
+            animation: fadeIn 1s ease-in-out;
+        }
+
+        @keyframes fadeIn {
+            from {opacity: 0; transform: translateY(20px);}
+            to {opacity: 1; transform: translateY(0);}
+        }
+
+        h1 {
+            font-weight: 800;
+            font-size: 2rem;
+            margin-bottom: 15px;
+            text-shadow: 0 0 12px rgba(255,255,255,0.5);
+        }
+
+        .hint {
+            font-size: 0.95em;
+            background: rgba(255,255,255,0.15);
+            padding: 8px 12px;
+            border-radius: 10px;
+            font-weight: 600;
+            margin-bottom: 18px;
+        }
+
+        input {
+            width: 100%;
+            padding: 12px;
+            margin: 8px 0;
+            border-radius: 12px;
+            border: none;
+            outline: none;
+            font-family: "Nunito", sans-serif;
+            font-size: 1em;
+        }
+
+        input:focus {
+            box-shadow: 0 0 10px rgba(255,255,255,0.6);
+        }
+
+        .btn {
+            background-color: #9d4edd;
+            color: white;
+            padding: 12px;
+            border: none;
+            border-radius: 30px;
+            width: 100%;
+            cursor: pointer;
+            font-weight: 700;
+            margin-top: 15px;
+            transition: 0.3s ease;
+            font-size: 1em;
+        }
+
+        .btn:hover {
+            background-color: #7b2cbf;
+        }
+
+        p {
+            margin-top: 15px;
+            font-size: 0.9em;
+        }
+
+        .error {
+            margin-top: 12px;
+            color: #fff;
+            background: rgba(255, 0, 88, 0.6);
+            padding: 6px;
+            border-radius: 8px;
+            font-weight: 700;
+            display: none;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="login-container">
+        <h1>💜 Cantinho da Lulu</h1>
+        <div class="hint">💌 Login: O destino que vou te levar<br>📅 Senha: Quando nos conhecemos?</div>
+
+        <input type="text" id="username" placeholder="Lugar...">
+        <input type="password" id="password" placeholder="Data...">
+        <button class="btn" onclick="login()">Entrar</button>
+
+        <p>Feito com amor 💜</p>
+        <div class="error" id="errorMsg">NOOOO, try again, momo!!</div>
+    </div>
+
+    <script>
+        const destinoCorreto = ["italia", "itália"];
+        const datasCorretas = ["29012023", "29/01/2023", "290123"];
+
+        function limparTexto(texto) {
+            return texto.trim().toLowerCase()
+                .normalize("NFD").replace(/[\u0300-\u036f]/g, "")
+                .replace(/[^a-z0-9]/g, "");
+        }
+
+        function limparData(data) {
+            return data.trim().replace(/[^0-9]/g, "");
+        }
+
+        function login() {
+            let user = limparTexto(document.getElementById("username").value);
+            let pass = limparData(document.getElementById("password").value);
+
+            const destinoValido = destinoCorreto.map(limparTexto).includes(user);
+            const dataValida = datasCorretas.map(limparData).includes(pass);
+
+            if (destinoValido && dataValida) {
+                window.location.href = "menu.html";
+            } else {
+                const errorMsg = document.getElementById("errorMsg");
+                errorMsg.style.display = "block";
+            }
+        }
+    </script>
+</body>
+</html>
