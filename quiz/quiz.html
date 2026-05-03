@@ -146,11 +146,11 @@
 
 <script>
     const questions = [
-        { q: "O que o João vendeu de graça pra lulu no HayDay?", options: ["Trigo", "Ferramentas", "Torta de Abóbora", "Minérios"], correct: 1 },
-        { q: "Qual a data que o João começou a gostar da lulu?", options: ["29/01/2023", "05/02/2023", "12/10/2025", "01/01/2023"], correct: 1 },
-        { q: "Qual o destino dos sonhos que o João vai levar a lulu?", options: ["França", "Grécia", "Itália", "Japão"], correct: 2 },
-        { q: "Qual o apelido que o João mais gosta de chamar a lulu?", options: ["momo", "macaca", "milacateia", "chapolina"], correct: 3 },
-        { q: "Qual a sobremesa favorita da joão?", options: ["musse", "pastelzinho de goiabada", "Açaí", "a lulu"], correct: 3 },
+        { q: "Qual a coisa que joão mais gosta de comer?", options: ["Feijão", "Chocolate", "a lulu", "Nada :("], correct: 2 },
+        { q: "Qual foi a data do primeiro eu te amo", options: ["01/09/2023", "05/02/2023", "29/04/2024", "18/02/2024"], correct: 0 },
+        { q: "Qual jogo que joao e lulu mais gostam de jogar?", options: ["Jogos de misterio", "Minecraft", "Tyne glade", "Ludo"], correct: 1 },
+        { q: "é verdade que lulu ama o joão? (espero que sim, mozi :( )", options: ["é verdade", "mentira", "é", "sisi"], correct: [0, 2, 3] },
+        { q: "o que acontece se joao nao receber o que ele quer da lulu?", options: ["joao cai duro no chao e morre", "joao vai de base, de silvio santos, de vaxco", "joao fica triste", "joao falece blau no chão"], correct: [0, 1, 2, 3] },
     ];
 
     const elogios = ["boa, minha diva!!!",];
@@ -187,7 +187,10 @@
         const buttons = document.querySelectorAll('.option-btn');
         buttons.forEach(b => b.style.pointerEvents = 'none');
 
-        if(index === questions[currentQ].correct) {
+        const correct = questions[currentQ].correct;
+        const isCorrect = Array.isArray(correct) ? correct.includes(index) : index === correct;
+
+        if(isCorrect) {
             btnElement.classList.add("correct-blink");
             quizBox.classList.add("quiz-success-glow");
             showStatus(elogios[Math.floor(Math.random()*elogios.length)], "success");
@@ -221,6 +224,14 @@
         const btn = document.getElementById("claimBtn");
         btn.innerText = "PRÊMIO REIVINDICADO! 💜";
         btn.classList.add("claimed");
+
+        const pdfUrl = '../vale_datezinho_lulu.pdf';
+        const link = document.createElement('a');
+        link.href = pdfUrl;
+        link.download = 'vale_datezinho_lulu.pdf';
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
         
         // Envia o e-mail usando sua função do app.js
         if(typeof avisarEla === "function") {
