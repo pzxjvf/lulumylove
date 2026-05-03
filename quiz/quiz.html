@@ -122,6 +122,78 @@
         }
         #claimBtn.claimed { background: #7a00ff; pointer-events: none; }
 
+        .modal {
+            position: fixed;
+            inset: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: rgba(0, 0, 0, 0.65);
+            visibility: hidden;
+            opacity: 0;
+            transition: opacity 0.25s ease, visibility 0.25s ease;
+            z-index: 200;
+        }
+        .modal.visible {
+            visibility: visible;
+            opacity: 1;
+        }
+        .modal-content {
+            background: linear-gradient(180deg, rgba(255,255,255,0.18), rgba(255,255,255,0.08));
+            border: 1px solid rgba(169, 50, 255, 0.35);
+            backdrop-filter: blur(24px);
+            padding: 30px 34px;
+            border-radius: 30px;
+            text-align: center;
+            max-width: 340px;
+            width: 92%;
+            color: #fff;
+            box-shadow: 0 24px 50px rgba(0,0,0,0.35);
+            position: relative;
+            overflow: hidden;
+        }
+        .modal-content::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(circle at top right, rgba(255,255,255,0.25), transparent 35%);
+            pointer-events: none;
+        }
+        .modal-content h3 {
+            font-size: 1.6rem;
+            margin-bottom: 12px;
+            letter-spacing: 0.02em;
+        }
+        .modal-content p {
+            font-size: 1.15rem;
+            margin-bottom: 24px;
+            font-weight: 700;
+            line-height: 1.6;
+            opacity: 0.95;
+        }
+        .modal-close-btn {
+            background: #ffffff22;
+            border: 1px solid rgba(255,255,255,0.45);
+            color: #fff;
+            padding: 14px 20px;
+            border-radius: 18px;
+            font-weight: 800;
+            cursor: pointer;
+            width: 100%;
+            transition: background 0.25s ease, transform 0.25s ease;
+        }
+        .modal-close-btn:hover {
+            background: rgba(255,255,255,0.28);
+            transform: translateY(-1px);
+        }
+        .modal.visible .modal-content {
+            animation: popIn 0.25s ease;
+        }
+        @keyframes popIn {
+            from { transform: scale(0.95); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
+        }
+
     </style>
 </head>
 <body>
@@ -131,7 +203,7 @@
 
 <div class="quiz-container" id="quizBox">
     <div id="game">
-        <div class="question" id="questionText">Preparada, Diva? 💅</div>
+        <div class="question" id="questionText">Preparada, momo? </div>
         <div class="options" id="optionsBox"></div>
     </div>
 
@@ -141,6 +213,12 @@
         <span class="reward-icon">🍨</span>
         <p><strong>RECOMPENSA:</strong> Um datezinho eu e tu<br>com sobremesa, pode me cobrar!!</p>
         <button id="claimBtn" onclick="reivindicar()">REIVINDICAR PRÊMIO</button>
+    </div>
+    <div id="loveModal" class="modal" role="dialog" aria-modal="true">
+        <div class="modal-content">
+            <p>num ama eu momo??🥺</p>
+            <button class="modal-close-btn" onclick="closeLoveModal()">Fechar</button>
+        </div>
     </div>
 </div>
 
@@ -190,6 +268,10 @@
         const correct = questions[currentQ].correct;
         const isCorrect = Array.isArray(correct) ? correct.includes(index) : index === correct;
 
+        if(!isCorrect && currentQ === 3 && index === 1) {
+            showLoveModal();
+        }
+
         if(isCorrect) {
             btnElement.classList.add("correct-blink");
             quizBox.classList.add("quiz-success-glow");
@@ -212,6 +294,14 @@
                 buttons.forEach(b => b.style.pointerEvents = 'auto');
             }, 600);
         }
+    }
+
+    function showLoveModal() {
+        document.getElementById('loveModal').classList.add('visible');
+    }
+
+    function closeLoveModal() {
+        document.getElementById('loveModal').classList.remove('visible');
     }
 
     function showReward() {
