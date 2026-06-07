@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Cantinho da Gente</title>
+<title>Cantinho da Gente 💖</title>
 
 <!-- Fonte Opção B -->
 <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@300;400;700;800&display=swap" rel="stylesheet">
@@ -11,26 +11,76 @@
 <style>
     body {
         margin: 0;
-        background: linear-gradient(135deg, #7a00ff, #00b667);
+        background: linear-gradient(135deg, #ff0055, #4a00e0);
         font-family: "Nunito", sans-serif;
         display: flex;
         justify-content: center;
         align-items: center;
         height: 100vh;
         color: #fff;
+        overflow: hidden;
+        position: relative;
         animation: fadeIn 1s ease-in-out;
+    }
+
+    /* Chuva de corações no fundo */
+    body::before {
+        content: "❤️";
+        position: absolute;
+        font-size: 2rem;
+        opacity: 0.15;
+        animation: floatHearts 6s infinite linear;
+        left: 10%;
+        top: -10%;
+    }
+    body::after {
+        content: "💜";
+        position: absolute;
+        font-size: 1.5rem;
+        opacity: 0.15;
+        animation: floatHearts 8s infinite linear;
+        right: 15%;
+        top: -10%;
+        animation-delay: 2s;
+    }
+
+    @keyframes floatHearts {
+        0% { transform: translateY(-10%) rotate(0deg); opacity: 0; }
+        10% { opacity: 0.15; }
+        90% { opacity: 0.15; }
+        100% { transform: translateY(110vh) rotate(360deg); opacity: 0; }
     }
 
     .container {
         text-align: center;
+        z-index: 10;
     }
 
     h1 {
         font-weight: 800;
         font-size: 2.6rem;
-        margin-bottom: 35px;
+        margin-bottom: 10px;
         text-shadow: 0 0 12px rgba(255,255,255,0.6);
         letter-spacing: 1px;
+    }
+
+    /* Cronômetro */
+    .countdown-box {
+        background: rgba(255, 255, 255, 0.15);
+        backdrop-filter: blur(8px);
+        border: 1px solid rgba(255, 255, 255, 0.25);
+        padding: 12px 25px;
+        border-radius: 50px;
+        display: inline-flex;
+        gap: 15px;
+        font-weight: 800;
+        font-size: 1.1rem;
+        margin-bottom: 35px;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.15);
+    }
+    .countdown-item span {
+        color: #ffeb3b;
+        font-size: 1.3rem;
     }
 
     .cards {
@@ -38,11 +88,12 @@
         gap: 25px;
         justify-content: center;
         flex-wrap: wrap;
+        max-width: 600px;
     }
 
     .card {
-        width: 160px;
-        height: 160px;
+        width: 140px;
+        height: 140px;
         background: rgba(255,255,255,0.12);
         backdrop-filter: blur(12px);
         border-radius: 22px;
@@ -63,22 +114,86 @@
         box-shadow: 0 8px 25px rgba(0,0,0,0.25);
     }
 
+    /* Card Especial Pulsando */
+    .card-special {
+        border-color: #ffeb3b;
+        animation: pulse 2s infinite alternate;
+    }
+    @keyframes pulse {
+        from { box-shadow: 0 0 10px rgba(255, 235, 59, 0.3); }
+        to { box-shadow: 0 0 25px rgba(255, 235, 59, 0.7); transform: scale(1.02); }
+    }
+
     .icon {
         font-size: 2.6rem;
         margin-bottom: 8px;
     }
 
+    /* ================= MODAL DE BLOQUEIO ================= */
+    .modal-overlay {
+        position: fixed;
+        inset: 0;
+        background: rgba(0,0,0,0.85);
+        display: none;
+        justify-content: center;
+        align-items: center;
+        z-index: 100;
+    }
+    .modal-lock {
+        background: #fff;
+        color: #333;
+        padding: 35px;
+        border-radius: 25px;
+        text-align: center;
+        width: 85%;
+        max-width: 340px;
+        box-shadow: 0 15px 40px rgba(0,0,0,0.5);
+        animation: popIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+    .modal-lock h2 { margin-top: 10px; color: #ff0055; font-weight: 800; }
+    .modal-lock p { font-size: 1.05rem; line-height: 1.5rem; margin: 15px 0; }
+    .modal-lock button {
+        background: linear-gradient(135deg, #ff0055, #4a00e0);
+        color: white;
+        border: none;
+        padding: 12px 30px;
+        border-radius: 20px;
+        font-weight: 700;
+        cursor: pointer;
+        transition: 0.3s;
+    }
+    .modal-lock button:hover { transform: scale(1.05); }
+
     @keyframes fadeIn {
         0% { opacity: 0; transform: translateY(20px); }
         100% { opacity: 1; transform: translateY(0); }
     }
+    @keyframes popIn { from { opacity: 0; transform: scale(0.6); } }
 </style>
 </head>
 
 <body>
 
+<!-- Modal de Conteúdo Bloqueado -->
+<div class="modal-overlay" id="lockModal">
+    <div class="modal-lock">
+        <div style="font-size: 4rem;">🔒</div>
+        <h2>Curiosa!</h2>
+        <p>Essa surpresa está trancada, volta aqui assim que o cronômetro zerar no dia 12 de Junho! ❤️</p>
+        <button onclick="closeModal()">Esperar ansiosamente</button>
+    </div>
+</div>
+
 <div class="container">
-    <h1>💜 Nosso cantinho 💚</h1>
+    <h1>💝 Nosso Dia dos Namorados 💖</h1>
+    
+    <!-- Cronômetro Regressivo -->
+    <div class="countdown-box" id="timerContainer">
+        <div class="countdown-item"><span id="days">00</span>d</div>
+        <div class="countdown-item"><span id="hours">00</span>h</div>
+        <div class="countdown-item"><span id="minutes">00</span>m</div>
+        <div class="countdown-item"><span id="seconds">00</span>s</div>
+    </div>
 
     <div class="cards">
         <div class="card" onclick="openPage('memorias.html')">
@@ -100,6 +215,12 @@
             <div class="icon">💎</div>
             <span>Quiz</span>
         </div>
+
+        <!-- CARD SURPRESA BLOQUEADO -->
+        <div class="card card-special" onclick="checkDateSurprise()">
+            <div class="icon">?</div>
+            <span>?</span>
+        </div>
     </div>
 </div>
 
@@ -107,6 +228,53 @@
 function openPage(page) {
     window.location.href = page;
 }
+
+function closeModal() {
+    document.getElementById("lockModal").style.display = "none";
+}
+
+// FIX DEFINITIVO: String ISO com fuso horário de Brasília (-03:00) especificado explicitamente
+const targetDate = new Date("2026-06-12T00:00:00-03:00").getTime();
+
+function startCountdown() {
+    const timer = setInterval(function() {
+        const now = new Date().getTime();
+        const difference = targetDate - now;
+
+        if (difference <= 0) {
+            clearInterval(timer);
+            document.getElementById("timerContainer").innerHTML = "❤️ Feliz Dia dos Namorados, meu amor! ❤️";
+            document.getElementById("days").innerText = "00";
+            document.getElementById("hours").innerText = "00";
+            document.getElementById("minutes").innerText = "00";
+            document.getElementById("seconds").innerText = "00";
+            return;
+        }
+
+        const d = Math.floor(difference / (1000 * 60 * 60 * 24));
+        const h = Math.floor((difference % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+        const m = Math.floor((difference % (1000 * 60 * 60)) / (1000 * 60));
+        const s = Math.floor((difference % (1000 * 60)) / 1000);
+
+        document.getElementById("days").innerText = d < 10 ? "0" + d : d;
+        document.getElementById("hours").innerText = h < 10 ? "0" + h : h;
+        document.getElementById("minutes").innerText = m < 10 ? "0" + m : m;
+        document.getElementById("seconds").innerText = s < 10 ? "0" + s : s;
+
+    }, 1000);
+}
+
+function checkDateSurprise() {
+    const now = new Date().getTime();
+    
+    if (now >= targetDate) {
+        window.open('vale_lanche_momo.pdf');
+    } else {
+        document.getElementById("lockModal").style.display = "flex";
+    }
+}
+
+startCountdown();
 </script>
 
 </body>
