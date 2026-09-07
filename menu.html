@@ -69,7 +69,7 @@
         gap: 25px;
         justify-content: center;
         flex-wrap: wrap;
-        max-width: 600px;
+        max-width: 900px;
     }
 
     .card {
@@ -121,7 +121,7 @@
 <body>
 
 <div class="container">
-    <h1>� Nosso Cantinho 💜</h1>
+    <h1>💜 Nosso Cantinho 💜</h1>
 
     <div class="cards">
         <div class="card" onclick="openPage('memorias.html')">
@@ -144,9 +144,29 @@
             <span>Quiz</span>
         </div>
 
-   
+        <div class="card" onclick="openPage('jogo/jogo.html')">
+            <div class="icon">🎮</div>
+            <span>Jogo</span>
+        </div>
+
+        <div class="card" onclick="openPage('loja.html')">
+            <div class="icon">🛒</div>
+            <span>Loja</span>
+        </div>
+
+        <!-- <div class="card card-special" onclick="openPage('ranking.html')">
+            <div class="icon">🏆</div>
+            <span>Ranking</span>
+        </div> -->
+
+        <div class="card card-special" onclick="openPage('loja.html')">
+            <div class="icon">🎁</div>
+            <span>Vale</span>
+        </div>
     </div>
 </div>
+
+
 
 <script>
 function openPage(page) {

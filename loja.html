@@ -1,0 +1,730 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Loja de Vales 🛒💜</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body {
+    min-height: 100%;
+    font-family: "Nunito", sans-serif;
+    background: linear-gradient(135deg, #ff0055 0%, #4a00e0 100%);
+    color: #fff;
+    overflow-x: hidden;
+  }
+  body::before {
+    content: "";
+    position: fixed; inset: 0;
+    background-image:
+      radial-gradient(circle at 15% 20%, rgba(255,255,255,0.16) 0%, transparent 45%),
+      radial-gradient(circle at 85% 75%, rgba(255,215,64,0.10) 0%, transparent 45%);
+    pointer-events: none; z-index: 0;
+  }
+  .hearts {
+    position: fixed; inset: 0; overflow: hidden;
+    pointer-events: none; z-index: 0;
+  }
+  .hearts span {
+    position: absolute;
+    font-size: 1.3rem; opacity: 0.14;
+    animation: float 9s infinite linear;
+  }
+  @keyframes float {
+    0% { transform: translateY(-10%) rotate(0deg); opacity: 0; }
+    10% { opacity: 0.16; }
+    90% { opacity: 0.16; }
+    100% { transform: translateY(110vh) rotate(360deg); opacity: 0; }
+  }
+
+  .wrap {
+    position: relative; z-index: 2;
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 26px 18px 80px;
+    animation: fadeIn 0.6s ease;
+  }
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(14px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .topbar {
+    display: flex; align-items: center; justify-content: space-between;
+    flex-wrap: wrap; gap: 12px; margin-bottom: 20px;
+  }
+  .topbar .esq { display: flex; gap: 10px; flex-wrap: wrap; }
+  .nav-btn {
+    background: rgba(255,255,255,0.14);
+    border: 2px solid rgba(255,255,255,0.35);
+    color: #fff; padding: 10px 18px;
+    border-radius: 50px; cursor: pointer;
+    font-family: inherit; font-weight: 700;
+    transition: 0.2s; backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+  }
+  .nav-btn:hover { transform: scale(1.04); background: rgba(255,255,255,0.22); }
+  .jogar-btn {
+    background: linear-gradient(135deg, #ff4081, #7c4dff); border: none;
+    color: #fff; padding: 10px 20px;
+    border-radius: 50px; font-family: inherit;
+    font-weight: 800; cursor: pointer; transition: 0.2s;
+    box-shadow: 0 6px 18px rgba(0,0,0,0.25);
+  }
+  .jogar-btn:hover { transform: translateY(-2px) scale(1.03); }
+
+  h1 {
+    text-align: center;
+    font-weight: 900;
+    font-size: clamp(1.8rem, 5vw, 2.6rem);
+    margin-bottom: 6px;
+    text-shadow: 0 2px 12px rgba(0,0,0,0.35);
+  }
+  .subt {
+    text-align: center;
+    font-weight: 600; opacity: 0.9;
+    margin-bottom: 22px;
+    font-size: 1rem;
+  }
+
+  /* Seleção de jogador no topo */
+  .selector {
+    display: flex; justify-content: center; gap: 14px;
+    margin-bottom: 22px; flex-wrap: wrap;
+  }
+  .sel-card {
+    display: flex; align-items: center; gap: 10px;
+    padding: 10px 18px;
+    background: rgba(255,255,255,0.12);
+    border: 3px solid rgba(255,255,255,0.28);
+    border-radius: 50px;
+    cursor: pointer; transition: 0.25s;
+    font-weight: 800;
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    box-shadow: 0 6px 18px rgba(0,0,0,0.2);
+  }
+  .sel-card:hover { transform: translateY(-2px); background: rgba(255,255,255,0.2); }
+  .sel-card.lulu.active { border-color: #b388ff; box-shadow: 0 0 0 4px rgba(179,136,255,0.3), 0 8px 20px rgba(0,0,0,0.25); background: rgba(179,136,255,0.18); }
+  .sel-card.joao.active { border-color: #64b5f6; box-shadow: 0 0 0 4px rgba(100,181,246,0.3), 0 8px 20px rgba(0,0,0,0.25); background: rgba(100,181,246,0.18); }
+  .sel-card .av { font-size: 1.4rem; }
+  .sel-card .coins {
+    background: rgba(0,0,0,0.3); padding: 3px 10px;
+    border-radius: 50px; font-size: 0.85rem;
+    color: #ffd740; font-weight: 800;
+  }
+
+  /* Categorias tabs */
+  .tabs {
+    display: flex; justify-content: center; gap: 10px;
+    margin-bottom: 18px; flex-wrap: wrap;
+  }
+  .tab {
+    padding: 10px 20px; border-radius: 50px;
+    background: rgba(255,255,255,0.12);
+    border: 2px solid rgba(255,255,255,0.28);
+    font-weight: 800; cursor: pointer;
+    transition: 0.2s; backdrop-filter: blur(6px);
+  }
+  .tab:hover { background: rgba(255,255,255,0.2); }
+  .tab.active {
+    background: linear-gradient(135deg, #ffd740, #ff6f00);
+    color: #3e2723; border-color: rgba(255,255,255,0.55);
+    box-shadow: 0 6px 16px rgba(0,0,0,0.25);
+  }
+
+  /* Grid de vales */
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    gap: 16px; margin-bottom: 28px;
+  }
+  .vale {
+    position: relative;
+    background: linear-gradient(145deg, rgba(255,255,255,0.16), rgba(255,255,255,0.08));
+    border: 2px solid rgba(255,255,255,0.28);
+    border-radius: 22px;
+    padding: 18px 16px;
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    box-shadow: 0 10px 26px rgba(0,0,0,0.22);
+    transition: 0.25s ease;
+    overflow: hidden;
+    display: flex; flex-direction: column;
+    animation: pop 0.35s ease both;
+  }
+  @keyframes pop { from { opacity: 0; transform: translateY(10px) scale(0.96);} }
+  .vale:hover { transform: translateY(-4px); box-shadow: 0 16px 34px rgba(0,0,0,0.3); border-color: rgba(255,255,255,0.5); }
+  .vale::before {
+    content: "";
+    position: absolute;
+    top: 0; right: 0;
+    width: 60px; height: 60px;
+    background: radial-gradient(circle at top right, rgba(255,215,64,0.3), transparent 70%);
+  }
+  .vale .icone {
+    font-size: 2.8rem; text-align: center;
+    margin-bottom: 6px; filter: drop-shadow(0 3px 6px rgba(0,0,0,0.3));
+  }
+  .vale .nome {
+    font-weight: 900; font-size: 1.15rem;
+    text-align: center; margin-bottom: 4px;
+  }
+  .vale .desc {
+    font-size: 0.85rem; opacity: 0.9;
+    text-align: center; margin-bottom: 10px;
+    min-height: 38px;
+  }
+  .vale .preco {
+    display: flex; justify-content: center; align-items: center; gap: 8px;
+    background: rgba(0,0,0,0.28);
+    border-radius: 50px; padding: 6px 14px;
+    font-weight: 800; margin: 0 auto 12px;
+    font-size: 0.95rem;
+  }
+  .vale .preco .cor { color: #ff80ab; }
+  .vale .preco.car { color: #ffd740; }
+  .vale .comprar {
+    width: 100%; margin-top: auto;
+    padding: 11px; border-radius: 50px; border: none;
+    font-family: inherit; font-weight: 800; font-size: 0.95rem;
+    color: #fff; cursor: pointer; transition: 0.2s;
+    background: linear-gradient(135deg, #ff4081, #7c4dff);
+    box-shadow: 0 6px 16px rgba(0,0,0,0.25);
+  }
+  .vale .comprar:hover:not(:disabled) { transform: translateY(-2px) scale(1.02); }
+  .vale .comprar:disabled {
+    filter: grayscale(0.6) brightness(0.7);
+    cursor: not-allowed; transform: none;
+    box-shadow: none;
+  }
+  .vale.ja-comprou .comprar {
+    background: linear-gradient(135deg, #4caf50, #2e7d32);
+  }
+  .vale.caro .icone { filter: drop-shadow(0 0 8px rgba(255,215,64,0.6)); }
+
+  /* Aviso indisponivel */
+  .no-money {
+    display: none;
+    background: rgba(255,82,82,0.2);
+    border: 2px solid rgba(255,82,82,0.55);
+    padding: 6px 10px;
+    border-radius: 14px;
+    text-align: center;
+    font-weight: 700; font-size: 0.8rem;
+    margin-top: 8px;
+  }
+  .vale.broke .no-money { display: block; }
+
+  /* MINHA MOCHILA */
+  .mochila {
+    background: rgba(255,255,255,0.12);
+    border: 2px solid rgba(255,255,255,0.28);
+    border-radius: 24px;
+    padding: 20px;
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    box-shadow: 0 10px 28px rgba(0,0,0,0.22);
+  }
+  .mochila h2 {
+    font-weight: 900; font-size: 1.35rem; margin-bottom: 14px;
+    display: flex; align-items: center; gap: 10px;
+  }
+  .mochila .vazia {
+    text-align: center; padding: 30px 10px; opacity: 0.78;
+    font-weight: 600;
+  }
+  .lista-vales {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 12px;
+  }
+  .vale-usar {
+    background: rgba(255,255,255,0.1);
+    border: 2px solid rgba(255,215,64,0.45);
+    border-radius: 18px;
+    padding: 14px;
+    display: flex; flex-direction: column;
+    gap: 8px;
+    position: relative;
+  }
+  .vale-usar .topo {
+    display: flex; align-items: center; gap: 10px;
+  }
+  .vale-usar .ic { font-size: 2rem; }
+  .vale-usar .nm { font-weight: 800; font-size: 1rem; }
+  .vale-usar .dt { font-size: 0.72rem; opacity: 0.75; }
+  .vale-usar .info { font-size: 0.85rem; opacity: 0.9; min-height: 34px; }
+  .vale-usar .qtd {
+    position: absolute; top: 10px; right: 12px;
+    background: rgba(255,215,64,0.22);
+    border: 1.5px solid rgba(255,215,64,0.55);
+    padding: 2px 9px; border-radius: 50px;
+    font-weight: 800; font-size: 0.75rem;
+    color: #ffe082;
+  }
+  .vale-usar.usado { opacity: 0.55; border-color: rgba(156,156,156,0.45); }
+  .vale-usar.usado .qtd { background: rgba(156,156,156,0.22); border-color: rgba(156,156,156,0.45); color: #e0e0e0; }
+  .botoes-vale { display: flex; gap: 8px; margin-top: auto; }
+  .usar-btn {
+    flex: 1; padding: 9px; border-radius: 50px; border: none;
+    background: linear-gradient(135deg, #ffd740, #ff6f00);
+    color: #3e2723; font-family: inherit; font-weight: 800;
+    font-size: 0.88rem; cursor: pointer; transition: 0.2s;
+  }
+  .usar-btn:hover:not(:disabled) { transform: translateY(-1px) scale(1.02); filter: brightness(1.05); }
+  .usar-btn:disabled { filter: grayscale(0.6) brightness(0.75); cursor: not-allowed; }
+  .excluir-btn {
+    background: rgba(0,0,0,0.3); border: 1.5px solid rgba(255,82,82,0.4);
+    color: #ffcdd2; border-radius: 50%;
+    width: 38px; cursor: pointer; transition: 0.2s;
+  }
+  .excluir-btn:hover { background: rgba(255,82,82,0.25); transform: scale(1.08); }
+
+  /* Toast */
+  .toasts {
+    position: fixed; top: 18px; left: 50%;
+    transform: translateX(-50%); z-index: 999;
+    display: flex; flex-direction: column; gap: 8px;
+    pointer-events: none;
+  }
+  .toast {
+    background: rgba(0,0,0,0.78);
+    border: 1px solid rgba(255,255,255,0.3);
+    padding: 10px 20px;
+    border-radius: 50px;
+    font-weight: 700; font-size: 0.92rem;
+    animation: tin 0.3s ease, tout 0.4s ease 2.7s forwards;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+  }
+  @keyframes tin { from { opacity: 0; transform: translateY(-10px);} to { opacity: 1; transform: translateY(0);} }
+  @keyframes tout { to { opacity: 0; transform: translateY(-18px); } }
+
+  /* Modal de vale usado */
+  .modal-bg {
+    position: fixed; inset: 0;
+    background: rgba(0,0,0,0.65);
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+    display: none; align-items: center; justify-content: center;
+    z-index: 9999; padding: 20px;
+  }
+  .modal-bg.show { display: flex; animation: fadeIn 0.3s ease; }
+  .modal {
+    background: linear-gradient(145deg, #ff4081, #7c4dff);
+    border: 3px solid rgba(255,255,255,0.45);
+    border-radius: 26px;
+    padding: 30px 24px;
+    max-width: 420px; width: 100%;
+    text-align: center;
+    box-shadow: 0 25px 60px rgba(0,0,0,0.4);
+    animation: popIn 0.4s cubic-bezier(.2,.9,.3,1.2) both;
+  }
+  @keyframes popIn { from { opacity: 0; transform: scale(0.8) translateY(20px); } }
+  .modal .micone { font-size: 4rem; margin-bottom: 8px; filter: drop-shadow(0 4px 10px rgba(0,0,0,0.3)); }
+  .modal h3 { font-weight: 900; font-size: 1.5rem; margin-bottom: 8px; }
+  .modal .mdesc { font-weight: 600; opacity: 0.95; margin-bottom: 18px; font-size: 1rem; }
+  .modal .linha {
+    background: rgba(255,255,255,0.16);
+    border: 1.5px solid rgba(255,255,255,0.3);
+    border-radius: 16px;
+    padding: 14px;
+    margin-bottom: 18px;
+    font-size: 0.9rem;
+    text-align: left;
+  }
+  .modal .linha b { color: #fff59d; }
+  .modal .ok-btn {
+    background: #fff; color: #7c4dff; border: none;
+    padding: 12px 30px; border-radius: 50px;
+    font-family: inherit; font-weight: 900; font-size: 1rem;
+    cursor: pointer; transition: 0.2s;
+    box-shadow: 0 6px 16px rgba(0,0,0,0.25);
+  }
+  .modal .ok-btn:hover { transform: translateY(-2px) scale(1.04); }
+
+  @media (max-width: 480px) {
+    .wrap { padding: 20px 14px 60px; }
+    h1 { font-size: 1.6rem; }
+  }
+</style>
+</head>
+<body>
+
+<div class="hearts" id="hearts"></div>
+
+<div class="wrap">
+  <div class="topbar">
+    <div class="esq">
+      <button class="nav-btn" onclick="window.location.href='menu.html'">← Menu</button>
+      <!-- <button class="nav-btn" onclick="window.location.href='ranking.html'">🏆 Ranking</button> -->
+    </div>
+    <button class="jogar-btn" onclick="window.location.href='jogo/jogo.html'">🎮 Ganhar Mais Corações</button>
+  </div>
+
+  <h1>🛒 Loja de Vales do Amor 💜</h1>
+  <div class="subt">Troque seus corações coletados por recompensas reais para o casal!</div>
+
+  <!-- Seletor de quem está comprando -->
+  <div class="selector" id="selector"></div>
+
+  <!-- Tabs -->
+  <div class="tabs">
+    <div class="tab active" data-tab="loja">💝 Loja de Vales</div>
+    <div class="tab" data-tab="mochila">🎁 Minha Mochila (<span id="countMochila">0</span>)</div>
+  </div>
+
+  <!-- PAINEL LOJA -->
+  <div id="painelLoja">
+    <div class="grid" id="gridVales"></div>
+  </div>
+
+  <!-- PAINEL MOCHILA -->
+  <div id="painelMochila" style="display:none;">
+    <div class="mochila">
+      <h2>🎁 Vales comprados por <span id="mNome">—</span></h2>
+      <div id="listaMochila"></div>
+    </div>
+  </div>
+</div>
+
+<div class="toasts" id="toasts"></div>
+
+<!-- Modal "Vale usado!" -->
+<div class="modal-bg" id="modal">
+  <div class="modal">
+    <div class="micone" id="mIcone">💌</div>
+    <h3 id="mTitulo">Vale Usado!</h3>
+    <div class="mdesc" id="mSub">A outra pessoa já foi avisada 💜</div>
+    <div class="linha" id="mLinha"></div>
+    <button class="ok-btn" onclick="fecharModal()">💜 Entendido</button>
+  </div>
+</div>
+
+<script>
+/* ============ DADOS E STORAGE (compatível com jogo) ============ */
+const LS_KEYS = {
+  coinsLulu: 'amor_coins_lulu',
+  coinsJoao: 'amor_coins_joao',
+  valesLulu: 'amor_vales_lulu',
+  valesJoao: 'amor_vales_joao',
+};
+
+const VALES = [
+  {
+    id: 'v_joguinho',
+    nome: 'Joguinho',
+    desc: 'Qualquer jogo que a lulu quiser jogar, o joao e a lulu vai jogar.',
+    emoji: '🎮',
+    preco: 25,
+    raro: false,
+  },
+  {
+    id: 'v_filme',
+    nome: 'Filme da Minha Escolha',
+    desc: 'Você escolhe o filme/série da sessão de casal! 🍿',
+    emoji: '🎬',
+    preco: 50,
+    raro: false,
+  },
+  {
+    id: 'v_lanche',
+    nome: 'Pizza com Sabores que eu quero',
+    desc: 'Você escolhe o que quer lanchar!',
+    emoji: '🍕',
+    preco: 80,
+    raro: false,
+  },
+  {
+    id: 'v_carta',
+    nome: 'Carta Secreta de Amor',
+    desc: 'A outra pessoa tem que escrever uma carta manual com tudo o que sente 💌',
+    emoji: '💌',
+    preco: 130,
+    raro: false,
+  },
+  {
+    id: 'v_semanasexo',
+    nome: 'Semana de sxo',
+    desc: 'João fará de tudo com lanches e muitoooo daquilo pra lulu.',
+    emoji: '🌅',
+    preco: 180,
+    raro: true,
+  },
+  {
+    id: 'v_datezinho',
+    nome: 'Datezinho Completo ',
+    desc: 'Você escolhe quando e onde, e joao paga TUDO (comida, atividades). Vale-datezinho oficial! 💸',
+    emoji: '🎁',
+    preco: 500,
+    raro: true,
+  },
+];
+
+const PLAYERS = [
+  { key:'lulu', name:'Lulu',  emoji:'👩‍🦽', av:'💜', tabClass:'lulu' },
+];
+
+function getInt(k) { return parseInt(localStorage.getItem(k) || '0', 10); }
+function setInt(k, v) { localStorage.setItem(k, String(v)); }
+function getArr(k) {
+  try { return JSON.parse(localStorage.getItem(k) || '[]'); } catch { return []; }
+}
+function setArr(k, v) { localStorage.setItem(k, JSON.stringify(v)); }
+function toast(msg) {
+  const s = document.getElementById('toasts');
+  const t = document.createElement('div');
+  t.className = 'toast';
+  t.textContent = msg;
+  s.appendChild(t);
+  setTimeout(() => t.remove(), 3200);
+}
+
+/* corações de fundo */
+(function makeHearts() {
+  const emojis = ['💖','💜','💙','💘','💕','❤️','🛒','🎁'];
+  const bg = document.getElementById('hearts');
+  for (let i = 0; i < 14; i++) {
+    const s = document.createElement('span');
+    s.textContent = emojis[i % emojis.length];
+    s.style.left = (Math.random()*100).toFixed(2) + '%';
+    s.style.animationDelay = (Math.random()*9).toFixed(2) + 's';
+    s.style.animationDuration = (7 + Math.random()*7).toFixed(2) + 's';
+    s.style.fontSize = (1 + Math.random()*1.7).toFixed(2) + 'rem';
+    bg.appendChild(s);
+  }
+})();
+
+/* ============ SELETOR DE JOGADOR ============ */
+let jogador = 'lulu';
+
+function renderSelector() {
+  const sel = document.getElementById('selector');
+  sel.innerHTML = '';
+  PLAYERS.forEach(p => {
+    const coins = getInt(p.key === 'lulu' ? LS_KEYS.coinsLulu : LS_KEYS.coinsJoao);
+    const el = document.createElement('div');
+    el.className = `sel-card ${p.tabClass} ${jogador === p.key ? 'active' : ''}`;
+    el.innerHTML = `
+      <span class="av">${p.emoji}</span>
+      <span>Comprando como <b>${p.name}</b></span>
+      <span class="coins">💗 ${coins}</span>
+    `;
+    el.onclick = () => { jogador = p.key; renderTudo(); };
+    sel.appendChild(el);
+  });
+}
+
+/* ============ TABS ============ */
+let aba = 'loja';
+document.querySelectorAll('.tab').forEach(t => {
+  t.onclick = () => {
+    aba = t.dataset.tab;
+    document.querySelectorAll('.tab').forEach(x => x.classList.remove('active'));
+    t.classList.add('active');
+    document.getElementById('painelLoja').style.display = aba === 'loja' ? '' : 'none';
+    document.getElementById('painelMochila').style.display = aba === 'mochila' ? '' : 'none';
+    if (aba === 'mochila') renderMochila();
+  };
+});
+
+/* ============ LOJA ============ */
+function podeComprar(valeId) {
+  const v = VALES.find(x => x.id === valeId);
+  if (!v) return false;
+  const coinKey = jogador === 'lulu' ? LS_KEYS.coinsLulu : LS_KEYS.coinsJoao;
+  return getInt(coinKey) >= v.preco;
+}
+function comprarVale(valeId) {
+  const v = VALES.find(x => x.id === valeId);
+  if (!v) return;
+  const coinKey = jogador === 'lulu' ? LS_KEYS.coinsLulu : LS_KEYS.coinsJoao;
+  const valesKey = jogador === 'lulu' ? LS_KEYS.valesLulu : LS_KEYS.valesJoao;
+  const saldo = getInt(coinKey);
+  if (saldo < v.preco) { toast('💔 Corações insuficientes. Jogue mais!'); return; }
+
+  // Debita + adiciona na mochila
+  setInt(coinKey, saldo - v.preco);
+  const lista = getArr(valesKey);
+  // procura existencia do mesmo vale (empilha qtd)
+  let existente = lista.find(x => x.valeId === valeId && !x.usado);
+  if (existente) {
+    existente.qtd = (existente.qtd || 1) + 1;
+    existente.data = new Date().toISOString();
+  } else {
+    lista.push({
+      uid: 'u_' + Date.now() + '_' + Math.floor(Math.random()*1000),
+      valeId,
+      qtd: 1,
+      data: new Date().toISOString(),
+      usado: false,
+    });
+  }
+  setArr(valesKey, lista);
+  toast(`🎁 Vale comprado: ${v.nome}!`);
+  renderTudo();
+}
+
+function renderLoja() {
+  const grid = document.getElementById('gridVales');
+  grid.innerHTML = '';
+  const coinKey = jogador === 'lulu' ? LS_KEYS.coinsLulu : LS_KEYS.coinsJoao;
+  const saldo = getInt(coinKey);
+  VALES.forEach(v => {
+    const caro = v.preco >= 120;
+    const broke = saldo < v.preco;
+    const el = document.createElement('div');
+    el.className = `vale ${caro ? 'caro' : ''} ${broke ? 'broke' : ''}`;
+    el.innerHTML = `
+      <div class="icone">${v.emoji}</div>
+      <div class="nome">${v.nome}</div>
+      <div class="desc">${v.desc}</div>
+      <div class="preco ${caro ? 'car' : 'cor'}">
+        <span>💗</span><span>${v.preco}</span>
+      </div>
+      <div class="no-money">💔 Falta ${v.preco - saldo} 💗 pra comprar</div>
+      <button class="comprar" ${broke ? 'disabled' : ''} data-id="${v.id}">
+        ${caro ? '✨ COMPRAR ✨' : '🛒 Comprar'}
+      </button>
+    `;
+    el.querySelector('.comprar').onclick = () => comprarVale(v.id);
+    grid.appendChild(el);
+  });
+}
+
+/* ============ MOCHILA ============ */
+function fmtData(iso) {
+  try {
+    const d = new Date(iso);
+    return d.toLocaleDateString('pt-BR') + ' às ' + d.toLocaleTimeString('pt-BR', {hour:'2-digit', minute:'2-digit'});
+  } catch { return iso; }
+}
+
+function qtdTotalMochila() {
+  const valesKey = jogador === 'lulu' ? LS_KEYS.valesLulu : LS_KEYS.valesJoao;
+  const arr = getArr(valesKey);
+  return arr.reduce((s, x) => s + (x.usado ? 0 : (x.qtd || 1)), 0);
+}
+
+function usarVale(uid) {
+  const valesKey = jogador === 'lulu' ? LS_KEYS.valesLulu : LS_KEYS.valesJoao;
+  const arr = getArr(valesKey);
+  const item = arr.find(x => x.uid === uid);
+  if (!item || item.usado) return;
+  const v = VALES.find(x => x.id === item.valeId);
+  if (!v) return;
+
+  // se tem mais de 1, decrementa ao invés de marcar usado
+  if (item.qtd > 1) {
+    item.qtd -= 1;
+  } else {
+    item.usado = true;
+    item.dataUso = new Date().toISOString();
+  }
+  setArr(valesKey, arr);
+
+  // Registra um histórico de "vale emitido" para a outra pessoa também?
+  // Melhor: registra na mochila do OUTRO como "vale pendente de receber"?
+  // Solução simples: mostra modal bonito com aviso pra outra pessoa.
+  const outroNome = jogador === 'lulu' ? 'João' : 'Lulu';
+  const meuNome = jogador === 'lulu' ? 'Lulu' : 'João';
+  document.getElementById('mIcone').textContent = v.emoji;
+  document.getElementById('mTitulo').textContent = `🎉 ${v.nome} Ativado!`;
+  document.getElementById('mSub').textContent = `Avisa o(a) ${outroNome} que ele(a) tem que cumprir! 💜`;
+  document.getElementById('mLinha').innerHTML = `
+    <div><b>Quem usou:</b> ${meuNome} (com 💗 corações coletados!)</div>
+    <div style="margin-top:8px;"><b>Vale:</b> ${v.desc}</div>
+    <div style="margin-top:8px;"><b>Data/Hora:</b> ${new Date().toLocaleString('pt-BR')}</div>
+    <div style="margin-top:10px; padding:8px; border-radius:10px; background:rgba(255,255,255,0.15); text-align:center; font-weight:800;">
+      ${outroNome.toUpperCase()} TEM QUE CUMPRIR! ${v.emoji}
+    </div>
+  `;
+  document.getElementById('modal').classList.add('show');
+  toast(`✨ Vale "${v.nome}" usado!`);
+  renderMochila();
+}
+
+function excluirVale(uid) {
+  if (!confirm('Tem certeza que quer excluir este vale da mochila?')) return;
+  const valesKey = jogador === 'lulu' ? LS_KEYS.valesLulu : LS_KEYS.valesJoao;
+  const arr = getArr(valesKey).filter(x => x.uid !== uid);
+  setArr(valesKey, arr);
+  toast('🗑️ Vale removido.');
+  renderMochila();
+}
+
+function renderMochila() {
+  const p = PLAYERS.find(x => x.key === jogador);
+  document.getElementById('mNome').innerHTML = `${p.emoji} ${p.name} ${p.av}`;
+  document.getElementById('countMochila').textContent = qtdTotalMochila();
+  const valesKey = jogador === 'lulu' ? LS_KEYS.valesLulu : LS_KEYS.valesJoao;
+  const arr = getArr(valesKey);
+  // ordena: não usados primeiro, +recentes primeiro
+  const ordenado = [...arr].sort((a,b) => {
+    if (!!a.usado !== !!b.usado) return (a.usado?1:0) - (b.usado?1:0);
+    return new Date(b.data) - new Date(a.data);
+  });
+  const lista = document.getElementById('listaMochila');
+  if (ordenado.length === 0) {
+    lista.innerHTML = `<div class="vazia">🎒 A mochila está vazia!<br>Compre vales na loja usando os corações coletados no jogo 💗</div>`;
+    return;
+  }
+  lista.innerHTML = '';
+  const wrap = document.createElement('div');
+  wrap.className = 'lista-vales';
+  ordenado.forEach(it => {
+    const v = VALES.find(x => x.id === it.valeId);
+    if (!v) return;
+    const qtd = it.qtd || 1;
+    const disp = qtd > 0 && !it.usado;
+    const el = document.createElement('div');
+    el.className = `vale-usar ${!disp ? 'usado' : ''}`;
+    el.innerHTML = `
+      <div class="qtd">${disp ? `×${qtd} disponível` : '✅ USADO'}</div>
+      <div class="topo">
+        <div class="ic">${v.emoji}</div>
+        <div>
+          <div class="nm">${v.nome}</div>
+          <div class="dt">Comprado em: ${fmtData(it.data)}</div>
+        </div>
+      </div>
+      <div class="info">${v.desc}</div>
+      ${it.usado ? `<div class="dt" style="color:#ffab91;"><b>Usado em:</b> ${fmtData(it.dataUso || it.data)}</div>` : ''}
+      <div class="botoes-vale">
+        <button class="usar-btn" ${disp ? '' : 'disabled'} data-uid="${it.uid}">
+          ${disp ? '✨ Usar Vale' : '✅ Já Usado'}
+        </button>
+        <button class="excluir-btn" title="Excluir" data-del="${it.uid}">🗑️</button>
+      </div>
+    `;
+    wrap.appendChild(el);
+  });
+  lista.appendChild(wrap);
+  // bind botoes
+  wrap.querySelectorAll('.usar-btn').forEach(b => {
+    if (b.disabled) return;
+    b.onclick = () => usarVale(b.dataset.uid);
+  });
+  wrap.querySelectorAll('.excluir-btn').forEach(b => {
+    b.onclick = () => excluirVale(b.dataset.del);
+  });
+}
+
+/* ============ MODAL ============ */
+function fecharModal() { document.getElementById('modal').classList.remove('show'); }
+document.getElementById('modal').onclick = (e) => {
+  if (e.target.id === 'modal') fecharModal();
+};
+
+/* ============ RENDER GERAL ============ */
+function renderTudo() {
+  renderSelector();
+  renderLoja();
+  document.getElementById('countMochila').textContent = qtdTotalMochila();
+  if (aba === 'mochila') renderMochila();
+}
+renderTudo();
+</script>
+</body>
+</html>

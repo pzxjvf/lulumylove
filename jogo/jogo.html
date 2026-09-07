@@ -1,0 +1,1687 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Jogo da Lulu 💜</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body {
+    height: 100%;
+    font-family: "Nunito", sans-serif;
+    background: linear-gradient(135deg, #ff0055 0%, #4a00e0 100%);
+    overflow: hidden;
+    color: #fff;
+    user-select: none;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    background-image:
+      radial-gradient(circle at 20% 20%, rgba(255,255,255,0.15) 0%, transparent 40%),
+      radial-gradient(circle at 80% 70%, rgba(255,255,255,0.1) 0%, transparent 40%);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .app {
+    position: relative;
+    z-index: 1;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 16px;
+  }
+
+  h1.titulo {
+    font-weight: 900;
+    font-size: clamp(1.6rem, 4vw, 2.4rem);
+    margin-bottom: 14px;
+    text-shadow: 0 2px 12px rgba(0,0,0,0.35);
+    letter-spacing: 0.5px;
+  }
+
+  .game-shell {
+    width: min(1400px, 96%);
+    aspect-ratio: 16/9;
+    max-height: 92vh;
+    position: relative;
+    border-radius: 28px;
+    overflow: hidden;
+    border: 3px solid rgba(255,255,255,0.35);
+    box-shadow:
+      0 25px 60px rgba(0,0,0,0.35),
+      0 0 0 1px rgba(255,255,255,0.1) inset;
+    background: linear-gradient(180deg, #ffe4f0 0%, #ffd1e6 45%, #e8d3ff 100%);
+    touch-action: manipulation;
+  }
+
+  canvas {
+    display: block;
+    width: 100%;
+    height: 100%;
+  }
+
+  /* Overlays */
+  .overlay {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 24px;
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    background: rgba(74, 0, 224, 0.55);
+    z-index: 5;
+    animation: overlayIn 0.4s ease;
+    overflow-y: auto;
+  }
+  .overlay.hidden { display: none; }
+
+  @keyframes overlayIn {
+    from { opacity: 0; transform: scale(0.96); }
+    to { opacity: 1; transform: scale(1); }
+  }
+
+  .overlay h2 {
+    font-size: clamp(1.4rem, 3.2vw, 2.3rem);
+    font-weight: 900;
+    margin-bottom: 6px;
+    text-shadow: 0 3px 14px rgba(0,0,0,0.4);
+  }
+  .overlay .sub {
+    font-size: clamp(0.9rem, 1.9vw, 1.1rem);
+    font-weight: 600;
+    margin-bottom: 18px;
+    opacity: 0.95;
+  }
+
+  /* Info bar no menu */
+  .info-bar {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 18px;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+  .info-chip {
+    background: rgba(255,255,255,0.14);
+    border: 2px solid rgba(255,255,255,0.3);
+    padding: 8px 16px;
+    border-radius: 50px;
+    font-weight: 800;
+    font-size: 0.9rem;
+    backdrop-filter: blur(6px);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  /* Escolha de jogador */
+  .players {
+    display: flex;
+    gap: 20px;
+    margin-bottom: 22px;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+  .player-card {
+    width: 150px;
+    padding: 18px 14px;
+    border-radius: 22px;
+    border: 3px solid rgba(255,255,255,0.35);
+    background: rgba(255,255,255,0.12);
+    cursor: pointer;
+    transition: 0.25s ease;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.25);
+  }
+  .player-card:hover { transform: translateY(-4px) scale(1.03); background: rgba(255,255,255,0.2); }
+  .player-card.lulu.selected { border-color: #b388ff; box-shadow: 0 0 0 4px rgba(179,136,255,0.35), 0 10px 24px rgba(0,0,0,0.3); }
+  .player-card.joao.selected { border-color: #64b5f6; box-shadow: 0 0 0 4px rgba(100,181,246,0.35), 0 10px 24px rgba(0,0,0,0.3); }
+
+  .avatar { font-size: 3rem; margin-bottom: 8px; }
+  .pnome { font-weight: 800; font-size: 1.15rem; }
+  .prec, .pcoins {
+    margin-top: 6px;
+    font-size: 0.82rem;
+    opacity: 0.95;
+    padding: 4px 10px;
+    border-radius: 50px;
+    display: inline-block;
+    font-weight: 700;
+  }
+  .prec { background: rgba(0,0,0,0.25); }
+  .pcoins { background: rgba(255,215,64,0.22); margin-left: 4px; }
+
+  /* Botões */
+  .btn {
+    font-family: inherit;
+    border: none;
+    padding: 13px 28px;
+    border-radius: 50px;
+    font-weight: 800;
+    font-size: 1rem;
+    cursor: pointer;
+    color: #fff;
+    transition: 0.2s ease;
+    box-shadow: 0 8px 22px rgba(0,0,0,0.28);
+    letter-spacing: 0.3px;
+  }
+  .btn:hover { transform: translateY(-2px) scale(1.03); }
+  .btn:active { transform: translateY(0) scale(0.98); }
+
+  .btn-primary { background: linear-gradient(135deg, #ff4081, #7c4dff); }
+  .btn-primary:disabled { filter: grayscale(0.6) brightness(0.7); cursor: not-allowed; transform: none; box-shadow: none; }
+  .btn-lulu { background: linear-gradient(135deg, #b388ff, #7c4dff); }
+  .btn-joao { background: linear-gradient(135deg, #4fc3f7, #3f51b5); }
+  .btn-gold { background: linear-gradient(135deg, #ffd740, #ff6f00); color: #3e2723; }
+  .btn-ghost {
+    background: rgba(255,255,255,0.14);
+    border: 2px solid rgba(255,255,255,0.4);
+  }
+
+  .btns-row {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  /* HUD */
+  .hud {
+    position: absolute;
+    top: 14px;
+    left: 14px;
+    right: 14px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    z-index: 3;
+    pointer-events: none;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  .hud-group { display: flex; gap: 8px; flex-wrap: wrap; }
+  .hud-chip {
+    background: rgba(74, 0, 224, 0.78);
+    border: 2px solid rgba(255,255,255,0.4);
+    padding: 8px 14px;
+    border-radius: 50px;
+    font-weight: 800;
+    font-size: 0.9rem;
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    box-shadow: 0 4px 14px rgba(0,0,0,0.2);
+  }
+  .hud-chip.lulu-bg { background: rgba(124, 77, 255, 0.85); }
+  .hud-chip.joao-bg { background: rgba(33, 150, 243, 0.85); }
+  .hud-chip.gold-bg { background: rgba(255, 152, 0, 0.85); }
+
+  /* Game Over VS */
+  .vs {
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    align-items: center;
+    gap: 14px;
+    width: min(460px, 100%);
+    margin-bottom: 18px;
+  }
+  .vs-box {
+    padding: 14px 10px;
+    border-radius: 18px;
+    background: rgba(255,255,255,0.12);
+    border: 2px solid rgba(255,255,255,0.25);
+  }
+  .vs-box.vencedor {
+    border-color: #ffd740;
+    box-shadow: 0 0 0 3px rgba(255,215,64,0.3), 0 8px 24px rgba(0,0,0,0.25);
+    background: rgba(255,255,255,0.2);
+  }
+  .vs-box .nome { font-weight: 800; font-size: 0.95rem; margin-bottom: 4px; }
+  .vs-box .pts { font-weight: 900; font-size: 1.4rem; }
+  .vs-box .sub { font-size: 0.72rem; opacity: 0.85; margin-top: 2px; }
+  .vs-x {
+    font-weight: 900;
+    font-size: 1.6rem;
+    opacity: 0.7;
+  }
+  .crown { font-size: 1.1rem; margin-left: 4px; }
+
+  .ganhou {
+    background: rgba(255,215,64,0.18);
+    border: 2px solid rgba(255,215,64,0.55);
+    padding: 8px 18px;
+    border-radius: 50px;
+    font-weight: 800;
+    margin-bottom: 14px;
+    font-size: 0.95rem;
+  }
+
+  /* Conquistas */
+  .achv-list {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 14px;
+    flex-wrap: wrap;
+    justify-content: center;
+    max-width: 500px;
+  }
+  .achv {
+    width: 68px;
+    padding: 8px 4px;
+    border-radius: 14px;
+    background: rgba(0,0,0,0.25);
+    border: 2px solid rgba(255,255,255,0.15);
+    text-align: center;
+    position: relative;
+    transition: 0.2s;
+  }
+  .achv.unlocked {
+    background: rgba(255,255,255,0.18);
+    border-color: #ffd740;
+    box-shadow: 0 0 0 2px rgba(255,215,64,0.25);
+  }
+  .achv .a-emoji { font-size: 1.6rem; display: block; }
+  .achv .a-label { font-size: 0.68rem; font-weight: 700; margin-top: 2px; opacity: 0.9; }
+  .achv.locked .a-emoji { filter: grayscale(1) opacity(0.4); }
+  .achv.locked .a-label { opacity: 0.4; }
+  .achv .novo {
+    position: absolute;
+    top: -8px;
+    right: -8px;
+    background: #ff4081;
+    color: #fff;
+    font-weight: 900;
+    font-size: 0.65rem;
+    padding: 2px 6px;
+    border-radius: 50px;
+    animation: pulseNovo 0.9s infinite alternate;
+    border: 2px solid #fff;
+  }
+  @keyframes pulseNovo {
+    from { transform: scale(1); }
+    to { transform: scale(1.15); box-shadow: 0 0 10px #ff4081; }
+  }
+
+  .dica {
+    margin-top: 14px;
+    font-size: 0.85rem;
+    opacity: 0.85;
+    font-weight: 600;
+  }
+
+  /* Toasts */
+  .toast-stack {
+    position: fixed;
+    top: 18px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 50;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    pointer-events: none;
+  }
+  .toast {
+    background: rgba(0,0,0,0.78);
+    border: 1px solid rgba(255,255,255,0.3);
+    padding: 10px 18px;
+    border-radius: 50px;
+    font-weight: 700;
+    font-size: 0.9rem;
+    animation: toastIn 0.3s ease, toastOut 0.4s ease 2.6s forwards;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+  }
+  @keyframes toastIn { from { opacity: 0; transform: translateY(-10px);} to {opacity:1;transform:translateY(0);} }
+  @keyframes toastOut { to { opacity: 0; transform: translateY(-18px); } }
+
+  @media (max-width: 540px) {
+    .player-card { width: 128px; padding: 14px 10px; }
+    .avatar { font-size: 2.4rem; }
+    .btn { padding: 11px 22px; font-size: 0.9rem; }
+    .vs-box .pts { font-size: 1.15rem; }
+  }
+
+  @keyframes pulseBtn {
+    0%, 100% { transform: translateX(-50%) scale(1); box-shadow: 0 10px 30px rgba(124,77,255,0.55), 0 0 0 0 rgba(255,64,129,0.55); }
+    50%      { transform: translateX(-50%) scale(1.06); box-shadow: 0 10px 30px rgba(124,77,255,0.55), 0 0 0 16px rgba(255,64,129,0); }
+  }
+  #btnPular:active { transform: translateX(-50%) scale(0.92) !important; filter: brightness(1.2); }
+  #btnPular:hover  { filter: brightness(1.08); }
+</style>
+</head>
+<body>
+
+<div class="app">
+  <h1 class="titulo">💜 Jogo da Lulu 💜</h1>
+
+  <div class="game-shell" id="shell">
+    <canvas id="gameCanvas" width="1600" height="900"></canvas>
+
+    <!-- BOTÃO PULAR GARANTIDO (100% inline, sem dependência de listeners -->
+    <button id="btnPular"
+      ontouchstart="try{event.preventDefault();event.stopPropagation();}catch(e){}pularForcado();"
+      onpointerdown="try{event.preventDefault();event.stopPropagation();}catch(e){}pularForcado();"
+      onmousedown="try{event.preventDefault();event.stopPropagation();}catch(e){}pularForcado();"
+      onclick="try{event.preventDefault();event.stopPropagation();}catch(e){}pularForcado();"
+      style="
+      position:absolute;
+      bottom:22px;
+      left:50%;
+      transform:translateX(-50%);
+      z-index:999;
+      background:linear-gradient(135deg,#ff4081,#b388ff,#7c4dff);
+      border:4px solid rgba(255,255,255,0.7);
+      color:#fff;
+      padding:20px 56px;
+      border-radius:999px;
+      font-family:inherit;
+      font-weight:900;
+      font-size:1.35rem;
+      letter-spacing:2px;
+      cursor:pointer;
+      box-shadow:0 10px 30px rgba(124,77,255,0.55), 0 0 0 0 rgba(255,64,129,0.6);
+      touch-action:manipulation;
+      -webkit-touch-callout:none;
+      -webkit-user-select:none;
+      user-select:none;
+      pointer-events:auto;
+      display:none;
+      transition:transform 0.08s ease, box-shadow 0.2s ease;
+      animation:pulseBtn 1.8s ease-in-out infinite;
+    ">💖 PULAR 💖</button>
+
+    <!-- HUD durante jogo -->
+    <div class="hud" id="hud" style="display:none;">
+      <div class="hud-group">
+        <div class="hud-chip" id="chipScore">💖 <span id="scoreVal">0</span></div>
+        <div class="hud-chip gold-bg">💗 +<span id="gainVal">0</span></div>
+      </div>
+      <div class="hud-group">
+        <div class="hud-chip" id="chipCoins">💰 <span id="coinsVal">0</span></div>
+        <div class="hud-chip" id="chipRec">🏆 <span id="recVal">0</span></div>
+      </div>
+    </div>
+
+    <!-- Tela: Menu inicial (só Lulu) -->
+    <div class="overlay" id="scrMenu">
+      <h2>💜 Vamos Jogar, Lulu! 💜</h2>
+      <div class="sub">Colete corações para ganhar pontos e gastar na Loja de Vales!</div>
+
+      <div class="info-bar">
+        <div class="info-chip">💰 Seu Saldo: <span id="coinsLulu">0</span> 💗</div>
+        <div class="info-chip">🏆 Seu Recorde: <span id="recLulu">0</span></div>
+      </div>
+
+      <div class="players" style="margin-bottom:18px;">
+        <div class="player-card lulu selected" style="width:180px;">
+          <div class="avatar">👩‍🦽</div>
+          <div class="pnome">Lulu 💜</div>
+          <div>
+            <span class="prec">🏆 <span id="pRecLulu">0</span></span>
+            <span class="pcoins">💗 <span id="pCoinsLulu">0</span></span>
+          </div>
+        </div>
+      </div>
+
+      <div class="btns-row">
+        <button class="btn btn-lulu" id="btnComecar" style="font-size:1.1rem; padding:15px 38px;">COMEÇAR 💫</button>
+      </div>
+      <div class="btns-row" style="margin-top:14px;">
+        <button class="btn btn-gold" onclick="window.location.href='../loja.html'">🛒 Loja de Vales</button>
+        <!-- <button class="btn btn-ghost" onclick="window.location.href='../ranking.html'">🏆 Ranking</button> -->
+        <button class="btn btn-ghost" onclick="window.location.href='../menu.html'">← Voltar</button>
+      </div>
+      <div class="dica">💡 Dica: Toque no botão <b>💜 PULAR 💜</b>, ESPAÇO ou toque na tela!</div>
+    </div>
+
+    <!-- Tela: Game Over (só Lulu) -->
+    <div class="overlay hidden" id="scrOver">
+      <h2 id="overTitulo">Fim de jogo 💔</h2>
+      <div class="sub" id="overSub">Você fez uma ótima pontuação!</div>
+      <div class="ganhou" id="ganhouLine">💗 Ganhou <b id="ganhouQtd">0</b> corações para usar na Loja!</div>
+
+      <div class="achv-list" id="achvMini"></div>
+
+      <div style="
+        background:rgba(255,255,255,0.12);
+        border:2px solid rgba(179,136,255,0.5);
+        border-radius:20px;
+        padding:16px 20px;
+        margin-bottom:18px;
+        max-width:360px;
+        width:100%;
+      ">
+        <div style="display:flex;justify-content:space-between;gap:10px;align-items:center;">
+          <div style="text-align:left;">
+            <div style="font-weight:900; font-size:0.95rem; color:#e1bee7;">👩‍🦽 Lulu 💜</div>
+            <div style="font-size:0.78rem; opacity:0.85;">Sua pontuação</div>
+          </div>
+          <div style="text-align:right;">
+            <div style="font-weight:900; font-size:1.6rem;" id="finalPts">0</div>
+            <div style="font-size:0.78rem; opacity:0.85;">🏆 Recorde: <span id="finalRec">0</span></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="btns-row">
+        <button class="btn btn-lulu" id="btnJogarNovamente" style="font-size:1.05rem;">🔁 Jogar Novamente</button>
+        <button class="btn btn-gold" onclick="window.location.href='../loja.html'">🛒 Ir pra Loja</button>
+      </div>
+      <div class="btns-row" style="margin-top:12px;">
+        <!-- <button class="btn btn-ghost" onclick="window.location.href='../ranking.html'">🏆 Ranking</button> -->
+        <button class="btn btn-ghost" onclick="window.location.href='../menu.html'">← Menu</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="toast-stack" id="toasts"></div>
+
+<script>
+/* =========================
+   CONFIG & STORAGE
+   ========================= */
+const LS_KEYS = {
+  lulu: 'amor_high_lulu',
+  joao: 'amor_high_joao',
+  achLulu: 'amor_ach_lulu',
+  achJoao: 'amor_ach_joao',
+  coinsLulu: 'amor_coins_lulu',
+  coinsJoao: 'amor_coins_joao',
+  valesLulu: 'amor_vales_lulu',
+  valesJoao: 'amor_vales_joao',
+};
+
+/* =========================
+   PULAR FORÇADO (FUNÇÃO GLOBAL)
+   ========================= */
+let _ultimoPuloTick = -99999;
+let _gameOverTimer = null;
+function pularForcado() {
+  // Animação visual do clique no botão
+  try {
+    const bp = document.getElementById('btnPular');
+    if (bp) {
+      bp.style.transition = 'transform 0.06s ease';
+      bp.style.transform = 'translateX(-50%) scale(0.9)';
+      setTimeout(() => {
+        bp.style.transform = '';
+        bp.style.transition = '';
+      }, 90);
+    }
+  } catch(e) {}
+
+  if (typeof state === 'undefined') return;
+
+  // No menu → começa o jogo
+  if (state === 'menu') {
+    startGame('lulu');
+    return;
+  }
+  // No game over → joga de novo
+  if (state === 'over') {
+    startGame('lulu');
+    return;
+  }
+  // Jogando → permite somente o pulo normal + 1 pulo duplo.
+  if (state === 'playing' && player) {
+    // Evita que um único toque dispare pointerdown + mousedown + click.
+    if (typeof tickCount !== 'undefined' && tickCount - _ultimoPuloTick < 8) return;
+    _ultimoPuloTick = (typeof tickCount !== 'undefined') ? tickCount : 0;
+
+    if (typeof player.jumps !== 'number') player.jumps = 0;
+    if (player.jumps >= 2) return;
+
+    if (typeof groundY !== 'undefined' && player.y + player.h > groundY) {
+      player.y = groundY - player.h;
+    }
+
+    player.vy = -26;
+    player.jumps += 1;
+    player.onGround = false;
+
+    // Partículas
+    if (typeof particles !== 'undefined' && typeof Particle !== 'undefined' && typeof groundY !== 'undefined') {
+      for (let i = 0; i < 16; i++) {
+        particles.push(new Particle(player.x + player.w/2, groundY - 6, 'rgba(255,255,255,0.95)', {
+          spread: 8, up: 4, life: 32, size: 3+Math.random()*2.5, grav: 0.2
+        }));
+      }
+    }
+  }
+}
+
+const ACHIEVEMENTS = [
+  { id: 'a50',   pts: 50,    emoji: '🌸', label: '50 pts',   nome: 'Primeiros Passos' },
+  { id: 'a100',  pts: 100,   emoji: '💌', label: '100 pts',  nome: 'Carta de Amor' },
+  { id: 'a200',  pts: 200,   emoji: '💜', label: '200 pts',  nome: 'Coração Roxo' },
+  { id: 'a500',  pts: 500,   emoji: '🚀', label: '500 pts',  nome: 'Muito Amor' },
+  { id: 'a1000', pts: 1000,  emoji: '👑', label: '1000 pts', nome: 'Rei do Amor' },
+];
+
+const PLAYERS = {
+  lulu: { name: 'Lulu', emoji: '👩‍🦽', color: '#b388ff', dark: '#7c4dff', class: 'lulu', wheelchair: true  },
+  joao: { name: 'João', emoji: '🧑',    color: '#64b5f6', dark: '#3f51b5', class: 'joao', wheelchair: false },
+};
+
+function getInt(key) { return parseInt(localStorage.getItem(key) || '0', 10); }
+function setInt(key, v) { localStorage.setItem(key, String(v)); }
+function getArr(key) {
+  try { return JSON.parse(localStorage.getItem(key) || '[]'); }
+  catch { return []; }
+}
+function setArr(key, arr) { localStorage.setItem(key, JSON.stringify(arr)); }
+
+/* =========================
+   TOAST
+   ========================= */
+function toast(msg) {
+  const stack = document.getElementById('toasts');
+  const t = document.createElement('div');
+  t.className = 'toast';
+  t.textContent = msg;
+  stack.appendChild(t);
+  setTimeout(() => t.remove(), 3100);
+}
+
+/* =========================
+   RENDER: MENU (SÓ LULU)
+   ========================= */
+function refreshMenuInfo() {
+  const c = getInt(LS_KEYS.coinsLulu);
+  const r = getInt(LS_KEYS.lulu);
+  document.getElementById('coinsLulu').textContent = c;
+  document.getElementById('recLulu').textContent = r;
+  document.getElementById('pCoinsLulu').textContent = c;
+  document.getElementById('pRecLulu').textContent = r;
+}
+refreshMenuInfo();
+
+document.getElementById('btnComecar').onclick = () => {
+  startGame('lulu');
+};
+
+/* =========================
+   BOTÃO PULAR GARANTIDO
+   ========================= */
+const _btnPular = document.getElementById('btnPular');
+function _btnPularAction(e) {
+  if (e) {
+    try { e.stopPropagation(); } catch(_){}
+    try { e.preventDefault(); } catch(_){}
+  }
+  if (state === 'playing') doJump();
+  else if (state === 'over') startGame('lulu');
+  else if (state === 'menu') startGame('lulu');
+}
+_btnPular.addEventListener('touchstart', _btnPularAction, { passive: false });
+_btnPular.addEventListener('pointerdown', _btnPularAction, { passive: false });
+_btnPular.addEventListener('mousedown', _btnPularAction, { passive: false });
+_btnPular.addEventListener('click', _btnPularAction);
+
+/* =========================
+   GAME ENGINE
+   ========================= */
+const canvas = document.getElementById('gameCanvas');
+const ctx = canvas.getContext('2d');
+const W = canvas.width, H = canvas.height;
+
+let state = 'menu';
+let currentPlayerKey = null;
+let score = 0;
+let gain = 0;
+let player = null;
+let obstacles = [];
+let hearts = [];
+let particles = [];
+let clouds = [];
+let groundY = H - 160;
+let speed = 10;
+let spawnTimer = 0;
+let heartTimer = 0;
+let bgOffset = 0;
+let tickCount = 0;
+let gameTime = 0;
+let invincibleUntil = 0;
+
+function makePlayer(pkey) {
+  const cfg = PLAYERS[pkey];
+  const pw = cfg.wheelchair ? 108 : 92;
+  const ph = cfg.wheelchair ? 128 : 124;
+  return {
+    x: 160,
+    y: groundY - ph,
+    w: pw,
+    h: ph,
+    vy: 0,
+    onGround: true,
+    key: pkey,
+    bob: 0,
+    jumps: 0,
+  };
+}
+
+/* Obstáculos */
+class Obstacle {
+  constructor() {
+    const r = Math.random();
+    if (r < 0.42) this.type = 'spike';
+    else if (r < 0.72) this.type = 'tall';
+    else this.type = 'fly';
+
+    if (this.type === 'spike') { this.w = 64; this.h = 64; }
+    else if (this.type === 'tall') { this.w = 60; this.h = 100; }
+    else { this.w = 62; this.h = 46; }
+
+    this.x = W + 60;
+    if (this.type === 'fly') {
+      this.y = groundY - 160 - Math.random() * 120;
+    } else {
+      this.y = groundY - this.h;
+    }
+
+    if (this.type === 'tall') {
+      const sx = this.x - 34, sy = groundY - 54;
+      this.extra = {sx, sy, sw: 54, sh: 54};
+    } else {
+      this.extra = null;
+    }
+  }
+  update(s) { this.x -= s; }
+  draw() {
+    ctx.save();
+    if (this.type === 'spike') {
+      ctx.fillStyle = '#e53935';
+      ctx.strokeStyle = '#b71c1c';
+      ctx.lineWidth = 4;
+      ctx.beginPath();
+      ctx.moveTo(this.x, this.y + this.h);
+      ctx.lineTo(this.x + this.w / 2, this.y);
+      ctx.lineTo(this.x + this.w, this.y + this.h);
+      ctx.closePath();
+      ctx.fill(); ctx.stroke();
+      ctx.fillStyle = '#ff8a80';
+      ctx.beginPath();
+      ctx.moveTo(this.x + 8, this.y + this.h - 6);
+      ctx.lineTo(this.x + this.w / 2, this.y + 14);
+      ctx.lineTo(this.x + this.w / 2 + 3, this.y + this.h - 6);
+      ctx.closePath();
+      ctx.fill();
+    } else if (this.type === 'tall') {
+      ctx.fillStyle = '#c62828';
+      ctx.strokeStyle = '#7f0000';
+      ctx.lineWidth = 4;
+      ctx.beginPath();
+      ctx.moveTo(this.x, this.y + this.h);
+      ctx.lineTo(this.x + this.w/2, this.y);
+      ctx.lineTo(this.x + this.w, this.y + this.h);
+      ctx.closePath();
+      ctx.fill(); ctx.stroke();
+      const e = this.extra;
+      ctx.fillStyle = '#e53935';
+      ctx.strokeStyle = '#b71c1c';
+      ctx.beginPath();
+      ctx.moveTo(e.sx, e.sy + e.sh);
+      ctx.lineTo(e.sx + e.sw/2, e.sy);
+      ctx.lineTo(e.sx + e.sw, e.sy + e.sh);
+      ctx.closePath();
+      ctx.fill(); ctx.stroke();
+    } else {
+      // Obstáculo voador: corvo / pássaro raivoso
+      const cx = this.x + this.w/2;
+      const cy = this.y + this.h/2;
+      const flap = Math.sin(tickCount * 0.3) * 8;
+      // corpo
+      ctx.fillStyle = '#37474f';
+      ctx.strokeStyle = '#1a1a1a';
+      ctx.lineWidth = 3;
+      ctx.beginPath();
+      ctx.ellipse(cx, cy, this.w/2, this.h/2.2, 0, 0, Math.PI*2);
+      ctx.fill(); ctx.stroke();
+      // asa
+      ctx.fillStyle = '#263238';
+      ctx.beginPath();
+      ctx.moveTo(cx - 8, cy);
+      ctx.lineTo(cx - 30, cy - 12 - flap);
+      ctx.lineTo(cx - 6, cy + 6);
+      ctx.closePath();
+      ctx.fill(); ctx.stroke();
+      ctx.beginPath();
+      ctx.moveTo(cx + 8, cy);
+      ctx.lineTo(cx + 30, cy - 12 - flap);
+      ctx.lineTo(cx + 6, cy + 6);
+      ctx.closePath();
+      ctx.fill(); ctx.stroke();
+      // bico
+      ctx.fillStyle = '#ff6f00';
+      ctx.beginPath();
+      ctx.moveTo(this.x - 4, cy);
+      ctx.lineTo(this.x - 18, cy - 4);
+      ctx.lineTo(this.x - 4, cy + 4);
+      ctx.closePath();
+      ctx.fill();
+      // olho
+      ctx.fillStyle = '#ff1744';
+      ctx.beginPath();
+      ctx.arc(this.x + 10, cy - 5, 4, 0, Math.PI*2);
+      ctx.fill();
+      ctx.fillStyle = '#fff';
+      ctx.beginPath();
+      ctx.arc(this.x + 11, cy - 6, 1.2, 0, Math.PI*2);
+      ctx.fill();
+    }
+    ctx.restore();
+  }
+  hit(px, py, pw, ph) {
+    const pad = 8;
+    const hb = { x: this.x + pad, y: this.y + pad, w: this.w - pad*2, h: this.h - pad };
+    if (rectsOverlap(px, py, pw, ph, hb.x, hb.y, hb.w, hb.h)) return true;
+    if (this.extra) {
+      const e = this.extra;
+      return rectsOverlap(px, py, pw, ph, e.sx+6, e.sy+6, e.sw-12, e.sh-6);
+    }
+    return false;
+  }
+}
+
+/* Corações colecionáveis */
+class Heart {
+  constructor() {
+    this.size = 42 + Math.random()*16;
+    const r = Math.random();
+    this.value = r < 0.12 ? 5 : (r < 0.42 ? 3 : 1);
+    this.x = W + 40;
+    this.y = groundY - 180 - Math.random()*240;
+    this.collected = false;
+    this.bob = Math.random()*Math.PI*2;
+  }
+  update(s) { this.x -= s; this.bob += 0.08; }
+  draw() {
+    if (this.collected) return;
+    const yy = this.y + Math.sin(this.bob)*8;
+    const isBig = this.value >= 3;
+    const cor = this.value >= 5 ? '#ffd740' : '#ff4081';
+    const borda = this.value >= 5 ? '#ff6f00' : '#ff1744';
+    drawHeart(this.x, yy, this.size * (isBig ? 1.15 : 1), cor, borda);
+    ctx.save();
+    ctx.fillStyle = 'rgba(255,255,255,0.75)';
+    ctx.beginPath();
+    ctx.arc(this.x - this.size*0.18, yy - this.size*0.18, this.size*0.13, 0, Math.PI*2);
+    ctx.fill();
+    if (this.value >= 3) {
+      ctx.fillStyle = '#fff';
+      ctx.strokeStyle = this.value >= 5 ? '#e65100' : '#b71c1c';
+      ctx.lineWidth = 2.5;
+      ctx.beginPath();
+      ctx.arc(this.x, yy + this.size*0.1, this.size*0.27, 0, Math.PI*2);
+      ctx.fill(); ctx.stroke();
+      ctx.fillStyle = this.value >= 5 ? '#e65100' : '#b71c1c';
+      ctx.font = `bold ${this.size*0.32}px Nunito, sans-serif`;
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillText('+'+this.value, this.x, yy + this.size*0.1);
+    }
+    ctx.restore();
+  }
+}
+
+function drawHeart(x, y, size, fill, stroke) {
+  ctx.save();
+  ctx.translate(x, y);
+  const s = size / 30;
+  ctx.scale(s, s);
+  ctx.beginPath();
+  ctx.moveTo(0, 8);
+  ctx.bezierCurveTo(0, 4, -6, -2, -12, 4);
+  ctx.bezierCurveTo(-20, 12, 0, 24, 0, 28);
+  ctx.bezierCurveTo(0, 24, 20, 12, 12, 4);
+  ctx.bezierCurveTo(6, -2, 0, 4, 0, 8);
+  ctx.closePath();
+  ctx.fillStyle = fill;
+  ctx.fill();
+  if (stroke) {
+    ctx.lineWidth = 2;
+    ctx.strokeStyle = stroke;
+    ctx.stroke();
+  }
+  ctx.restore();
+}
+
+/* Partículas */
+class Particle {
+  constructor(x, y, color, opts={}) {
+    this.x = x; this.y = y;
+    this.vx = (Math.random() - 0.5) * (opts.spread || 6);
+    this.vy = (Math.random() - 1) * (opts.up || 5);
+    this.life = opts.life || 38;
+    this.maxLife = this.life;
+    this.color = color;
+    this.size = opts.size || (3 + Math.random()*3);
+    this.grav = opts.grav ?? 0.18;
+    this.heart = opts.heart || false;
+    this.text = opts.text || null;
+  }
+  update() {
+    this.x += this.vx;
+    this.y += this.vy;
+    this.vy += this.grav;
+    this.life--;
+  }
+  draw() {
+    const a = Math.max(0, this.life / this.maxLife);
+    ctx.save();
+    ctx.globalAlpha = a;
+    if (this.text) {
+      ctx.fillStyle = this.color;
+      ctx.font = 'bold 18px Nunito, sans-serif';
+      ctx.textAlign = 'center';
+      ctx.fillText(this.text, this.x, this.y);
+    } else if (this.heart) {
+      drawHeart(this.x, this.y, this.size*2.5, this.color, this.color);
+    } else {
+      ctx.fillStyle = this.color;
+      ctx.beginPath();
+      ctx.arc(this.x, this.y, this.size, 0, Math.PI*2);
+      ctx.fill();
+    }
+    ctx.restore();
+  }
+}
+
+/* Nuvens */
+class Cloud {
+  constructor(x, y, s) {
+    this.x = x; this.y = y; this.s = s; this.speed = 0.4 + Math.random()*0.6;
+  }
+  update() { this.x -= this.speed; if (this.x < -220) this.x = W + 180; }
+  draw() {
+    ctx.save();
+    ctx.globalAlpha = 0.7;
+    ctx.fillStyle = '#ffffff';
+    ctx.beginPath();
+    ctx.arc(this.x, this.y, 32*this.s, 0, Math.PI*2);
+    ctx.arc(this.x + 38*this.s, this.y - 12*this.s, 28*this.s, 0, Math.PI*2);
+    ctx.arc(this.x + 72*this.s, this.y, 32*this.s, 0, Math.PI*2);
+    ctx.arc(this.x + 32*this.s, this.y + 12*this.s, 26*this.s, 0, Math.PI*2);
+    ctx.fill();
+    ctx.restore();
+  }
+}
+
+function rectsOverlap(ax, ay, aw, ah, bx, by, bw, bh) {
+  return ax < bx + bw && ax + aw > bx && ay < by + bh && ay + ah > by;
+}
+
+/* =========================
+   RENDER: LULU NA CADEIRA DE RODAS + JOÃO
+   ========================= */
+function drawWheelchair(cx, feetY, wheelSpin, cfg) {
+  const wr = 34;
+  const wcx = cx - 6;
+  const wcy = feetY - 4;
+  ctx.save();
+  ctx.translate(wcx, wcy);
+  ctx.rotate(wheelSpin);
+  ctx.strokeStyle = '#2b2b2b';
+  ctx.fillStyle = '#424242';
+  ctx.lineWidth = 4;
+  ctx.beginPath();
+  ctx.arc(0, 0, wr, 0, Math.PI*2);
+  ctx.fill(); ctx.stroke();
+  ctx.strokeStyle = '#fff';
+  ctx.lineWidth = 2;
+  for (let i=0;i<8;i++) {
+    const a = (i/8)*Math.PI*2;
+    ctx.beginPath();
+    ctx.moveTo(0,0);
+    ctx.lineTo(Math.cos(a)*wr, Math.sin(a)*wr);
+    ctx.stroke();
+  }
+  ctx.fillStyle = cfg.dark;
+  ctx.strokeStyle = '#fff';
+  ctx.lineWidth = 2.5;
+  ctx.beginPath();
+  ctx.arc(0, 0, 8, 0, Math.PI*2);
+  ctx.fill(); ctx.stroke();
+  ctx.restore();
+
+  const sr = 14;
+  const scx = cx + 34;
+  const scy = feetY;
+  ctx.save();
+  ctx.translate(scx, scy);
+  ctx.rotate(-wheelSpin*1.6);
+  ctx.strokeStyle = '#2b2b2b';
+  ctx.fillStyle = '#424242';
+  ctx.lineWidth = 3.5;
+  ctx.beginPath();
+  ctx.arc(0, 0, sr, 0, Math.PI*2);
+  ctx.fill(); ctx.stroke();
+  ctx.fillStyle = cfg.color;
+  ctx.beginPath();
+  ctx.arc(0, 0, 5, 0, Math.PI*2);
+  ctx.fill();
+  ctx.restore();
+
+  ctx.strokeStyle = '#cfd8dc';
+  ctx.lineWidth = 5;
+  ctx.lineCap = 'round';
+  ctx.beginPath();
+  ctx.moveTo(wcx - wr + 4, feetY - 34);
+  ctx.lineTo(wcx - wr + 4, feetY - 6);
+  ctx.moveTo(wcx - wr + 4, feetY - 34);
+  ctx.lineTo(scx + 3, feetY - 16);
+  ctx.moveTo(scx + 3, feetY - 16);
+  ctx.lineTo(scx + 9, feetY - 2);
+  ctx.stroke();
+  ctx.strokeStyle = '#2b2b2b';
+  ctx.lineWidth = 4;
+  ctx.beginPath();
+  ctx.arc(wcx, wcy, wr + 6, -Math.PI*0.9, -Math.PI*0.1);
+  ctx.stroke();
+
+  ctx.fillStyle = cfg.color;
+  ctx.strokeStyle = 'rgba(0,0,0,0.25)';
+  ctx.lineWidth = 2;
+  roundRect(wcx - wr + 2, feetY - 82, 44, 54, 10);
+  ctx.fill(); ctx.stroke();
+  ctx.fillStyle = cfg.dark;
+  roundRect(wcx - wr + 2, feetY - 82, 44, 12, 10); ctx.fill();
+
+  ctx.fillStyle = cfg.dark;
+  ctx.strokeStyle = 'rgba(0,0,0,0.25)';
+  roundRect(wcx - wr + 2, feetY - 34, 58, 20, 8);
+  ctx.fill(); ctx.stroke();
+}
+
+function drawPlayer(p) {
+  ctx.save();
+  const bob = p.onGround ? Math.sin(p.bob) * 1.6 : 0;
+  const cx = p.x + p.w / 2;
+  const cyTopo = p.y + 38 + bob;
+  const cfg = PLAYERS[p.key];
+  const skin = '#ffd9b3';
+  const hair = '#3d2b1f';
+  // Os pés precisam acompanhar a posição real do personagem.
+  // Antes estava fixo em groundY, então a física fazia o pulo,
+  // mas o desenho da Lulu continuava preso no chão.
+  const feetY = p.y + p.h;
+  const wheelSpin = p.onGround ? (p.bob * 2.4) : (p.bob * 0.5);
+
+  ctx.fillStyle = 'rgba(0,0,0,0.22)';
+  ctx.beginPath();
+  ctx.ellipse(cx + 6, groundY + 8, 46, 8, 0, 0, Math.PI*2);
+  ctx.fill();
+
+  if (cfg.wheelchair) {
+    drawWheelchair(cx, feetY, wheelSpin, cfg);
+
+    const bodyTop = feetY - 80;
+    const headY = bodyTop - 10;
+    ctx.fillStyle = cfg.dark;
+    ctx.beginPath();
+    ctx.moveTo(cx - 28, bodyTop + 12);
+    ctx.lineTo(cx + 30, bodyTop + 12);
+    ctx.lineTo(cx + 38, feetY - 14);
+    ctx.lineTo(cx - 30, feetY - 14);
+    ctx.closePath();
+    ctx.fill();
+    ctx.fillStyle = cfg.color;
+    roundRect(cx - 28, bodyTop + 12, 58, 18, 8); ctx.fill();
+    drawHeart(cx + 1, bodyTop + 22, 16, '#ff80ab', '#c2185b');
+
+    ctx.fillStyle = skin;
+    const backHandAngle = Math.sin(p.bob*2) * 0.6;
+    const bx1 = cx - 18, by1 = bodyTop + 18;
+    const handX = bx1 + 28*Math.cos(-Math.PI/2 + backHandAngle);
+    const handY = by1 + 28*Math.sin(-Math.PI/2 + backHandAngle) + 22;
+    ctx.strokeStyle = skin;
+    ctx.lineWidth = 12;
+    ctx.lineCap = 'round';
+    ctx.beginPath();
+    ctx.moveTo(bx1, by1);
+    ctx.lineTo(handX - 3, handY);
+    ctx.stroke();
+    ctx.fillStyle = skin;
+    ctx.beginPath();
+    ctx.arc(handX - 3, handY, 8.5, 0, Math.PI*2);
+    ctx.fill();
+
+    ctx.strokeStyle = skin;
+    ctx.lineWidth = 12;
+    ctx.lineCap = 'round';
+    ctx.beginPath();
+    ctx.moveTo(cx + 21, bodyTop + 16);
+    ctx.lineTo(cx + 40, bodyTop + 40);
+    ctx.stroke();
+    ctx.fillStyle = skin;
+    ctx.beginPath();
+    ctx.arc(cx + 41, bodyTop + 41, 8.5, 0, Math.PI*2);
+    ctx.fill();
+
+    drawHead(cx, headY - 24, cfg, hair, skin, true);
+  } else {
+    ctx.fillStyle = cfg.dark;
+    roundRect(cx - 34, cyTopo + 6, 68, 60, 14); ctx.fill();
+    ctx.fillStyle = cfg.color;
+    roundRect(cx - 34, cyTopo + 6, 68, 22, 14); ctx.fill();
+
+    ctx.fillStyle = skin;
+    const armSwing = p.onGround ? Math.sin(p.bob*2) * 6 : -10;
+    ctx.beginPath();
+    ctx.arc(cx - 40, cyTopo + 22 + armSwing, 9, 0, Math.PI*2);
+    ctx.arc(cx + 40, cyTopo + 22 - armSwing, 9, 0, Math.PI*2);
+    ctx.fill();
+
+    ctx.fillStyle = '#2b2b2b';
+    const legSwing = p.onGround ? Math.sin(p.bob*2) * 5 : 0;
+    roundRect(cx - 24, cyTopo + 58, 18, 32, 8); ctx.fill();
+    roundRect(cx + 6 + legSwing, cyTopo + 58, 18, 32, 8); ctx.fill();
+
+    drawHead(cx, cyTopo - 28, cfg, hair, skin, false);
+  }
+
+  ctx.restore();
+}
+
+function drawHead(cx, cy, cfg, hair, skin, isLulu) {
+  ctx.fillStyle = skin;
+  ctx.beginPath();
+  ctx.arc(cx, cy, 28, 0, Math.PI*2);
+  ctx.fill();
+  ctx.fillStyle = 'rgba(255, 128, 171, 0.55)';
+  ctx.beginPath();
+  ctx.arc(cx - 14, cy - 3, 5.5, 0, Math.PI*2);
+  ctx.arc(cx + 14, cy - 3, 5.5, 0, Math.PI*2);
+  ctx.fill();
+  ctx.fillStyle = hair;
+  ctx.beginPath();
+  ctx.arc(cx, cy - 10, 28, Math.PI, 2*Math.PI);
+  ctx.fill();
+  ctx.fillRect(cx - 28, cy - 13, 56, 10);
+  if (isLulu) {
+    ctx.fillRect(cx - 30, cy - 4, 11, 42);
+    ctx.fillRect(cx + 19, cy - 4, 11, 42);
+    ctx.fillStyle = '#ff4081';
+    ctx.fillRect(cx - 28, cy - 15, 56, 5);
+    drawHeart(cx + 28, cy - 18, 18, '#ff80ab', '#c2185b');
+  } else {
+    ctx.fillStyle = hair;
+    ctx.beginPath();
+    ctx.moveTo(cx - 6, cy - 32);
+    ctx.lineTo(cx + 16, cy - 35);
+    ctx.lineTo(cx + 10, cy - 12);
+    ctx.closePath();
+    ctx.fill();
+  }
+  ctx.fillStyle = '#2b2b2b';
+  const blink = (tickCount % 200 < 8) ? 1 : 0;
+  if (blink) {
+    ctx.fillRect(cx - 12, cy - 2, 8, 2);
+    ctx.fillRect(cx + 4, cy - 2, 8, 2);
+  } else {
+    ctx.beginPath();
+    ctx.arc(cx - 9, cy, 3.4, 0, Math.PI*2);
+    ctx.arc(cx + 9, cy, 3.4, 0, Math.PI*2);
+    ctx.fill();
+    ctx.fillStyle = '#fff';
+    ctx.beginPath();
+    ctx.arc(cx - 8, cy - 1.5, 1.4, 0, Math.PI*2);
+    ctx.arc(cx + 10, cy - 1.5, 1.4, 0, Math.PI*2);
+    ctx.fill();
+  }
+  ctx.strokeStyle = '#b71c1c';
+  ctx.lineWidth = 2.2;
+  ctx.beginPath();
+  ctx.arc(cx, cy + 10, 5.5, 0.15*Math.PI, 0.85*Math.PI);
+  ctx.stroke();
+}
+
+function roundRect(x, y, w, h, r) {
+  ctx.beginPath();
+  ctx.moveTo(x + r, y);
+  ctx.lineTo(x + w - r, y);
+  ctx.quadraticCurveTo(x + w, y, x + w, y + r);
+  ctx.lineTo(x + w, y + h - r);
+  ctx.quadraticCurveTo(x + w, y + h, x + w - r, y + h);
+  ctx.lineTo(x + r, y + h);
+  ctx.quadraticCurveTo(x, y + h, x, y + h - r);
+  ctx.lineTo(x, y + r);
+  ctx.quadraticCurveTo(x, y, x + r, y);
+  ctx.closePath();
+}
+
+/* =========================
+   CENÁRIO
+   ========================= */
+function drawBG() {
+  const grad = ctx.createLinearGradient(0, 0, 0, H);
+  grad.addColorStop(0, '#ffd1e6');
+  grad.addColorStop(0.5, '#e4c7ff');
+  grad.addColorStop(1, '#c9e4ff');
+  ctx.fillStyle = grad;
+  ctx.fillRect(0, 0, W, H);
+
+  ctx.fillStyle = 'rgba(179, 136, 255, 0.35)';
+  ctx.beginPath();
+  ctx.moveTo(0, groundY);
+  ctx.lineTo(260, groundY - 220);
+  ctx.lineTo(520, groundY - 60);
+  ctx.lineTo(780, groundY - 260);
+  ctx.lineTo(1100, groundY - 40);
+  ctx.lineTo(1380, groundY - 240);
+  ctx.lineTo(W, groundY - 90);
+  ctx.lineTo(W, groundY);
+  ctx.closePath();
+  ctx.fill();
+
+  ctx.fillStyle = 'rgba(100, 181, 246, 0.35)';
+  ctx.beginPath();
+  ctx.moveTo(0, groundY);
+  ctx.lineTo(180, groundY - 120);
+  ctx.lineTo(400, groundY - 30);
+  ctx.lineTo(660, groundY - 150);
+  ctx.lineTo(960, groundY - 14);
+  ctx.lineTo(1240, groundY - 130);
+  ctx.lineTo(W, groundY - 30);
+  ctx.lineTo(W, groundY);
+  ctx.closePath();
+  ctx.fill();
+
+  clouds.forEach(c => c.draw());
+
+  ctx.fillStyle = '#d1b3ff';
+  ctx.fillRect(0, groundY, W, H - groundY);
+  ctx.fillStyle = '#9c64ff';
+  ctx.fillRect(0, groundY, W, 8);
+  ctx.fillStyle = 'rgba(255,255,255,0.5)';
+  const off = bgOffset % 100;
+  for (let i = -off; i < W; i += 100) {
+    ctx.fillRect(i, groundY + 40, 50, 5);
+    ctx.fillRect(i + 28, groundY + 80, 40, 5);
+  }
+  const flrColors = ['#ff4081','#ffd740','#4fc3f7','#ba68c8','#ff8a65'];
+  for (let i = 0; i < 16; i++) {
+    const fx = (i*177 - off*1.2) % (W+100);
+    drawFlower(fx, groundY + 28, flrColors[i%flrColors.length]);
+  }
+}
+function drawFlower(x, y, c) {
+  ctx.save();
+  ctx.translate(x, y);
+  ctx.fillStyle = '#66bb6a';
+  ctx.fillRect(-1, 0, 2, 18);
+  ctx.fillStyle = c;
+  for (let i=0;i<5;i++) {
+    const a = (i/5)*Math.PI*2;
+    ctx.beginPath();
+    ctx.arc(Math.cos(a)*5, Math.sin(a)*5, 4, 0, Math.PI*2);
+    ctx.fill();
+  }
+  ctx.fillStyle = '#fff59d';
+  ctx.beginPath();
+  ctx.arc(0, 0, 3, 0, Math.PI*2);
+  ctx.fill();
+  ctx.restore();
+}
+
+/* =========================
+   GAME FLOW
+   ========================= */
+function startGame(pkey) {
+  // Cancela qualquer abertura atrasada do Game Over da partida anterior.
+  // Sem isso, o timer antigo podia colocar a tela de derrota por cima
+  // da partida nova depois que ela já tinha começado.
+  if (_gameOverTimer) {
+    clearTimeout(_gameOverTimer);
+    _gameOverTimer = null;
+  }
+
+  _overProcessing = false;
+  _ultimoPuloTick = -99999;
+  currentPlayerKey = 'lulu';
+  score = 0;
+  gain = 0;
+  speed = 10;
+  obstacles = [];
+  hearts = [];
+  particles = [];
+  spawnTimer = 50;
+  heartTimer = 100;
+  bgOffset = 0;
+  tickCount = 0;
+  gameTime = 0;
+  invincibleUntil = 0;
+  player = makePlayer('lulu');
+
+  clouds = [];
+  for (let i = 0; i < 8; i++) {
+    clouds.push(new Cloud(Math.random()*W, 60 + Math.random()*200, 0.9 + Math.random()*0.9));
+  }
+
+  const hud = document.getElementById('hud');
+  hud.style.display = 'flex';
+  const cs = document.getElementById('chipScore');
+  const cc = document.getElementById('chipCoins');
+  const cr = document.getElementById('chipRec');
+  cs.classList.remove('lulu-bg','joao-bg');
+  cc.classList.remove('lulu-bg','joao-bg');
+  cr.classList.remove('lulu-bg','joao-bg');
+  // Sempre roxo (Lulu)
+  cs.classList.add('lulu-bg'); cc.classList.add('lulu-bg'); cr.classList.add('lulu-bg');
+  document.getElementById('scoreVal').textContent = '0';
+  document.getElementById('gainVal').textContent = '0';
+  document.getElementById('recVal').textContent = getInt(LS_KEYS.lulu);
+  document.getElementById('coinsVal').textContent = getInt(LS_KEYS.coinsLulu);
+
+  document.getElementById('scrMenu').classList.add('hidden');
+  document.getElementById('scrOver').classList.add('hidden');
+
+  // Mostra o botão PULAR
+  const bp = document.getElementById('btnPular');
+  bp.style.display = 'block';
+  bp.textContent = '💜 PULAR 💜';
+
+  toast('💜 Boa sorte, Lulu! Colete corações 💖');
+  _lastGroundTick = 0;
+  state = 'playing';
+}
+
+let _lastGroundTick = 0;
+function doJump() {
+  // Tudo agora vai para a função FORÇADA (global, sem filtros)
+  pularForcado();
+}
+
+window.addEventListener('keydown', (e) => {
+  if (e.code === 'Space' || e.code === 'ArrowUp' || e.code === 'KeyW') {
+    e.preventDefault();
+    if (state === 'menu') {
+      startGame('lulu');
+    } else if (state === 'over') {
+      startGame('lulu');
+    } else if (state === 'playing') {
+      doJump();
+    }
+  }
+}, { passive: false });
+
+/* =============== INPUT 100% CONFIÁVEL ===============
+   Liga DIRETAMENTE no game-shell e no scrOver (tela de game over).
+   Usa múltiplos eventos em cascata (touchstart > pointerdown > mousedown > click).
+   Nenhum filtro complicado — só verifica se o clique foi em botão.
+*/
+const _shell = document.getElementById('shell');
+const _scrOver = document.getElementById('scrOver');
+
+function _isButton(t) {
+  if (!t) return false;
+  // Sobe na árvore e verifica se é botão ou link clicável
+  let el = t;
+  for (let i = 0; i < 6; i++) {
+    if (!el) break;
+    const tag = (el.tagName || '').toLowerCase();
+    if (tag === 'button' || tag === 'a' || tag === 'input' || tag === 'textarea' || tag === 'select') return true;
+    // Cards de jogador (não pule ao selecionar)
+    if (el.classList && (el.classList.contains('player-card'))) return true;
+    el = el.parentElement;
+  }
+  return false;
+}
+
+function _action(e, src) {
+  if (e && _isButton(e.target)) return; // clique em botão → ignora
+
+  // Tudo vai para a função forçada (funciona em menu / over / playing)
+  pularForcado();
+
+  if (e && e.cancelable) { try { e.preventDefault(); } catch(_){} try { e.stopPropagation(); } catch(_){} }
+}
+
+// ============== GAME SHELL ==============
+function _bindShell(ev, opts) {
+  _shell.addEventListener(ev, (e) => _action(e, 'shell'), opts);
+}
+_bindShell('touchstart', { passive: false });
+_bindShell('pointerdown', { passive: false });
+_bindShell('mousedown', { passive: false });
+_bindShell('click', { passive: false });
+
+// ============== TELA DE GAME OVER ==============
+function _bindOver(ev, opts) {
+  _scrOver.addEventListener(ev, (e) => _action(e, 'scrOver'), opts);
+}
+_bindOver('touchstart', { passive: false });
+_bindOver('pointerdown', { passive: false });
+_bindOver('mousedown', { passive: false });
+_bindOver('click', { passive: false });
+
+function spawn() {
+  spawnTimer--;
+  if (spawnTimer <= 0) {
+    obstacles.push(new Obstacle());
+    // Chance de spawn duplo em velocidades altas
+    if (speed > 14 && Math.random() < 0.35) {
+      setTimeout(() => {
+        if (state === 'playing') obstacles.push(new Obstacle());
+      }, 320);
+    }
+    spawnTimer = Math.max(28, 82 - Math.floor(speed * 3.2)) + Math.random() * 32;
+  }
+  heartTimer--;
+  if (heartTimer <= 0) {
+    hearts.push(new Heart());
+    heartTimer = 48 + Math.random() * 60;
+  }
+}
+
+function update() {
+  tickCount++;
+  if (state !== 'playing') {
+    if (state === 'menu') clouds.forEach(c => c.update());
+    return;
+  }
+  gameTime++;
+  bgOffset += speed;
+  speed = Math.min(19, 10 + gameTime / 700);
+
+  const previousPlayerBottom = player.y + player.h;
+  const previousPlayerVy = player.vy;
+
+  player.vy += 1.15;
+  player.y += player.vy;
+  if (player.y + player.h >= groundY) {
+    player.y = groundY - player.h;
+    player.vy = 0;
+    player.onGround = true;
+    player.jumps = 0;
+    _lastGroundTick = tickCount;
+  }
+  player.bob += 0.32;
+
+  spawn();
+  clouds.forEach(c => c.update());
+
+  const hitboxPlayer = {
+    x: player.x + 20,
+    y: player.y + 18,
+    w: player.w - 40,
+    h: player.h - 28
+  };
+
+  for (let i = obstacles.length - 1; i >= 0; i--) {
+    const ob = obstacles[i];
+    ob.update(speed);
+
+    // Caindo em cima do bichinho/obstáculo: derrota ele e quica para cima.
+    const horizontalOverlap =
+      hitboxPlayer.x < ob.x + ob.w - 6 &&
+      hitboxPlayer.x + hitboxPlayer.w > ob.x + 6;
+    const landingOnTop =
+      previousPlayerVy > 0 &&
+      previousPlayerBottom <= ob.y + 16 &&
+      player.y + player.h >= ob.y &&
+      horizontalOverlap;
+
+    if (landingOnTop) {
+      obstacles.splice(i, 1);
+      player.y = ob.y - player.h;
+      player.vy = -18;
+      player.onGround = false;
+      addScore(10);
+      for (let k = 0; k < 14; k++) {
+        particles.push(new Particle(ob.x + ob.w / 2, ob.y, '#ffd740', {
+          spread: 8, up: 7, life: 34, size: 3 + Math.random() * 2, grav: 0.2
+        }));
+      }
+      particles.push(new Particle(ob.x + ob.w / 2, ob.y - 16, '#7c4dff', {
+        spread: 0.5, up: 1.2, life: 48, size: 0, grav: -0.04, text: '+10 💥'
+      }));
+      continue;
+    }
+
+    if (tickCount > invincibleUntil && ob.hit(hitboxPlayer.x, hitboxPlayer.y, hitboxPlayer.w, hitboxPlayer.h)) {
+      triggerGameOver();
+      return;
+    }
+    if (ob.x + ob.w < -60) {
+      obstacles.splice(i, 1);
+      addScore(1);
+    }
+  }
+
+  for (let i = hearts.length - 1; i >= 0; i--) {
+    const h = hearts[i];
+    h.update(speed);
+    if (!h.collected) {
+      const hb = { x: player.x + 14, y: player.y + 10, w: player.w - 28, h: player.h - 18 };
+      if (rectsOverlap(hb.x,hb.y,hb.w,hb.h, h.x-h.size/2, h.y-h.size/2, h.size, h.size)) {
+        h.collected = true;
+        addScore(h.value);
+        gain += h.value;
+        document.getElementById('gainVal').textContent = gain;
+        // Sempre Lulu
+        document.getElementById('coinsVal').textContent = getInt(LS_KEYS.coinsLulu) + gain;
+        for (let k = 0; k < 18; k++) {
+          particles.push(new Particle(h.x, h.y,
+            ['#ff4081','#ff80ab','#ffd740','#fff'][k%4],
+            { spread: 9, up: 8, life: 42, size: 3+Math.random()*3, grav: 0.14, heart: k%3===0 }
+          ));
+        }
+        particles.push(new Particle(h.x, h.y - 14, h.value >= 5 ? '#ff6f00' : '#c2185b', {
+          spread: 0.5, up: 1.2, life: 55, size: 0, grav: -0.04, text: `+${h.value} 💗`
+        }));
+      }
+    }
+    if (h.x < -80 || h.collected) hearts.splice(i, 1);
+  }
+
+  for (let i = particles.length - 1; i >= 0; i--) {
+    particles[i].update();
+    if (particles[i].life <= 0) particles.splice(i, 1);
+  }
+}
+
+function addScore(v) {
+  score += v;
+  document.getElementById('scoreVal').textContent = score;
+}
+
+/* =========================
+   GAME OVER
+   ========================= */
+let _overProcessing = false;
+function triggerGameOver() {
+  if (state !== 'playing' || _overProcessing) return;
+  _overProcessing = true;
+  state = 'over';
+
+  try {
+    for (let i = 0; i < 30; i++) {
+      particles.push(new Particle(player.x + player.w/2, player.y + player.h/2,
+        ['#ff4081','#b388ff','#ffffff','#ffd740'][i%4],
+        { spread: 12, up: 10, life: 55, size: 3+Math.random()*4, grav: 0.2, heart: i%4===0 }
+      ));
+    }
+
+    // Sempre Lulu
+    const prevHigh = getInt(LS_KEYS.lulu);
+    let isNewRecord = false;
+    if (score > prevHigh) { setInt(LS_KEYS.lulu, score); isNewRecord = true; }
+    document.getElementById('recVal').textContent = getInt(LS_KEYS.lulu);
+
+    const prevCoins = getInt(LS_KEYS.coinsLulu);
+    setInt(LS_KEYS.coinsLulu, prevCoins + gain);
+
+    const unlockedBefore = getArr(LS_KEYS.achLulu);
+    const novosAch = [];
+    ACHIEVEMENTS.forEach(a => {
+      if (score >= a.pts && !unlockedBefore.includes(a.id)) {
+        unlockedBefore.push(a.id);
+        novosAch.push(a);
+      }
+    });
+    setArr(LS_KEYS.achLulu, unlockedBefore);
+
+    let bonus = 0;
+    if (isNewRecord) bonus = Math.max(15, Math.floor(score * 0.2));
+    if (bonus > 0) {
+      gain += bonus;
+      setInt(LS_KEYS.coinsLulu, prevCoins + gain);
+    }
+
+    // Mostra a tela de derrota imediatamente.
+    // A versão anterior usava um setTimeout aqui; se qualquer detalhe
+    // da tela de Game Over falhasse, o estado ficava em "over" e o jogo
+    // parecia congelado sem mostrar a tela.
+    showGameOver(isNewRecord, novosAch, bonus);
+  } catch (err) {
+    // Nunca deixa uma exceção travar a partida em estado "over".
+    console.error('Erro ao abrir Game Over:', err);
+    const over = document.getElementById('scrOver');
+    const hud = document.getElementById('hud');
+    const bp = document.getElementById('btnPular');
+    if (over) {
+      over.classList.remove('hidden');
+      const finalPts = document.getElementById('finalPts');
+      const finalRec = document.getElementById('finalRec');
+      if (finalPts) finalPts.textContent = score;
+      if (finalRec) finalRec.textContent = getInt(LS_KEYS.lulu);
+    }
+    if (hud) hud.style.display = 'none';
+    if (bp) {
+      bp.style.display = 'block';
+      bp.textContent = '💜 JOGAR DE NOVO 💜';
+    }
+  } finally {
+    setTimeout(() => { _overProcessing = false; }, 1200);
+  }
+}
+
+function showGameOver(isNewRecord, novosAch, bonus) {
+  document.getElementById('overTitulo').textContent =
+    isNewRecord ? '🎉 NOVO RECORDE, LULU!' : 'Fim de jogo, Lulu 💔';
+
+  document.getElementById('overSub').textContent =
+    isNewRecord ? 'Você superou seu melhor! Ganhou corações bônus 💘' : 'Tente de novo para bater seu recorde!';
+
+  const gLine = document.getElementById('ganhouLine');
+  document.getElementById('ganhouQtd').textContent = gain;
+  if (bonus > 0) {
+    gLine.innerHTML = `💗 Ganhou <b>${gain}</b> corações (inclui +${bonus} de bônus de recorde!)`;
+  } else if (gain === 0) {
+    gLine.textContent = '💔 Nessa partida não ganhou corações. Tente de novo!';
+  } else {
+    gLine.innerHTML = `💗 Ganhou <b>${gain}</b> corações para usar na Loja!`;
+  }
+
+  // Conquistas
+  const achDiv = document.getElementById('achvMini');
+  achDiv.innerHTML = '';
+  const unlocked = getArr(LS_KEYS.achLulu);
+  ACHIEVEMENTS.forEach(a => {
+    const ok = unlocked.includes(a.id);
+    const el = document.createElement('div');
+    el.className = `achv ${ok ? 'unlocked' : 'locked'}`;
+    el.title = `${a.nome} — ${a.pts} pontos`;
+    el.innerHTML = `
+      <span class="a-emoji">${a.emoji}</span>
+      <div class="a-label">${a.label}</div>
+      ${ok && novosAch.find(n => n.id === a.id) ? '<span class="novo">NOVO</span>' : ''}
+    `;
+    achDiv.appendChild(el);
+  });
+
+  // Pontuação final da Lulu
+  document.getElementById('finalPts').textContent = score;
+  document.getElementById('finalRec').textContent = getInt(LS_KEYS.lulu);
+
+  // Botão jogar novamente
+  const btnNovamente = document.getElementById('btnJogarNovamente');
+  btnNovamente.className = 'btn btn-lulu';
+  btnNovamente.onclick = () => startGame('lulu');
+
+  novosAch.forEach(a => toast(`🏆 Desbloqueou: ${a.nome} ${a.emoji}`));
+  if (isNewRecord) toast(`🎉 Novo recorde: ${score} pts!`);
+  if (gain > 0) toast(`💗 +${gain} corações adicionados ao saldo!`);
+
+  // Abre o Game Over na hora. O botão "Jogar Novamente" chama startGame()
+  // e limpa qualquer estado da partida anterior.
+  _gameOverTimer = null;
+  if (state !== 'over') return;
+  document.getElementById('scrOver').classList.remove('hidden');
+  document.getElementById('hud').style.display = 'none';
+  const bp = document.getElementById('btnPular');
+  bp.style.display = 'block';
+  bp.textContent = '💜 JOGAR DE NOVO 💜';
+}
+
+function backToMenu() {
+  _overProcessing = false;
+  state = 'menu';
+  currentPlayerKey = null;
+  refreshMenuInfo();
+  document.getElementById('scrOver').classList.add('hidden');
+  document.getElementById('hud').style.display = 'none';
+  const bp = document.getElementById('btnPular');
+  bp.style.display = 'none';
+  document.getElementById('scrMenu').classList.remove('hidden');
+}
+
+/* =========================
+   LOOP
+   ========================= */
+function render() {
+  drawBG();
+
+  if (state !== 'menu') {
+    obstacles.forEach(o => o.draw());
+    hearts.forEach(h => h.draw());
+    if (player) drawPlayer(player);
+    particles.forEach(p => p.draw());
+  } else {
+    if (!player) player = makePlayer('lulu');
+    player.y = groundY - player.h;
+    player.onGround = true;
+    player.bob += 0.06;
+    drawPlayer(player);
+    const tmp = makePlayer('joao');
+    tmp.x = 360;
+    tmp.y = groundY - tmp.h;
+    tmp.onGround = true;
+    tmp.bob = player.bob + Math.PI;
+    drawPlayer(tmp);
+
+    for (let i = 0; i < 8; i++) {
+      const hx = 760 + i*100;
+      const hy = 260 + Math.sin((tickCount/40)+i)*32;
+      const val = (i%3)+1;
+      drawHeart(hx, hy, 44, i%2?'#ff80ab': (val===3?'#ffd740':'#b388ff'), i%2?'#c2185b': (val===3?'#ff6f00':'#651fff'));
+    }
+  }
+}
+
+function loop() { update(); render(); requestAnimationFrame(loop); }
+loop();
+
+(function initMenuClouds() {
+  clouds = [];
+  for (let i = 0; i < 8; i++) clouds.push(new Cloud(120 + i*200, 60 + (i%3)*80, 0.9 + (i%3)*0.3));
+})();
+</script>
+
+</body>
+</html>
