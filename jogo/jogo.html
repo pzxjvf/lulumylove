@@ -428,6 +428,109 @@
     font-weight: 800;
   }
 
+  /* SALA SECRETA */
+  #secretRoom {
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(circle at 50% 40%, rgba(255,215,64,0.22), rgba(74,0,128,0.88) 70%);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 50;
+    padding: 20px;
+  }
+  #secretRoom.show { display: flex; animation: overlayIn 0.55s ease; }
+  .secret-card {
+    width: min(440px, 96%);
+    padding: 30px 24px 26px;
+    border-radius: 28px;
+    background:
+      radial-gradient(circle at 20% 15%, rgba(255,215,64,0.35), transparent 45%),
+      radial-gradient(circle at 85% 80%, rgba(255,128,171,0.3), transparent 50%),
+      linear-gradient(155deg, #4a148c 0%, #6a1b9a 50%, #880e4f 100%);
+    border: 3px solid rgba(255,215,64,0.55);
+    box-shadow:
+      0 0 0 4px rgba(255,215,64,0.15),
+      0 28px 70px rgba(0,0,0,0.55),
+      inset 0 0 40px rgba(255,255,255,0.05);
+    text-align: center;
+    position: relative;
+    animation: popIn 0.5s cubic-bezier(.2,.9,.3,1.2) both;
+  }
+  @keyframes popIn { from { opacity: 0; transform: scale(0.85) translateY(18px); } }
+  .secret-card::before, .secret-card::after {
+    content: "";
+    position: absolute;
+    width: 80px; height: 80px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(255,215,64,0.3), transparent 70%);
+    pointer-events: none;
+  }
+  .secret-card::before { top: -20px; left: -20px; }
+  .secret-card::after { bottom: -20px; right: -20px; }
+  .secret-emoji {
+    font-size: 4rem;
+    margin-bottom: 6px;
+    display: block;
+    filter: drop-shadow(0 4px 12px rgba(255,215,64,0.5));
+  }
+  .secret-card h2 {
+    font-weight: 900;
+    font-size: 1.55rem;
+    background: linear-gradient(135deg, #fff59d, #ff80ab, #b388ff);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    margin-bottom: 10px;
+  }
+  .secret-card .subt-sala {
+    font-size: 0.88rem;
+    font-weight: 700;
+    opacity: 0.92;
+    color: #fff59d;
+    margin-bottom: 16px;
+    letter-spacing: 0.3px;
+  }
+  .sala-itens {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin: 12px 0 18px;
+  }
+  .sala-item {
+    background: rgba(255,255,255,0.1);
+    border: 1.5px solid rgba(255,255,255,0.25);
+    border-radius: 14px;
+    padding: 10px 8px;
+  }
+  .sala-item .si { font-size: 1.7rem; display: block; margin-bottom: 3px; }
+  .sala-item .sn { font-weight: 800; font-size: 0.82rem; }
+  .sala-item .sd { font-size: 0.7rem; opacity: 0.88; margin-top: 2px; }
+  .secret-card .msg {
+    font-size: 0.95rem;
+    line-height: 1.55;
+    font-weight: 600;
+    padding: 12px 14px;
+    border-radius: 16px;
+    background: rgba(255,255,255,0.1);
+    border: 1.5px solid rgba(255,255,255,0.22);
+    margin-bottom: 16px;
+  }
+  .secret-card .recompensa {
+    display: inline-block;
+    background: linear-gradient(135deg, #ffd740, #ff6f00);
+    color: #3e2723;
+    font-weight: 900;
+    padding: 5px 14px;
+    border-radius: 50px;
+    font-size: 0.82rem;
+    margin-bottom: 14px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.25);
+  }
+  .secret-card button { margin-top: 4px; }
+
   @media (max-width: 540px) {
     #eventBanner { top: 74px; min-width: 230px; padding: 10px 14px; }
     #eventBanner .event-title { font-size: 1rem; }
@@ -512,6 +615,49 @@
         <h2>✨ Memória Secreta!</h2>
         <p id="memoryText">Você encontrou um cantinho secreto do nosso jogo. 💕</p>
         <button class="btn btn-lulu" id="memoryClose">CONTINUAR 💜</button>
+      </div>
+    </div>
+
+    <!-- SALA SECRETA 🔐 (acesso: 5 corações dourados) -->
+    <div id="secretRoom">
+      <div class="secret-card">
+        <span class="secret-emoji">🔐💜</span>
+        <h2>Sala Secreta do Amor</h2>
+        <div class="subt-sala">— desbloqueada com 5 corações dourados </div>
+
+        <div class="recompensa">🎁 +50 pts • +10 💗 de presente!</div>
+
+        <div class="sala-itens">
+          <div class="sala-item">
+            <span class="si">📖</span>
+            <div class="sn">Livro de Memórias</div>
+            <div class="sd">Todas as partidas são lembranças</div>
+          </div>
+          <div class="sala-item">
+            <span class="si">🌙</span>
+            <div class="sn">Varanda da Lua</div>
+            <div class="sd">Lugar pra dois olhar as estrelas</div>
+          </div>
+          <div class="sala-item">
+            <span class="si">🍫</span>
+            <div class="sn">Estoque de Chocolate</div>
+            <div class="sd">Nunca falta doce quando está aqui</div>
+          </div>
+          <div class="sala-item">
+            <span class="si">🎶</span>
+            <div class="sn">Nossa Playlist</div>
+            <div class="sd">Toca baixinho, sempre</div>
+          </div>
+        </div>
+
+        <div class="msg">
+          — Ei, Lulu. Cada 💜<br>
+          Se você chegou até aqui é porque <b>insistiu</b bastante<br>
+          em pegar os corações mais difíceis.<br>
+          Esse cantinho é só seu. 💘
+        </div>
+
+        <button class="btn btn-primary" id="secretClose" style="background:linear-gradient(135deg,#ffd740,#ff6f00);color:#3e2723;">VOLTAR PRO JOGO 💖</button>
       </div>
     </div>
 
@@ -654,9 +800,32 @@ function pularForcado() {
       player.y = groundY - player.h;
     }
 
+    const wasFirstJump = player.jumps === 0;
     player.vy = -26;
     player.jumps += 1;
     player.onGround = false;
+
+    if (!wasFirstJump && player.jumps === 2) {
+      if (_lastJumpWasDouble) {
+        _doubleJumpsInRow++;
+      } else {
+        _doubleJumpsInRow = 1;
+      }
+      _lastJumpWasDouble = true;
+      if (_doubleJumpsInRow >= 3 && _playstyleHintsShown < 2) {
+        _playstyleHintsShown++;
+        _doubleJumpsInRow = 0;
+        const phrases = [
+          '✨ 3 pulos duplos… arriscada, hein? ✨',
+          '💜 Sempre usa o ar todo… 💜',
+        ];
+        _floatingMessages.push({
+          kind:'clue', text: phrases[_playstyleHintsShown-1] || phrases[0],
+          x: player.x + 160, y: player.y - 30,
+          life: 200, t:0
+        });
+      }
+    }
 
     // Partículas
     if (typeof particles !== 'undefined' && typeof Particle !== 'undefined' && typeof groundY !== 'undefined') {
@@ -678,6 +847,7 @@ const ACHIEVEMENTS = [
   { id: 'combo10', special: 'combo10', emoji: '🔥', label: 'COMBO 10', nome: 'Imparável' },
   { id: 'diva', special: 'diva', emoji: '👑', label: 'MODO DIVA', nome: 'Diva Suprema' },
   { id: 'secret', special: 'secret', emoji: '🔒', label: '???', nome: 'Memória Secreta' },
+  { id: 'secretroom', special: 'secretroom', emoji: '🔐', label: 'SALA', nome: 'Sala Secreta' },
 ];
 
 const PLAYERS = {
@@ -776,6 +946,22 @@ let nextEventTick = 650;
 let eventBannerUntil = 0;
 let secretFound = false;
 let joaoEventUntil = 0;
+
+/* ===== NOVOS SISTEMAS: BIOMAS / SECRETA / EASTER EGGS / PISTA ===== */
+let currentBiome = 0;
+let biomeTransition = 0;
+let stars = [];
+let fireflies = [];
+let secretRoomActive = false;
+let secretHeartsCollected = 0;
+let _doubleJumpsInRow = 0;
+let _lastJumpWasDouble = false;
+let _playstyleHintsShown = 0;
+let _floatingMessages = [];
+let _tinyJoaoTimer = 0;
+let _tinyCatTimer = 0;
+let _butterflies = [];
+let _secretRoomThisRun = false;
 
 function makePlayer(pkey) {
   const cfg = PLAYERS[pkey];
@@ -1320,17 +1506,107 @@ function roundRect(x, y, w, h, r) {
 }
 
 /* =========================
-   CENÁRIO
+   CENÁRIO — 3 BIOMAS + TRANSIÇÕES SUAVES
    ========================= */
+function lerpColor(a, b, t) {
+  const pa = parseInt(a.slice(1),16), pb = parseInt(b.slice(1),16);
+  const ar=(pa>>16)&255, ag=(pa>>8)&255, ab=pa&255;
+  const br=(pb>>16)&255, bg=(pb>>8)&255, bb=pb&255;
+  const r=Math.round(ar+(br-ar)*t), g=Math.round(ag+(bg-ag)*t), bl=Math.round(ab+(bb-ab)*t);
+  return `rgb(${r},${g},${bl})`;
+}
+function getBiomeT() {
+  if (score < 150) return { b:0, t:Math.max(0,score/150) };
+  if (score < 400) return { b:1, t:Math.max(0,(score-150)/250) };
+  return { b:2, t:Math.min(1,(score-400)/300) };
+}
 function drawBG() {
+  const bt = getBiomeT();
+  currentBiome = bt.b;
+  biomeTransition = bt.t;
+
+  /* === SKY GRADIENT (3 biomas) === */
+  const skyPalettes = [
+    ['#ffe4f0','#ffd1e6','#e8d3ff'],
+    ['#f3e5ff','#d1b3ff','#b39ddb'],
+    ['#1a1a3e','#2d1b4e','#3d2466'],
+  ];
+  const p0 = skyPalettes[Math.min(2,bt.b)];
+  const p1 = skyPalettes[Math.max(0,Math.min(2,bt.b+1))];
+  const tt = bt.t;
   const grad = ctx.createLinearGradient(0, 0, 0, H);
-  grad.addColorStop(0, '#ffd1e6');
-  grad.addColorStop(0.5, '#e4c7ff');
-  grad.addColorStop(1, '#c9e4ff');
+  grad.addColorStop(0,   lerpColor(p0[0], p1[0], tt));
+  grad.addColorStop(0.5, lerpColor(p0[1], p1[1], tt));
+  grad.addColorStop(1,   lerpColor(p0[2], p1[2], tt));
   ctx.fillStyle = grad;
   ctx.fillRect(0, 0, W, H);
 
-  ctx.fillStyle = 'rgba(179, 136, 255, 0.35)';
+  /* === NOITE: ESTRELAS + LUA === */
+  const nightT = bt.b === 2 ? Math.min(1, 0.4 + bt.t) : (bt.b === 1 ? bt.t * 0.35 : 0);
+  if (nightT > 0.02) {
+    ctx.save();
+    ctx.globalAlpha = nightT;
+    stars.forEach(st => {
+      st.tw += 0.05;
+      const a = 0.55 + 0.45*Math.sin(st.tw);
+      ctx.fillStyle = `rgba(255,255,255,${a})`;
+      ctx.beginPath();
+      ctx.arc(st.x, st.y, st.r, 0, Math.PI*2);
+      ctx.fill();
+    });
+    /* lua */
+    const lx = W-220, ly = 130;
+    const moonGlow = ctx.createRadialGradient(lx,ly,10, lx,ly,120);
+    moonGlow.addColorStop(0, 'rgba(255,255,210,0.55)');
+    moonGlow.addColorStop(1, 'rgba(255,255,210,0)');
+    ctx.fillStyle = moonGlow;
+    ctx.fillRect(lx-130, ly-130, 260, 260);
+    ctx.fillStyle = '#fff9c4';
+    ctx.beginPath();
+    ctx.arc(lx, ly, 54, 0, Math.PI*2);
+    ctx.fill();
+    ctx.fillStyle = lerpColor('#fff9c4', p0[2], 0.5);
+    ctx.beginPath();
+    ctx.arc(lx-18, ly-10, 12, 0, Math.PI*2);
+    ctx.arc(lx+14, ly+20, 8, 0, Math.PI*2);
+    ctx.arc(lx+22, ly-16, 6, 0, Math.PI*2);
+    ctx.fill();
+    ctx.restore();
+  }
+
+  /* === SOL / AURORA ROSA (bioma 0 e 1) === */
+  const dayT = bt.b === 0 ? (1 - bt.t*0.7) : (bt.b === 1 ? (1 - bt.t)*0.55 : 0);
+  if (dayT > 0.02) {
+    ctx.save();
+    ctx.globalAlpha = dayT;
+    const sx = 1240, sy = 150;
+    const sunG = ctx.createRadialGradient(sx,sy,20, sx,sy,240);
+    sunG.addColorStop(0, 'rgba(255,200,220,0.7)');
+    sunG.addColorStop(1, 'rgba(255,200,220,0)');
+    ctx.fillStyle = sunG;
+    ctx.fillRect(sx-260, sy-260, 520, 520);
+    ctx.fillStyle = bt.b === 0 ? '#ffb6d9' : '#e1bee7';
+    ctx.beginPath();
+    ctx.arc(sx, sy, 60, 0, Math.PI*2);
+    ctx.fill();
+    ctx.restore();
+  }
+
+  /* === MONTANHAS TRASEIRAS === */
+  const mtnBack = [
+    ['rgba(179,136,255,0.38)', 'rgba(100,181,246,0.32)'],
+    ['rgba(123,63,191,0.48)', 'rgba(81,45,168,0.38)'],
+    ['rgba(74,20,140,0.75)', 'rgba(49,27,89,0.68)'],
+  ];
+  const mb = mtnBack[bt.b];
+  const mbN = mtnBack[Math.min(2,bt.b+1)];
+  const c1 = bt.b === 2 ? lerpColor('#6a3db3'.replace('#',''), '#8b5cf6'.replace('#',''), tt) : lerpColor(mb[0].match(/#[0-9a-f]{6}|rgba\([^\)]+\)/)[0] || mb[0], (mbN[0].match(/#[0-9a-f]{6}|rgba\([^\)]+\)/)||[mbN[0]])[0], tt);
+  ctx.fillStyle = (function(){
+    if (bt.b===0 && bt.t<1) return `rgba(179,136,255,${0.38 - bt.t*0.08})`;
+    if (bt.b===1) return `rgba(${Math.round(123-42*bt.t)},${Math.round(63+14*bt.t)},${Math.round(191-51*bt.t)},${0.48 + bt.t*0.2})`;
+    if (bt.b===2) return `rgba(74,20,140,${0.75})`;
+    return mb[0];
+  })();
   ctx.beginPath();
   ctx.moveTo(0, groundY);
   ctx.lineTo(260, groundY - 220);
@@ -1343,7 +1619,12 @@ function drawBG() {
   ctx.closePath();
   ctx.fill();
 
-  ctx.fillStyle = 'rgba(100, 181, 246, 0.35)';
+  /* === MONTANHAS FRENTE === */
+  ctx.fillStyle = (function(){
+    if (bt.b===0) return `rgba(100,181,246,${0.35 - bt.t*0.05})`;
+    if (bt.b===1) return `rgba(${Math.round(81+8*bt.t)},${Math.round(45-18*bt.t)},${Math.round(168-79*bt.t)},${0.38 + bt.t*0.25})`;
+    return `rgba(49,27,89,0.78)`;
+  })();
   ctx.beginPath();
   ctx.moveTo(0, groundY);
   ctx.lineTo(180, groundY - 120);
@@ -1358,22 +1639,153 @@ function drawBG() {
 
   clouds.forEach(c => c.draw());
 
-  ctx.fillStyle = '#d1b3ff';
+  /* === VAGA-LUMES (bioma 1 tarde, bioma 2 noite) === */
+  const ffT = bt.b === 0 ? bt.t*0.5 : (bt.b === 1 ? 0.5 + bt.t*0.5 : 1);
+  if (state === 'playing' && ffT > 0.1) {
+    if (Math.random() < 0.04*ffT && fireflies.length < 22) {
+      fireflies.push({x:W+40, y:80+Math.random()*(groundY-180), vy:Math.random()*0.4-0.2, ph:Math.random()*Math.PI*2, life:700});
+    }
+    ctx.save();
+    fireflies.forEach((f,i) => {
+      f.x -= speed*0.35;
+      f.ph += 0.08;
+      f.y += Math.sin(f.ph)*0.6 + f.vy;
+      f.life--;
+      const a = ffT * (0.55 + 0.45*Math.sin(f.ph*2));
+      const g = ctx.createRadialGradient(f.x,f.y,1, f.x,f.y,14);
+      g.addColorStop(0, `rgba(255,255,160,${a})`);
+      g.addColorStop(1, `rgba(255,255,160,0)`);
+      ctx.fillStyle = g;
+      ctx.fillRect(f.x-16, f.y-16, 32, 32);
+      ctx.fillStyle = `rgba(255,255,180,${a})`;
+      ctx.beginPath();
+      ctx.arc(f.x, f.y, 2.2, 0, Math.PI*2);
+      ctx.fill();
+    });
+    fireflies = fireflies.filter(f => f.life>0 && f.x>-50);
+    ctx.restore();
+  }
+
+  /* === CHÃO === */
+  const floorColors = [
+    ['#d1b3ff','#9c64ff'],
+    ['#b39ddb','#7e57c2'],
+    ['#4a148c','#311b69'],
+  ];
+  const fc = floorColors[bt.b];
+  const fcn = floorColors[Math.min(2,bt.b+1)];
+  ctx.fillStyle = bt.b===2 ? fc[0] : lerpColor(fc[0], fcn[0], tt);
   ctx.fillRect(0, groundY, W, H - groundY);
-  ctx.fillStyle = '#9c64ff';
+  ctx.fillStyle = bt.b===2 ? fc[1] : lerpColor(fc[1], fcn[1], tt);
   ctx.fillRect(0, groundY, W, 8);
-  ctx.fillStyle = 'rgba(255,255,255,0.5)';
+  ctx.fillStyle = bt.b===2 ? 'rgba(255,255,255,0.12)' : 'rgba(255,255,255,0.5)';
   const off = bgOffset % 100;
   for (let i = -off; i < W; i += 100) {
     ctx.fillRect(i, groundY + 40, 50, 5);
     ctx.fillRect(i + 28, groundY + 80, 40, 5);
   }
-  const flrColors = ['#ff4081','#ffd740','#4fc3f7','#ba68c8','#ff8a65'];
+  const flrPalettes = [
+    ['#ff4081','#ffd740','#4fc3f7','#ba68c8','#ff8a65'],
+    ['#ce93d8','#9575cd','#ffb74d','#f06292','#7986cb'],
+    ['#7e57c2','#5c6bc0','#ab47bc','#ff80ab','#b39ddb'],
+  ];
+  const flr = flrPalettes[bt.b];
+  const flrN = flrPalettes[Math.min(2,bt.b+1)];
   for (let i = 0; i < 16; i++) {
     const fx = (i*177 - off*1.2) % (W+100);
-    drawFlower(fx, groundY + 28, flrColors[i%flrColors.length]);
+    const col = bt.b===2 ? flr[i%flr.length] : lerpColor(flr[i%flr.length], flrN[i%flrN.length], tt);
+    drawFlower(fx, groundY + 28, col);
+  }
+
+  /* === BORBOLETAS (easter egg discreto) === */
+  if (state === 'playing') {
+    if (Math.random() < 0.006 && _butterflies.length < 5 && bt.b < 2) {
+      _butterflies.push({x:W+50, y:60+Math.random()*(groundY-200), ph:Math.random()*Math.PI*2, col:['#ff80ab','#b388ff','#80d8ff','#ffd54f'][Math.floor(Math.random()*4)]});
+    }
+    _butterflies.forEach(b => {
+      b.x -= speed*0.55;
+      b.ph += 0.25;
+      b.y += Math.sin(b.ph*0.5)*1.2;
+      const w = 10 + 4*Math.abs(Math.sin(b.ph));
+      ctx.save();
+      ctx.translate(b.x, b.y);
+      ctx.fillStyle = b.col;
+      ctx.beginPath();
+      ctx.ellipse(-5, 0, w*0.5, w*0.65, -0.3, 0, Math.PI*2);
+      ctx.ellipse(5, 0, w*0.5, w*0.65, 0.3, 0, Math.PI*2);
+      ctx.fill();
+      ctx.fillStyle = '#2b2b2b';
+      ctx.fillRect(-0.8, -6, 1.6, 12);
+      ctx.restore();
+    });
+    _butterflies = _butterflies.filter(b => b.x>-60);
+  }
+
+  /* === EASTER EGG: JOÃOZINHO MINIATURA + GATINHO === */
+  if (state === 'playing') {
+    _tinyJoaoTimer--;
+    if (_tinyJoaoTimer <= 0 && bt.b < 2) {
+      _tinyJoaoTimer = 1800 + Math.floor(Math.random()*2400);
+      const x = W+80;
+      const y = groundY - 42;
+      _floatingMessages.push({
+        kind:'tinyjoao', x, y, life:520, t:0
+      });
+    }
+    _tinyCatTimer--;
+    if (_tinyCatTimer <= 0) {
+      _tinyCatTimer = 2600 + Math.floor(Math.random()*2800);
+      _floatingMessages.push({
+        kind:'tinycat', x:W+80, y:groundY-34, life:600, t:0
+      });
+    }
+    _floatingMessages.forEach(m => {
+      m.life--;
+      m.t++;
+      if (m.kind === 'tinyjoao') {
+        m.x -= speed*0.48;
+        const bob = Math.sin(m.t*0.15)*1.5;
+        ctx.save();
+        ctx.translate(m.x, m.y+bob);
+        ctx.fillStyle = '#3f51b5';
+        roundRect(-11,-22,22,20,4); ctx.fill();
+        ctx.fillStyle = '#ffd9b3';
+        ctx.beginPath();
+        ctx.arc(0,-28,8,0,Math.PI*2); ctx.fill();
+        ctx.fillStyle = '#4fc3f7';
+        roundRect(-10,-2,20,6,2); ctx.fill();
+        ctx.fillStyle = '#2b2b2b';
+        fillRect(-9,3,7,8); fillRect(2,3,7,8);
+        ctx.restore();
+      } else if (m.kind === 'tinycat') {
+        m.x -= speed*0.4;
+        ctx.save();
+        ctx.translate(m.x, m.y);
+        ctx.fillStyle = (score>200 && Math.random()<0.5) ? '#2b2b2b' : '#ffb74d';
+        roundRect(-10,-14,20,14,4); ctx.fill();
+        ctx.beginPath();
+        ctx.moveTo(-10,-14); ctx.lineTo(-6,-22); ctx.lineTo(-2,-14); ctx.closePath(); ctx.fill();
+        ctx.beginPath();
+        ctx.moveTo(2,-14); ctx.lineTo(6,-22); ctx.lineTo(10,-14); ctx.closePath(); ctx.fill();
+        ctx.fillStyle = bt.b===2 ? '#ffd740' : '#2196f3';
+        ctx.beginPath(); ctx.arc(-4,-8,1.4,0,Math.PI*2); ctx.arc(4,-8,1.4,0,Math.PI*2); ctx.fill();
+        ctx.fillStyle = '#ff4081';
+        ctx.fillRect(-1,-5,2,2);
+        ctx.restore();
+      } else if (m.kind === 'clue') {
+        ctx.save();
+        ctx.globalAlpha = Math.max(0, Math.min(1, m.life/40));
+        ctx.fillStyle = 'rgba(179,136,255,0.95)';
+        ctx.font = 'bold 14px Nunito, sans-serif';
+        ctx.textAlign = 'center';
+        ctx.fillText(m.text, m.x, m.y);
+        ctx.restore();
+      }
+    });
+    _floatingMessages = _floatingMessages.filter(m => m.life>0 && m.x>-100);
   }
 }
+function fillRect(x,y,w,h){ctx.fillRect(x,y,w,h);}
 function drawFlower(x, y, c) {
   ctx.save();
   ctx.translate(x, y);
@@ -1430,10 +1842,26 @@ function startGame(pkey) {
   eventBannerUntil = 0;
   secretFound = false;
   joaoEventUntil = 0;
+  currentBiome = 0;
+  biomeTransition = 0;
+  stars = [];
+  fireflies = [];
+  secretRoomActive = false;
+  secretHeartsCollected = 0;
+  _doubleJumpsInRow = 0;
+  _lastJumpWasDouble = false;
+  _playstyleHintsShown = 0;
+  _floatingMessages = [];
+  _tinyJoaoTimer = 420 + Math.floor(Math.random()*600);
+  _tinyCatTimer = 800 + Math.floor(Math.random()*900);
+  _butterflies = [];
+  _secretRoomThisRun = false;
+  for (let s=0; s<70; s++) stars.push({x:Math.random()*W, y:Math.random()*(groundY-100), r:0.6+Math.random()*1.6, tw:Math.random()*Math.PI*2});
   updateComboHUD();
   updateDivaHUD();
   hideEventBanner();
   document.getElementById('memoryModal').classList.remove('show');
+  try { document.getElementById('secretRoom').classList.remove('show'); } catch(e){}
   player = makePlayer('lulu');
 
   clouds = [];
@@ -1623,6 +2051,34 @@ document.getElementById('memoryModal').addEventListener('click', (e) => {
   if (e.target.id === 'memoryModal') closeMemoryModal();
 });
 
+/* ===== SALA SECRETA — 5 corações dourados ===== */
+function triggerSecretRoom() {
+  if (secretRoomActive || state !== 'playing') return;
+  secretRoomActive = true;
+  _secretRoomThisRun = true;
+  state = 'paused';
+  addScore(50);
+  gain += 10;
+  document.getElementById('gainVal').textContent = gain;
+  document.getElementById('coinsVal').textContent = getInt(LS_KEYS.coinsLulu) + gain;
+  document.getElementById('secretRoom').classList.add('show');
+  for (let i=0;i<50;i++) {
+    particles.push(new Particle(W*0.5, H*0.4,
+      ['#ffd740','#ff80ab','#b388ff','#ffffff'][i%4],
+      { spread:22, up:12, life:90, size:3+Math.random()*3, grav:0.08, heart:i%5===0 }));
+  }
+}
+function closeSecretRoom() {
+  document.getElementById('secretRoom').classList.remove('show');
+  if (state === 'paused') state = 'playing';
+}
+try {
+  document.getElementById('secretClose').onclick = closeSecretRoom;
+  document.getElementById('secretRoom').addEventListener('click', (e) => {
+    if (e.target.id === 'secretRoom') closeSecretRoom();
+  });
+} catch(e){}
+
 function triggerDivaMode() {
   if (divaUsed || state !== 'playing') return;
   divaUsed = true;
@@ -1722,7 +2178,12 @@ function update() {
     player.y = groundY - player.h;
     player.vy = 0;
     player.onGround = true;
+    const usedDoubleThisCycle = (player.jumps >= 2);
     player.jumps = 0;
+    if (!usedDoubleThisCycle) {
+      _lastJumpWasDouble = false;
+      _doubleJumpsInRow = 0;
+    }
     _lastGroundTick = tickCount;
   }
   player.bob += 0.32;
@@ -1793,6 +2254,18 @@ function update() {
         addScore(h.value + comboBonus);
 
         gain += h.value;
+
+        if (!secretRoomActive && (h.value >= 5)) {
+          secretHeartsCollected++;
+          for (let ee=0; ee<8; ee++) {
+            particles.push(new Particle(h.x, h.y, h.kind === 'purple' ? '#651fff' : '#00a152',
+            { spread: 6, up: 5, life: 50, size: 3, grav: 0.1, heart: true }));
+          }
+        }
+        if (!secretRoomActive && secretHeartsCollected >= 5) {
+          triggerSecretRoom();
+        }
+
         document.getElementById('gainVal').textContent = gain;
         updateComboHUD();
         // Sempre Lulu
@@ -1862,6 +2335,7 @@ function triggerGameOver() {
       if (a.special === 'combo10') unlockedNow = maxCombo >= 10;
       else if (a.special === 'diva') unlockedNow = divaUsed;
       else if (a.special === 'secret') unlockedNow = secretFound;
+      else if (a.special === 'secretroom') unlockedNow = _secretRoomThisRun;
       else unlockedNow = score >= a.pts;
 
       if (unlockedNow && !unlockedBefore.includes(a.id)) {
@@ -1977,6 +2451,8 @@ function backToMenu() {
   document.getElementById('hud').style.display = 'none';
   hideEventBanner();
   document.getElementById('memoryModal').classList.remove('show');
+  try { document.getElementById('secretRoom').classList.remove('show'); } catch(e){}
+  secretRoomActive = false;
   const bp = document.getElementById('btnPular');
   bp.style.display = 'none';
   document.getElementById('scrMenu').classList.remove('hidden');
@@ -2031,6 +2507,8 @@ loop();
 (function initMenuClouds() {
   clouds = [];
   for (let i = 0; i < 8; i++) clouds.push(new Cloud(120 + i*200, 60 + (i%3)*80, 0.9 + (i%3)*0.3));
+  stars = [];
+  for (let s=0; s<70; s++) stars.push({x:Math.random()*W, y:Math.random()*(groundY-100), r:0.6+Math.random()*1.6, tw:Math.random()*Math.PI*2});
 })();
 </script>
 
