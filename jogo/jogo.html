@@ -60,12 +60,103 @@
       0 0 0 1px rgba(255,255,255,0.1) inset;
     background: linear-gradient(180deg, #ffe4f0 0%, #ffd1e6 45%, #e8d3ff 100%);
     touch-action: manipulation;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .game-inner {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    aspect-ratio: 16 / 9;
+    max-width: 100%;
+    max-height: 100%;
+  }
+
+  /* ============== CELULAR: TELA INTEIRA ============== */
+  @media (max-aspect-ratio: 1/1) {
+    .app {
+      padding: 0;
+      width: 100%;
+      height: 100%;
+      justify-content: center;
+      align-items: center;
+    }
+    h1.titulo { display: none; }
+    .game-shell {
+      width: 100%;
+      height: 100%;
+      max-width: 100%;
+      max-height: 100%;
+      aspect-ratio: auto;
+      border-radius: 0;
+      border: none;
+      box-shadow: none;
+    }
+    .game-inner {
+      width: 100%;
+      height: 100%;
+      max-width: 100%;
+      max-height: 100%;
+      aspect-ratio: auto;
+    }
+    canvas { object-fit: cover; }
+    #btnPular { display: none !important; }
+  }
+
+  @media (max-width: 480px) {
+    .app {
+      padding: 0;
+      width: 100vw;
+      height: 100vh;
+      justify-content: center;
+      align-items: center;
+      margin: 0;
+    }
+    h1.titulo { display: none; }
+    .game-shell {
+      width: 100vw;
+      height: 100vh;
+      max-width: 100vw;
+      max-height: 100vh;
+      aspect-ratio: auto;
+      border-radius: 0;
+      border: none;
+      box-shadow: none;
+    }
+    .game-inner {
+      width: 100%;
+      height: 100%;
+      aspect-ratio: auto;
+    }
+    canvas { object-fit: cover; }
+    #btnPular { display: none !important; }
+    .hud {
+      top: 6px;
+      left: 6px;
+      right: 6px;
+      gap: 4px;
+    }
+    .hud-group { gap: 4px; }
+    .hud-chip {
+      padding: 4px 9px;
+      font-size: 0.7rem;
+      border-width: 1.5px;
+      gap: 3px;
+      border-radius: 40px;
+      line-height: 1.3;
+    }
+    .overlay { padding: 12px; }
+    .overlay h2 { font-size: 1.25rem; }
+    .overlay .sub { font-size: 0.78rem; }
   }
 
   canvas {
     display: block;
     width: 100%;
     height: 100%;
+    object-fit: contain;
   }
 
   /* Overlays */
@@ -395,7 +486,7 @@
     background: rgba(32, 0, 70, 0.76);
     backdrop-filter: blur(10px);
     -webkit-backdrop-filter: blur(10px);
-    z-index: 20;
+    z-index: 9999;
     text-align: center;
   }
   #memoryModal.show { display: flex; animation: overlayIn 0.35s ease; }
@@ -438,7 +529,7 @@
     display: none;
     align-items: center;
     justify-content: center;
-    z-index: 50;
+    z-index: 9999;
     padding: 20px;
   }
   #secretRoom.show { display: flex; animation: overlayIn 0.55s ease; }
@@ -531,14 +622,49 @@
   }
   .secret-card button { margin-top: 4px; }
 
+  @media (max-width: 768px) {
+    #btnPular {
+      padding: 14px 36px !important;
+      font-size: 1rem !important;
+      bottom: 14px !important;
+      letter-spacing: 1px !important;
+      border-width: 3px !important;
+      min-width: auto;
+      width: auto;
+    }
+  }
+
   @media (max-width: 540px) {
-    #eventBanner { top: 74px; min-width: 230px; padding: 10px 14px; }
-    #eventBanner .event-title { font-size: 1rem; }
-    #eventBanner .event-sub { font-size: 0.72rem; }
-    .player-card { width: 128px; padding: 14px 10px; }
-    .avatar { font-size: 2.4rem; }
-    .btn { padding: 11px 22px; font-size: 0.9rem; }
-    .vs-box .pts { font-size: 1.15rem; }
+    #btnPular {
+      padding: 12px 28px !important;
+      font-size: 0.92rem !important;
+      bottom: 10px !important;
+      letter-spacing: 0.6px !important;
+      border-width: 3px !important;
+      min-width: 180px;
+      width: auto;
+      max-width: none;
+    }
+    #eventBanner { top: 60px; min-width: 200px; padding: 8px 12px; }
+    #eventBanner .event-title { font-size: 0.88rem; }
+    #eventBanner .event-sub { font-size: 0.68rem; }
+    .player-card { width: 120px; padding: 12px 8px; }
+    .avatar { font-size: 2.1rem; }
+    .btn { padding: 10px 20px; font-size: 0.85rem; }
+    .vs-box .pts { font-size: 1rem; }
+    .btns-row { flex-direction: column; gap: 8px; }
+    .info-bar { flex-direction: column; gap: 6px; }
+  }
+
+  @media (max-width: 380px) {
+    #btnPular {
+      padding: 10px 22px !important;
+      font-size: 0.85rem !important;
+      bottom: 8px !important;
+      letter-spacing: 0.3px !important;
+      border-width: 2.5px !important;
+      min-width: 160px;
+    }
   }
 
   @keyframes pulseBtn {
@@ -555,6 +681,7 @@
   <h1 class="titulo">💜 Jogo da Lulu 💜</h1>
 
   <div class="game-shell" id="shell">
+    <div class="game-inner">
     <canvas id="gameCanvas" width="1600" height="900"></canvas>
 
     <!-- BOTÃO PULAR GARANTIDO (100% inline, sem dependência de listeners -->
@@ -735,6 +862,7 @@
         <!-- <button class="btn btn-ghost" onclick="window.location.href='../ranking.html'">🏆 Ranking</button> -->
         <button class="btn btn-ghost" onclick="window.location.href='../menu.html'">← Menu</button>
       </div>
+    </div>
     </div>
   </div>
 </div>
@@ -2033,6 +2161,9 @@ function findSecretMemory() {
   }
 
   state = 'paused';
+  invincibleUntil = Math.max(invincibleUntil, tickCount + 120);
+
+  try { document.getElementById('btnPular').style.display = 'none'; } catch(e){}
 
   document.getElementById('memoryText').textContent =
     'Entre tantos corações, você encontrou uma lembrança escondida. O melhor prêmio aqui não é a pontuação… é a gente. 💜';
@@ -2042,6 +2173,8 @@ function findSecretMemory() {
 
 function closeMemoryModal() {
   document.getElementById('memoryModal').classList.remove('show');
+  try { document.getElementById('btnPular').style.display = ''; } catch(e){}
+  invincibleUntil = Math.max(invincibleUntil, tickCount + 60);
   if (state === 'paused') state = 'playing';
 }
 
@@ -2057,6 +2190,10 @@ function triggerSecretRoom() {
   secretRoomActive = true;
   _secretRoomThisRun = true;
   state = 'paused';
+  invincibleUntil = Math.max(invincibleUntil, tickCount + 120);
+
+  try { document.getElementById('btnPular').style.display = 'none'; } catch(e){}
+
   addScore(50);
   gain += 10;
   document.getElementById('gainVal').textContent = gain;
@@ -2070,6 +2207,8 @@ function triggerSecretRoom() {
 }
 function closeSecretRoom() {
   document.getElementById('secretRoom').classList.remove('show');
+  try { document.getElementById('btnPular').style.display = ''; } catch(e){}
+  invincibleUntil = Math.max(invincibleUntil, tickCount + 60);
   if (state === 'paused') state = 'playing';
 }
 try {
@@ -2169,6 +2308,8 @@ function update() {
   speed = Math.min(19, 10 + gameTime / 700);
   checkSpecialSystems();
 
+  if (state !== 'playing') return;
+
   const previousPlayerBottom = player.y + player.h;
   const previousPlayerVy = player.vy;
 
@@ -2202,7 +2343,6 @@ function update() {
     const ob = obstacles[i];
     ob.update(speed);
 
-    // Caindo em cima do bichinho/obstáculo: derrota ele e quica para cima.
     const horizontalOverlap =
       hitboxPlayer.x < ob.x + ob.w - 6 &&
       hitboxPlayer.x + hitboxPlayer.w > ob.x + 6;
@@ -2264,11 +2404,11 @@ function update() {
         }
         if (!secretRoomActive && secretHeartsCollected >= 5) {
           triggerSecretRoom();
+          if (state !== 'playing') return;
         }
 
         document.getElementById('gainVal').textContent = gain;
         updateComboHUD();
-        // Sempre Lulu
         document.getElementById('coinsVal').textContent = getInt(LS_KEYS.coinsLulu) + gain;
         for (let k = 0; k < 18; k++) {
           particles.push(new Particle(h.x, h.y,
