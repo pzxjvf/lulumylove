@@ -347,7 +347,91 @@
   @keyframes toastIn { from { opacity: 0; transform: translateY(-10px);} to {opacity:1;transform:translateY(0);} }
   @keyframes toastOut { to { opacity: 0; transform: translateY(-18px); } }
 
+
+
+  /* =========================
+     ATUALIZAÇÃO 2.0
+     ========================= */
+  .hud-chip.combo-bg { background: rgba(255, 64, 129, 0.88); }
+  .hud-chip.diva-bg { background: linear-gradient(135deg, rgba(255,64,129,0.92), rgba(124,77,255,0.92)); }
+  .hud-chip.diva-bg.active { animation: divaPulse 0.7s infinite alternate; }
+  @keyframes divaPulse {
+    from { box-shadow: 0 4px 14px rgba(0,0,0,0.2), 0 0 0 rgba(255,64,129,0); }
+    to { box-shadow: 0 4px 14px rgba(0,0,0,0.2), 0 0 22px rgba(255,64,129,0.8); }
+  }
+
+  #eventBanner {
+    position: absolute;
+    top: 88px;
+    left: 50%;
+    transform: translateX(-50%) translateY(-18px) scale(0.94);
+    min-width: 280px;
+    max-width: 80%;
+    padding: 13px 22px;
+    border-radius: 20px;
+    background: rgba(74,0,224,0.88);
+    border: 2px solid rgba(255,255,255,0.55);
+    box-shadow: 0 12px 30px rgba(0,0,0,0.3), 0 0 25px rgba(179,136,255,0.35);
+    text-align: center;
+    z-index: 4;
+    opacity: 0;
+    pointer-events: none;
+    transition: 0.28s ease;
+  }
+  #eventBanner.show {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0) scale(1);
+  }
+  #eventBanner .event-title { font-size: 1.18rem; font-weight: 900; }
+  #eventBanner .event-sub { margin-top: 3px; font-size: 0.82rem; font-weight: 700; opacity: 0.92; }
+
+  #memoryModal {
+    position: absolute;
+    inset: 0;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+    background: rgba(32, 0, 70, 0.76);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    z-index: 20;
+    text-align: center;
+  }
+  #memoryModal.show { display: flex; animation: overlayIn 0.35s ease; }
+  .memory-card {
+    width: min(390px, 92%);
+    padding: 28px 24px;
+    border-radius: 26px;
+    background: linear-gradient(145deg, rgba(124,77,255,0.9), rgba(255,64,129,0.82));
+    border: 3px solid rgba(255,255,255,0.55);
+    box-shadow: 0 20px 50px rgba(0,0,0,0.4);
+  }
+  .memory-card .memory-heart { font-size: 3.5rem; margin-bottom: 8px; }
+  .memory-card h2 { font-size: 1.55rem; font-weight: 900; margin-bottom: 8px; }
+  .memory-card p { font-size: 0.98rem; line-height: 1.5; opacity: 0.96; }
+  .memory-card button { margin-top: 18px; }
+
+  .run-stats {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    justify-content: center;
+    margin-bottom: 14px;
+  }
+  .run-stat {
+    background: rgba(255,255,255,0.11);
+    border: 1px solid rgba(255,255,255,0.25);
+    padding: 6px 10px;
+    border-radius: 50px;
+    font-size: 0.78rem;
+    font-weight: 800;
+  }
+
   @media (max-width: 540px) {
+    #eventBanner { top: 74px; min-width: 230px; padding: 10px 14px; }
+    #eventBanner .event-title { font-size: 1rem; }
+    #eventBanner .event-sub { font-size: 0.72rem; }
     .player-card { width: 128px; padding: 14px 10px; }
     .avatar { font-size: 2.4rem; }
     .btn { padding: 11px 22px; font-size: 0.9rem; }
@@ -412,6 +496,22 @@
       <div class="hud-group">
         <div class="hud-chip" id="chipCoins">💰 <span id="coinsVal">0</span></div>
         <div class="hud-chip" id="chipRec">🏆 <span id="recVal">0</span></div>
+        <div class="hud-chip combo-bg" id="chipCombo">🔥 x<span id="comboVal">0</span></div>
+        <div class="hud-chip diva-bg" id="chipDiva">👑 <span id="divaVal">DIVA</span></div>
+      </div>
+    </div>
+
+    <div id="eventBanner">
+      <div class="event-title" id="eventTitle">💜 EVENTO!</div>
+      <div class="event-sub" id="eventSub">Algo especial aconteceu!</div>
+    </div>
+
+    <div id="memoryModal">
+      <div class="memory-card">
+        <div class="memory-heart">💜</div>
+        <h2>✨ Memória Secreta!</h2>
+        <p id="memoryText">Você encontrou um cantinho secreto do nosso jogo. 💕</p>
+        <button class="btn btn-lulu" id="memoryClose">CONTINUAR 💜</button>
       </div>
     </div>
 
@@ -454,6 +554,11 @@
       <div class="ganhou" id="ganhouLine">💗 Ganhou <b id="ganhouQtd">0</b> corações para usar na Loja!</div>
 
       <div class="achv-list" id="achvMini"></div>
+
+      <div class="run-stats">
+        <div class="run-stat">🔥 Maior combo: <span id="finalCombo">0</span></div>
+        <div class="run-stat">👑 Modo Diva: <span id="finalDiva">Não</span></div>
+      </div>
 
       <div style="
         background:rgba(255,255,255,0.12);
@@ -570,6 +675,9 @@ const ACHIEVEMENTS = [
   { id: 'a200',  pts: 200,   emoji: '💜', label: '200 pts',  nome: 'Coração Roxo' },
   { id: 'a500',  pts: 500,   emoji: '🚀', label: '500 pts',  nome: 'Muito Amor' },
   { id: 'a1000', pts: 1000,  emoji: '👑', label: '1000 pts', nome: 'Rei do Amor' },
+  { id: 'combo10', special: 'combo10', emoji: '🔥', label: 'COMBO 10', nome: 'Imparável' },
+  { id: 'diva', special: 'diva', emoji: '👑', label: 'MODO DIVA', nome: 'Diva Suprema' },
+  { id: 'secret', special: 'secret', emoji: '🔒', label: '???', nome: 'Memória Secreta' },
 ];
 
 const PLAYERS = {
@@ -656,6 +764,18 @@ let bgOffset = 0;
 let tickCount = 0;
 let gameTime = 0;
 let invincibleUntil = 0;
+
+// ===== SISTEMAS DA VERSÃO 2.0 =====
+let combo = 0;
+let maxCombo = 0;
+let comboTimer = 0;
+let divaUsed = false;
+let divaUntil = 0;
+let scoreMultiplier = 1;
+let nextEventTick = 650;
+let eventBannerUntil = 0;
+let secretFound = false;
+let joaoEventUntil = 0;
 
 function makePlayer(pkey) {
   const cfg = PLAYERS[pkey];
@@ -802,7 +922,22 @@ class Heart {
   constructor() {
     this.size = 42 + Math.random()*16;
     const r = Math.random();
-    this.value = r < 0.12 ? 5 : (r < 0.42 ? 3 : 1);
+
+    // Corações especiais da versão 2.0
+    if (r < 0.055) {
+      this.value = 10;
+      this.kind = 'green';
+    } else if (r < 0.16) {
+      this.value = 5;
+      this.kind = 'purple';
+    } else if (r < 0.42) {
+      this.value = 3;
+      this.kind = 'gold';
+    } else {
+      this.value = 1;
+      this.kind = 'pink';
+    }
+
     this.x = W + 40;
     this.y = groundY - 180 - Math.random()*240;
     this.collected = false;
@@ -811,24 +946,33 @@ class Heart {
   update(s) { this.x -= s; this.bob += 0.08; }
   draw() {
     if (this.collected) return;
+
     const yy = this.y + Math.sin(this.bob)*8;
-    const isBig = this.value >= 3;
-    const cor = this.value >= 5 ? '#ffd740' : '#ff4081';
-    const borda = this.value >= 5 ? '#ff6f00' : '#ff1744';
-    drawHeart(this.x, yy, this.size * (isBig ? 1.15 : 1), cor, borda);
+    const isSpecial = this.value >= 3;
+    const scale = isSpecial ? 1.15 : 1;
+
+    let cor = '#ff4081';
+    let borda = '#ff1744';
+    if (this.kind === 'purple') { cor = '#b388ff'; borda = '#651fff'; }
+    if (this.kind === 'gold') { cor = '#ffd740'; borda = '#ff6f00'; }
+    if (this.kind === 'green') { cor = '#69f0ae'; borda = '#00a152'; }
+
+    drawHeart(this.x, yy, this.size * scale, cor, borda);
+
     ctx.save();
-    ctx.fillStyle = 'rgba(255,255,255,0.75)';
+    ctx.fillStyle = 'rgba(255,255,255,0.8)';
     ctx.beginPath();
     ctx.arc(this.x - this.size*0.18, yy - this.size*0.18, this.size*0.13, 0, Math.PI*2);
     ctx.fill();
-    if (this.value >= 3) {
+
+    if (isSpecial) {
       ctx.fillStyle = '#fff';
-      ctx.strokeStyle = this.value >= 5 ? '#e65100' : '#b71c1c';
+      ctx.strokeStyle = borda;
       ctx.lineWidth = 2.5;
       ctx.beginPath();
       ctx.arc(this.x, yy + this.size*0.1, this.size*0.27, 0, Math.PI*2);
       ctx.fill(); ctx.stroke();
-      ctx.fillStyle = this.value >= 5 ? '#e65100' : '#b71c1c';
+      ctx.fillStyle = borda;
       ctx.font = `bold ${this.size*0.32}px Nunito, sans-serif`;
       ctx.textAlign = 'center';
       ctx.textBaseline = 'middle';
@@ -1094,6 +1238,17 @@ function drawPlayer(p) {
     drawHead(cx, cyTopo - 28, cfg, hair, skin, false);
   }
 
+  if (divaUntil > tickCount) {
+    ctx.save();
+    ctx.globalAlpha = 0.22 + Math.sin(tickCount * 0.18) * 0.08;
+    ctx.strokeStyle = '#ff4081';
+    ctx.lineWidth = 8;
+    ctx.beginPath();
+    ctx.arc(cx, p.y + p.h/2, Math.max(p.w,p.h) * 0.62, 0, Math.PI*2);
+    ctx.stroke();
+    ctx.restore();
+  }
+
   ctx.restore();
 }
 
@@ -1265,6 +1420,20 @@ function startGame(pkey) {
   tickCount = 0;
   gameTime = 0;
   invincibleUntil = 0;
+  combo = 0;
+  maxCombo = 0;
+  comboTimer = 0;
+  divaUsed = false;
+  divaUntil = 0;
+  scoreMultiplier = 1;
+  nextEventTick = 650 + Math.floor(Math.random()*180);
+  eventBannerUntil = 0;
+  secretFound = false;
+  joaoEventUntil = 0;
+  updateComboHUD();
+  updateDivaHUD();
+  hideEventBanner();
+  document.getElementById('memoryModal').classList.remove('show');
   player = makePlayer('lulu');
 
   clouds = [];
@@ -1388,6 +1557,151 @@ function spawn() {
   }
 }
 
+function updateComboHUD() {
+  const el = document.getElementById('comboVal');
+  if (el) el.textContent = combo;
+  const chip = document.getElementById('chipCombo');
+  if (chip) chip.style.transform = combo >= 3 ? 'scale(1.06)' : 'scale(1)';
+}
+
+function updateDivaHUD() {
+  const chip = document.getElementById('chipDiva');
+  const value = document.getElementById('divaVal');
+  if (!chip || !value) return;
+
+  if (divaUntil > tickCount) {
+    chip.classList.add('active');
+    const seconds = Math.max(0, Math.ceil((divaUntil - tickCount) / 60));
+    value.textContent = `${seconds}s`;
+  } else if (divaUsed) {
+    chip.classList.remove('active');
+    value.textContent = 'OK';
+  } else {
+    chip.classList.remove('active');
+    value.textContent = 'DIVA';
+  }
+}
+
+function showEvent(title, sub) {
+  const banner = document.getElementById('eventBanner');
+  document.getElementById('eventTitle').textContent = title;
+  document.getElementById('eventSub').textContent = sub;
+  banner.classList.add('show');
+  eventBannerUntil = tickCount + 180;
+}
+
+function hideEventBanner() {
+  const banner = document.getElementById('eventBanner');
+  if (banner) banner.classList.remove('show');
+}
+
+function findSecretMemory() {
+  if (secretFound) return;
+  secretFound = true;
+  const unlocked = getArr(LS_KEYS.achLulu);
+  if (!unlocked.includes('secret')) {
+    unlocked.push('secret');
+    setArr(LS_KEYS.achLulu, unlocked);
+  }
+
+  state = 'paused';
+
+  document.getElementById('memoryText').textContent =
+    'Entre tantos corações, você encontrou uma lembrança escondida. O melhor prêmio aqui não é a pontuação… é a gente. 💜';
+  document.getElementById('memoryModal').classList.add('show');
+  toast('🔒 Você encontrou uma Memória Secreta!');
+}
+
+function closeMemoryModal() {
+  document.getElementById('memoryModal').classList.remove('show');
+  if (state === 'paused') state = 'playing';
+}
+
+document.getElementById('memoryClose').onclick = closeMemoryModal;
+
+document.getElementById('memoryModal').addEventListener('click', (e) => {
+  if (e.target.id === 'memoryModal') closeMemoryModal();
+});
+
+function triggerDivaMode() {
+  if (divaUsed || state !== 'playing') return;
+  divaUsed = true;
+  divaUntil = tickCount + 480;
+  invincibleUntil = Math.max(invincibleUntil, divaUntil);
+  scoreMultiplier = 2;
+  updateDivaHUD();
+  showEvent('👑 MODO DIVA ATIVADO!', '8 segundos de invencibilidade + pontos em dobro!');
+  toast('👑 LULU ENTROU NO MODO DIVA!');
+
+  for (let i = 0; i < 28; i++) {
+    particles.push(new Particle(player.x + player.w/2, player.y + player.h/2,
+      ['#ff4081','#b388ff','#ffd740','#ffffff'][i%4],
+      { spread: 12, up: 8, life: 60, size: 3+Math.random()*3, grav: 0.12, heart: i%3===0 }
+    ));
+  }
+}
+
+function triggerRandomEvent() {
+  if (state !== 'playing') return;
+
+  const events = [
+    () => {
+      addScore(15);
+      joaoEventUntil = tickCount + 180;
+      showEvent('💙 JOÃO APARECEU!', 'Ele te deu sorte: +15 pontos!');
+    },
+    () => {
+      gain += 5;
+      document.getElementById('gainVal').textContent = gain;
+      document.getElementById('coinsVal').textContent = getInt(LS_KEYS.coinsLulu) + gain;
+      addScore(10);
+      showEvent('🍨 VONTADE DE SOBREMESA!', '+5 corações e +10 pontos!');
+    },
+    () => {
+      addScore(20);
+      showEvent('💋 BEIJINHO!', '+20 pontos porque sim 😌💜');
+    },
+    () => {
+      findSecretMemory();
+      addScore(25);
+      showEvent('✨ EASTER EGG!', 'Você achou uma coisa que estava escondida...');
+    }
+  ];
+
+  const chosen = events[Math.floor(Math.random() * events.length)];
+  chosen();
+}
+
+function checkSpecialSystems() {
+  if (comboTimer > 0) {
+    comboTimer--;
+    if (comboTimer === 0 && combo > 0) {
+      combo = 0;
+      updateComboHUD();
+    }
+  }
+
+  if (!divaUsed && score >= 100) triggerDivaMode();
+
+  if (divaUsed && divaUntil <= tickCount && scoreMultiplier !== 1) {
+    scoreMultiplier = 1;
+    updateDivaHUD();
+    toast('👑 O Modo Diva terminou!');
+  } else {
+    updateDivaHUD();
+  }
+
+  if (gameTime >= nextEventTick) {
+    triggerRandomEvent();
+    nextEventTick = gameTime + 850 + Math.floor(Math.random()*500);
+  }
+
+  if (eventBannerUntil && tickCount >= eventBannerUntil) {
+    eventBannerUntil = 0;
+    hideEventBanner();
+  }
+}
+
 function update() {
   tickCount++;
   if (state !== 'playing') {
@@ -1397,6 +1711,7 @@ function update() {
   gameTime++;
   bgOffset += speed;
   speed = Math.min(19, 10 + gameTime / 700);
+  checkSpecialSystems();
 
   const previousPlayerBottom = player.y + player.h;
   const previousPlayerVy = player.vy;
@@ -1470,9 +1785,16 @@ function update() {
       const hb = { x: player.x + 14, y: player.y + 10, w: player.w - 28, h: player.h - 18 };
       if (rectsOverlap(hb.x,hb.y,hb.w,hb.h, h.x-h.size/2, h.y-h.size/2, h.size, h.size)) {
         h.collected = true;
-        addScore(h.value);
+
+        combo += 1;
+        comboTimer = 150;
+        if (combo > maxCombo) maxCombo = combo;
+        const comboBonus = combo >= 3 ? Math.min(10, Math.floor(combo / 3)) : 0;
+        addScore(h.value + comboBonus);
+
         gain += h.value;
         document.getElementById('gainVal').textContent = gain;
+        updateComboHUD();
         // Sempre Lulu
         document.getElementById('coinsVal').textContent = getInt(LS_KEYS.coinsLulu) + gain;
         for (let k = 0; k < 18; k++) {
@@ -1481,8 +1803,10 @@ function update() {
             { spread: 9, up: 8, life: 42, size: 3+Math.random()*3, grav: 0.14, heart: k%3===0 }
           ));
         }
-        particles.push(new Particle(h.x, h.y - 14, h.value >= 5 ? '#ff6f00' : '#c2185b', {
-          spread: 0.5, up: 1.2, life: 55, size: 0, grav: -0.04, text: `+${h.value} 💗`
+        const textCor = h.kind === 'green' ? '#00a152' : (h.kind === 'purple' ? '#651fff' : (h.kind === 'gold' ? '#e65100' : '#c2185b'));
+        const comboText = comboBonus > 0 ? ` +${comboBonus}🔥` : '';
+        particles.push(new Particle(h.x, h.y - 14, textCor, {
+          spread: 0.5, up: 1.2, life: 55, size: 0, grav: -0.04, text: `+${h.value} 💗${comboText}`
         }));
       }
     }
@@ -1496,8 +1820,13 @@ function update() {
 }
 
 function addScore(v) {
-  score += v;
+  const finalValue = Math.max(1, Math.round(v * scoreMultiplier));
+  score += finalValue;
   document.getElementById('scoreVal').textContent = score;
+
+  if (!divaUsed && score >= 100 && state === 'playing') {
+    triggerDivaMode();
+  }
 }
 
 /* =========================
@@ -1529,7 +1858,13 @@ function triggerGameOver() {
     const unlockedBefore = getArr(LS_KEYS.achLulu);
     const novosAch = [];
     ACHIEVEMENTS.forEach(a => {
-      if (score >= a.pts && !unlockedBefore.includes(a.id)) {
+      let unlockedNow = false;
+      if (a.special === 'combo10') unlockedNow = maxCombo >= 10;
+      else if (a.special === 'diva') unlockedNow = divaUsed;
+      else if (a.special === 'secret') unlockedNow = secretFound;
+      else unlockedNow = score >= a.pts;
+
+      if (unlockedNow && !unlockedBefore.includes(a.id)) {
         unlockedBefore.push(a.id);
         novosAch.push(a);
       }
@@ -1596,10 +1931,12 @@ function showGameOver(isNewRecord, novosAch, bonus) {
     const ok = unlocked.includes(a.id);
     const el = document.createElement('div');
     el.className = `achv ${ok ? 'unlocked' : 'locked'}`;
-    el.title = `${a.nome} — ${a.pts} pontos`;
+    const label = (!ok && a.special === 'secret') ? '???' : a.label;
+    const nome = (!ok && a.special === 'secret') ? 'Segredo' : a.nome;
+    el.title = a.special === 'secret' && !ok ? 'Existe uma conquista escondida...' : `${nome}${a.pts ? ` — ${a.pts} pontos` : ''}`;
     el.innerHTML = `
-      <span class="a-emoji">${a.emoji}</span>
-      <div class="a-label">${a.label}</div>
+      <span class="a-emoji">${ok ? a.emoji : (a.special === 'secret' ? '🔒' : a.emoji)}</span>
+      <div class="a-label">${label}</div>
       ${ok && novosAch.find(n => n.id === a.id) ? '<span class="novo">NOVO</span>' : ''}
     `;
     achDiv.appendChild(el);
@@ -1608,6 +1945,8 @@ function showGameOver(isNewRecord, novosAch, bonus) {
   // Pontuação final da Lulu
   document.getElementById('finalPts').textContent = score;
   document.getElementById('finalRec').textContent = getInt(LS_KEYS.lulu);
+  document.getElementById('finalCombo').textContent = maxCombo;
+  document.getElementById('finalDiva').textContent = divaUsed ? 'Sim 👑' : 'Não';
 
   // Botão jogar novamente
   const btnNovamente = document.getElementById('btnJogarNovamente');
@@ -1636,6 +1975,8 @@ function backToMenu() {
   refreshMenuInfo();
   document.getElementById('scrOver').classList.add('hidden');
   document.getElementById('hud').style.display = 'none';
+  hideEventBanner();
+  document.getElementById('memoryModal').classList.remove('show');
   const bp = document.getElementById('btnPular');
   bp.style.display = 'none';
   document.getElementById('scrMenu').classList.remove('hidden');
@@ -1651,6 +1992,16 @@ function render() {
     obstacles.forEach(o => o.draw());
     hearts.forEach(h => h.draw());
     if (player) drawPlayer(player);
+
+    if (joaoEventUntil > tickCount && player) {
+      const joao = makePlayer('joao');
+      joao.x = Math.min(W - 180, player.x + 190);
+      joao.y = groundY - joao.h;
+      joao.onGround = true;
+      joao.bob = player.bob + Math.PI;
+      drawPlayer(joao);
+    }
+
     particles.forEach(p => p.draw());
   } else {
     if (!player) player = makePlayer('lulu');
