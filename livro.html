@@ -1,0 +1,1521 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>📖 O Livro da Nossa História</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400&family=Dancing+Script:wght@600;700&family=Nunito:wght@400;700&display=swap" rel="stylesheet">
+
+<style>
+  * { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    min-height: 100vh;
+    background:
+      radial-gradient(ellipse at top, #3a0ca3 0%, transparent 60%),
+      radial-gradient(ellipse at bottom, #7209b7 0%, transparent 60%),
+      linear-gradient(135deg, #1a0033 0%, #2d0050 50%, #0a0020 100%);
+    font-family: "Cormorant Garamond", serif;
+    color: #3a2817;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px 15px 40px;
+    overflow-x: hidden;
+  }
+
+  .top-bar {
+    width: 100%;
+    max-width: 1000px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    color: #fff;
+    font-family: "Nunito", sans-serif;
+    z-index: 10;
+  }
+
+  .back-btn {
+    background: rgba(255,255,255,0.12);
+    border: 1.5px solid rgba(255,255,255,0.3);
+    color: white;
+    padding: 8px 18px;
+    border-radius: 25px;
+    font-family: "Nunito", sans-serif;
+    font-weight: 700;
+    cursor: pointer;
+    backdrop-filter: blur(10px);
+    transition: 0.3s;
+  }
+  .back-btn:hover {
+    background: rgba(255,255,255,0.22);
+    transform: scale(1.05);
+  }
+
+  .page-indicator {
+    background: rgba(255,255,255,0.12);
+    border: 1.5px solid rgba(255,255,255,0.3);
+    padding: 8px 16px;
+    border-radius: 25px;
+    font-weight: 700;
+    backdrop-filter: blur(10px);
+    font-size: 0.9em;
+  }
+
+  .book-title {
+    text-align: center;
+    margin-bottom: 18px;
+    z-index: 5;
+  }
+  .book-title h1 {
+    font-family: "Dancing Script", cursive;
+    font-size: clamp(2rem, 5vw, 3.2rem);
+    margin: 0;
+    background: linear-gradient(135deg, #ffd700, #ff9ecf, #c77dff, #ffd700);
+    background-size: 300% 300%;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    animation: shimmer 4s ease infinite;
+    text-shadow: 0 0 30px rgba(199, 125, 255, 0.3);
+  }
+  .book-title p {
+    color: rgba(255,255,255,0.75);
+    font-family: "Nunito", sans-serif;
+    font-size: 0.95em;
+    margin: 5px 0 0;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+  }
+
+  @keyframes shimmer {
+    0%, 100% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+  }
+
+  .book-wrapper {
+    perspective: 2000px;
+    width: 100%;
+    max-width: 1000px;
+    display: flex;
+    justify-content: center;
+  }
+
+  .book {
+    width: 100%;
+    max-width: 960px;
+    min-height: 620px;
+    position: relative;
+    transform-style: preserve-3d;
+    display: flex;
+    border-radius: 8px;
+    box-shadow:
+      0 0 0 2px #4a2c1a,
+      0 0 0 5px #6b3f24,
+      0 25px 60px rgba(0,0,0,0.6),
+      0 15px 30px rgba(0,0,0,0.5),
+      inset 0 0 80px rgba(139, 90, 43, 0.1);
+    background: #6b3f24;
+  }
+
+  .book-spine {
+    width: 28px;
+    min-height: 620px;
+    background: linear-gradient(to right,
+      #3a1f10 0%,
+      #5a3318 25%,
+      #7a4a28 50%,
+      #5a3318 75%,
+      #3a1f10 100%);
+    position: relative;
+    box-shadow:
+      inset -3px 0 6px rgba(0,0,0,0.5),
+      inset 3px 0 6px rgba(255,255,255,0.05);
+    z-index: 3;
+    flex-shrink: 0;
+  }
+  .book-spine::before {
+    content: "";
+    position: absolute;
+    top: 30px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 16px;
+    height: 40px;
+    background: linear-gradient(180deg, #ffd700, #ff9ecf);
+    border-radius: 2px;
+    opacity: 0.9;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.3);
+  }
+  .book-spine::after {
+    content: "";
+    position: absolute;
+    bottom: 30px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 16px;
+    height: 40px;
+    background: linear-gradient(180deg, #ff9ecf, #c77dff);
+    border-radius: 2px;
+    opacity: 0.9;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.3);
+  }
+
+  .page {
+    flex: 1;
+    min-height: 620px;
+    padding: 45px 50px 60px;
+    position: relative;
+    overflow-y: auto;
+    max-height: 80vh;
+  }
+
+  .page-left {
+    background:
+      linear-gradient(to right,
+        rgba(139, 90, 43, 0.08) 0%,
+        transparent 5%,
+        transparent 95%,
+        rgba(139, 90, 43, 0.04) 100%),
+      repeating-linear-gradient(
+        180deg,
+        transparent 0px,
+        transparent 31px,
+        rgba(139, 90, 43, 0.05) 31px,
+        rgba(139, 90, 43, 0.05) 32px
+      ),
+      radial-gradient(ellipse at 20% 10%, rgba(255, 235, 180, 0.5), transparent 50%),
+      radial-gradient(ellipse at 80% 90%, rgba(210, 170, 120, 0.2), transparent 50%),
+      linear-gradient(180deg, #fdf6e3 0%, #f5ecd3 50%, #f3e7c9 100%);
+    box-shadow: inset 15px 0 25px -15px rgba(0,0,0,0.2);
+    border-right: 1px solid rgba(139, 90, 43, 0.15);
+  }
+
+  .page-right {
+    background:
+      linear-gradient(to left,
+        rgba(139, 90, 43, 0.08) 0%,
+        transparent 5%,
+        transparent 95%,
+        rgba(139, 90, 43, 0.04) 100%),
+      repeating-linear-gradient(
+        180deg,
+        transparent 0px,
+        transparent 31px,
+        rgba(139, 90, 43, 0.05) 31px,
+        rgba(139, 90, 43, 0.05) 32px
+      ),
+      radial-gradient(ellipse at 80% 10%, rgba(255, 235, 180, 0.5), transparent 50%),
+      radial-gradient(ellipse at 20% 90%, rgba(210, 170, 120, 0.2), transparent 50%),
+      linear-gradient(180deg, #fdf6e3 0%, #f5ecd3 50%, #f3e7c9 100%);
+    box-shadow: inset -15px 0 25px -15px rgba(0,0,0,0.2);
+    border-left: 1px solid rgba(139, 90, 43, 0.15);
+  }
+
+  .page::-webkit-scrollbar { width: 6px; }
+  .page::-webkit-scrollbar-track { background: transparent; }
+  .page::-webkit-scrollbar-thumb {
+    background: rgba(139, 90, 43, 0.3);
+    border-radius: 3px;
+  }
+
+  .page-number {
+    position: absolute;
+    bottom: 18px;
+    font-family: "Cormorant Garamond", serif;
+    font-style: italic;
+    color: #6b4423;
+    font-size: 0.95em;
+    opacity: 0.8;
+  }
+  .page-left .page-number { left: 50px; }
+  .page-right .page-number { right: 50px; }
+
+  .page-corner {
+    position: absolute;
+    width: 40px;
+    height: 40px;
+    background: linear-gradient(135deg, rgba(0,0,0,0.05) 0%, transparent 50%);
+  }
+  .page-left .page-corner { top: 0; right: 0; border-top-right-radius: 8px; }
+  .page-right .page-corner { top: 0; left: 0; border-top-left-radius: 8px; }
+
+  .toc-entry {
+    padding: 14px 18px;
+    border-bottom: 1px dashed rgba(107, 68, 35, 0.3);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    cursor: pointer;
+    transition: 0.25s;
+    border-radius: 6px;
+    margin-bottom: 4px;
+    position: relative;
+  }
+  .toc-entry:hover:not(.locked) {
+    background: rgba(255, 200, 150, 0.2);
+    transform: translateX(4px);
+  }
+
+  .toc-entry.unlocked {
+    background: linear-gradient(90deg, rgba(199, 125, 255, 0.12), transparent);
+    border-left: 3px solid #c77dff;
+  }
+  .toc-entry.unlocked:hover {
+    background: linear-gradient(90deg, rgba(199, 125, 255, 0.22), rgba(255, 158, 207, 0.1));
+  }
+
+  .toc-entry.locked {
+    opacity: 0.6;
+    cursor: not-allowed;
+    filter: grayscale(0.3);
+  }
+  .toc-entry.locked::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: repeating-linear-gradient(
+      45deg,
+      transparent,
+      transparent 10px,
+      rgba(107, 68, 35, 0.04) 10px,
+      rgba(107, 68, 35, 0.04) 20px
+    );
+    pointer-events: none;
+    border-radius: 6px;
+  }
+
+  .toc-info { flex: 1; min-width: 0; }
+
+  .toc-chapter {
+    font-family: "Nunito", sans-serif;
+    font-size: 0.75em;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    color: #8a5a2b;
+    font-weight: 700;
+    margin-bottom: 3px;
+  }
+
+  .toc-title {
+    font-family: "Cormorant Garamond", serif;
+    font-size: 1.25em;
+    font-weight: 600;
+    color: #3a2817;
+    line-height: 1.2;
+  }
+
+  .toc-date {
+    text-align: right;
+    flex-shrink: 0;
+  }
+  .toc-date .date-label {
+    font-family: "Nunito", sans-serif;
+    font-size: 0.7em;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: #8a5a2b;
+    font-weight: 700;
+  }
+  .toc-date .date-value {
+    font-family: "Cormorant Garamond", serif;
+    font-size: 1.1em;
+    font-weight: 600;
+    color: #5a3a1a;
+  }
+
+  .lock-icon {
+    font-size: 1.5em;
+    margin-left: 8px;
+    flex-shrink: 0;
+  }
+
+  .divider-dot {
+    width: 6px;
+    height: 6px;
+    background: #c77dff;
+    border-radius: 50%;
+    margin: 0 4px;
+  }
+
+  .chapter-header {
+    text-align: center;
+    margin-bottom: 30px;
+    padding-bottom: 20px;
+    border-bottom: 2px double rgba(107, 68, 35, 0.3);
+  }
+  .chapter-header .ch-num {
+    font-family: "Nunito", sans-serif;
+    font-size: 0.75em;
+    text-transform: uppercase;
+    letter-spacing: 3px;
+    color: #c77dff;
+    font-weight: 700;
+    margin-bottom: 6px;
+  }
+  .chapter-header h2 {
+    font-family: "Dancing Script", cursive;
+    font-size: 2.4em;
+    margin: 0;
+    color: #3a2817;
+    line-height: 1.1;
+  }
+  .chapter-header .ch-date {
+    margin-top: 10px;
+    font-family: "Cormorant Garamond", serif;
+    font-style: italic;
+    color: #6b4423;
+    font-size: 1.05em;
+  }
+  .chapter-header .ch-heart {
+    margin-top: 12px;
+    font-size: 1.3em;
+    color: #c77dff;
+    letter-spacing: 8px;
+  }
+
+  .chapter-content {
+    font-family: "Cormorant Garamond", serif;
+    font-size: 1.15em;
+    line-height: 1.75;
+    color: #2e1f10;
+  }
+  .chapter-content p {
+    text-indent: 1.8em;
+    margin: 0 0 14px;
+    text-align: justify;
+  }
+  .chapter-content p:first-of-type::first-letter {
+    font-family: "Dancing Script", cursive;
+    font-size: 3.5em;
+    float: left;
+    line-height: 0.9;
+    padding: 4px 8px 0 0;
+    color: #c77dff;
+    font-weight: 700;
+  }
+
+  .chapter-content .quote {
+    border-left: 3px solid #c77dff;
+    padding: 8px 20px;
+    margin: 20px 0;
+    font-style: italic;
+    background: rgba(199, 125, 255, 0.08);
+    border-radius: 0 8px 8px 0;
+    color: #5a3a7a;
+  }
+
+  .editor-placeholder {
+    font-family: "Nunito", sans-serif;
+    background: rgba(199, 125, 255, 0.1);
+    border: 2px dashed rgba(199, 125, 255, 0.5);
+    padding: 14px 18px;
+    border-radius: 12px;
+    margin: 20px 0;
+    text-align: center;
+    font-size: 0.85em;
+    color: #7a4a9a;
+    cursor: pointer;
+    transition: 0.3s;
+  }
+  .editor-placeholder:hover {
+    background: rgba(199, 125, 255, 0.2);
+    border-color: #c77dff;
+    transform: scale(1.02);
+  }
+
+  .edit-area {
+    width: 100%;
+    min-height: 180px;
+    padding: 15px;
+    border: 2px solid #c77dff;
+    border-radius: 10px;
+    background: rgba(255, 250, 240, 0.9);
+    font-family: "Cormorant Garamond", serif;
+    font-size: 1.1em;
+    line-height: 1.7;
+    color: #2e1f10;
+    resize: vertical;
+    outline: none;
+    transition: 0.3s;
+  }
+  .edit-area:focus {
+    box-shadow: 0 0 0 3px rgba(199, 125, 255, 0.25);
+    border-color: #9d4edd;
+  }
+
+  .edit-actions {
+    display: flex;
+    gap: 10px;
+    margin-top: 12px;
+    justify-content: flex-end;
+  }
+  .btn-edit {
+    font-family: "Nunito", sans-serif;
+    font-weight: 700;
+    padding: 8px 18px;
+    border-radius: 20px;
+    border: none;
+    cursor: pointer;
+    transition: 0.25s;
+    font-size: 0.9em;
+  }
+  .btn-save {
+    background: linear-gradient(135deg, #c77dff, #9d4edd);
+    color: white;
+    box-shadow: 0 4px 12px rgba(157, 78, 221, 0.4);
+  }
+  .btn-save:hover { transform: scale(1.05); box-shadow: 0 6px 18px rgba(157, 78, 221, 0.5); }
+  .btn-cancel {
+    background: rgba(107, 68, 35, 0.1);
+    color: #6b4423;
+    border: 1.5px solid rgba(107, 68, 35, 0.3);
+  }
+  .btn-cancel:hover { background: rgba(107, 68, 35, 0.2); }
+
+  .locked-cover {
+    position: relative;
+    min-height: 400px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 20px;
+  }
+  .locked-big {
+    font-size: 5rem;
+    margin-bottom: 20px;
+    filter: drop-shadow(0 4px 8px rgba(0,0,0,0.2));
+    animation: float 3s ease-in-out infinite;
+  }
+  @keyframes float {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-10px); }
+  }
+  .locked-title {
+    font-family: "Dancing Script", cursive;
+    font-size: 1.8em;
+    color: #5a3a1a;
+    margin-bottom: 10px;
+  }
+  .locked-subtitle {
+    font-family: "Nunito", sans-serif;
+    font-size: 0.85em;
+    color: #8a5a2b;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    margin-bottom: 16px;
+    font-weight: 700;
+  }
+  .countdown {
+    background: linear-gradient(135deg, rgba(199, 125, 255, 0.15), rgba(255, 158, 207, 0.15));
+    border: 2px dashed rgba(199, 125, 255, 0.5);
+    padding: 16px 24px;
+    border-radius: 16px;
+    margin-top: 10px;
+  }
+  .countdown-label {
+    font-family: "Nunito", sans-serif;
+    font-size: 0.7em;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    color: #8a5a7a;
+    font-weight: 700;
+    margin-bottom: 6px;
+  }
+  .countdown-numbers {
+    font-family: "Cormorant Garamond", serif;
+    font-size: 1.6em;
+    font-weight: 700;
+    color: #6b3a9a;
+  }
+  .countdown-numbers span {
+    display: inline-block;
+    min-width: 55px;
+  }
+  .countdown-numbers small {
+    display: block;
+    font-family: "Nunito", sans-serif;
+    font-size: 0.45em;
+    color: #8a5a2b;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    font-weight: 700;
+  }
+
+  .back-toc {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-family: "Nunito", sans-serif;
+    font-size: 0.8em;
+    font-weight: 700;
+    color: #c77dff;
+    cursor: pointer;
+    background: rgba(199, 125, 255, 0.1);
+    padding: 6px 14px;
+    border-radius: 18px;
+    border: 1.5px solid rgba(199, 125, 255, 0.35);
+    transition: 0.25s;
+    margin-bottom: 15px;
+  }
+  .back-toc:hover {
+    background: rgba(199, 125, 255, 0.2);
+    transform: translateX(-3px);
+  }
+
+  .dedication {
+    text-align: center;
+    padding: 20px 0 30px;
+  }
+  .dedication-text {
+    font-family: "Dancing Script", cursive;
+    font-size: 1.4em;
+    color: #6b4423;
+    line-height: 1.5;
+    font-style: italic;
+  }
+  .dedication-sign {
+    margin-top: 15px;
+    font-family: "Cormorant Garamond", serif;
+    font-style: italic;
+    color: #8a5a2b;
+  }
+
+  .toc-header {
+    text-align: center;
+    margin-bottom: 25px;
+  }
+  .toc-header h3 {
+    font-family: "Dancing Script", cursive;
+    font-size: 2em;
+    margin: 0 0 6px;
+    color: #3a2817;
+  }
+  .toc-header .toc-decor {
+    color: #c77dff;
+    letter-spacing: 10px;
+    font-size: 0.9em;
+  }
+
+  .nav-arrows {
+    position: fixed;
+    bottom: 30px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 12px;
+    z-index: 20;
+  }
+  .nav-arrow {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #c77dff, #9d4edd);
+    color: white;
+    border: none;
+    cursor: pointer;
+    font-size: 1.3em;
+    box-shadow: 0 6px 18px rgba(157, 78, 221, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: 0.25s;
+  }
+  .nav-arrow:hover:not(:disabled) { transform: scale(1.1); }
+  .nav-arrow:disabled {
+    opacity: 0.35;
+    cursor: not-allowed;
+    box-shadow: none;
+  }
+
+  .toast {
+    position: fixed;
+    top: 30px;
+    right: 30px;
+    background: linear-gradient(135deg, #38b000, #7b2cbf);
+    color: white;
+    padding: 14px 24px;
+    border-radius: 16px;
+    font-family: "Nunito", sans-serif;
+    font-weight: 700;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.35);
+    z-index: 9999;
+    animation: toastIn 0.4s ease forwards;
+    display: none;
+    max-width: 340px;
+    line-height: 1.5;
+    white-space: pre-line;
+  }
+  @keyframes toastIn {
+    from { opacity: 0; transform: translateX(30px); }
+    to { opacity: 1; transform: translateX(0); }
+  }
+  @keyframes toastOut {
+    to { opacity: 0; transform: translateX(30px); }
+  }
+
+  .author-badge {
+    font-family: "Nunito", sans-serif;
+    font-size: 0.75em;
+    font-weight: 700;
+    background: linear-gradient(135deg, #ffd700, #ff9ecf);
+    color: #3a1f50;
+    padding: 6px 12px;
+    border-radius: 16px;
+    cursor: pointer;
+    transition: 0.25s;
+    border: 1.5px solid rgba(255,255,255,0.4);
+    user-select: none;
+    white-space: nowrap;
+  }
+  .author-badge:hover {
+    transform: scale(1.06);
+    box-shadow: 0 4px 12px rgba(255, 158, 207, 0.5);
+  }
+
+  @media (max-width: 768px) {
+    .book { flex-direction: column; max-width: 100%; }
+    .book-spine { width: 100%; min-height: 22px; }
+    .book-spine::before, .book-spine::after { display: none; }
+    .page { min-height: auto; padding: 28px 22px 70px; max-height: none; overflow: visible; }
+    .page-left, .page-right { box-shadow: none; border: none; }
+    .page-left { border-bottom: 1px solid rgba(139, 90, 43, 0.15); }
+    .page-number { display: none; }
+    .book-title h1 { font-size: 2.2rem; }
+    .chapter-header h2 { font-size: 1.8em; }
+    .chapter-content { font-size: 1.05em; }
+    .toc-title { font-size: 1.1em; }
+    .nav-arrows { bottom: 15px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="top-bar">
+  <button class="back-btn" onclick="goBack()">← Voltar</button>
+  <div class="page-indicator" id="pageIndicator">📖 Sumário</div>
+  <div style="width:95px; display:flex; justify-content:flex-end;" id="authorSlot"></div>
+</div>
+
+<div class="book-title">
+  <h1>O Livro da Nossa História</h1>
+  <p>✨ Cada capítulo, um pedaço do nosso amor ✨</p>
+</div>
+
+<div class="book-wrapper">
+  <div class="book" id="book">
+    <div class="book-spine"></div>
+
+    <div class="page page-left" id="pageLeft">
+      <div class="page-corner"></div>
+      <div id="leftContent"></div>
+      <div class="page-number" id="pageLeftNum">i</div>
+    </div>
+
+    <div class="page page-right" id="pageRight">
+      <div class="page-corner"></div>
+      <div id="rightContent"></div>
+      <div class="page-number" id="pageRightNum">ii</div>
+    </div>
+  </div>
+</div>
+
+<div class="nav-arrows" id="navArrows">
+  <button class="nav-arrow" id="prevBtn" onclick="navPrev()" title="Anterior">‹</button>
+  <button class="nav-arrow" id="nextBtn" onclick="navNext()" title="Próximo">›</button>
+</div>
+
+<div class="toast" id="toast">💾 Salvo com sucesso!</div>
+
+<script>
+/* =========================================================
+   🌟 AREA PARA EDITAR O LIVRO 🌟
+   Tudo que for alterado aqui sera publicado para ela quando
+   voce subir o site (Netlify). Basta editar e dar deploy!
+   =========================================================
+   Campos de cada capitulo:
+   - num:        "Capitulo I", "Capitulo II"...
+   - title:      Titulo bonito do capitulo
+   - date:       Data visual (ex: "29 de Janeiro de 2023")
+   - unlockDate: Quando desbloqueia ("YYYY-MM-DDTHH:mm:ss")
+                 Deixe null para liberar agora
+   - unlocked:   true = ja esta liberado | false = cadeado
+   - content:    A historia (pule linhas com Enter)
+   ========================================================= */
+
+const LIVRO_CONFIG = {
+  tituloGeral:  "O Livro da Nossa Historia",
+  subtituloGeral: "✨ Cada capitulo, um pedaco do nosso amor ✨",
+};
+
+const defaultChapters = [
+
+  /* ========== CAPITULO 1 ========== */
+  {
+    id: 1,
+    num: "Capitulo I",
+    title: "O Dia em que Tudo Comecou",
+    date: "29 de Janeiro de 2023",
+    unlockDate: null,
+    unlocked: true,
+    content:
+`Eu não sabia que aquele domingo seria importante.
+
+Na verdade, eu estava ocupado demais comemorando.
+
+Tinha acabado de chegar da casa da minha irmã e meu time tinha acabado de ser campeão da Supercopa do Brasil. Eu estava eufórico. Daqueles níveis de euforia em que qualquer pessoa razoável provavelmente recomendaria água, alguns minutos de silêncio e, talvez, uma avaliação sobre o quanto de futebol era saudável para um ser humano.
+
+Mas eu não queria água.
+
+Eu queria comemorar.
+
+E, naquele momento, eu sinceramente achava que nada conseguiria deixar aquele domingo melhor.
+
+Eu estava errado.
+
+O celular vibrou.
+
+Era uma mensagem de uma antiga amiga.
+
+Nada muito extraordinário. Pelo menos, não naquele primeiro segundo.
+
+Ela perguntou se eu queria conhecer uma garota.
+
+Uma garota.
+
+Amiga dela.
+
+Eu poderia simplesmente ter respondido que sim ou não, mas havia um pequeno detalhe: eu já sabia quem ela era.
+
+Não conhecia de verdade. Não ainda.
+
+Mas já tinha reparado nela algumas vezes.
+
+E, para ser completamente honesto, ela era facilmente a garota mais bonita do grupo.
+
+Eu já tinha olhado algumas fotos dela, mas ninguém sabia e eu disfarcei bem.
+
+Só que eu não fazia ideia se ela teria qualquer interesse em me conhecer.
+
+Então, quando minha amiga apareceu perguntando se eu queria conhecê-la, minha primeira reação provavelmente foi uma mistura bastante específica de curiosidade, surpresa e aquele pequeno pensamento inconveniente que surge quando alguma coisa que você queria, mas não tinha coragem de admitir que queria, aparece de repente na sua frente.
+
+Foi então que ela perguntou se eu teria algum problema pelo fato de a garota ser cadeirante.
+
+Ela explicou que ela não tinha movimento nos pés.
+
+Na época, nem a própria melhor amiga conseguia explicar direito qual era a condição dela ou quais eram, de fato, as limitações.
+
+E, sinceramente?
+
+Aquilo nunca foi um problema para mim.
+
+Respondi simplesmente:
+
+"Sim. Nunca tive problema com isso."
+
+Era uma resposta simples.
+
+Porque, para mim, realmente era.
+
+Não havia uma grande reflexão por trás. Não havia uma lista mental de motivos. Eu só queria conhecê-la.
+
+Foi então que minha amiga mandou um print.
+
+E foi aí que meu ego resolveu participar da conversa.
+
+No print, ela tinha perguntado quem eu era.
+
+A resposta dela foi:
+
+"Como assim? Ele é bonito pra cacete."
+
+Eu ri.
+
+Mas ri daquele jeito que a gente tenta esconder mesmo quando está sozinho.
+
+Porque, obviamente, eu tinha gostado.
+
+E ela ainda completou, em tom de ameaça:
+
+"Não manda isso pra ele, senão viajo só pra te bater."
+
+Bom...
+
+Ela tinha acabado de me chamar de bonito.
+
+Não era exatamente o momento de questionar os métodos de segurança daquele grupo de amigas.
+
+Minha amiga começou então a contar mais sobre mim.
+
+Falou da minha personalidade, de como eu era, das coisas que eu gostava e, provavelmente, de várias outras informações que eu preferia ter revisado antes que fossem entregues para uma garota que eu queria impressionar.
+
+Em algum momento, ela disse:
+
+"Gosto de pessoas assim."
+
+E talvez tenha sido ali que alguma coisa começou.
+
+Não a história inteira.
+
+Não ainda.
+
+Mas a ponte estava construída.
+
+Só faltava atravessar.
+
+---
+
+Pouco depois, minha amiga me mandou o contato dela.
+
+E eu fiquei olhando para aquele número.
+
+Porque, aparentemente, conseguir o contato da garota que você acha bonita é muito mais fácil do que descobrir o que diabos você deveria escrever depois que consegue.
+
+Eu queria fazer diferente.
+
+Queria chegar de um jeito que ela nunca tivesse visto antes.
+
+Queria ser diferente dos outros caras que ela já tinha conhecido, conversado ou se envolvido.
+
+Queria causar uma boa primeira impressão.
+
+Então abri o WhatsApp.
+
+Digitei.
+
+Apaguei.
+
+Digitei de novo.
+
+E finalmente mandei:
+
+"Oioi, como está?"
+
+...
+
+Sim.
+
+Esse era o meu plano.
+
+Depois de toda aquela preparação mental, de toda a preocupação em ser diferente, de todo o esforço para pensar em uma abordagem inesquecível, eu tinha chegado com um "oioi".
+
+Hoje, olhando para trás, eu ainda não sei exatamente o que eu estava tentando fazer.
+
+Ser fofo?
+
+Ser casual?
+
+Parecer misterioso?
+
+Provavelmente nenhuma das três coisas.
+
+Na minha cabeça, eu tinha sido completamente diferente.
+
+Na prática, eu provavelmente tinha acabado de entregar material suficiente para virar print no grupo das amigas.
+
+Por sorte, não virei.
+
+Acho.
+
+Ela respondeu.
+
+E aquilo, por algum motivo, fez meu coração dar aquela pequena acelerada que a gente tenta fingir que não aconteceu.
+
+Perguntei algumas coisas.
+
+Ela perguntou outras.
+
+Eu queria conhecê-la, mas não queria transformar aquilo numa entrevista de emprego.
+
+Então começamos pelo básico.
+
+Perguntei se ela e minha amiga eram amigas há muito tempo.
+
+Depois vieram outras perguntas.
+
+O que você gosta de fazer?
+
+Que tipo de música você gosta?
+
+O que você faz no tempo livre?
+
+E, de algum jeito, aquilo funcionou.
+
+Não havia nenhuma cantada mirabolante.
+
+Nenhuma tentativa desesperada de impressionar.
+
+Nenhuma frase cuidadosamente preparada.
+
+Era só uma conversa.
+
+Uma conversa leve.
+
+Aquelas em que você faz uma pergunta, recebe uma resposta e percebe que, em vez de procurar uma maneira educada de encerrar o assunto, já está pensando no que perguntar em seguida.
+
+E foi assim que as horas começaram a desaparecer.
+
+Nós começamos a conversar por volta das seis da tarde.
+
+Quando percebi, já era quase nove e meia.
+
+Três horas.
+
+Eu tinha acabado de conhecer aquela garota e, mesmo assim, o tempo parecia ter decidido acelerar só para me irritar.
+
+Era engraçado.
+
+Eu tinha começado aquela conversa com um objetivo muito claro.
+
+Eu queria conhecê-la.
+
+Queria que acontecesse alguma coisa.
+
+Queria, desde o começo, ter algo com ela.
+
+Mas ela ainda não sabia disso.
+
+E talvez eu também não soubesse o tamanho do que estava começando.
+
+Naquela noite, eu só sabia que conversar com ela era fácil.
+
+Que eu gostava das respostas.
+
+Que gostava de fazer novas perguntas.
+
+Que três horas tinham passado rápido demais.
+
+E que havia alguma coisa naquela garota que fazia minha atenção voltar para a tela do celular toda vez que uma nova mensagem aparecia.
+
+Eu ainda não sabia o nome daquilo.
+
+Não sabia onde aquela conversa iria parar.
+
+Não sabia quantas outras conversas viriam depois daquela.
+
+Não sabia quantas risadas, discussões, momentos, memórias e capítulos ainda existiriam.
+
+Muito menos sabia que aquela garota, que eu conhecia havia poucas horas, acabaria ocupando um espaço tão grande na minha vida.
+
+Naquele domingo, eu só achava que tinha conhecido uma garota bonita.
+
+Mal sabia eu que tinha acabado de conhecer a mulher dos meus sonhos. 💜`
+  },
+
+  /* ========== CAPITULO 2 ========== */
+  {
+    id: 2,
+    num: "Capitulo II",
+    title: "Os Primeiros Meses de Encanto",
+    date: "05 de Outubro de 2026",
+    unlockDate: "2026-10-05T00:00:00",
+    unlocked: false,
+    content:
+`Escreva aqui a historia desse capitulo...
+Fica escondido ate a data chegar!
+
+Sugestoes: os primeiros beijos, as primeiras viagens curtas,
+a primeira vez que passaram um fim de semana juntos,
+as musicas marcantes... Tudo que fez os primeiros meses
+serem inesqueciveis. 💜`
+  },
+
+  /* ========== CAPITULO 3 ========== */
+  {
+    id: 3,
+    num: "Capitulo III",
+    title: "Viagens e Sonhos a Dois",
+    date: "12 de Outubro de 2026",
+    unlockDate: "2026-10-12T00:00:00",
+    unlocked: false,
+    content:
+`Escreva aqui os planos e sonhos que voces ja viveram
+ou ainda querem viver!
+
+A primeira viagem juntos, os lugares que marcaram no mapa,
+os sonhos que planejam realizar lado a lado.
+Cada passaporte, cada mala, cada lugar carimbado no coracao. 💜`
+  }
+];
+/* =========================================================
+   FIM DA AREA DE EDICAO
+   (o resto do arquivo e layout - so mexer se quiser mudar
+   a aparencia do livro!)
+   ========================================================= */
+
+const STORAGE_KEY = "livro_capitulos_v1";
+const AUTHOR_STORAGE_KEY = "livro_modo_autor_v1";
+
+let chapters = loadChapters();
+let currentView = "toc";
+let editingCh1 = false;
+
+function isAuthorMode() {
+  const params = new URLSearchParams(window.location.search);
+  if (params.get("modo") === "autor" || params.get("autor") === "1") {
+    localStorage.setItem(AUTHOR_STORAGE_KEY, "1");
+    return true;
+  }
+  return localStorage.getItem(AUTHOR_STORAGE_KEY) === "1";
+}
+
+function loadChapters() {
+  return defaultChapters.map(dc => ({
+    ...dc,
+    unlocked: dc.unlocked || checkUnlocked(dc)
+  }));
+}
+
+function saveChapters() {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(
+    chapters.map(c => ({ id: c.id, unlocked: c.unlocked }))
+  ));
+}
+
+function checkUnlocked(ch) {
+  if (!ch.unlockDate) return true;
+  return new Date() >= new Date(ch.unlockDate);
+}
+
+function goBack() {
+  window.location.href = "menu.html";
+}
+
+function renderView() {
+  updateAuthorBadge();
+  if (currentView === "toc") {
+    renderTOC();
+    document.getElementById("pageIndicator").textContent = "📖 Sumário";
+  } else {
+    const chId = parseInt(currentView.split("-")[1]);
+    renderChapter(chId);
+  }
+  updateNavArrows();
+}
+
+function updateAuthorBadge() {
+  const slot = document.getElementById("authorSlot");
+  if (!slot) return;
+  if (isAuthorMode()) {
+    slot.innerHTML = `<div class="author-badge" onclick="exitAuthorMode()" title="Clique para sair do modo autor (visualizar como ela vai ver)">✍️ Modo Autor</div>`;
+  } else {
+    slot.innerHTML = "";
+  }
+}
+
+function exitAuthorMode() {
+  localStorage.removeItem(AUTHOR_STORAGE_KEY);
+  editingCh1 = false;
+  renderView();
+  showToast("💜 Saiu do Modo Autor.\nAgora voce esta vendo exatamente como ela vai ver! ✨");
+}
+
+function renderTOC() {
+  document.getElementById("pageLeftNum").textContent = "i";
+  document.getElementById("pageRightNum").textContent = "ii";
+
+  const left = `
+    <div class="dedication">
+      <div class="dedication-text">
+        "E no meio dos meus sonhos,<br>
+        descobri que o melhor capítulo<br>
+        é o que eu vivo ao seu lado."
+      </div>
+      <div class="dedication-sign">— Para você, minha Lulu.</div>
+    </div>
+
+    <div style="border-top: 2px double rgba(107,68,35,0.3); margin: 25px 0; padding-top: 25px;">
+      <div style="font-family: 'Nunito', sans-serif; font-size: 0.75em; text-transform: uppercase; letter-spacing: 3px; color: #8a5a2b; font-weight: 700; text-align: center; margin-bottom: 10px;">📜 Sobre este livro</div>
+      <div style="font-family: 'Cormorant Garamond', serif; font-size: 1em; line-height: 1.7; color: #3a2817; text-align: justify;">
+        <p style="text-indent: 1.5em;">Este livro não tem final. Porque a nossa história se escreve a cada dia, a cada risada, a cada "eu te amo" dito no silêncio do olhar.</p>
+        <p style="text-indent: 1.5em;">Cada capítulo é um presente reservado para um momento especial. Abra cada página com o coração, assim como você abriu o meu.</p>
+      </div>
+    </div>
+  `;
+
+  const right = `
+    <div class="toc-header">
+      <h3>Sumário</h3>
+      <div class="toc-decor">✦ ✦ ✦</div>
+    </div>
+    <div id="tocList">
+      ${chapters.map(ch => {
+        const isUnlocked = ch.unlocked || checkUnlocked(ch);
+        if (!ch.unlocked && isUnlocked) {
+          ch.unlocked = true;
+          saveChapters();
+        }
+        return `
+          <div class="toc-entry ${isUnlocked ? 'unlocked' : 'locked'}" ${isUnlocked ? `onclick="openChapter(${ch.id})"` : ''}>
+            <div class="toc-info">
+              <div class="toc-chapter">${ch.num}</div>
+              <div class="toc-title">${ch.title}</div>
+            </div>
+            <div class="toc-date">
+              <div class="date-label">${isUnlocked ? 'Liberado em' : 'Libera em'}</div>
+              <div class="date-value">${ch.date}</div>
+            </div>
+            ${isUnlocked
+              ? '<span style="font-size:1.4em;">💜</span>'
+              : `<span class="lock-icon" id="lock-${ch.id}">🔒</span>`}
+          </div>
+        `;
+      }).join('')}
+    </div>
+  `;
+
+  document.getElementById("leftContent").innerHTML = left;
+  document.getElementById("rightContent").innerHTML = right;
+}
+
+function openChapter(id) {
+  currentView = `chapter-${id}`;
+  renderView();
+  startCountdowns();
+}
+
+function backToTOC() {
+  currentView = "toc";
+  renderView();
+}
+
+function renderChapter(id) {
+  const ch = chapters.find(c => c.id === id);
+  if (!ch) return;
+  const isUnlocked = ch.unlocked || checkUnlocked(ch);
+
+  document.getElementById("pageLeftNum").textContent = (id * 2 - 1).toString();
+  document.getElementById("pageRightNum").textContent = (id * 2).toString();
+  document.getElementById("pageIndicator").textContent = `📖 ${ch.num}`;
+
+  const decor = "💕".repeat(5);
+
+  if (!isUnlocked) {
+    document.getElementById("leftContent").innerHTML = `
+      <button class="back-toc" onclick="backToTOC()">← Sumário</button>
+      <div class="locked-cover">
+        <div class="locked-big">🔐</div>
+        <div class="locked-title">${ch.title}</div>
+        <div class="locked-subtitle">${ch.num}</div>
+        <div class="countdown">
+          <div class="countdown-label">Este capítulo desbloqueia em</div>
+          <div class="countdown-numbers" id="countdown-${id}">
+            <span>--<small>Dias</small></span>
+            <span>--<small>Horas</small></span>
+            <span>--<small>Min</small></span>
+            <span>--<small>Seg</small></span>
+          </div>
+        </div>
+        <div style="margin-top: 30px; font-family: 'Dancing Script', cursive; font-size: 1.3em; color: #8a5a7a;">
+          "A espera de cada momento com você<br>já vale a pena." 💜
+        </div>
+      </div>
+    `;
+    document.getElementById("rightContent").innerHTML = `
+      <div style="display:flex; flex-direction:column; height:100%; justify-content:center; align-items:center; padding: 20px;">
+        <div style="font-size: 6rem; opacity:0.3; margin-bottom: 20px;">📖</div>
+        <div style="font-family: 'Dancing Script', cursive; font-size: 1.6em; color: #6b4423; text-align: center; line-height: 1.5;">
+          Páginas guardadas<br>com carinho...
+        </div>
+        <div style="margin-top: 30px; text-align: center;">
+          <div style="font-family: 'Nunito', sans-serif; font-size: 0.75em; color: #8a5a2b; letter-spacing: 2px; text-transform: uppercase; font-weight: 700;">Data marcada</div>
+          <div style="font-family: 'Cormorant Garamond', serif; font-size: 1.6em; color: #3a2817; font-weight: 700; margin-top: 4px;">${ch.date}</div>
+        </div>
+        <div style="margin-top: 40px; color: #c77dff; letter-spacing: 8px;">${decor}</div>
+      </div>
+    `;
+    return;
+  }
+
+  if (id === 1) {
+    renderChapter1(ch);
+    return;
+  }
+
+  const split = splitContent(ch.content);
+  const contentLeft = formatContent(split.left);
+  const contentRight = formatContent(split.right);
+
+  document.getElementById("leftContent").innerHTML = `
+    <button class="back-toc" onclick="backToTOC()">← Sumário</button>
+    <div class="chapter-header">
+      <div class="ch-num">${ch.num}</div>
+      <h2>${ch.title}</h2>
+      <div class="ch-date">— ${ch.date} —</div>
+      <div class="ch-heart">${decor}</div>
+    </div>
+    <div class="chapter-content">
+      ${contentLeft}
+    </div>
+  `;
+
+  const rightBody = contentRight ? `
+    <div style="flex:1;" class="chapter-content">
+      ${contentRight}
+    </div>
+  ` : `
+    <div style="flex:1;" class="chapter-content" style="display:flex; flex-direction:column; justify-content:center; align-items:center; text-align:center; opacity: 0.85;">
+      <div style="font-family: 'Dancing Script', cursive; font-size: 1.6em; color: #6b4423; line-height: 1.6;">
+        "A nossa história continua...<br>escrita a cada dia ao seu lado."
+      </div>
+      <div style="font-size: 2.5rem; opacity: 0.4; margin-top: 20px;">💜</div>
+    </div>
+  `;
+
+  document.getElementById("rightContent").innerHTML = `
+    <div style="height: 100%; display: flex; flex-direction: column;">
+      ${rightBody}
+      <div style="text-align: center; padding-top: 20px; color: #c77dff; letter-spacing: 8px;">✦ ✦ ✦ ✦ ✦</div>
+    </div>
+  `;
+}
+
+function renderChapter1(ch) {
+  const decor = "💕".repeat(5);
+  const author = isAuthorMode();
+
+  if (editingCh1 && author) {
+    document.getElementById("leftContent").innerHTML = `
+      <button class="back-toc" onclick="backToTOC()">← Sumário</button>
+      <div class="chapter-header">
+        <div class="ch-num">${ch.num}</div>
+        <h2>${ch.title}</h2>
+        <div class="ch-date">— ${ch.date} —</div>
+        <div class="ch-heart">${decor}</div>
+      </div>
+      <textarea id="ch1editor" class="edit-area">${escapeHtml(ch.content)}</textarea>
+      <div class="edit-actions">
+        <button class="btn-edit btn-cancel" onclick="cancelEdit()">Cancelar</button>
+        <button class="btn-edit btn-save" onclick="saveEdit()">💾 Salvar história</button>
+      </div>
+    `;
+    document.getElementById("rightContent").innerHTML = `
+      <div style="padding: 10px;">
+        <div style="background: rgba(199,125,255,0.12); border-left: 3px solid #c77dff; padding: 14px 18px; border-radius: 0 12px 12px 0; font-family: 'Nunito', sans-serif; font-size: 0.88em; color: #5a3a7a; line-height: 1.6;">
+          <div style="font-weight: 700; margin-bottom: 6px;">💡 Dicas para sua história:</div>
+          ✿ Onde foi o primeiro encontro?<br>
+          ✿ Qual foi a primeira impressão?<br>
+          ✿ O que você sentiu ao olhar para ela?<br>
+          ✿ Algum detalhe engraçado ou especial?<br>
+          ✿ Quando você percebeu que era amor?<br>
+          <br>
+          <div style="font-weight: 700;">💡 Dica:</div>
+          Use <b>---</b> em uma linha sozinha para separar o que aparece na pagina esquerda da pagina direita.
+        </div>
+        <div style="margin-top: 25px; text-align: center;">
+          <div style="font-family: 'Dancing Script', cursive; font-size: 1.5em; color: #6b4423;">
+            "Escreva com o coração,<br>que ele sempre sabe<br>as melhores palavras." 💜
+          </div>
+        </div>
+      </div>
+    `;
+    return;
+  }
+
+  const split = splitContent(ch.content);
+  const contentLeft = formatContent(split.left);
+  const contentRight = formatContent(split.right);
+
+  const rascunhoBtn = author ? `
+    <div class="editor-placeholder" onclick="startEdit()">
+      ✍️ <b>Rascunho local</b> — escreva aqui para testar, depois copie e cole no <b>codigo do arquivo</b> para publicar para ela 💜
+    </div>
+  ` : "";
+
+  document.getElementById("leftContent").innerHTML = `
+    <button class="back-toc" onclick="backToTOC()">← Sumário</button>
+    <div class="chapter-header">
+      <div class="ch-num">${ch.num}</div>
+      <h2>${ch.title}</h2>
+      <div class="ch-date">— ${ch.date} —</div>
+      <div class="ch-heart">${decor}</div>
+    </div>
+    <div class="chapter-content">
+      ${contentLeft}
+    </div>
+    ${rascunhoBtn}
+  `;
+
+  const rightInner = contentRight ? `
+    <div class="chapter-content" style="flex:1;">
+      ${contentRight}
+    </div>
+  ` : `
+    <div class="chapter-content" style="flex:1; display:flex; flex-direction:column; justify-content:center; align-items:center; text-align:center; opacity: 0.85;">
+      <div style="font-family: 'Dancing Script', cursive; font-size: 1.6em; color: #6b4423; line-height: 1.6; margin-bottom: 20px;">
+        "A nossa história continua...<br>escrita a cada dia ao seu lado."
+      </div>
+      <div style="font-size: 2.5rem; opacity: 0.4;">💜</div>
+    </div>
+  `;
+
+  document.getElementById("rightContent").innerHTML = `
+    <div style="height:100%; display:flex; flex-direction:column;">
+      ${rightInner}
+      <div style="text-align: center; padding: 20px 0; color: #c77dff; letter-spacing: 8px;">✦ ✦ ✦ ✦ ✦</div>
+    </div>
+  `;
+}
+
+function startEdit() {
+  if (!isAuthorMode()) return;
+  editingCh1 = true;
+  renderView();
+  setTimeout(() => {
+    const ta = document.getElementById("ch1editor");
+    if (ta) ta.focus();
+  }, 100);
+}
+
+function cancelEdit() {
+  if (!isAuthorMode()) return;
+  editingCh1 = false;
+  renderView();
+}
+
+function saveEdit() {
+  if (!isAuthorMode()) return;
+  const ta = document.getElementById("ch1editor");
+  if (!ta) return;
+  chapters[0].content = ta.value;
+  editingCh1 = false;
+  renderView();
+  showToast("💾 Rascunho salvo! Copie o texto e cole no arquivo livro.html para publicar para ela 💜");
+}
+
+function showToast(msg) {
+  const t = document.getElementById("toast");
+  t.textContent = msg;
+  t.style.display = "block";
+  t.style.animation = "toastIn 0.4s ease forwards";
+  setTimeout(() => {
+    t.style.animation = "toastOut 0.4s ease forwards";
+    setTimeout(() => { t.style.display = "none"; t.style.animation = ""; }, 400);
+  }, 3800);
+}
+
+function formatContent(text) {
+  if (!text) return "";
+  const paras = text.split(/\n\n+/).filter(p => p.trim());
+  if (paras.length === 0) {
+    return `<p>${escapeHtml(text).replace(/\n/g, "<br>")}</p>`;
+  }
+  return paras.map(p => {
+    if (p.startsWith('"') && p.endsWith('"')) {
+      return `<div class="quote">${escapeHtml(p).replace(/\n/g, "<br>")}</div>`;
+    }
+    return `<p>${escapeHtml(p).replace(/\n/g, "<br>")}</p>`;
+  }).join("");
+}
+
+function splitContent(text) {
+  if (!text) return { left: "", right: "" };
+  const parts = text.split(/\n---\n/);
+  if (parts.length >= 2) {
+    return { left: parts[0].trim(), right: parts.slice(1).join("\n---\n").trim() };
+  }
+  const paras = text.split(/\n\n+/).filter(p => p.trim());
+  const mid = Math.max(1, Math.ceil(paras.length / 2));
+  return {
+    left: paras.slice(0, mid).join("\n\n"),
+    right: paras.slice(mid).join("\n\n")
+  };
+}
+
+function escapeHtml(s) {
+  const div = document.createElement("div");
+  div.textContent = s;
+  return div.innerHTML;
+}
+
+function updateNavArrows() {
+  const prev = document.getElementById("prevBtn");
+  const next = document.getElementById("nextBtn");
+  if (currentView === "toc") {
+    prev.disabled = true;
+    const nextUnlocked = chapters.find(c => c.unlocked || checkUnlocked(c));
+    next.disabled = !nextUnlocked;
+  } else {
+    const id = parseInt(currentView.split("-")[1]);
+    prev.disabled = false;
+    const nextCh = chapters.find(c => c.id === id + 1);
+    next.disabled = !nextCh || (!nextCh.unlocked && !checkUnlocked(nextCh));
+  }
+}
+
+function navPrev() {
+  if (currentView === "toc") return;
+  const id = parseInt(currentView.split("-")[1]);
+  if (id > 1) {
+    const prev = chapters.find(c => c.id === id - 1);
+    if (prev && (prev.unlocked || checkUnlocked(prev))) {
+      currentView = `chapter-${id - 1}`;
+    } else {
+      currentView = "toc";
+    }
+  } else {
+    currentView = "toc";
+  }
+  renderView();
+  startCountdowns();
+}
+
+function navNext() {
+  if (currentView === "toc") {
+    const first = chapters.find(c => c.unlocked || checkUnlocked(c));
+    if (first) { currentView = `chapter-${first.id}`; renderView(); startCountdowns(); }
+    return;
+  }
+  const id = parseInt(currentView.split("-")[1]);
+  const nextCh = chapters.find(c => c.id === id + 1);
+  if (nextCh && (nextCh.unlocked || checkUnlocked(nextCh))) {
+    currentView = `chapter-${id + 1}`;
+    renderView();
+    startCountdowns();
+  }
+}
+
+let countdownInterval = null;
+function startCountdowns() {
+  if (countdownInterval) clearInterval(countdownInterval);
+  const tick = () => {
+    chapters.forEach(ch => {
+      if (ch.unlocked || checkUnlocked(ch)) return;
+      const el = document.getElementById(`countdown-${ch.id}`);
+      if (!el) return;
+      const now = new Date().getTime();
+      const target = new Date(ch.unlockDate).getTime();
+      let diff = target - now;
+      if (diff <= 0) {
+        ch.unlocked = true;
+        saveChapters();
+        renderView();
+        return;
+      }
+      const d = Math.floor(diff / 86400000); diff -= d * 86400000;
+      const h = Math.floor(diff / 3600000); diff -= h * 3600000;
+      const m = Math.floor(diff / 60000); diff -= m * 60000;
+      const s = Math.floor(diff / 1000);
+      el.innerHTML = `
+        <span>${String(d).padStart(2,'0')}<small>Dias</small></span>
+        <span>${String(h).padStart(2,'0')}<small>Horas</small></span>
+        <span>${String(m).padStart(2,'0')}<small>Min</small></span>
+        <span>${String(s).padStart(2,'0')}<small>Seg</small></span>
+      `;
+    });
+  };
+  tick();
+  countdownInterval = setInterval(tick, 1000);
+}
+
+renderView();
+startCountdowns();
+</script>
+</body>
+</html>
