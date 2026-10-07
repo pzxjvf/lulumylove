@@ -956,6 +956,276 @@
     50% { transform: scale(1.3); opacity: 0.7; }
   }
 
+  .news-btn {
+    position: absolute;
+    top: 18px;
+    right: 18px;
+    z-index: 50;
+    background: linear-gradient(135deg, #ffd166, #ef476f 50%, #c77dff 100%);
+    color: white;
+    border: 1.5px solid rgba(255,255,255,0.3);
+    border-radius: 20px;
+    padding: 7px 14px;
+    font-family: "Nunito", sans-serif;
+    font-weight: 800;
+    font-size: 0.78em;
+    letter-spacing: 0.6px;
+    cursor: pointer;
+    box-shadow: 0 8px 20px rgba(123, 44, 191, 0.35), 0 3px 8px rgba(0,0,0,0.12);
+    transition: transform 0.2s, box-shadow 0.2s;
+    display: flex;
+    align-items: center;
+    gap: 7px;
+  }
+  .news-btn:hover {
+    transform: translateY(-2px) scale(1.03);
+    box-shadow: 0 12px 26px rgba(123, 44, 191, 0.45);
+  }
+  .news-dot {
+    width: 8px;
+    height: 8px;
+    background: #fff;
+    border-radius: 50%;
+    animation: pulse 1.3s ease-in-out infinite;
+    box-shadow: 0 0 0 3px rgba(255,255,255,0.3);
+  }
+
+  .patch-overlay {
+    position: fixed;
+    inset: 0;
+    background: radial-gradient(circle at center, rgba(60, 15, 90, 0.65), rgba(10, 0, 30, 0.85));
+    backdrop-filter: blur(10px);
+    z-index: 20000;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+    animation: fadeIn 0.35s ease;
+  }
+  .patch-overlay.open {
+    display: flex;
+  }
+  @keyframes fadeIn { from {opacity:0;} to {opacity:1;} }
+
+  .patch-modal {
+    background: linear-gradient(160deg, #fff9ed 0%, #ffeaf5 45%, #f3e4ff 100%);
+    border: 2px solid rgba(199, 125, 255, 0.35);
+    border-radius: 26px;
+    max-width: 640px;
+    width: 100%;
+    max-height: 84vh;
+    box-shadow:
+      0 30px 80px rgba(90, 30, 130, 0.5),
+      inset 0 0 0 1px rgba(255,255,255,0.6);
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    animation: patchPop 0.5s cubic-bezier(.2,1.3,.5,1) both;
+    overflow: hidden;
+  }
+  @keyframes patchPop {
+    from { opacity: 0; transform: scale(0.82) translateY(18px); }
+    to   { opacity: 1; transform: scale(1)    translateY(0);    }
+  }
+  .patch-header {
+    padding: 26px 28px 20px 28px;
+    text-align: center;
+    background: linear-gradient(135deg, rgba(239, 71, 111, 0.12), rgba(199, 125, 255, 0.18));
+    border-bottom: 2px dashed rgba(199,125,255,0.3);
+    position: relative;
+  }
+  .patch-close {
+    position: absolute;
+    top: 16px;
+    right: 18px;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.7);
+    border: 1.5px solid rgba(199,125,255,0.3);
+    font-size: 1.1em;
+    cursor: pointer;
+    transition: 0.2s;
+    color: #7b2cbf;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .patch-close:hover {
+    background: #ef476f;
+    color: white;
+    border-color: #ef476f;
+    transform: rotate(90deg);
+  }
+  .patch-icon {
+    font-size: 3em;
+    filter: drop-shadow(0 4px 10px rgba(199,125,255,0.35));
+    margin-bottom: 4px;
+  }
+  .patch-title {
+    font-family: "Dancing Script", cursive;
+    font-size: 2.2em;
+    color: #5a1f8a;
+    line-height: 1.1;
+    background: linear-gradient(135deg, #ef476f, #9d4edd);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    font-weight: 700;
+  }
+  .patch-subtitle {
+    font-family: "Nunito", sans-serif;
+    font-size: 0.8em;
+    font-weight: 700;
+    letter-spacing: 3.5px;
+    text-transform: uppercase;
+    color: #a06cd5;
+    margin-top: 6px;
+    opacity: 0.85;
+  }
+  .patch-new-count {
+    display: inline-block;
+    margin-top: 10px;
+    padding: 5px 14px;
+    background: linear-gradient(135deg, #ef476f, #c9184a);
+    color: white;
+    font-family: "Nunito", sans-serif;
+    font-weight: 800;
+    font-size: 0.7em;
+    letter-spacing: 1.2px;
+    border-radius: 14px;
+    box-shadow: 0 4px 12px rgba(201, 24, 74, 0.4);
+  }
+
+  .patch-body {
+    padding: 22px 26px;
+    overflow-y: auto;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(199,125,255,0.4) transparent;
+  }
+  .patch-body::-webkit-scrollbar { width: 7px; }
+  .patch-body::-webkit-scrollbar-thumb { background: rgba(199,125,255,0.45); border-radius: 6px; }
+
+  .patch-entry {
+    margin-bottom: 22px;
+  }
+  .patch-entry:last-child { margin-bottom: 0; }
+  .patch-entry-head {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 10px;
+    padding-bottom: 8px;
+    border-bottom: 1.5px dashed rgba(160, 108, 213, 0.3);
+  }
+  .patch-version {
+    font-family: "Nunito", sans-serif;
+    font-weight: 800;
+    font-size: 0.8em;
+    background: linear-gradient(135deg, #9d4edd, #7b2cbf);
+    color: white;
+    padding: 4px 12px;
+    border-radius: 10px;
+    letter-spacing: 0.6px;
+    box-shadow: 0 3px 10px rgba(157, 78, 221, 0.35);
+  }
+  .patch-version.latest::after {
+    content: " NOVO";
+    margin-left: 8px;
+    background: #ef476f;
+    font-size: 0.75em;
+    padding: 2px 8px;
+    border-radius: 8px;
+    letter-spacing: 1px;
+    animation: pulse 1.4s ease-in-out infinite;
+  }
+  .patch-date {
+    font-family: "Nunito", sans-serif;
+    font-size: 0.78em;
+    font-weight: 700;
+    color: #8a5a2b;
+    letter-spacing: 0.6px;
+  }
+  .patch-entry-title {
+    font-family: "Dancing Script", cursive;
+    font-size: 1.5em;
+    color: #3a1f5a;
+    line-height: 1.1;
+    margin-left: auto;
+  }
+  .patch-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+  .patch-list li {
+    padding: 9px 14px 9px 40px;
+    position: relative;
+    margin-bottom: 6px;
+    background: rgba(255,255,255,0.7);
+    border-radius: 12px;
+    border-left: 3px solid #c77dff;
+    font-family: "Nunito", sans-serif;
+    font-size: 0.88em;
+    line-height: 1.5;
+    color: #2e1f10;
+    transition: transform 0.2s, background 0.2s;
+  }
+  .patch-list li:hover {
+    transform: translateX(3px);
+    background: rgba(199, 125, 255, 0.1);
+  }
+  .patch-list li::before {
+    content: "💖";
+    position: absolute;
+    left: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 0.9em;
+    filter: drop-shadow(0 1px 2px rgba(199,125,255,0.3));
+  }
+  .patch-list li.feat::before { content: "✨"; }
+  .patch-list li.chapter::before { content: "📖"; border-left-color: #ef476f; }
+  .patch-list li.chapter { border-left-color: #ef476f; }
+  .patch-list li.fix::before { content: "🛠️"; }
+  .patch-list li.fix { border-left-color: #ffd166; }
+
+  .patch-footer {
+    padding: 16px 24px 22px 24px;
+    background: linear-gradient(180deg, transparent, rgba(199, 125, 255, 0.12));
+    border-top: 2px dashed rgba(199,125,255,0.25);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+  }
+  .patch-btn-ok {
+    width: 100%;
+    padding: 14px 24px;
+    border: none;
+    border-radius: 18px;
+    background: linear-gradient(135deg, #ef476f 0%, #c9184a 40%, #9d4edd 100%);
+    color: white;
+    font-family: "Nunito", sans-serif;
+    font-weight: 800;
+    font-size: 0.95em;
+    letter-spacing: 1px;
+    cursor: pointer;
+    box-shadow: 0 10px 25px rgba(157, 78, 221, 0.4);
+    transition: transform 0.2s, box-shadow 0.2s;
+  }
+  .patch-btn-ok:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 14px 30px rgba(157, 78, 221, 0.55);
+  }
+  .patch-note {
+    font-family: "Dancing Script", cursive;
+    color: #5a1f8a;
+    font-size: 1.2em;
+    text-align: center;
+    line-height: 1.4;
+  }
+
   @keyframes fadeInUp {
     from { opacity: 0; transform: translateY(16px); }
     to   { opacity: 1; transform: translateY(0); }
@@ -1017,6 +1287,31 @@
 
 <div class="toast" id="toast">💾 Salvo com sucesso!</div>
 <div class="mark-tooltip" id="markTooltip" onclick="markSelectedText()">💖 Marcar este trecho</div>
+
+<button class="news-btn" id="newsBtn" onclick="openPatchNotes(true)">
+  <span class="news-dot" id="newsDot"></span>
+  <span>📰 Atualizações do Livro</span>
+</button>
+
+<div class="patch-overlay" id="patchOverlay">
+  <div class="patch-modal">
+    <button class="patch-close" onclick="closePatchNotes()">✕</button>
+    <div class="patch-header">
+      <div class="patch-icon">📖💕</div>
+      <div class="patch-title">Novidades do Nosso Livro</div>
+      <div class="patch-subtitle">O que há de novo por aqui</div>
+      <div class="patch-new-count" id="patchNewCount">1 atualização nova</div>
+    </div>
+    <div class="patch-body" id="patchBody">
+    </div>
+    <div class="patch-footer">
+      <div class="patch-note">
+        "A cada nova página, um novo pedaço<br>de nós dois ficando para sempre." 💕
+      </div>
+      <button class="patch-btn-ok" onclick="closePatchNotes(true)">💝 Li tudo! Vamos ler o livro</button>
+    </div>
+  </div>
+</div>
 
 <script>
 /* =========================================================
@@ -1693,6 +1988,121 @@ Cada passaporte, cada mala, cada lugar carimbado no coracao. 💜`
 const STORAGE_KEY = "livro_capitulos_v1";
 const AUTHOR_STORAGE_KEY = "livro_modo_autor_v1";
 const BOOKMARK_KEY = "livro_marcadores_v1";
+const PATCH_SEEN_KEY = "livro_patch_seen_v1";
+
+const PATCHES = [
+  {
+    id: "v2.0.0",
+    date: "07 de Outubro de 2026",
+    title: "Capítulo II + Marcadores de Texto",
+    latest: true,
+    items: [
+      { type: "chapter", text: "📖 Capítulo II liberado — <b>O Começo de Tudo</b> (30 de Janeiro de 2023): a manhã após a primeira conversa, o bom dia, a pesquisa sobre CMT, a brincadeira dos números e o 'estou perto de ter um crush'...!" },
+      { type: "feat",    text: "✨ Sistema de <b>marcadores de texto</b>: selecione qualquer trecho com o mouse e clique no botão 💖 roxo que aparece — o trecho fica marcado em roxo permanentemente, como um marca-texto!" },
+      { type: "feat",    text: "💖 Página <b>Minhas Citações Favoritas</b>: todos os trechos que ela marcar ficam salvos em uma página especial, com referência de qual capítulo e página." },
+      { type: "feat",    text: "🎀 <b>Marcador físico</b> de fita 💖 aparece saindo do topo do livro quando ela tem marcações salvas — clique na fita para abrir suas citações favoritas." },
+      { type: "fix",     text: "🛠️ Tooltip do marca-texto agora fica mais longe da seleção para não cobrir o texto, com seta apontando sempre para a seleção." }
+    ]
+  },
+  {
+    id: "v1.0.0",
+    date: "01 de Outubro de 2026",
+    title: "Lançamento do Livro",
+    latest: false,
+    items: [
+      { type: "chapter", text: "📖 Capítulo I — <b>O Dia em que Tudo Começou</b> (29 de Janeiro de 2023): a história de como nos conhecemos, do 'oioi' até a conversa de 3 horas!" },
+      { type: "feat",    text: "✨ Livro com duas páginas interativas, visual super realista de livro físico com sombra, textura e efeitos de página." },
+      { type: "feat",    text: "🔒 Sumário inteligente com capítulos liberados por data — cada capítulo novo só libera na data programada." },
+      { type: "feat",    text: "📜 Modo Autor para o escritor da história (com `?modo=autor`) com rascunho local e publicação segura." }
+    ]
+  }
+];
+
+function getLastSeenPatch() {
+  return localStorage.getItem(PATCH_SEEN_KEY) || "";
+}
+
+function markPatchesSeen() {
+  if (PATCHES.length > 0) {
+    localStorage.setItem(PATCH_SEEN_KEY, PATCHES[0].id);
+  }
+  updateNewsBadge();
+  if (currentView === "toc") renderView();
+}
+
+function countNewPatches() {
+  const lastSeen = getLastSeenPatch();
+  if (!lastSeen) return PATCHES.length;
+  return PATCHES.filter(p => p.id !== lastSeen).length;
+}
+
+function buildPatchHTML(patch, isLatest) {
+  let itemsHTML = "";
+  patch.items.forEach(it => {
+    itemsHTML += `<li class="${it.type || ""}">${it.text}</li>`;
+  });
+  const latestCls = isLatest ? " latest" : "";
+  return `
+    <div class="patch-entry">
+      <div class="patch-entry-head">
+        <span class="patch-version${latestCls}">${patch.id}</span>
+        <span class="patch-date">${patch.date}</span>
+        <span class="patch-entry-title">${patch.title}</span>
+      </div>
+      <ul class="patch-list">
+        ${itemsHTML}
+      </ul>
+    </div>
+  `;
+}
+
+function openPatchNotes(force = false) {
+  const body = document.getElementById("patchBody");
+  const overlay = document.getElementById("patchOverlay");
+  const badge = document.getElementById("patchNewCount");
+
+  const lastSeen = getLastSeenPatch();
+  let firstNewIndex = PATCHES.findIndex(p => p.id === lastSeen);
+  if (firstNewIndex === -1) firstNewIndex = PATCHES.length;
+  const newCount = firstNewIndex;
+
+  let html = "";
+  PATCHES.forEach((p, idx) => {
+    html += buildPatchHTML(p, idx < firstNewIndex);
+  });
+
+  body.innerHTML = html;
+  if (newCount > 0) {
+    badge.style.display = "inline-block";
+    badge.textContent = newCount === 1 ? "🎉 1 atualização nova!" : `🎉 ${newCount} atualizações novas!`;
+  } else {
+    badge.style.display = "none";
+  }
+
+  overlay.classList.add("open");
+  setTimeout(() => {
+    body.scrollTop = 0;
+  }, 50);
+}
+
+function closePatchNotes(markSeen = true) {
+  const overlay = document.getElementById("patchOverlay");
+  overlay.classList.remove("open");
+  if (markSeen) {
+    markPatchesSeen();
+  }
+}
+
+function updateNewsBadge() {
+  const dot = document.getElementById("newsDot");
+  const count = countNewPatches();
+  if (!dot) return;
+  if (count > 0) {
+    dot.style.display = "inline-block";
+  } else {
+    dot.style.display = "none";
+  }
+}
 
 let chapters = loadChapters();
 let currentView = "toc";
@@ -2574,6 +2984,7 @@ function startCountdowns() {
 
 renderView();
 startCountdowns();
+updateNewsBadge();
 </script>
 </body>
 </html>
