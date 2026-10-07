@@ -2151,6 +2151,164 @@ function findChapterContainer(el) {
   return null;
 }
 
+function getContainerText(containerEl) {
+  const walker = document.createTreeWalker(containerEl, NodeFilter.SHOW_TEXT, null);
+  let all = "";
+  const nodeMap = [];
+  let node;
+  while (node = walker.nextNode()) {
+    if (node.parentNode && node.parentNode.classList && node.parentNode.classList.contains("marked-text")) {
+      const pNode = node.parentNode;
+      const start = all.length;
+      const text = node.nodeValue;
+      all += text;
+      nodeMap.push({ node, start, end: start + text.length, inside: true, parentEl: pNode });
+      continue;
+    }
+    const start = all.length;
+    const text = node.nodeValue;
+    all += text;
+    nodeMap.push({ node, start, end: start + text.length, inside: false });
+  }
+  return { fullText: all, nodes: nodeMap };
+}
+
+function getRangeInContainer(range, containerEl) {
+  const info = getContainerText(containerEl);
+  const pre = document.createRange();
+  const post = document.createRange();
+
+  let startChar = 0;
+  try {
+    pre.setStart(containerEl, 0);
+    pre.setEnd(range.startContainer, range.startOffset);
+    startChar = pre.toString().length;
+  } catch (e) {
+    const startAnchor = info.nodes.find(n => n.node === range.startContainer);
+    if (startAnchor) startChar = startAnchor.start + range.startOffset;
+  }
+
+  let endChar = startChar + range.toString().length;
+  try {
+    post.setStart(containerEl, 0);
+    post.setEnd(range.endContainer, range.endOffset);
+    endChar = post.toString().length;
+  } catch (e) {
+    const endAnchor = info.nodes.find(n => n.node === range.endContainer);
+    if (endAnchor) endChar = endAnchor.start + range.endOffset;
+  }
+
+  const startCtx = info.fullText.slice(Math.max(0, startChar - 60), startChar);
+  const endCtx   = info.fullText.slice(endChar, endChar + 60);
+
+  return {
+    startChar,
+    endChar,
+    length: endChar - startChar,
+    text: info.fullText.slice(startChar, endChar),
+    contextBefore: startCtx,
+    contextAfter: endCtx
+  };
+}
+
+function resolvePositionByContext(fullText, needle, ctxBefore, ctxAfter, startHint) {
+  const needleLen = needle.length;
+  let start = startHint || 0;
+  let bestScore = -1;
+  let bestIndex = -1;
+
+  function scoreMatch(idx) {
+    let s = 0;
+    const beforeStart = Math.max(0, idx - 60);
+    const beforeSlice = fullText.slice(beforeStart, idx);
+    const commonBefore = (ctxBefore || "");
+    const minLenB = Math.min(beforeSlice.length, commonBefore.length);
+    for (let k = 1; k <= minLenB; k++) {
+      if (beforeSlice.slice(-k) === commonBefore.slice(-k)) s += k;
+      else break;
+    }
+    const afterStart = idx + needleLen;
+    const afterSlice = fullText.slice(afterStart, afterStart + 60);
+    const commonAfter = (ctxAfter || "");
+    const minLenA = Math.min(afterSlice.length, commonAfter.length);
+    for (let k = 0; k < minLenA; k++) {
+      if (afterSlice[k] === commonAfter[k]) s += 5;
+      else break;
+    }
+    return s;
+  }
+
+  let found = fullText.indexOf(needle, start);
+  let tries = 0;
+  while (found !== -1 && tries < 1000) {
+    tries++;
+    const sc = scoreMatch(found);
+    if (sc > bestScore) {
+      bestScore = sc;
+      bestIndex = found;
+    }
+    if (sc >= Math.min(ctxBefore ? ctxBefore.length : 0, 60) * 0.9 + 30 && tries > 0) {
+      break;
+    }
+    found = fullText.indexOf(needle, found + 1);
+  }
+  if (bestIndex === -1 && startHint > 0) {
+    found = fullText.indexOf(needle, 0);
+    while (found !== -1) {
+      const sc = scoreMatch(found);
+      if (sc > bestScore) { bestScore = sc; bestIndex = found; }
+      found = fullText.indexOf(needle, found + 1);
+    }
+  }
+  return bestIndex;
+}
+
+function wrapCharRangeInContainer(containerEl, startChar, endChar, markId) {
+  const info = getContainerText(containerEl);
+  if (startChar < 0 || endChar <= startChar || endChar > info.fullText.length) return false;
+
+  let startNode = info.nodes.find(n => n.start <= startChar && startChar < n.end);
+  let endNode   = info.nodes.find(n => n.start < endChar && endChar <= n.end);
+  if (!startNode || !endNode) return false;
+
+  if (startNode === endNode) {
+    const range = document.createRange();
+    const offsetStart = startChar - startNode.start;
+    const offsetEnd = endChar - endNode.start;
+    range.setStart(startNode.node, offsetStart);
+    range.setEnd(endNode.node, offsetEnd);
+    return wrapRangeWithMark(range, markId);
+  }
+
+  const partialNodes = info.nodes.filter(n => n.end > startChar && n.start < endChar && !n.inside);
+  if (partialNodes.length === 0) return false;
+  let ok = false;
+
+  for (let i = 0; i < partialNodes.length; i++) {
+    const infoN = partialNodes[i];
+    const range = document.createRange();
+    let s, e;
+    if (i === 0) {
+      s = startChar - infoN.start;
+      e = infoN.node.nodeValue.length;
+    } else if (i === partialNodes.length - 1) {
+      s = 0;
+      e = endChar - infoN.start;
+    } else {
+      s = 0;
+      e = infoN.node.nodeValue.length;
+    }
+    try {
+      range.setStart(infoN.node, Math.max(0, s));
+      range.setEnd(infoN.node, Math.min(infoN.node.nodeValue.length, Math.max(0, e)));
+      if (range.toString().trim().length > 0) {
+        if (wrapRangeWithMark(range, markId)) ok = true;
+      }
+    } catch (e) {}
+  }
+  return ok;
+}
+
 function getCurrentChapterId() {
   if (typeof currentView === "string" && currentView.startsWith("chapter-")) {
     return parseInt(currentView.split("-")[1]);
@@ -2248,30 +2406,57 @@ document.addEventListener("mousedown", (e) => {
 });
 
 function wrapRangeWithMark(range, markId) {
-  const span = document.createElement("span");
-  span.className = "marked-text";
-  span.dataset.markId = markId;
-  span.title = "Clique para desmarcar este trecho 💔";
+  try {
+    if (!range || range.collapsed || !range.toString().trim()) return false;
+
+    if (range.startContainer === range.endContainer) {
+      let container = range.startContainer;
+      let safety = 0;
+      while (container && safety < 20) {
+        if (container.nodeType === 1 && container.classList && container.classList.contains("marked-text")) return false;
+        if (container.nodeType === 1 && container.classList && container.classList.contains("chapter-content")) break;
+        container = container.parentNode;
+        safety++;
+      }
+
+      const span = document.createElement("span");
+      span.className = "marked-text";
+      span.dataset.markId = markId;
+      span.title = "Clique para desmarcar este trecho 💔";
+
+      try {
+        range.surroundContents(span);
+        attachHandlerToSpan(span);
+        return true;
+      } catch (e) {
+        try {
+          const frag = range.extractContents();
+          span.appendChild(frag);
+          range.insertNode(span);
+          attachHandlerToSpan(span);
+          return true;
+        } catch (e2) {
+          return false;
+        }
+      }
+    }
+  } catch (e) {
+    return false;
+  }
+  return false;
+}
+
+function attachHandlerToSpan(span) {
+  if (!span || span.dataset.handlerAttached === "1") return;
+  span.dataset.handlerAttached = "1";
   span.addEventListener("click", (ev) => {
     ev.preventDefault();
     ev.stopPropagation();
-    if (confirm("Deseja desmarcar este trecho? 💔")) {
-      removeMark(markId);
+    const id = span.dataset.markId;
+    if (id && confirm("Deseja desmarcar este trecho? 💔")) {
+      removeMark(id);
     }
   });
-  try {
-    range.surroundContents(span);
-    return true;
-  } catch (e) {
-    try {
-      const frag = range.extractContents();
-      span.appendChild(frag);
-      range.insertNode(span);
-      return true;
-    } catch (e2) {
-      return false;
-    }
-  }
 }
 
 function markSelectedText() {
@@ -2292,10 +2477,28 @@ function markSelectedText() {
     return;
   }
 
-  const markId = ch.id + ":" + info.pageSide + ":" + hashStr(text) + ":" + Date.now().toString(36);
-  const ok = wrapRangeWithMark(range, markId);
+  const containerEl = info.container;
+  const side = info.pageSide;
+  const pos = getRangeInContainer(range, containerEl);
+
+  const duplicate = loadBookmarks().find(b =>
+    b.chapterId === chId &&
+    b.pageSide === side &&
+    b.startChar === pos.startChar &&
+    b.endChar === pos.endChar
+  );
+  if (duplicate) {
+    showToast("💝 Este trecho já está marcado!");
+    sel.removeAllRanges();
+    const tt = document.getElementById("markTooltip");
+    if (tt) tt.style.display = "none";
+    return;
+  }
+
+  const markId = ch.id + ":" + side + ":" + hashStr(text + pos.contextBefore + pos.contextAfter) + ":" + Date.now().toString(36);
+  const ok = wrapCharRangeInContainer(containerEl, pos.startChar, pos.endChar, markId);
   if (!ok) {
-    showToast("⚠️ Não foi possível marcar este trecho. Tente selecionar apenas o texto, sem passar o mouse sobre títulos ou divisórias.");
+    showToast("⚠️ Não foi possível marcar este trecho. Tente selecionar apenas o texto, sem passar sobre títulos ou divisórias.");
     return;
   }
 
@@ -2305,8 +2508,13 @@ function markSelectedText() {
     chapterId: ch.id,
     chapterNum: ch.num,
     chapterTitle: ch.title,
-    pageSide: info.pageSide,
+    pageSide: side,
     text: text,
+    startChar: pos.startChar,
+    endChar: pos.endChar,
+    length: pos.length,
+    contextBefore: pos.contextBefore,
+    contextAfter: pos.contextAfter,
     savedAt: Date.now()
   });
   saveBookmarks(list);
@@ -2349,44 +2557,24 @@ function clearAllMarks() {
 }
 
 function applySavedHighlightsToContainer(containerEl, chapterId, pageSide) {
-  const list = loadBookmarks().filter(b => b.chapterId === chapterId && b.pageSide === pageSide);
-  if (list.length === 0) return;
-  const walker = document.createTreeWalker(containerEl, NodeFilter.SHOW_TEXT, null);
-  const textNodes = [];
-  let node;
-  while (node = walker.nextNode()) textNodes.push(node);
+  const relevant = loadBookmarks().filter(b => b.chapterId === chapterId && b.pageSide === pageSide);
+  if (relevant.length === 0) return;
+  const info = getContainerText(containerEl);
 
-  list.forEach(mark => {
-    const needle = mark.text;
-    const needleLen = needle.length;
-    let accText = "";
-    const nodeOffsets = [];
-    textNodes.forEach(tn => {
-      if (tn.parentNode && tn.parentNode.classList && tn.parentNode.classList.contains("marked-text")) return;
-      const start = accText.length;
-      nodeOffsets.push({ tn, start, len: tn.nodeValue.length });
-      accText += tn.nodeValue;
-    });
+  const sorted = [...relevant].sort((a, b) => (b.endChar - b.startChar) - (a.endChar - a.startChar));
 
-    let idx = accText.indexOf(needle);
-    while (idx !== -1) {
-      const endIdx = idx + needleLen;
-      const startNode = nodeOffsets.find(n => n.start <= idx && idx < n.start + n.len);
-      const endNode   = nodeOffsets.find(n => n.start <= endIdx && endIdx <= n.start + n.len);
-      if (startNode && endNode) {
-        const range = document.createRange();
-        try {
-          range.setStart(startNode.tn, idx - startNode.start);
-          if (endIdx === endNode.start + endNode.len) {
-            range.setEndAfter(endNode.tn);
-          } else {
-            range.setEnd(endNode.tn, endIdx - endNode.start);
-          }
-          wrapRangeWithMark(range, mark.id);
-          break;
-        } catch (e) {}
-      }
-      idx = accText.indexOf(needle, idx + 1);
+  sorted.forEach(mark => {
+    let startIdx = -1;
+    if (typeof mark.startChar === "number" && typeof mark.contextBefore !== "undefined") {
+      startIdx = resolvePositionByContext(info.fullText, mark.text, mark.contextBefore, mark.contextAfter, mark.startChar);
+      if (startIdx === -1) startIdx = resolvePositionByContext(info.fullText, mark.text, mark.contextBefore, mark.contextAfter, 0);
+    } else {
+      startIdx = info.fullText.indexOf(mark.text);
+    }
+
+    if (startIdx >= 0) {
+      const endIdx = startIdx + mark.text.length;
+      wrapCharRangeInContainer(containerEl, startIdx, endIdx, mark.id);
     }
   });
 }
