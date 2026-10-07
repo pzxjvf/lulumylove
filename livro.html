@@ -10,8 +10,14 @@
 <style>
   * { box-sizing: border-box; }
 
-  body {
+  html, body {
     margin: 0;
+    padding: 0;
+    height: 100%;
+    width: 100%;
+    overflow: hidden;
+  }
+  body {
     min-height: 100vh;
     background:
       radial-gradient(ellipse at top, #3a0ca3 0%, transparent 60%),
@@ -22,8 +28,8 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    padding: 20px 15px 40px;
-    overflow-x: hidden;
+    padding: 16px 15px 16px;
+    overflow: hidden !important;
   }
 
   .top-bar {
@@ -166,11 +172,11 @@
 
   .page {
     flex: 1;
+    height: 620px;
     min-height: 620px;
-    padding: 45px 50px 60px;
+    padding: 45px 50px 95px;
     position: relative;
-    overflow-y: auto;
-    max-height: 80vh;
+    overflow: hidden !important;
   }
 
   .page-left {
@@ -213,13 +219,6 @@
       linear-gradient(180deg, #fdf6e3 0%, #f5ecd3 50%, #f3e7c9 100%);
     box-shadow: inset -15px 0 25px -15px rgba(0,0,0,0.2);
     border-left: 1px solid rgba(139, 90, 43, 0.15);
-  }
-
-  .page::-webkit-scrollbar { width: 6px; }
-  .page::-webkit-scrollbar-track { background: transparent; }
-  .page::-webkit-scrollbar-thumb {
-    background: rgba(139, 90, 43, 0.3);
-    border-radius: 3px;
   }
 
   .page-number {
@@ -334,14 +333,6 @@
     flex-shrink: 0;
   }
 
-  .divider-dot {
-    width: 6px;
-    height: 6px;
-    background: #c77dff;
-    border-radius: 50%;
-    margin: 0 4px;
-  }
-
   .chapter-header {
     text-align: center;
     margin-bottom: 30px;
@@ -381,15 +372,16 @@
   .chapter-content {
     font-family: "Cormorant Garamond", serif;
     font-size: 1.15em;
-    line-height: 1.75;
+    line-height: 1.55;
     color: #2e1f10;
   }
   .chapter-content p {
     text-indent: 1.8em;
-    margin: 0 0 14px;
+    margin: 0 0 6px;
     text-align: justify;
   }
-  .chapter-content p:first-of-type::first-letter {
+  /* letra capitular só no primeiro parágrafo do capítulo */
+  .chapter-content p.dropcap::first-letter {
     font-family: "Dancing Script", cursive;
     font-size: 3.5em;
     float: left;
@@ -398,15 +390,35 @@
     color: #c77dff;
     font-weight: 700;
   }
+  /* parágrafo que continua da página anterior: sem recuo */
+  .chapter-content p.cont {
+    text-indent: 0;
+  }
 
   .chapter-content .quote {
     border-left: 3px solid #c77dff;
     padding: 8px 20px;
-    margin: 20px 0;
+    margin: 12px 0;
     font-style: italic;
     background: rgba(199, 125, 255, 0.08);
     border-radius: 0 8px 8px 0;
     color: #5a3a7a;
+  }
+
+  .chapter-content .scene-break {
+    text-align: center;
+    color: #c77dff;
+    letter-spacing: 10px;
+    font-size: 0.9em;
+    margin: 8px 0 10px;
+    line-height: 1.2;
+  }
+
+  .end-ornament {
+    text-align: center;
+    padding: 14px 0 0;
+    color: #c77dff;
+    letter-spacing: 8px;
   }
 
   .editor-placeholder {
@@ -427,6 +439,25 @@
     border-color: #c77dff;
     transform: scale(1.02);
   }
+
+  .draft-pill {
+    position: fixed;
+    left: 30px;
+    bottom: 30px;
+    z-index: 20;
+    font-family: "Nunito", sans-serif;
+    font-weight: 700;
+    font-size: 0.8em;
+    color: white;
+    background: rgba(199, 125, 255, 0.25);
+    border: 1.5px dashed rgba(255,255,255,0.5);
+    padding: 9px 16px;
+    border-radius: 20px;
+    cursor: pointer;
+    backdrop-filter: blur(8px);
+    transition: 0.25s;
+  }
+  .draft-pill:hover { background: rgba(199, 125, 255, 0.45); transform: scale(1.04); }
 
   .edit-area {
     width: 100%;
@@ -679,10 +710,11 @@
     box-shadow: 0 4px 12px rgba(255, 158, 207, 0.5);
   }
 
+  /* fita marcadora: fica na margem da página, sem cobrir o texto */
   .bookmark-ribbon {
     position: absolute;
     top: -4px;
-    right: 32px;
+    right: 12px;
     width: 26px;
     height: 70px;
     background: linear-gradient(180deg, #ff4d6d 0%, #c9184a 100%);
@@ -1235,7 +1267,14 @@
     .book { flex-direction: column; max-width: 100%; }
     .book-spine { width: 100%; min-height: 22px; }
     .book-spine::before, .book-spine::after { display: none; }
-    .page { min-height: auto; padding: 28px 22px 70px; max-height: none; overflow: visible; }
+    .page {
+      min-height: auto;
+      padding: 28px 30px 70px 22px;
+      height: 72vh;
+      max-height: 72vh;
+      overflow: hidden !important;
+    }
+    .bookmark-ribbon { right: 4px; width: 20px; }
     .page-left, .page-right { box-shadow: none; border: none; }
     .page-left { border-bottom: 1px solid rgba(139, 90, 43, 0.15); }
     .page-number { display: none; }
@@ -1250,9 +1289,12 @@
 <body>
 
 <div class="top-bar">
-  <button class="back-btn" onclick="goBack()">← Voltar</button>
+  <div style="flex:1; display:flex; gap:8px; align-items:center;">
+    <button class="back-btn" onclick="goBack()">← Voltar</button>
+    <button class="back-btn" id="soundBtn" onclick="toggleSound()" title="Som ao virar a página" style="padding:8px 14px;">🔊</button>
+  </div>
   <div class="page-indicator" id="pageIndicator">📖 Sumário</div>
-  <div style="width:95px; display:flex; justify-content:flex-end;" id="authorSlot"></div>
+  <div style="flex:1; display:flex; justify-content:flex-end;" id="authorSlot"></div>
 </div>
 
 <div class="book-title">
@@ -1284,6 +1326,8 @@
   <button class="nav-arrow" id="prevBtn" onclick="navPrev()" title="Anterior">‹</button>
   <button class="nav-arrow" id="nextBtn" onclick="navNext()" title="Próximo">›</button>
 </div>
+
+<button class="draft-pill" id="draftPill" style="display:none;" onclick="startEdit()">✍️ Rascunho local</button>
 
 <div class="toast" id="toast">💾 Salvo com sucesso!</div>
 <div class="mark-tooltip" id="markTooltip" onclick="markSelectedText()">💖 Marcar este trecho</div>
@@ -1327,6 +1371,10 @@
                  Deixe null para liberar agora
    - unlocked:   true = ja esta liberado | false = cadeado
    - content:    A historia (pule linhas com Enter)
+
+   As paginas sao montadas AUTOMATICAMENTE pelo tamanho real
+   do texto: nada fica cortado e nao existe scroll.
+   Uma linha com apenas --- vira uma divisoria ✦ ✦ ✦ no texto.
    ========================================================= */
 
 const LIVRO_CONFIG = {
@@ -1503,6 +1551,8 @@ Por sorte, não virei.
 
 Acho.
 
+---
+
 Ela respondeu.
 
 E aquilo, por algum motivo, fez meu coração dar aquela pequena acelerada que a gente tenta fingir que não aconteceu.
@@ -1546,6 +1596,8 @@ Nós começamos a conversar por volta das seis da tarde.
 Quando percebi, já era quase nove e meia.
 
 Três horas.
+
+---
 
 Eu tinha acabado de conhecer aquela garota e, mesmo assim, o tempo parecia ter decidido acelerar só para me irritar.
 
@@ -1760,6 +1812,8 @@ Coisas que, isoladamente, pareciam insignificantes, mas que, juntas, começavam 
 
 E eu queria cada vez mais pedaços.
 
+---
+
 Em algum momento, encontramos uma brincadeira.
 
 Era simples.
@@ -1811,6 +1865,8 @@ Fingi interesse em perguntas que, naquele momento, me interessavam aproximadamen
 Tudo para, eventualmente, chegar naquele número.
 
 Aquele que eu já tinha escolhido antes mesmo de escolher.
+
+---
 
 Quando finalmente chegou a hora, ela respondeu primeiro.
 
@@ -1882,6 +1938,8 @@ Podiam declarar oficialmente encerrado o expediente daquela brincadeira.
 
 Eu tinha conseguido exatamente a resposta que queria.
 
+---
+
 O que mais me encantava, porém, não era apenas saber que ela estava começando a gostar de mim.
 
 Era perceber que ela estava me deixando entrar.
@@ -1924,6 +1982,8 @@ E já estava prestando atenção demais.
 
 Mas havia uma coisa ainda mais perigosa:
 eu não queria parar.
+
+---
 
 Aquela semana foi perfeita.
 
@@ -1989,6 +2049,7 @@ const STORAGE_KEY = "livro_capitulos_v1";
 const AUTHOR_STORAGE_KEY = "livro_modo_autor_v1";
 const BOOKMARK_KEY = "livro_marcadores_v1";
 const PATCH_SEEN_KEY = "livro_patch_seen_v1";
+const SOUND_KEY = "livro_som_v1";
 
 const PATCHES = [
   {
@@ -2107,6 +2168,10 @@ function updateNewsBadge() {
 let chapters = loadChapters();
 let currentView = "toc";
 let editingCh1 = false;
+let currentSpread = 0;
+let totalSpreads = 1;
+let lastDir = null;
+let fontsReady = false;
 
 function isAuthorMode() {
   const params = new URLSearchParams(window.location.search);
@@ -2211,56 +2276,40 @@ function getRangeInContainer(range, containerEl) {
   };
 }
 
-function resolvePositionByContext(fullText, needle, ctxBefore, ctxAfter, startHint) {
-  const needleLen = needle.length;
-  let start = startHint || 0;
-  let bestScore = -1;
-  let bestIndex = -1;
+/* Mede o quanto o contexto (texto antes/depois) de uma ocorrência bate com o salvo */
+function matchScore(fullText, idx, needleLen, ctxBefore, ctxAfter) {
+  let before = 0, after = 0;
+  const b = fullText.slice(Math.max(0, idx - 60), idx);
+  const cb = ctxBefore || "";
+  const minB = Math.min(b.length, cb.length);
+  for (let k = 1; k <= minB; k++) {
+    if (b.slice(-k) === cb.slice(-k)) before = k; else break;
+  }
+  const a = fullText.slice(idx + needleLen, idx + needleLen + 60);
+  const ca = ctxAfter || "";
+  const minA = Math.min(a.length, ca.length);
+  for (let k = 0; k < minA; k++) {
+    if (a[k] === ca[k]) after = k + 1; else break;
+  }
+  return { before, after };
+}
 
-  function scoreMatch(idx) {
-    let s = 0;
-    const beforeStart = Math.max(0, idx - 60);
-    const beforeSlice = fullText.slice(beforeStart, idx);
-    const commonBefore = (ctxBefore || "");
-    const minLenB = Math.min(beforeSlice.length, commonBefore.length);
-    for (let k = 1; k <= minLenB; k++) {
-      if (beforeSlice.slice(-k) === commonBefore.slice(-k)) s += k;
-      else break;
-    }
-    const afterStart = idx + needleLen;
-    const afterSlice = fullText.slice(afterStart, afterStart + 60);
-    const commonAfter = (ctxAfter || "");
-    const minLenA = Math.min(afterSlice.length, commonAfter.length);
-    for (let k = 0; k < minLenA; k++) {
-      if (afterSlice[k] === commonAfter[k]) s += 5;
-      else break;
-    }
-    return s;
+/* Procura onde um marcador salvo está dentro do texto de uma página */
+function locateMark(fullText, mark) {
+  const needle = mark.anchor || mark.text;
+  if (!needle) return null;
+  const cb = mark.contextBefore || "";
+  const ca = mark.contextAfter || "";
+  const need = Math.min(10, Math.min(8, cb.length) + Math.min(8, ca.length));
+  let best = null, from = 0, idx;
+  while ((idx = fullText.indexOf(needle, from)) !== -1) {
+    const s = matchScore(fullText, idx, needle.length, cb, ca);
+    const total = s.before + s.after;
+    if (!best || total > best.total) best = { idx, total, len: needle.length };
+    from = idx + 1;
   }
-
-  let found = fullText.indexOf(needle, start);
-  let tries = 0;
-  while (found !== -1 && tries < 1000) {
-    tries++;
-    const sc = scoreMatch(found);
-    if (sc > bestScore) {
-      bestScore = sc;
-      bestIndex = found;
-    }
-    if (sc >= Math.min(ctxBefore ? ctxBefore.length : 0, 60) * 0.9 + 30 && tries > 0) {
-      break;
-    }
-    found = fullText.indexOf(needle, found + 1);
-  }
-  if (bestIndex === -1 && startHint > 0) {
-    found = fullText.indexOf(needle, 0);
-    while (found !== -1) {
-      const sc = scoreMatch(found);
-      if (sc > bestScore) { bestScore = sc; bestIndex = found; }
-      found = fullText.indexOf(needle, found + 1);
-    }
-  }
-  return bestIndex;
+  if (!best || best.total < need) return null;
+  return best;
 }
 
 function wrapCharRangeInContainer(containerEl, startChar, endChar, markId) {
@@ -2483,9 +2532,9 @@ function markSelectedText() {
 
   const duplicate = loadBookmarks().find(b =>
     b.chapterId === chId &&
-    b.pageSide === side &&
-    b.startChar === pos.startChar &&
-    b.endChar === pos.endChar
+    b.text === text &&
+    b.contextBefore === pos.contextBefore &&
+    b.contextAfter === pos.contextAfter
   );
   if (duplicate) {
     showToast("💝 Este trecho já está marcado!");
@@ -2510,6 +2559,7 @@ function markSelectedText() {
     chapterTitle: ch.title,
     pageSide: side,
     text: text,
+    anchor: pos.text,
     startChar: pos.startChar,
     endChar: pos.endChar,
     length: pos.length,
@@ -2556,27 +2606,27 @@ function clearAllMarks() {
   }
 }
 
-function applySavedHighlightsToContainer(containerEl, chapterId, pageSide) {
-  const relevant = loadBookmarks().filter(b => b.chapterId === chapterId && b.pageSide === pageSide);
-  if (relevant.length === 0) return;
-  const info = getContainerText(containerEl);
+/* Reaplica os marca-textos salvos nas duas páginas visíveis do capítulo */
+function applySavedHighlights(chapterId) {
+  const marks = loadBookmarks().filter(b => b.chapterId === chapterId);
+  if (marks.length === 0) return;
+  const containers = [
+    document.querySelector("#pageLeft .chapter-content"),
+    document.querySelector("#pageRight .chapter-content")
+  ].filter(Boolean);
+  if (containers.length === 0) return;
 
-  const sorted = [...relevant].sort((a, b) => (b.endChar - b.startChar) - (a.endChar - a.startChar));
-
+  const sorted = [...marks].sort((a, b) => (b.anchor || b.text).length - (a.anchor || a.text).length);
   sorted.forEach(mark => {
-    let startIdx = -1;
-    if (typeof mark.startChar === "number" && typeof mark.contextBefore !== "undefined") {
-      startIdx = resolvePositionByContext(info.fullText, mark.text, mark.contextBefore, mark.contextAfter, mark.startChar);
-      if (startIdx === -1) startIdx = resolvePositionByContext(info.fullText, mark.text, mark.contextBefore, mark.contextAfter, 0);
-    } else {
-      startIdx = info.fullText.indexOf(mark.text);
-    }
-
-    if (startIdx >= 0) {
-      const endIdx = startIdx + mark.text.length;
-      wrapCharRangeInContainer(containerEl, startIdx, endIdx, mark.id);
-    }
+    let best = null;
+    containers.forEach(c => {
+      const info = getContainerText(c);
+      const r = locateMark(info.fullText, mark);
+      if (r && (!best || r.total > best.total)) best = { c, idx: r.idx, len: r.len, total: r.total };
+    });
+    if (best) wrapCharRangeInContainer(best.c, best.idx, best.idx + best.len, mark.id);
   });
+  attachUnmarkHandlers();
 }
 
 function attachUnmarkHandlers() {
@@ -2596,8 +2646,11 @@ function attachUnmarkHandlers() {
 
 function openFavoritesView() {
   currentView = "favorites";
+  currentSpread = 0;
+  totalSpreads = 1;
   renderFavoritesView();
   updateNavArrows();
+  updateDraftPill();
 }
 
 function updateRibbonVisibility() {
@@ -2615,16 +2668,38 @@ function updateRibbonVisibility() {
   }
 }
 
+/* O texto vem sempre do código (para as suas edições chegarem até ela).
+   Só o rascunho feito no Modo Autor fica guardado no navegador. */
 function loadChapters() {
-  return defaultChapters.map(dc => ({
-    ...dc,
-    unlocked: dc.unlocked || checkUnlocked(dc)
-  }));
+  let saved = null;
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (raw) saved = JSON.parse(raw);
+  } catch (e) {}
+  const author = isAuthorMode();
+  return defaultChapters.map(dc => {
+    let override = null;
+    if (Array.isArray(saved)) override = saved.find(s => s && s.id === dc.id);
+    return {
+      ...dc,
+      content: (author && override && override.draft === true && typeof override.content === "string") ? override.content : dc.content,
+      unlocked: (override && typeof override.unlocked === "boolean") ? override.unlocked : (dc.unlocked || checkUnlocked(dc))
+    };
+  });
 }
 
 function saveChapters() {
+  const author = isAuthorMode();
   localStorage.setItem(STORAGE_KEY, JSON.stringify(
-    chapters.map(c => ({ id: c.id, unlocked: c.unlocked }))
+    chapters.map(c => {
+      const o = { id: c.id, unlocked: c.unlocked };
+      const def = defaultChapters.find(d => d.id === c.id);
+      if (author && def && c.content !== def.content) {
+        o.content = c.content;
+        o.draft = true;
+      }
+      return o;
+    })
   ));
 }
 
@@ -2636,6 +2711,235 @@ function checkUnlocked(ch) {
 function goBack() {
   window.location.href = "menu.html";
 }
+
+/* =========================================================
+   📐 PAGINAÇÃO PELA ALTURA REAL DO TEXTO
+   O texto é medido num elemento invisível com a mesma largura,
+   fonte e altura útil da página. Cada página recebe só o que
+   cabe, e um parágrafo longo continua na página seguinte
+   (quebrando entre palavras). Nada é cortado, sem scroll.
+   ========================================================= */
+const pageCache = {};
+
+function escapeHtml(s) {
+  const div = document.createElement("div");
+  div.textContent = s;
+  return div.innerHTML;
+}
+
+function parseBlocks(text) {
+  const norm = (text || "").replace(/\r/g, "").replace(/\n---+\n/g, "\n\n---\n\n");
+  const blocks = [];
+  norm.split(/\n\n+/).forEach(raw => {
+    const t = raw.trim();
+    if (!t) return;
+    if (/^---+$/.test(t)) { blocks.push({ type: "break" }); return; }
+    const isQuote = t.startsWith('"') && t.endsWith('"');
+    blocks.push({ type: isQuote ? "quote" : "p", text: t });
+  });
+  return blocks;
+}
+
+function blockHTML(type, text, opts) {
+  opts = opts || {};
+  const body = escapeHtml(text).replace(/\n/g, "<br>");
+  if (type === "quote") return `<div class="quote">${body}</div>`;
+  const cls = [opts.dropcap ? "dropcap" : "", opts.cont ? "cont" : ""].filter(Boolean).join(" ");
+  return `<p${cls ? ` class="${cls}"` : ""}>${body}</p>`;
+}
+
+function chapterHeaderHTML(ch) {
+  const decor = "💕".repeat(5);
+  return `<button class="back-toc" onclick="backToTOC()">← Sumário</button>
+    <div class="chapter-header">
+      <div class="ch-num">${ch.num}</div>
+      <h2>${ch.title}</h2>
+      <div class="ch-date">— ${ch.date} —</div>
+      <div class="ch-heart">${decor}</div>
+    </div>`;
+}
+
+const END_ORNAMENT = '<div class="end-ornament">✦ ✦ ✦ ✦ ✦</div>';
+
+function paginateText(ch) {
+  const page = document.getElementById("pageLeft");
+  const cs = getComputedStyle(page);
+  const width = page.clientWidth - parseFloat(cs.paddingLeft) - parseFloat(cs.paddingRight);
+  const H = page.clientHeight - parseFloat(cs.paddingTop) - parseFloat(cs.paddingBottom) - 4;
+
+  const m = document.createElement("div");
+  m.style.cssText = `position:absolute;left:-10000px;top:0;width:${width}px;visibility:hidden;pointer-events:none;`;
+  document.body.appendChild(m);
+
+  const sides = [];
+  let htmlList = [];
+  let contentEl = null;
+
+  const mk = html => {
+    const t = document.createElement("div");
+    t.innerHTML = html;
+    return t.firstElementChild;
+  };
+  const reset = () => {
+    m.innerHTML = (sides.length === 0 ? chapterHeaderHTML(ch) : "") + '<div class="chapter-content"></div>';
+    contentEl = m.lastElementChild;
+    htmlList = [];
+  };
+  const fits = html => {
+    const n = mk(html);
+    contentEl.appendChild(n);
+    const ok = m.offsetHeight <= H;
+    contentEl.removeChild(n);
+    return ok;
+  };
+  const add = html => {
+    contentEl.appendChild(mk(html));
+    htmlList.push(html);
+  };
+  const flush = () => {
+    sides.push(htmlList.join(""));
+    reset();
+  };
+
+  reset();
+  let first = true;
+
+  parseBlocks(ch.content).forEach(b => {
+    if (b.type === "break") {
+      if (htmlList.length === 0) return;
+      const h = '<div class="scene-break">✦ ✦ ✦</div>';
+      if (fits(h)) add(h);
+      return;
+    }
+
+    let text = b.text;
+    let cont = false;
+    let guard = 0;
+    while (text && guard++ < 1000) {
+      const opts = { dropcap: first && b.type === "p" && !cont, cont };
+      const whole = blockHTML(b.type, text, opts);
+
+      if (fits(whole)) {
+        add(whole);
+        if (b.type === "p") first = false;
+        text = "";
+        break;
+      }
+
+      const empty = htmlList.length === 0;
+
+      // citações e parágrafos curtos não são divididos: vão inteiros para a próxima página
+      if (b.type === "quote" || text.length < 140) {
+        if (empty) { add(whole); if (b.type === "p") first = false; text = ""; break; }
+        flush();
+        continue;
+      }
+
+      // parágrafo longo: acha o maior trecho (em palavras) que ainda cabe
+      const words = text.split(" ");
+      let lo = 0, hi = words.length - 1;
+      while (lo < hi) {
+        const mid = Math.ceil((lo + hi) / 2);
+        if (fits(blockHTML(b.type, words.slice(0, mid).join(" "), opts))) lo = mid;
+        else hi = mid - 1;
+      }
+      // evita deixar poucas palavras sozinhas na página seguinte
+      if (words.length - lo < 4 && words.length - 4 >= 6) lo = words.length - 4;
+
+      if (lo < 1) {
+        if (empty) { add(whole); if (b.type === "p") first = false; text = ""; break; }
+        flush();
+        continue;
+      }
+      // evita um começo de parágrafo minúsculo no fim da página
+      if (lo < 6 && !empty) {
+        flush();
+        continue;
+      }
+
+      add(blockHTML(b.type, words.slice(0, lo).join(" "), opts));
+      if (b.type === "p") first = false;
+      text = words.slice(lo).join(" ");
+      cont = true;
+      flush();
+    }
+  });
+
+  // o enfeite final só aparece se couber na última página (quando ela é a da direita)
+  const lastIdx = sides.length;
+  let footerOk = true;
+  if (lastIdx % 2 === 1) footerOk = fits(END_ORNAMENT);
+  sides.push(htmlList.join(""));
+
+  document.body.removeChild(m);
+  return { sides, footerOk, totalSpreads: Math.max(1, Math.ceil(sides.length / 2)) };
+}
+
+function getPagination(ch) {
+  const page = document.getElementById("pageLeft");
+  const sig = page.clientWidth + "x" + page.clientHeight + "|" + (fontsReady ? 1 : 0);
+  const c = pageCache[ch.id];
+  if (c && c.sig === sig && c.content === ch.content) return c.result;
+  const result = paginateText(ch);
+  pageCache[ch.id] = { sig, content: ch.content, result };
+  return result;
+}
+
+function chapterStartPage(id) {
+  let pages = 0;
+  for (const c of chapters) {
+    if (c.id >= id) break;
+    const unlocked = c.unlocked || checkUnlocked(c);
+    const n = unlocked ? getPagination(c).sides.length : 2;
+    pages += Math.ceil(n / 2) * 2;
+  }
+  return 1 + pages;
+}
+
+function preloadFonts() {
+  if (!document.fonts || !document.fonts.load) return Promise.resolve();
+  const specs = [
+    '400 18px "Cormorant Garamond"',
+    'italic 400 18px "Cormorant Garamond"',
+    '600 18px "Cormorant Garamond"',
+    '700 18px "Cormorant Garamond"',
+    '700 40px "Dancing Script"',
+    '600 16px "Dancing Script"',
+    '400 14px "Nunito"',
+    '700 14px "Nunito"'
+  ];
+  const loads = specs.map(f => document.fonts.load(f).catch(() => {}));
+  return Promise.race([Promise.all(loads), new Promise(r => setTimeout(r, 3000))]);
+}
+
+function relayout() {
+  Object.keys(pageCache).forEach(k => delete pageCache[k]);
+  if (currentView.startsWith("chapter-") && !editingCh1) {
+    const id = parseInt(currentView.split("-")[1]);
+    const ch = chapters.find(c => c.id === id);
+    if (ch && (ch.unlocked || checkUnlocked(ch))) {
+      const frac = totalSpreads > 0 ? currentSpread / totalSpreads : 0;
+      const pag = getPagination(ch);
+      currentSpread = Math.min(pag.totalSpreads - 1, Math.floor(frac * pag.totalSpreads));
+    }
+  }
+  renderView();
+}
+
+let resizeTimer = null;
+let lastPageSig = "";
+window.addEventListener("resize", () => {
+  clearTimeout(resizeTimer);
+  resizeTimer = setTimeout(() => {
+    const p = document.getElementById("pageLeft");
+    const sig = p.clientWidth + "x" + p.clientHeight;
+    if (sig === lastPageSig) return;
+    lastPageSig = sig;
+    relayout();
+  }, 250);
+});
+
+/* ========================================================= */
 
 function renderView() {
   updateAuthorBadge();
@@ -2650,6 +2954,29 @@ function renderView() {
     renderChapter(chId);
   }
   updateNavArrows();
+  updateDraftPill();
+  animateTurn();
+}
+
+function animateTurn() {
+  if (!lastDir) return;
+  const dx = lastDir === "next" ? 18 : -18;
+  lastDir = null;
+  ["leftContent", "rightContent"].forEach(id => {
+    const el = document.getElementById(id);
+    if (el && el.animate) {
+      el.animate(
+        [{ opacity: 0, transform: `translateX(${dx}px)` }, { opacity: 1, transform: "translateX(0)" }],
+        { duration: 320, easing: "ease-out" }
+      );
+    }
+  });
+}
+
+function updateDraftPill() {
+  const pill = document.getElementById("draftPill");
+  if (!pill) return;
+  pill.style.display = (isAuthorMode() && currentView === "chapter-1" && !editingCh1) ? "block" : "none";
 }
 
 function updateAuthorBadge() {
@@ -2665,6 +2992,7 @@ function updateAuthorBadge() {
 function exitAuthorMode() {
   localStorage.removeItem(AUTHOR_STORAGE_KEY);
   editingCh1 = false;
+  chapters = loadChapters();
   renderView();
   showToast("💜 Saiu do Modo Autor.\nAgora voce esta vendo exatamente como ela vai ver! ✨");
 }
@@ -2738,13 +3066,21 @@ function renderTOC() {
 }
 
 function openChapter(id) {
+  playPageFlipSound("next");
+  lastDir = "next";
   currentView = `chapter-${id}`;
+  currentSpread = 0;
   renderView();
   startCountdowns();
 }
 
 function backToTOC() {
+  playPageFlipSound("prev");
+  lastDir = "prev";
+  editingCh1 = false;
   currentView = "toc";
+  currentSpread = 0;
+  totalSpreads = 1;
   renderView();
 }
 
@@ -2753,152 +3089,110 @@ function renderChapter(id) {
   if (!ch) return;
   const isUnlocked = ch.unlocked || checkUnlocked(ch);
 
-  document.getElementById("pageLeftNum").textContent = (id * 2 - 1).toString();
-  document.getElementById("pageRightNum").textContent = (id * 2).toString();
-  document.getElementById("pageIndicator").textContent = `📖 ${ch.num}`;
-
-  const decor = "💕".repeat(5);
-
   if (!isUnlocked) {
-    document.getElementById("leftContent").innerHTML = `
-      <button class="back-toc" onclick="backToTOC()">← Sumário</button>
-      <div class="locked-cover">
-        <div class="locked-big">🔐</div>
-        <div class="locked-title">${ch.title}</div>
-        <div class="locked-subtitle">${ch.num}</div>
-        <div class="countdown">
-          <div class="countdown-label">Este capítulo desbloqueia em</div>
-          <div class="countdown-numbers" id="countdown-${id}">
-            <span>--<small>Dias</small></span>
-            <span>--<small>Horas</small></span>
-            <span>--<small>Min</small></span>
-            <span>--<small>Seg</small></span>
-          </div>
-        </div>
-        <div style="margin-top: 30px; font-family: 'Dancing Script', cursive; font-size: 1.3em; color: #8a5a7a;">
-          "A espera de cada momento com você<br>já vale a pena." 💜
-        </div>
-      </div>
-    `;
-    document.getElementById("rightContent").innerHTML = `
-      <div style="display:flex; flex-direction:column; height:100%; justify-content:center; align-items:center; padding: 20px;">
-        <div style="font-size: 6rem; opacity:0.3; margin-bottom: 20px;">📖</div>
-        <div style="font-family: 'Dancing Script', cursive; font-size: 1.6em; color: #6b4423; text-align: center; line-height: 1.5;">
-          Páginas guardadas<br>com carinho...
-        </div>
-        <div style="margin-top: 30px; text-align: center;">
-          <div style="font-family: 'Nunito', sans-serif; font-size: 0.75em; color: #8a5a2b; letter-spacing: 2px; text-transform: uppercase; font-weight: 700;">Data marcada</div>
-          <div style="font-family: 'Cormorant Garamond', serif; font-size: 1.6em; color: #3a2817; font-weight: 700; margin-top: 4px;">${ch.date}</div>
-        </div>
-        <div style="margin-top: 40px; color: #c77dff; letter-spacing: 8px;">${decor}</div>
-      </div>
-    `;
+    renderLockedChapter(ch);
     return;
   }
 
-  if (id === 1) {
-    renderChapter1(ch);
+  if (id === 1 && editingCh1 && isAuthorMode()) {
+    renderEditor(ch);
     return;
   }
 
-  const split = splitContent(ch.content);
-  const contentLeft = formatContent(split.left, ch);
-  const contentRight = formatContent(split.right, ch);
-
-  document.getElementById("leftContent").innerHTML = `
-    <button class="back-toc" onclick="backToTOC()">← Sumário</button>
-    <div class="chapter-header">
-      <div class="ch-num">${ch.num}</div>
-      <h2>${ch.title}</h2>
-      <div class="ch-date">— ${ch.date} —</div>
-      <div class="ch-heart">${decor}</div>
-    </div>
-    <div class="chapter-content">
-      ${contentLeft}
-    </div>
-  `;
-
-  const rightBody = contentRight ? `
-    <div style="flex:1;" class="chapter-content">
-      ${contentRight}
-    </div>
-  ` : `
-    <div style="flex:1;" class="chapter-content" style="display:flex; flex-direction:column; justify-content:center; align-items:center; text-align:center; opacity: 0.85;">
-      <div style="font-family: 'Dancing Script', cursive; font-size: 1.6em; color: #6b4423; line-height: 1.6;">
-        "A nossa história continua...<br>escrita a cada dia ao seu lado."
-      </div>
-      <div style="font-size: 2.5rem; opacity: 0.4; margin-top: 20px;">💜</div>
-    </div>
-  `;
-
-  document.getElementById("rightContent").innerHTML = `
-    <div style="height: 100%; display: flex; flex-direction: column;">
-      ${rightBody}
-      <div style="text-align: center; padding-top: 20px; color: #c77dff; letter-spacing: 8px;">✦ ✦ ✦ ✦ ✦</div>
-    </div>
-  `;
-
-  setTimeout(() => {
-    const leftCC  = document.querySelector("#pageLeft  .chapter-content");
-    const rightCC = document.querySelector("#pageRight .chapter-content");
-    if (leftCC)  applySavedHighlightsToContainer(leftCC,  id, "left");
-    if (rightCC) applySavedHighlightsToContainer(rightCC, id, "right");
-    attachUnmarkHandlers();
-  }, 0);
+  renderChapterPages(ch);
 }
 
-function renderChapter1(ch) {
+function renderLockedChapter(ch) {
+  const id = ch.id;
   const decor = "💕".repeat(5);
-  const author = isAuthorMode();
+  totalSpreads = 1;
+  currentSpread = 0;
+  const start = chapterStartPage(id);
+  document.getElementById("pageLeftNum").textContent = start.toString();
+  document.getElementById("pageRightNum").textContent = (start + 1).toString();
+  document.getElementById("pageIndicator").textContent = `📖 ${ch.num}`;
+  document.getElementById("leftContent").innerHTML = `
+    <button class="back-toc" onclick="backToTOC()">← Sumário</button>
+    <div class="locked-cover">
+      <div class="locked-big">🔐</div>
+      <div class="locked-title">${ch.title}</div>
+      <div class="locked-subtitle">${ch.num}</div>
+      <div class="countdown">
+        <div class="countdown-label">Este capítulo desbloqueia em</div>
+        <div class="countdown-numbers" id="countdown-${id}">
+          <span>--<small>Dias</small></span>
+          <span>--<small>Horas</small></span>
+          <span>--<small>Min</small></span>
+          <span>--<small>Seg</small></span>
+        </div>
+      </div>
+      <div style="margin-top: 30px; font-family: 'Dancing Script', cursive; font-size: 1.3em; color: #8a5a7a;">
+        "A espera de cada momento com você<br>já vale a pena." 💜
+      </div>
+    </div>
+  `;
+  document.getElementById("rightContent").innerHTML = `
+    <div style="display:flex; flex-direction:column; height:100%; justify-content:center; align-items:center; padding: 20px;">
+      <div style="font-size: 6rem; opacity:0.3; margin-bottom: 20px;">📖</div>
+      <div style="font-family: 'Dancing Script', cursive; font-size: 1.6em; color: #6b4423; text-align: center; line-height: 1.5;">
+        Páginas guardadas<br>com carinho...
+      </div>
+      <div style="margin-top: 30px; text-align: center;">
+        <div style="font-family: 'Nunito', sans-serif; font-size: 0.75em; color: #8a5a2b; letter-spacing: 2px; text-transform: uppercase; font-weight: 700;">Data marcada</div>
+        <div style="font-family: 'Cormorant Garamond', serif; font-size: 1.6em; color: #3a2817; font-weight: 700; margin-top: 4px;">${ch.date}</div>
+      </div>
+      <div style="margin-top: 40px; color: #c77dff; letter-spacing: 8px;">${decor}</div>
+    </div>
+  `;
+}
 
-  if (editingCh1 && author) {
-    document.getElementById("leftContent").innerHTML = `
-      <button class="back-toc" onclick="backToTOC()">← Sumário</button>
-      <div class="chapter-header">
-        <div class="ch-num">${ch.num}</div>
-        <h2>${ch.title}</h2>
-        <div class="ch-date">— ${ch.date} —</div>
-        <div class="ch-heart">${decor}</div>
-      </div>
-      <textarea id="ch1editor" class="edit-area">${escapeHtml(ch.content)}</textarea>
-      <div class="edit-actions">
-        <button class="btn-edit btn-cancel" onclick="cancelEdit()">Cancelar</button>
-        <button class="btn-edit btn-save" onclick="saveEdit()">💾 Salvar história</button>
-      </div>
-    `;
+function renderChapterPages(ch) {
+  const pag = getPagination(ch);
+  totalSpreads = pag.totalSpreads;
+  if (currentSpread >= totalSpreads) currentSpread = totalSpreads - 1;
+  if (currentSpread < 0) currentSpread = 0;
+
+  const leftNo = chapterStartPage(ch.id) + currentSpread * 2;
+  document.getElementById("pageLeftNum").textContent = leftNo.toString();
+  document.getElementById("pageRightNum").textContent = (leftNo + 1).toString();
+  const spreadLabel = totalSpreads > 1 ? ` · pág ${currentSpread + 1}/${totalSpreads}` : "";
+  document.getElementById("pageIndicator").textContent = `📖 ${ch.num}${spreadLabel}`;
+
+  const leftSide = pag.sides[currentSpread * 2];
+  const rightSide = pag.sides[currentSpread * 2 + 1];
+  const isFirst = currentSpread === 0;
+  const isLast = currentSpread === totalSpreads - 1;
+
+  document.getElementById("leftContent").innerHTML =
+    (isFirst ? chapterHeaderHTML(ch) : "") +
+    `<div class="chapter-content">${leftSide || ""}</div>`;
+
+  if (rightSide !== undefined) {
+    document.getElementById("rightContent").innerHTML =
+      `<div class="chapter-content">${rightSide}</div>` +
+      (isLast && pag.footerOk ? END_ORNAMENT : "");
+  } else {
     document.getElementById("rightContent").innerHTML = `
-      <div style="padding: 10px;">
-        <div style="background: rgba(199,125,255,0.12); border-left: 3px solid #c77dff; padding: 14px 18px; border-radius: 0 12px 12px 0; font-family: 'Nunito', sans-serif; font-size: 0.88em; color: #5a3a7a; line-height: 1.6;">
-          <div style="font-weight: 700; margin-bottom: 6px;">💡 Dicas para sua história:</div>
-          ✿ Onde foi o primeiro encontro?<br>
-          ✿ Qual foi a primeira impressão?<br>
-          ✿ O que você sentiu ao olhar para ela?<br>
-          ✿ Algum detalhe engraçado ou especial?<br>
-          ✿ Quando você percebeu que era amor?<br>
-          <br>
-          <div style="font-weight: 700;">💡 Dica:</div>
-          Use <b>---</b> em uma linha sozinha para separar o que aparece na pagina esquerda da pagina direita.
+      <div style="height:100%; display:flex; flex-direction:column; justify-content:center; align-items:center; text-align:center; opacity:0.85;">
+        <div style="font-family: 'Dancing Script', cursive; font-size: 1.6em; color: #6b4423; line-height: 1.6; margin-bottom: 20px;">
+          "A nossa história continua...<br>escrita a cada dia ao seu lado."
         </div>
-        <div style="margin-top: 25px; text-align: center;">
-          <div style="font-family: 'Dancing Script', cursive; font-size: 1.5em; color: #6b4423;">
-            "Escreva com o coração,<br>que ele sempre sabe<br>as melhores palavras." 💜
-          </div>
-        </div>
+        <div style="font-size: 2.5rem; opacity: 0.4;">💜</div>
+        <div class="end-ornament" style="margin-top: 24px;">✦ ✦ ✦ ✦ ✦</div>
       </div>
     `;
-    return;
   }
 
-  const split = splitContent(ch.content);
-  const contentLeft = formatContent(split.left, ch);
-  const contentRight = formatContent(split.right, ch);
+  applySavedHighlights(ch.id);
+}
 
-  const rascunhoBtn = author ? `
-    <div class="editor-placeholder" onclick="startEdit()">
-      ✍️ <b>Rascunho local</b> — escreva aqui para testar, depois copie e cole no <b>codigo do arquivo</b> para publicar para ela 💜
-    </div>
-  ` : "";
-
+function renderEditor(ch) {
+  const decor = "💕".repeat(5);
+  totalSpreads = 1;
+  currentSpread = 0;
+  document.getElementById("pageLeftNum").textContent = "1";
+  document.getElementById("pageRightNum").textContent = "2";
+  document.getElementById("pageIndicator").textContent = `📖 ${ch.num}`;
   document.getElementById("leftContent").innerHTML = `
     <button class="back-toc" onclick="backToTOC()">← Sumário</button>
     <div class="chapter-header">
@@ -2907,41 +3201,32 @@ function renderChapter1(ch) {
       <div class="ch-date">— ${ch.date} —</div>
       <div class="ch-heart">${decor}</div>
     </div>
-    <div class="chapter-content">
-      ${contentLeft}
-    </div>
-    ${rascunhoBtn}
-  `;
-
-  const rightInner = contentRight ? `
-    <div class="chapter-content" style="flex:1;">
-      ${contentRight}
-    </div>
-  ` : `
-    <div class="chapter-content" style="flex:1; display:flex; flex-direction:column; justify-content:center; align-items:center; text-align:center; opacity: 0.85;">
-      <div style="font-family: 'Dancing Script', cursive; font-size: 1.6em; color: #6b4423; line-height: 1.6; margin-bottom: 20px;">
-        "A nossa história continua...<br>escrita a cada dia ao seu lado."
-      </div>
-      <div style="font-size: 2.5rem; opacity: 0.4;">💜</div>
+    <textarea id="ch1editor" class="edit-area">${escapeHtml(ch.content)}</textarea>
+    <div class="edit-actions">
+      <button class="btn-edit btn-cancel" onclick="cancelEdit()">Cancelar</button>
+      <button class="btn-edit btn-save" onclick="saveEdit()">💾 Salvar história</button>
     </div>
   `;
-
   document.getElementById("rightContent").innerHTML = `
-    <div style="height:100%; display:flex; flex-direction:column;">
-      ${rightInner}
-      <div style="text-align: center; padding: 20px 0; color: #c77dff; letter-spacing: 8px;">✦ ✦ ✦ ✦ ✦</div>
+    <div style="padding: 10px;">
+      <div style="background: rgba(199,125,255,0.12); border-left: 3px solid #c77dff; padding: 14px 18px; border-radius: 0 12px 12px 0; font-family: 'Nunito', sans-serif; font-size: 0.88em; color: #5a3a7a; line-height: 1.6;">
+        <div style="font-weight: 700; margin-bottom: 6px;">💡 Dicas para sua história:</div>
+        ✿ Onde foi o primeiro encontro?<br>
+        ✿ Qual foi a primeira impressão?<br>
+        ✿ O que você sentiu ao olhar para ela?<br>
+        ✿ Algum detalhe engraçado ou especial?<br>
+        ✿ Quando você percebeu que era amor?<br>
+        <br>
+        <div style="font-weight: 700;">💡 Dica:</div>
+        As páginas são montadas sozinhas pelo tamanho do texto. Use <b>---</b> em uma linha sozinha para colocar uma divisória ✦ ✦ ✦ entre cenas.
+      </div>
+      <div style="margin-top: 25px; text-align: center;">
+        <div style="font-family: 'Dancing Script', cursive; font-size: 1.5em; color: #6b4423;">
+          "Escreva com o coração,<br>que ele sempre sabe<br>as melhores palavras." 💜
+        </div>
+      </div>
     </div>
   `;
-
-  if (!editingCh1) {
-    setTimeout(() => {
-      const leftCC  = document.querySelector("#pageLeft  .chapter-content");
-      const rightCC = document.querySelector("#pageRight .chapter-content");
-      if (leftCC)  applySavedHighlightsToContainer(leftCC,  ch.id, "left");
-      if (rightCC) applySavedHighlightsToContainer(rightCC, ch.id, "right");
-      attachUnmarkHandlers();
-    }, 0);
-  }
 }
 
 function startEdit() {
@@ -2965,6 +3250,7 @@ function saveEdit() {
   const ta = document.getElementById("ch1editor");
   if (!ta) return;
   chapters[0].content = ta.value;
+  saveChapters();
   editingCh1 = false;
   renderView();
   showToast("💾 Rascunho salvo! Copie o texto e cole no arquivo livro.html para publicar para ela 💜");
@@ -2979,21 +3265,6 @@ function showToast(msg) {
     t.style.animation = "toastOut 0.4s ease forwards";
     setTimeout(() => { t.style.display = "none"; t.style.animation = ""; }, 400);
   }, 3800);
-}
-
-function formatContent(text, ch) {
-  if (!text) return "";
-  const paras = text.split(/\n\n+/).filter(p => p.trim());
-  if (paras.length === 0) {
-    return `<p>${escapeHtml(text).replace(/\n/g, "<br>")}</p>`;
-  }
-  return paras.map(p => {
-    const clean = p.trim();
-    if (clean.startsWith('"') && clean.endsWith('"')) {
-      return `<div class="quote">${escapeHtml(clean).replace(/\n/g, "<br>")}</div>`;
-    }
-    return `<p>${escapeHtml(clean).replace(/\n/g, "<br>")}</p>`;
-  }).join("");
 }
 
 function renderFavoritesView() {
@@ -3040,7 +3311,7 @@ function renderFavoritesView() {
           Passe pelos capítulos do livro e<br>
           marque os trechos que mais tocarem o seu coração.
         </div>
-        <div class="fav-empty-hint">PASSE O MOUSE SOBRE UM PARÁGRAFO E CLIQUE NO BOTÃO 🔖</div>
+        <div class="fav-empty-hint">SELECIONE UM TRECHO COM O MOUSE E CLIQUE NO BOTÃO 💖</div>
       </div>
     `;
   } else {
@@ -3065,26 +3336,6 @@ function renderFavoritesView() {
   document.getElementById("rightContent").innerHTML = right;
 }
 
-function splitContent(text) {
-  if (!text) return { left: "", right: "" };
-  const parts = text.split(/\n---\n/);
-  if (parts.length >= 2) {
-    return { left: parts[0].trim(), right: parts.slice(1).join("\n---\n").trim() };
-  }
-  const paras = text.split(/\n\n+/).filter(p => p.trim());
-  const mid = Math.max(1, Math.ceil(paras.length / 2));
-  return {
-    left: paras.slice(0, mid).join("\n\n"),
-    right: paras.slice(mid).join("\n\n")
-  };
-}
-
-function escapeHtml(s) {
-  const div = document.createElement("div");
-  div.textContent = s;
-  return div.innerHTML;
-}
-
 function updateNavArrows() {
   const prev = document.getElementById("prevBtn");
   const next = document.getElementById("nextBtn");
@@ -3092,49 +3343,278 @@ function updateNavArrows() {
     prev.disabled = true;
     const nextUnlocked = chapters.find(c => c.unlocked || checkUnlocked(c));
     next.disabled = !nextUnlocked;
-  } else {
-    const id = parseInt(currentView.split("-")[1]);
+    return;
+  }
+  const id = parseInt(currentView.split("-")[1]);
+  const ch = chapters.find(c => c.id === id);
+  const unlocked = ch && (ch.unlocked || checkUnlocked(ch));
+  if (!unlocked) {
+    prev.disabled = id <= 1;
+    const nextCh = chapters.find(c => c.id === id + 1);
+    next.disabled = !nextCh || (!nextCh.unlocked && !checkUnlocked(nextCh));
+    return;
+  }
+  prev.disabled = (id <= 1 && currentSpread <= 0);
+  if (currentSpread > 0) {
     prev.disabled = false;
+  } else if (id > 1) {
+    const prevCh = chapters.find(c => c.id === id - 1);
+    prev.disabled = !(prevCh && (prevCh.unlocked || checkUnlocked(prevCh)));
+  }
+  if (currentSpread < totalSpreads - 1) {
+    next.disabled = false;
+  } else {
     const nextCh = chapters.find(c => c.id === id + 1);
     next.disabled = !nextCh || (!nextCh.unlocked && !checkUnlocked(nextCh));
   }
 }
 
+/* =========================================================
+   🔊 SOM DE VIRAR PÁGINA (sintetizado, sem arquivos de áudio)
+   Farfalhar do papel + batidinha suave quando a página assenta.
+   ========================================================= */
+let audioCtx = null;
+let noiseBuf = null;
+let soundOn = localStorage.getItem(SOUND_KEY) !== "0";
+
+function updateSoundBtn() {
+  const b = document.getElementById("soundBtn");
+  if (b) {
+    b.textContent = soundOn ? "🔊" : "🔇";
+    b.title = soundOn ? "Som ao virar a página: ligado" : "Som ao virar a página: desligado";
+  }
+}
+
+function toggleSound() {
+  soundOn = !soundOn;
+  localStorage.setItem(SOUND_KEY, soundOn ? "1" : "0");
+  updateSoundBtn();
+  if (soundOn) playPageFlipSound("next");
+}
+
+function getAudio() {
+  if (!audioCtx) {
+    const AC = window.AudioContext || window.webkitAudioContext;
+    if (!AC) return null;
+    audioCtx = new AC();
+  }
+  if (audioCtx.state === "suspended") audioCtx.resume();
+  return audioCtx;
+}
+
+function getNoise(ctx) {
+  if (noiseBuf && noiseBuf.sampleRate === ctx.sampleRate) return noiseBuf;
+  const len = Math.floor(ctx.sampleRate * 1.2);
+  noiseBuf = ctx.createBuffer(1, len, ctx.sampleRate);
+  const d = noiseBuf.getChannelData(0);
+  let b0 = 0, b1 = 0, b2 = 0;
+  for (let i = 0; i < len; i++) {
+    const white = Math.random() * 2 - 1;
+    b0 = 0.99765 * b0 + white * 0.0990460;
+    b1 = 0.96300 * b1 + white * 0.2965164;
+    b2 = 0.57000 * b2 + white * 1.0526913;
+    const pink = (b0 + b1 + b2 + white * 0.1848) * 0.45;
+    d[i] = Math.max(-1, Math.min(1, pink));
+  }
+  return noiseBuf;
+}
+
+function playPageFlipSound(direction) {
+  if (!soundOn) return;
+  try {
+    const ctx = getAudio();
+    if (!ctx) return;
+    const t0 = ctx.currentTime + 0.01;
+    const noise = getNoise(ctx);
+
+    /* saída geral, bem suave */
+    const master = ctx.createGain();
+    master.gain.value = 0.8;
+    const soft = ctx.createBiquadFilter();
+    soft.type = "lowpass";
+    soft.frequency.value = 6500;
+    master.connect(soft);
+    soft.connect(ctx.destination);
+
+    /* eco curtinho e fofo (dá aquele ar de caixinha de música) */
+    const echo = ctx.createDelay(0.5);
+    echo.delayTime.value = 0.14;
+    const fb = ctx.createGain();
+    fb.gain.value = 0.28;
+    const echoLp = ctx.createBiquadFilter();
+    echoLp.type = "lowpass";
+    echoLp.frequency.value = 3200;
+    const wet = ctx.createGain();
+    wet.gain.value = 0.32;
+    echo.connect(echoLp);
+    echoLp.connect(fb);
+    fb.connect(echo);
+    echoLp.connect(wet);
+    wet.connect(soft);
+
+    /* 1) sussurro de papel: bem baixinho, só para dar a sensação da página */
+    const dur = 0.2;
+    const whisper = ctx.createBufferSource();
+    whisper.buffer = noise;
+    whisper.playbackRate.value = 0.9 + Math.random() * 0.2;
+    const bp = ctx.createBiquadFilter();
+    bp.type = "bandpass";
+    bp.Q.value = 0.7;
+    bp.frequency.setValueAtTime(direction === "prev" ? 3000 : 1500, t0);
+    bp.frequency.exponentialRampToValueAtTime(direction === "prev" ? 1500 : 3000, t0 + dur);
+    const wg = ctx.createGain();
+    wg.gain.setValueAtTime(0.0001, t0);
+    wg.gain.exponentialRampToValueAtTime(0.22, t0 + 0.04);
+    wg.gain.exponentialRampToValueAtTime(0.0001, t0 + dur);
+    whisper.connect(bp);
+    bp.connect(wg);
+    wg.connect(master);
+    whisper.start(t0, Math.random() * 0.6, dur + 0.05);
+    whisper.stop(t0 + dur + 0.05);
+
+    /* 2) plim-plim de caixinha de música: duas notinhas da escala pentatônica
+          (sobe ao avançar, desce ao voltar) + uma faíscia aguda bem baixinha */
+    const scale = [784, 880, 1046.5, 1174.7, 1318.5, 1568, 1760];
+    const i = Math.floor(Math.random() * 4);
+    const notes = direction === "prev" ? [scale[i + 2], scale[i]] : [scale[i], scale[i + 2]];
+
+    const plink = (freq, t, vol) => {
+      const g = ctx.createGain();
+      g.gain.setValueAtTime(0.0001, t);
+      g.gain.exponentialRampToValueAtTime(vol, t + 0.006);
+      g.gain.exponentialRampToValueAtTime(0.0001, t + 0.55);
+      const o1 = ctx.createOscillator();
+      o1.type = "sine";
+      o1.frequency.value = freq;
+      const o2 = ctx.createOscillator();
+      o2.type = "sine";
+      o2.frequency.value = freq * 2.01;
+      const g2 = ctx.createGain();
+      g2.gain.value = 0.28;
+      o1.connect(g);
+      o2.connect(g2);
+      g2.connect(g);
+      g.connect(master);
+      g.connect(echo);
+      o1.start(t);
+      o2.start(t);
+      o1.stop(t + 0.6);
+      o2.stop(t + 0.6);
+    };
+
+    const tn = t0 + 0.05;
+    plink(notes[0], tn, 0.22);
+    plink(notes[1], tn + 0.085, 0.2);
+    plink(notes[1] * 2, tn + 0.17, 0.07);
+  } catch (e) {}
+}
+
 function navPrev() {
   if (currentView === "toc") return;
+  lastDir = "prev";
   if (currentView === "favorites") {
+    playPageFlipSound("prev");
     currentView = "toc";
     renderView();
     return;
   }
   const id = parseInt(currentView.split("-")[1]);
+  const ch = chapters.find(c => c.id === id);
+  const unlocked = ch && (ch.unlocked || checkUnlocked(ch));
+  if (unlocked && currentSpread > 0) {
+    playPageFlipSound("prev");
+    currentSpread--;
+    renderView();
+    return;
+  }
+  playPageFlipSound("prev");
   if (id > 1) {
     const prev = chapters.find(c => c.id === id - 1);
     if (prev && (prev.unlocked || checkUnlocked(prev))) {
       currentView = `chapter-${id - 1}`;
+      totalSpreads = getPagination(prev).totalSpreads;
+      currentSpread = totalSpreads - 1;
     } else {
       currentView = "toc";
+      currentSpread = 0;
+      totalSpreads = 1;
     }
   } else {
     currentView = "toc";
+    currentSpread = 0;
+    totalSpreads = 1;
   }
   renderView();
   startCountdowns();
 }
 
 function navNext() {
+  lastDir = "next";
   if (currentView === "toc" || currentView === "favorites") {
     const first = chapters.find(c => c.unlocked || checkUnlocked(c));
-    if (first) { currentView = `chapter-${first.id}`; renderView(); startCountdowns(); }
+    if (first) {
+      playPageFlipSound("next");
+      currentView = `chapter-${first.id}`;
+      currentSpread = 0;
+      renderView();
+      startCountdowns();
+    }
     return;
   }
   const id = parseInt(currentView.split("-")[1]);
+  const ch = chapters.find(c => c.id === id);
+  const unlocked = ch && (ch.unlocked || checkUnlocked(ch));
+  if (unlocked && currentSpread < totalSpreads - 1) {
+    playPageFlipSound("next");
+    currentSpread++;
+    renderView();
+    return;
+  }
   const nextCh = chapters.find(c => c.id === id + 1);
   if (nextCh && (nextCh.unlocked || checkUnlocked(nextCh))) {
+    playPageFlipSound("next");
     currentView = `chapter-${id + 1}`;
+    currentSpread = 0;
     renderView();
     startCountdowns();
   }
+}
+
+document.addEventListener("keydown", (e) => {
+  if (e.target.tagName === "TEXTAREA" || e.target.tagName === "INPUT") return;
+  const selection = window.getSelection();
+  if (selection && selection.toString().trim().length > 0) return;
+  if (e.key === "ArrowLeft" || e.key === "PageUp" || e.key === "Backspace") {
+    e.preventDefault();
+    navPrev();
+  } else if (e.key === "ArrowRight" || e.key === "PageDown" || e.key === " " || e.key === "Enter") {
+    e.preventDefault();
+    navNext();
+  }
+});
+
+/* deslizar o dedo para virar a página (celular) */
+const INTERACTIVE_SELECTOR = "button, a, textarea, input, .toc-entry, .back-toc, .editor-placeholder, .toc-quick-fav, .clear-fav, .fav-unmark, .bookmark-ribbon, .author-badge, .btn-edit, .edit-area, .fav-card, .nav-arrow, .mark-tooltip";
+function attachPageClickHandlers() {
+  const book = document.getElementById("book");
+  if (!book) return;
+  let sx = null, sy = null;
+  book.addEventListener("touchstart", (e) => {
+    if (e.target.closest(INTERACTIVE_SELECTOR) || e.touches.length !== 1) { sx = null; return; }
+    sx = e.touches[0].clientX;
+    sy = e.touches[0].clientY;
+  }, { passive: true });
+  book.addEventListener("touchend", (e) => {
+    if (sx === null || e.changedTouches.length !== 1) return;
+    const dx = e.changedTouches[0].clientX - sx;
+    const dy = e.changedTouches[0].clientY - sy;
+    sx = null;
+    const sel = window.getSelection();
+    if (sel && sel.toString().trim().length > 0) return;
+    if (Math.abs(dx) > 60 && Math.abs(dy) < 60) {
+      if (dx < 0) navNext(); else navPrev();
+    }
+  }, { passive: true });
 }
 
 let countdownInterval = null;
@@ -3170,9 +3650,21 @@ function startCountdowns() {
   countdownInterval = setInterval(tick, 1000);
 }
 
+updateSoundBtn();
 renderView();
+attachPageClickHandlers();
 startCountdowns();
 updateNewsBadge();
+(function () {
+  const p = document.getElementById("pageLeft");
+  lastPageSig = p.clientWidth + "x" + p.clientHeight;
+})();
+
+/* Espera as fontes carregarem antes de paginar (senão a medida sai errada) */
+preloadFonts().then(() => {
+  fontsReady = true;
+  relayout();
+});
 </script>
 </body>
 </html>
