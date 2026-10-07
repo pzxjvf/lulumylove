@@ -679,6 +679,288 @@
     box-shadow: 0 4px 12px rgba(255, 158, 207, 0.5);
   }
 
+  .bookmark-ribbon {
+    position: absolute;
+    top: -4px;
+    right: 32px;
+    width: 26px;
+    height: 70px;
+    background: linear-gradient(180deg, #ff4d6d 0%, #c9184a 100%);
+    box-shadow:
+      0 2px 6px rgba(201, 24, 74, 0.45),
+      inset 0 0 0 1px rgba(255,255,255,0.2);
+    z-index: 6;
+    cursor: pointer;
+    transition: transform 0.35s cubic-bezier(.3,1.5,.6,1), top 0.3s;
+  }
+  .bookmark-ribbon::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: -10px;
+    height: 0;
+    border-left: 13px solid transparent;
+    border-right: 13px solid transparent;
+    border-top: 12px solid #c9184a;
+  }
+  .bookmark-ribbon::after {
+    content: "💖";
+    position: absolute;
+    left: 50%;
+    top: 14px;
+    transform: translateX(-50%);
+    font-size: 0.85em;
+    filter: drop-shadow(0 1px 1px rgba(0,0,0,0.2));
+  }
+  .bookmark-ribbon.retracted {
+    top: -66px;
+  }
+  .bookmark-ribbon:hover:not(.retracted) {
+    transform: translateY(-2px) scale(1.03);
+  }
+
+  .chapter-content p,
+  .chapter-content .quote {
+    position: relative;
+    transition: background 0.25s, box-shadow 0.25s, transform 0.25s;
+    border-radius: 6px;
+  }
+
+  .marked-text {
+    background: linear-gradient(180deg, rgba(199, 125, 255, 0.18) 0%, rgba(199, 125, 255, 0.38) 100%);
+    border-radius: 4px;
+    box-shadow: inset 0 -2px 0 0 rgba(157, 78, 221, 0.5);
+    padding: 1px 2px;
+    color: #2e104a;
+    cursor: pointer;
+    transition: background 0.2s, box-shadow 0.2s;
+    position: relative;
+  }
+  .marked-text:hover {
+    background: linear-gradient(180deg, rgba(199, 125, 255, 0.3) 0%, rgba(199, 125, 255, 0.52) 100%);
+    box-shadow: inset 0 -2px 0 0 #7b2cbf, 0 2px 8px rgba(199,125,255,0.25);
+  }
+  .marked-text::after {
+    content: "💖";
+    position: absolute;
+    top: -10px;
+    right: -4px;
+    font-size: 0.65em;
+    opacity: 0;
+    transform: translateY(2px);
+    transition: opacity 0.2s, transform 0.2s;
+    filter: drop-shadow(0 1px 2px rgba(123, 44, 191, 0.4));
+  }
+  .marked-text:hover::after {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  .mark-tooltip {
+    position: fixed;
+    z-index: 10000;
+    background: linear-gradient(135deg, #c77dff 0%, #9d4edd 50%, #7b2cbf 100%);
+    color: white;
+    font-family: "Nunito", sans-serif;
+    font-weight: 700;
+    font-size: 0.82em;
+    padding: 10px 18px;
+    border-radius: 22px;
+    box-shadow: 0 10px 30px rgba(123, 44, 191, 0.45), 0 4px 10px rgba(0,0,0,0.18), 0 0 0 1px rgba(255,255,255,0.12);
+    cursor: pointer;
+    display: none;
+    transition: transform 0.15s cubic-bezier(.3,1.4,.6,1), opacity 0.15s;
+    user-select: none;
+    border: 1.5px solid rgba(255,255,255,0.3);
+    white-space: nowrap;
+    backdrop-filter: blur(6px);
+    filter: drop-shadow(0 0 12px rgba(199, 125, 255, 0.35));
+  }
+  .mark-tooltip:hover {
+    transform: scale(1.08);
+  }
+  .mark-tooltip::after {
+    content: "";
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%) rotate(45deg);
+    width: 12px;
+    height: 12px;
+    background: linear-gradient(135deg, #9d4edd, #7b2cbf);
+    border-right: 1.5px solid rgba(255,255,255,0.3);
+    border-bottom: 1.5px solid rgba(255,255,255,0.3);
+  }
+  .mark-tooltip.arrow-bottom::after {
+    bottom: -7px;
+  }
+  .mark-tooltip.arrow-top::after {
+    top: -7px;
+    background: linear-gradient(315deg, #c77dff, #9d4edd);
+    border-right: none;
+    border-bottom: none;
+    border-left: 1.5px solid rgba(255,255,255,0.3);
+    border-top: 1.5px solid rgba(255,255,255,0.3);
+  }
+
+  .favorites-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 16px;
+    padding-bottom: 12px;
+    border-bottom: 2px double rgba(107, 68, 35, 0.3);
+  }
+  .favorites-title {
+    font-family: "Dancing Script", cursive;
+    font-size: 1.6em;
+    color: #3a2817;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .fav-count {
+    font-family: "Nunito", sans-serif;
+    font-size: 0.7em;
+    background: linear-gradient(135deg, #ff9ecf, #c77dff);
+    color: white;
+    padding: 3px 10px;
+    border-radius: 12px;
+    font-weight: 700;
+  }
+  .clear-fav {
+    font-family: "Nunito", sans-serif;
+    font-size: 0.7em;
+    font-weight: 700;
+    background: transparent;
+    color: #8a5a2b;
+    border: 1.5px dashed rgba(138, 90, 43, 0.4);
+    padding: 5px 12px;
+    border-radius: 14px;
+    cursor: pointer;
+    transition: 0.25s;
+  }
+  .clear-fav:hover {
+    background: rgba(201, 24, 74, 0.08);
+    color: #c9184a;
+    border-color: rgba(201, 24, 74, 0.35);
+  }
+
+  .fav-card {
+    background: rgba(255, 250, 240, 0.7);
+    border-left: 3px solid #c9184a;
+    border-radius: 0 12px 12px 0;
+    padding: 14px 18px;
+    margin-bottom: 12px;
+    position: relative;
+    transition: 0.25s;
+    box-shadow: 0 2px 6px rgba(139, 90, 43, 0.08);
+  }
+  .fav-card:hover {
+    transform: translateX(4px);
+    box-shadow: 0 4px 12px rgba(139, 90, 43, 0.15);
+  }
+  .fav-card-text {
+    font-family: "Cormorant Garamond", serif;
+    font-size: 1.1em;
+    line-height: 1.6;
+    color: #2e1f10;
+    font-style: italic;
+    padding-right: 32px;
+  }
+  .fav-card-ref {
+    font-family: "Nunito", sans-serif;
+    font-size: 0.7em;
+    text-transform: uppercase;
+    letter-spacing: 1.2px;
+    color: #c9184a;
+    font-weight: 700;
+    margin-top: 8px;
+  }
+  .fav-unmark {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: transparent;
+    border: none;
+    font-size: 1.1em;
+    cursor: pointer;
+    opacity: 0.5;
+    transition: 0.25s;
+    padding: 2px 6px;
+    border-radius: 50%;
+  }
+  .fav-unmark:hover {
+    opacity: 1;
+    background: rgba(201, 24, 74, 0.1);
+    transform: scale(1.15);
+  }
+
+  .fav-empty {
+    text-align: center;
+    padding: 40px 20px;
+    color: #8a5a7a;
+  }
+  .fav-empty-icon {
+    font-size: 3.5em;
+    opacity: 0.5;
+    margin-bottom: 12px;
+  }
+  .fav-empty-text {
+    font-family: "Dancing Script", cursive;
+    font-size: 1.4em;
+    color: #6b4423;
+    line-height: 1.5;
+  }
+  .fav-empty-hint {
+    font-family: "Nunito", sans-serif;
+    font-size: 0.78em;
+    margin-top: 10px;
+    color: #8a5a2b;
+    letter-spacing: 0.8px;
+    opacity: 0.9;
+  }
+
+  .toc-quick-fav {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    margin-top: 16px;
+    padding: 12px 16px;
+    background: linear-gradient(135deg, rgba(255, 77, 109, 0.08), rgba(199, 125, 255, 0.08));
+    border: 1.5px dashed rgba(201, 24, 74, 0.3);
+    border-radius: 14px;
+    cursor: pointer;
+    transition: 0.25s;
+    font-family: "Nunito", sans-serif;
+    font-size: 0.85em;
+    font-weight: 700;
+    color: #6b3a9a;
+  }
+  .toc-quick-fav:hover {
+    transform: scale(1.03);
+    background: linear-gradient(135deg, rgba(255, 77, 109, 0.15), rgba(199, 125, 255, 0.15));
+    border-color: rgba(201, 24, 74, 0.5);
+  }
+  .toc-quick-fav .pulse-dot {
+    display: inline-block;
+    width: 8px;
+    height: 8px;
+    background: #c9184a;
+    border-radius: 50%;
+    animation: pulse 1.5s ease-in-out infinite;
+  }
+  @keyframes pulse {
+    0%, 100% { transform: scale(1); opacity: 1; }
+    50% { transform: scale(1.3); opacity: 0.7; }
+  }
+
+  @keyframes fadeInUp {
+    from { opacity: 0; transform: translateY(16px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
   @media (max-width: 768px) {
     .book { flex-direction: column; max-width: 100%; }
     .book-spine { width: 100%; min-height: 22px; }
@@ -713,12 +995,14 @@
     <div class="book-spine"></div>
 
     <div class="page page-left" id="pageLeft">
+      <div class="bookmark-ribbon retracted" id="ribbonLeft" title="Marcador — clique para abrir suas citações favoritas 💖" onclick="openFavoritesView()"></div>
       <div class="page-corner"></div>
       <div id="leftContent"></div>
       <div class="page-number" id="pageLeftNum">i</div>
     </div>
 
     <div class="page page-right" id="pageRight">
+      <div class="bookmark-ribbon retracted" id="ribbonRight" title="Marcador — clique para abrir suas citações favoritas 💖" onclick="openFavoritesView()"></div>
       <div class="page-corner"></div>
       <div id="rightContent"></div>
       <div class="page-number" id="pageRightNum">ii</div>
@@ -732,6 +1016,7 @@
 </div>
 
 <div class="toast" id="toast">💾 Salvo com sucesso!</div>
+<div class="mark-tooltip" id="markTooltip" onclick="markSelectedText()">💖 Marcar este trecho</div>
 
 <script>
 /* =========================================================
@@ -1012,25 +1297,381 @@ Mal sabia eu que tinha acabado de conhecer a mulher dos meus sonhos. 💜`
   {
     id: 2,
     num: "Capitulo II",
-    title: "Os Primeiros Meses de Encanto",
-    date: "05 de Outubro de 2026",
-    unlockDate: "2026-10-05T00:00:00",
-    unlocked: false,
+    title: "O Começo de Tudo",
+    date: "30 de Janeiro de 2023",
+    unlockDate: null,
+    unlocked: true,
     content:
-`Escreva aqui a historia desse capitulo...
-Fica escondido ate a data chegar!
+`Na manhã seguinte, ela não tinha mandado mensagem.
 
-Sugestoes: os primeiros beijos, as primeiras viagens curtas,
-a primeira vez que passaram um fim de semana juntos,
-as musicas marcantes... Tudo que fez os primeiros meses
-serem inesqueciveis. 💜`
+Eu poderia dizer que não me importei.
+
+Seria mentira.
+
+Não era exatamente preocupação. Pelo menos, era isso que eu dizia para mim mesmo enquanto olhava para o celular pela décima vez naquela manhã.
+
+Ela provavelmente estava dormindo.
+
+Era uma explicação perfeitamente razoável.
+
+Então, por que eu continuava olhando para a tela?
+
+Não faço ideia.
+
+Talvez porque, depois de passar quase três horas conversando com alguém no dia anterior, o silêncio do dia seguinte parecesse muito mais barulhento do que deveria.
+
+Peguei o celular e mandei um:
+
+"bom diaa"
+
+Dessa vez, sem planejamento.
+
+Sem ensaio.
+
+Sem passar cinco minutos pensando se um ponto final deixaria a mensagem fria demais ou se uma carinha sorrindo faria parecer que eu estava interessado demais.
+
+Eu só mandei.
+
+E esperei.
+
+Quando ela finalmente respondeu, descobri que não estava simplesmente dormindo.
+
+Ela estava passando mal.
+
+Disse que estava com secreção.
+
+E aqui preciso admitir uma coisa que provavelmente não me deixa muito inteligente nesta história:
+eu não fazia ideia do que era secreção.
+
+Nada.
+
+Zero.
+
+A palavra existia no meu vocabulário, obviamente. Eu só nunca tinha parado para pensar no que aquilo significava na prática.
+
+Então fiz o que qualquer homem extremamente preparado para lidar com uma situação delicada faria.
+
+Fui pesquisar no Google.
+
+Imediatamente.
+
+Sem fingir que eu sabia.
+
+Eu queria entender o que estava acontecendo com ela.
+
+E quanto mais eu procurava, mais percebia o quanto eu não sabia.
+
+Eu mal conhecia a condição dela.
+
+Na verdade, até aquele momento, eu conhecia mais a aparência da cadeira de rodas do que a pessoa que estava sentada nela.
+
+E aquilo me incomodou.
+
+Não porque ela tivesse alguma coisa que precisasse ser consertada.
+
+Mas porque eu queria conhecê-la de verdade.
+
+Queria saber o que fazia parte da vida dela.
+
+Queria entender o que ela sentia, o que enfrentava, o que a incomodava e, principalmente, o que eu deveria ou não fazer quando alguma dessas coisas aparecesse.
+
+Foi naquele dia que comecei a pesquisar sobre CMT.
+
+Charcot-Marie-Tooth.
+
+O nome parecia complicado demais para uma coisa que, até algumas horas antes, eu sequer sabia que existia.
+
+Li.
+
+Pesquisei.
+
+Abri coisas que provavelmente não precisava ter aberto.
+
+Fechei algumas páginas porque estavam me deixando mais confuso do que informado.
+
+E continuei.
+
+Era um hábito meu.
+
+Quando alguma coisa acontecia com alguém de quem eu gostava, minha primeira reação nunca era simplesmente aceitar que eu não sabia.
+
+Eu precisava entender.
+
+Precisava encontrar uma solução.
+
+Precisava fazer alguma coisa.
+
+Mesmo quando a única coisa realmente útil que eu podia fazer era ficar ali.
+
+Naquele momento, eu ainda não sabia que isso dizia muito mais sobre mim do que eu imaginava.
+
+Para mim, era normal.
+
+Tão normal que eu cheguei a pensar:
+
+Como alguém consegue se envolver com uma pessoa e não procurar saber mais sobre o que ela vive?
+
+Eu não entendia.
+
+Se você gosta de alguém, você quer conhecer essa pessoa.
+
+E conhecer alguém não é só saber qual música ela gosta ou qual comida ela prefere.
+
+É também saber aquilo que ninguém vê.
+
+As coisas que fazem parte da rotina.
+
+As dificuldades.
+
+Os medos.
+
+As limitações.
+
+As pequenas vitórias.
+
+Tudo aquilo que vem junto quando você escolhe prestar atenção.
+
+E eu estava prestando atenção.
+
+Talvez até demais.
+
+Mas ela pareceu gostar disso.
+
+E, honestamente, eu gostei de saber que ela gostou.
+
+---
+
+Os dias seguintes passaram rápido.
+
+De 30 de janeiro até 4 de fevereiro, nós conversamos muito.
+
+Muito mesmo.
+
+Era quase como se tivéssemos descoberto que existia uma porta aberta entre nós e nenhum dos dois tivesse interesse em fechá-la.
+
+A conversa do primeiro dia tinha sido sobre coisas básicas.
+
+Agora já começávamos a descobrir detalhes.
+
+Pequenas coisas.
+
+Preferências.
+
+Histórias.
+
+Opiniões.
+
+Coisas que, isoladamente, pareciam insignificantes, mas que, juntas, começavam a formar uma pessoa inteira diante de mim.
+
+E eu queria cada vez mais pedaços.
+
+Em algum momento, encontramos uma brincadeira.
+
+Era simples.
+
+Você escolhia um número e descobria uma pergunta.
+
+Aquelas brincadeiras feitas para duas pessoas que estão tentando se conhecer sem precisar admitir que estão tentando se conhecer.
+
+Algumas perguntas eram boas.
+
+Outras eram completamente inúteis.
+
+E havia aquelas que nenhum de nós queria escolher.
+
+Era um número aleatório, teoricamente.
+
+Teoricamente.
+
+Porque eu descobri uma pequena falha no sistema.
+
+Eu podia olhar as perguntas antes.
+
+E foi exatamente isso que fiz.
+
+Até encontrar uma.
+
+A pergunta:
+
+"Você tem um crush?"
+
+Ah.
+
+Essa.
+
+Eu queria aquele número.
+
+Muito.
+
+Mas obviamente não poderia simplesmente escolher de primeira.
+
+Seria suspeito.
+
+Então fiz o que qualquer pessoa perfeitamente discreta faria:
+
+Escolhi outros números primeiro.
+
+Fingi interesse em perguntas que, naquele momento, me interessavam aproximadamente tanto quanto a previsão do tempo em um lugar onde eu não morava.
+
+Tudo para, eventualmente, chegar naquele número.
+
+Aquele que eu já tinha escolhido antes mesmo de escolher.
+
+Quando finalmente chegou a hora, ela respondeu primeiro.
+
+E então veio a frase que, provavelmente, ficou muito maior dentro da minha cabeça do que deveria:
+
+"Não, mas estou perto de ter."
+
+Parei.
+
+Li de novo.
+
+Depois provavelmente li uma terceira vez.
+
+Porque, às vezes, quando uma pessoa diz exatamente aquilo que você queria ouvir, seu cérebro se recusa a aceitar na primeira tentativa.
+
+Eu estava feliz.
+
+Muito.
+
+Talvez feliz demais para uma pessoa que ainda conhecia aquela garota havia poucos dias.
+
+Mas ali estava ela.
+
+A confirmação de que eu não estava sozinho naquela história.
+
+Ela estava chegando perto.
+
+E eu sabia exatamente de quem ela estava falando.
+
+Então ela devolveu a pergunta.
+
+Eu poderia ter elaborado.
+
+Poderia ter feito uma gracinha.
+
+Poderia ter tentado parecer misterioso.
+
+Não fiz nada disso.
+
+Respondi:
+
+"Estou igual."
+
+Seco.
+
+Curto.
+
+Quase uma obra-prima da comunicação romântica.
+
+Mas ela entendeu.
+
+E eu também.
+
+Não precisávamos dizer o nome.
+
+Não precisávamos.
+
+Porque, naquele momento, nós dois sabíamos.
+
+E, sinceramente?
+
+Depois daquela resposta, eu já não precisava mais da brincadeira.
+
+Podiam apagar todos os outros números.
+
+Podiam fechar a imagem.
+
+Podiam declarar oficialmente encerrado o expediente daquela brincadeira.
+
+Eu tinha conseguido exatamente a resposta que queria.
+
+O que mais me encantava, porém, não era apenas saber que ela estava começando a gostar de mim.
+
+Era perceber que ela estava me deixando entrar.
+
+Ela começava a me colocar no dia a dia dela.
+
+Contava coisas.
+
+Falava dos planos.
+
+Compartilhava momentos.
+
+E, entre essas coisas, apareceu a festa de quinze anos dela.
+
+Ela falava sobre a festa com uma animação que era quase impossível não perceber.
+
+E eu gostava de vê-la assim.
+
+Gostava daquele brilho que aparecia quando ela falava de alguma coisa que realmente importava para ela.
+
+Talvez esse tenha sido um dos primeiros sinais de que eu estava me metendo em uma situação perigosa.
+
+Porque eu não estava apenas gostando das conversas.
+
+Eu estava gostando dela.
+
+Da maneira como ela falava.
+
+Da maneira como ficava animada.
+
+Da forma como me contava as coisas.
+
+Do jeito como, aos poucos, eu começava a reconhecer certas características dela mesmo através de uma tela.
+
+Eu tinha conhecido aquela garota havia poucos dias.
+
+Poucos.
+
+E já estava prestando atenção demais.
+
+Mas havia uma coisa ainda mais perigosa:
+eu não queria parar.
+
+Aquela semana foi perfeita.
+
+Não porque alguma coisa extraordinária tivesse acontecido todos os dias.
+
+Foi perfeita justamente porque não precisava acontecer.
+
+Uma mensagem de bom dia.
+
+Uma conversa que começava sem assunto.
+
+Uma pergunta inesperada.
+
+Uma brincadeira idiota.
+
+Uma descoberta nova.
+
+Uma resposta que fazia meu coração acelerar.
+
+E aquela sensação cada vez mais difícil de ignorar de que alguma coisa estava acontecendo.
+
+Alguma coisa entre nós.
+
+Naquele ponto, eu ainda não sabia exatamente o que aquilo seria.
+
+Só sabia que queria descobrir.
+
+E, quando chegou o fim daquela semana, eu tinha uma sensação estranha.
+
+Como se todos aqueles dias tivessem sido apenas uma preparação.
+
+Como se a história tivesse passado os últimos capítulos colocando cada peça no lugar.
+
+Porque o final de semana estava chegando.
+
+E eu ainda não fazia ideia de que aquele final de semana seria perfeito.`
   },
 
   /* ========== CAPITULO 3 ========== */
   {
     id: 3,
     num: "Capitulo III",
-    title: "Viagens e Sonhos a Dois",
+    title: "...",
     date: "12 de Outubro de 2026",
     unlockDate: "2026-10-12T00:00:00",
     unlocked: false,
@@ -1051,6 +1692,7 @@ Cada passaporte, cada mala, cada lugar carimbado no coracao. 💜`
 
 const STORAGE_KEY = "livro_capitulos_v1";
 const AUTHOR_STORAGE_KEY = "livro_modo_autor_v1";
+const BOOKMARK_KEY = "livro_marcadores_v1";
 
 let chapters = loadChapters();
 let currentView = "toc";
@@ -1063,6 +1705,316 @@ function isAuthorMode() {
     return true;
   }
   return localStorage.getItem(AUTHOR_STORAGE_KEY) === "1";
+}
+
+function loadBookmarks() {
+  try {
+    return JSON.parse(localStorage.getItem(BOOKMARK_KEY) || "[]");
+  } catch (e) {
+    return [];
+  }
+}
+
+function saveBookmarks(list) {
+  localStorage.setItem(BOOKMARK_KEY, JSON.stringify(list));
+  updateRibbonVisibility();
+}
+
+function hashStr(s) {
+  let h = 0;
+  for (let i = 0; i < s.length; i++) {
+    h = ((h << 5) - h) + s.charCodeAt(i);
+    h |= 0;
+  }
+  return Math.abs(h).toString(36);
+}
+
+function findChapterContainer(el) {
+  while (el && el !== document.body) {
+    if (el.classList && el.classList.contains("chapter-content")) {
+      const page = el.closest(".page-left") ? "left" :
+                   el.closest(".page-right") ? "right" : null;
+      return { container: el, pageSide: page };
+    }
+    el = el.parentNode;
+  }
+  return null;
+}
+
+function getCurrentChapterId() {
+  if (typeof currentView === "string" && currentView.startsWith("chapter-")) {
+    return parseInt(currentView.split("-")[1]);
+  }
+  return null;
+}
+
+function positionTooltip() {
+  const sel = window.getSelection();
+  const tooltip = document.getElementById("markTooltip");
+  if (!sel || sel.isCollapsed || sel.rangeCount === 0) {
+    tooltip.style.display = "none";
+    tooltip.classList.remove("arrow-bottom", "arrow-top");
+    return;
+  }
+
+  const range = sel.getRangeAt(0);
+  const info = findChapterContainer(range.commonAncestorContainer);
+  if (!info) {
+    tooltip.style.display = "none";
+    tooltip.classList.remove("arrow-bottom", "arrow-top");
+    return;
+  }
+
+  const text = sel.toString().trim();
+  if (text.length < 3) {
+    tooltip.style.display = "none";
+    tooltip.classList.remove("arrow-bottom", "arrow-top");
+    return;
+  }
+
+  const rect = range.getBoundingClientRect();
+  const scrollY = window.scrollY || document.documentElement.scrollTop;
+  const scrollX = window.scrollX || document.documentElement.scrollLeft;
+  const vh = Math.max(document.documentElement.clientHeight || 0, window.innerHeight || 0);
+
+  tooltip.style.display = "block";
+  const ttRect = tooltip.getBoundingClientRect();
+
+  const GAP = 42;
+  let preferBelow = rect.top < 130;
+  let top;
+  if (preferBelow) {
+    top = scrollY + rect.bottom + GAP;
+    if (top + ttRect.height > scrollY + vh - 10) {
+      top = scrollY + rect.top - ttRect.height - GAP;
+      tooltip.classList.remove("arrow-bottom");
+      tooltip.classList.add("arrow-top");
+    } else {
+      tooltip.classList.remove("arrow-top");
+      tooltip.classList.add("arrow-bottom");
+    }
+  } else {
+    top = scrollY + rect.top - ttRect.height - GAP;
+    if (top < scrollY + 10) {
+      top = scrollY + rect.bottom + GAP;
+      tooltip.classList.remove("arrow-top");
+      tooltip.classList.add("arrow-bottom");
+    } else {
+      tooltip.classList.remove("arrow-bottom");
+      tooltip.classList.add("arrow-top");
+    }
+  }
+
+  let left = scrollX + rect.left + rect.width / 2 - ttRect.width / 2;
+  if (left < scrollX + 8) left = scrollX + 8;
+  const vw = Math.max(document.documentElement.clientWidth || 0, window.innerWidth || 0);
+  if (left + ttRect.width > scrollX + vw - 8) {
+    left = scrollX + vw - ttRect.width - 8;
+  }
+
+  tooltip.style.top = top + "px";
+  tooltip.style.left = left + "px";
+}
+
+document.addEventListener("selectionchange", () => {
+  requestAnimationFrame(positionTooltip);
+});
+
+document.addEventListener("scroll", () => {
+  const tt = document.getElementById("markTooltip");
+  if (tt && tt.style.display === "block") positionTooltip();
+}, true);
+
+window.addEventListener("resize", () => {
+  const tt = document.getElementById("markTooltip");
+  if (tt && tt.style.display === "block") positionTooltip();
+});
+
+document.addEventListener("mousedown", (e) => {
+  const tt = document.getElementById("markTooltip");
+  if (tt && !tt.contains(e.target)) {
+    setTimeout(positionTooltip, 0);
+  }
+});
+
+function wrapRangeWithMark(range, markId) {
+  const span = document.createElement("span");
+  span.className = "marked-text";
+  span.dataset.markId = markId;
+  span.title = "Clique para desmarcar este trecho 💔";
+  span.addEventListener("click", (ev) => {
+    ev.preventDefault();
+    ev.stopPropagation();
+    if (confirm("Deseja desmarcar este trecho? 💔")) {
+      removeMark(markId);
+    }
+  });
+  try {
+    range.surroundContents(span);
+    return true;
+  } catch (e) {
+    try {
+      const frag = range.extractContents();
+      span.appendChild(frag);
+      range.insertNode(span);
+      return true;
+    } catch (e2) {
+      return false;
+    }
+  }
+}
+
+function markSelectedText() {
+  const chId = getCurrentChapterId();
+  if (chId == null) return;
+  const ch = chapters.find(c => c.id === chId);
+  if (!ch) return;
+
+  const sel = window.getSelection();
+  if (!sel || sel.isCollapsed || sel.rangeCount === 0) return;
+  const range = sel.getRangeAt(0);
+  const info = findChapterContainer(range.commonAncestorContainer);
+  if (!info) return;
+
+  const text = sel.toString().trim();
+  if (text.length < 3) {
+    showToast("✏️ Selecione pelo menos algumas palavrinhas para marcar 💖");
+    return;
+  }
+
+  const markId = ch.id + ":" + info.pageSide + ":" + hashStr(text) + ":" + Date.now().toString(36);
+  const ok = wrapRangeWithMark(range, markId);
+  if (!ok) {
+    showToast("⚠️ Não foi possível marcar este trecho. Tente selecionar apenas o texto, sem passar o mouse sobre títulos ou divisórias.");
+    return;
+  }
+
+  const list = loadBookmarks();
+  list.unshift({
+    id: markId,
+    chapterId: ch.id,
+    chapterNum: ch.num,
+    chapterTitle: ch.title,
+    pageSide: info.pageSide,
+    text: text,
+    savedAt: Date.now()
+  });
+  saveBookmarks(list);
+  sel.removeAllRanges();
+  const tt = document.getElementById("markTooltip");
+  if (tt) tt.style.display = "none";
+  showToast("💖 Trecho salvo como uma das suas citações favoritas!");
+}
+
+function removeMark(id) {
+  const list = loadBookmarks().filter(b => b.id !== id);
+  saveBookmarks(list);
+  document.querySelectorAll(`span.marked-text[data-mark-id="${CSS.escape(id)}"]`).forEach(span => {
+    const parent = span.parentNode;
+    while (span.firstChild) parent.insertBefore(span.firstChild, span);
+    parent.removeChild(span);
+    parent.normalize();
+  });
+  showToast("💔 Trecho desmarcado");
+  if (currentView === "favorites") {
+    renderFavoritesView();
+  }
+}
+
+function clearAllMarks() {
+  if (confirm("Tem certeza que quer apagar todos os marcadores? 💔")) {
+    const list = loadBookmarks();
+    list.forEach(b => {
+      document.querySelectorAll(`span.marked-text[data-mark-id="${CSS.escape(b.id)}"]`).forEach(span => {
+        const parent = span.parentNode;
+        while (span.firstChild) parent.insertBefore(span.firstChild, span);
+        parent.removeChild(span);
+        parent.normalize();
+      });
+    });
+    saveBookmarks([]);
+    showToast("💔 Todos os marcadores foram removidos");
+    if (currentView === "favorites") renderFavoritesView();
+  }
+}
+
+function applySavedHighlightsToContainer(containerEl, chapterId, pageSide) {
+  const list = loadBookmarks().filter(b => b.chapterId === chapterId && b.pageSide === pageSide);
+  if (list.length === 0) return;
+  const walker = document.createTreeWalker(containerEl, NodeFilter.SHOW_TEXT, null);
+  const textNodes = [];
+  let node;
+  while (node = walker.nextNode()) textNodes.push(node);
+
+  list.forEach(mark => {
+    const needle = mark.text;
+    const needleLen = needle.length;
+    let accText = "";
+    const nodeOffsets = [];
+    textNodes.forEach(tn => {
+      if (tn.parentNode && tn.parentNode.classList && tn.parentNode.classList.contains("marked-text")) return;
+      const start = accText.length;
+      nodeOffsets.push({ tn, start, len: tn.nodeValue.length });
+      accText += tn.nodeValue;
+    });
+
+    let idx = accText.indexOf(needle);
+    while (idx !== -1) {
+      const endIdx = idx + needleLen;
+      const startNode = nodeOffsets.find(n => n.start <= idx && idx < n.start + n.len);
+      const endNode   = nodeOffsets.find(n => n.start <= endIdx && endIdx <= n.start + n.len);
+      if (startNode && endNode) {
+        const range = document.createRange();
+        try {
+          range.setStart(startNode.tn, idx - startNode.start);
+          if (endIdx === endNode.start + endNode.len) {
+            range.setEndAfter(endNode.tn);
+          } else {
+            range.setEnd(endNode.tn, endIdx - endNode.start);
+          }
+          wrapRangeWithMark(range, mark.id);
+          break;
+        } catch (e) {}
+      }
+      idx = accText.indexOf(needle, idx + 1);
+    }
+  });
+}
+
+function attachUnmarkHandlers() {
+  document.querySelectorAll("span.marked-text").forEach(span => {
+    if (span.dataset.handlerAttached === "1") return;
+    span.dataset.handlerAttached = "1";
+    span.addEventListener("click", (ev) => {
+      ev.preventDefault();
+      ev.stopPropagation();
+      const id = span.dataset.markId;
+      if (id && confirm("Deseja desmarcar este trecho? 💔")) {
+        removeMark(id);
+      }
+    });
+  });
+}
+
+function openFavoritesView() {
+  currentView = "favorites";
+  renderFavoritesView();
+  updateNavArrows();
+}
+
+function updateRibbonVisibility() {
+  const count = loadBookmarks().length;
+  const rL = document.getElementById("ribbonLeft");
+  const rR = document.getElementById("ribbonRight");
+  if (rL && rR) {
+    if (count > 0) {
+      rL.classList.remove("retracted");
+      rR.classList.remove("retracted");
+    } else {
+      rL.classList.add("retracted");
+      rR.classList.add("retracted");
+    }
+  }
 }
 
 function loadChapters() {
@@ -1089,9 +2041,12 @@ function goBack() {
 
 function renderView() {
   updateAuthorBadge();
+  updateRibbonVisibility();
   if (currentView === "toc") {
     renderTOC();
     document.getElementById("pageIndicator").textContent = "📖 Sumário";
+  } else if (currentView === "favorites") {
+    renderFavoritesView();
   } else {
     const chId = parseInt(currentView.split("-")[1]);
     renderChapter(chId);
@@ -1119,6 +2074,7 @@ function exitAuthorMode() {
 function renderTOC() {
   document.getElementById("pageLeftNum").textContent = "i";
   document.getElementById("pageRightNum").textContent = "ii";
+  const favCount = loadBookmarks().length;
 
   const left = `
     <div class="dedication">
@@ -1137,6 +2093,15 @@ function renderTOC() {
         <p style="text-indent: 1.5em;">Cada capítulo é um presente reservado para um momento especial. Abra cada página com o coração, assim como você abriu o meu.</p>
       </div>
     </div>
+
+    ${favCount > 0 ? `
+    <div class="toc-quick-fav" onclick="openFavoritesView()">
+      <span class="pulse-dot"></span>
+      💖 ${favCount} citaç${favCount === 1 ? "ão" : "ões"} marcada${favCount === 1 ? "" : "s"} — ver minhas favoritas
+    </div>` : `
+    <div class="toc-quick-fav" onclick="openFavoritesView()">
+      💖 Crie sua coleção de citações favoritas
+    </div>`}
   `;
 
   const right = `
@@ -1239,8 +2204,8 @@ function renderChapter(id) {
   }
 
   const split = splitContent(ch.content);
-  const contentLeft = formatContent(split.left);
-  const contentRight = formatContent(split.right);
+  const contentLeft = formatContent(split.left, ch);
+  const contentRight = formatContent(split.right, ch);
 
   document.getElementById("leftContent").innerHTML = `
     <button class="back-toc" onclick="backToTOC()">← Sumário</button>
@@ -1274,6 +2239,14 @@ function renderChapter(id) {
       <div style="text-align: center; padding-top: 20px; color: #c77dff; letter-spacing: 8px;">✦ ✦ ✦ ✦ ✦</div>
     </div>
   `;
+
+  setTimeout(() => {
+    const leftCC  = document.querySelector("#pageLeft  .chapter-content");
+    const rightCC = document.querySelector("#pageRight .chapter-content");
+    if (leftCC)  applySavedHighlightsToContainer(leftCC,  id, "left");
+    if (rightCC) applySavedHighlightsToContainer(rightCC, id, "right");
+    attachUnmarkHandlers();
+  }, 0);
 }
 
 function renderChapter1(ch) {
@@ -1319,8 +2292,8 @@ function renderChapter1(ch) {
   }
 
   const split = splitContent(ch.content);
-  const contentLeft = formatContent(split.left);
-  const contentRight = formatContent(split.right);
+  const contentLeft = formatContent(split.left, ch);
+  const contentRight = formatContent(split.right, ch);
 
   const rascunhoBtn = author ? `
     <div class="editor-placeholder" onclick="startEdit()">
@@ -1361,6 +2334,16 @@ function renderChapter1(ch) {
       <div style="text-align: center; padding: 20px 0; color: #c77dff; letter-spacing: 8px;">✦ ✦ ✦ ✦ ✦</div>
     </div>
   `;
+
+  if (!editingCh1) {
+    setTimeout(() => {
+      const leftCC  = document.querySelector("#pageLeft  .chapter-content");
+      const rightCC = document.querySelector("#pageRight .chapter-content");
+      if (leftCC)  applySavedHighlightsToContainer(leftCC,  ch.id, "left");
+      if (rightCC) applySavedHighlightsToContainer(rightCC, ch.id, "right");
+      attachUnmarkHandlers();
+    }, 0);
+  }
 }
 
 function startEdit() {
@@ -1400,18 +2383,88 @@ function showToast(msg) {
   }, 3800);
 }
 
-function formatContent(text) {
+function formatContent(text, ch) {
   if (!text) return "";
   const paras = text.split(/\n\n+/).filter(p => p.trim());
   if (paras.length === 0) {
     return `<p>${escapeHtml(text).replace(/\n/g, "<br>")}</p>`;
   }
   return paras.map(p => {
-    if (p.startsWith('"') && p.endsWith('"')) {
-      return `<div class="quote">${escapeHtml(p).replace(/\n/g, "<br>")}</div>`;
+    const clean = p.trim();
+    if (clean.startsWith('"') && clean.endsWith('"')) {
+      return `<div class="quote">${escapeHtml(clean).replace(/\n/g, "<br>")}</div>`;
     }
-    return `<p>${escapeHtml(p).replace(/\n/g, "<br>")}</p>`;
+    return `<p>${escapeHtml(clean).replace(/\n/g, "<br>")}</p>`;
   }).join("");
+}
+
+function renderFavoritesView() {
+  const favs = loadBookmarks();
+  document.getElementById("pageIndicator").textContent = "💖 Minhas Citações";
+  document.getElementById("pageLeftNum").textContent = "";
+  document.getElementById("pageRightNum").textContent = "";
+
+  const left = `
+    <button class="back-toc" onclick="backToTOC()">← Sumário</button>
+
+    <div class="toc-header">
+      <h3>💖 Minhas Citações</h3>
+      <div class="toc-decor">✦ ✦ ✦</div>
+    </div>
+
+    <div style="font-family: 'Cormorant Garamond', serif; font-size: 1.05em; line-height: 1.7; color: #3a2817; text-align: justify; margin-bottom: 20px;">
+      <p style="text-indent: 1.5em;">Cada citação aqui foi marcada pelo seu coração. Reviva esses pedacinhos da nossa história sempre que quiser sentir um pouco mais de amor no seu dia. 💜</p>
+    </div>
+
+    <div style="text-align: center; padding: 16px; background: rgba(199,125,255,0.08); border-radius: 14px; border: 1.5px dashed rgba(199,125,255,0.35);">
+      <div style="font-family: 'Dancing Script', cursive; font-size: 1.5em; color: #5a3a7a; line-height: 1.4;">
+        "Os melhores trechos do livro<br>são aqueles que a gente lê<br>de novo e de novo, com o coração."
+      </div>
+    </div>
+  `;
+
+  let right = `
+    <div class="favorites-header">
+      <div class="favorites-title">
+        📚 Citações Marcadas
+        <span class="fav-count">${favs.length}</span>
+      </div>
+      ${favs.length > 0 ? `<button class="clear-fav" onclick="clearAllMarks()">🗑️ Limpar tudo</button>` : ""}
+    </div>
+  `;
+
+  if (favs.length === 0) {
+    right += `
+      <div class="fav-empty">
+        <div class="fav-empty-icon">💖📖</div>
+        <div class="fav-empty-text">
+          Ainda não há citações marcadas.<br>
+          Passe pelos capítulos do livro e<br>
+          marque os trechos que mais tocarem o seu coração.
+        </div>
+        <div class="fav-empty-hint">PASSE O MOUSE SOBRE UM PARÁGRAFO E CLIQUE NO BOTÃO 🔖</div>
+      </div>
+    `;
+  } else {
+    right += `<div style="max-height: 62vh; overflow-y: auto; padding-right: 8px;">`;
+    favs.forEach((f, i) => {
+      const safeText = escapeHtml(f.text);
+      const safeId = escapeHtml(f.id);
+      const safeNum = escapeHtml(f.chapterNum || "");
+      const safeTitle = escapeHtml(f.chapterTitle || "");
+      right += `
+        <div class="fav-card" style="animation: fadeInUp 0.4s ease backwards; animation-delay: ${i * 0.06}s;">
+          <button class="fav-unmark" title="Remover esta citação" onclick="removeMark(&quot;${safeId}&quot;)">✕</button>
+          <div class="fav-card-text">"${safeText.replace(/\n/g, "<br>")}"</div>
+          <div class="fav-card-ref">— ${safeNum} · ${safeTitle}</div>
+        </div>
+      `;
+    });
+    right += `</div>`;
+  }
+
+  document.getElementById("leftContent").innerHTML = left;
+  document.getElementById("rightContent").innerHTML = right;
 }
 
 function splitContent(text) {
@@ -1437,7 +2490,7 @@ function escapeHtml(s) {
 function updateNavArrows() {
   const prev = document.getElementById("prevBtn");
   const next = document.getElementById("nextBtn");
-  if (currentView === "toc") {
+  if (currentView === "toc" || currentView === "favorites") {
     prev.disabled = true;
     const nextUnlocked = chapters.find(c => c.unlocked || checkUnlocked(c));
     next.disabled = !nextUnlocked;
@@ -1451,6 +2504,11 @@ function updateNavArrows() {
 
 function navPrev() {
   if (currentView === "toc") return;
+  if (currentView === "favorites") {
+    currentView = "toc";
+    renderView();
+    return;
+  }
   const id = parseInt(currentView.split("-")[1]);
   if (id > 1) {
     const prev = chapters.find(c => c.id === id - 1);
@@ -1467,7 +2525,7 @@ function navPrev() {
 }
 
 function navNext() {
-  if (currentView === "toc") {
+  if (currentView === "toc" || currentView === "favorites") {
     const first = chapters.find(c => c.unlocked || checkUnlocked(c));
     if (first) { currentView = `chapter-${first.id}`; renderView(); startCountdowns(); }
     return;
