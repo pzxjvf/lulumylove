@@ -2053,10 +2053,21 @@ const SOUND_KEY = "livro_som_v1";
 
 const PATCHES = [
   {
+    id: "v2.1.0",
+    date: "08 de Outubro de 2026",
+    title: "Som de Virar Página + Patch Notes no Menu",
+    latest: true,
+    items: [
+      { type: "feat",    text: "🔊 <b>Som de virar página realista</b>: agora o livro toca um áudio de folhear página toda vez que você clica nas setas, voltar a página tem um som diferente (mais grave) de avançar!" },
+      { type: "feat",    text: "📰 <b>Patch Notes no Menu Principal</b>: agora todas as atualizações do cantinho aparecem direto na tela inicial, para ela ver tudo o que tem de novo em um lugar só 💜" },
+      { type: "fix",     text: "🛠️ Ajustes finos no volume e timing do som para ficar perfeito, sem clicks no começo/fim do áudio." }
+    ]
+  },
+  {
     id: "v2.0.0",
     date: "07 de Outubro de 2026",
     title: "Capítulo II + Marcadores de Texto",
-    latest: true,
+    latest: false,
     items: [
       { type: "chapter", text: "📖 Capítulo II liberado — <b>O Começo de Tudo</b> (30 de Janeiro de 2023): a manhã após a primeira conversa, o bom dia, a pesquisa sobre CMT, a brincadeira dos números e o 'estou perto de ter um crush'...!" },
       { type: "feat",    text: "✨ Sistema de <b>marcadores de texto</b>: selecione qualquer trecho com o mouse e clique no botão 💖 roxo que aparece — o trecho fica marcado em roxo permanentemente, como um marca-texto!" },
@@ -2074,7 +2085,6 @@ const PATCHES = [
       { type: "chapter", text: "📖 Capítulo I — <b>O Dia em que Tudo Começou</b> (29 de Janeiro de 2023): a história de como nos conhecemos, do 'oioi' até a conversa de 3 horas!" },
       { type: "feat",    text: "✨ Livro com duas páginas interativas, visual super realista de livro físico com sombra, textura e efeitos de página." },
       { type: "feat",    text: "🔒 Sumário inteligente com capítulos liberados por data — cada capítulo novo só libera na data programada." },
-      { type: "feat",    text: "📜 Modo Autor para o escritor da história (com `?modo=autor`) com rascunho local e publicação segura." }
     ]
   }
 ];
