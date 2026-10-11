@@ -1264,6 +1264,71 @@
     to   { opacity: 1; transform: translateY(0); }
   }
 
+  /* ===== folha que vira ===== */
+  .flip-leaf {
+    position: absolute;
+    top: 0;
+    z-index: 30;
+    pointer-events: none;
+    transform-style: preserve-3d;
+    will-change: transform;
+  }
+  .flip-leaf.next { transform-origin: left center;  animation: leafNext 0.8s cubic-bezier(.45,.05,.25,1) forwards; }
+  .flip-leaf.prev { transform-origin: right center; animation: leafPrev 0.8s cubic-bezier(.45,.05,.25,1) forwards; }
+
+  @keyframes leafNext {
+    0%   { transform: perspective(2200px) rotateY(0deg); }
+    100% { transform: perspective(2200px) rotateY(-180deg); }
+  }
+  @keyframes leafPrev {
+    0%   { transform: perspective(2200px) rotateY(0deg); }
+    100% { transform: perspective(2200px) rotateY(180deg); }
+  }
+
+  .flip-face {
+    position: absolute !important;
+    inset: 0;
+    width: 100%;
+    height: 100% !important;
+    min-height: 0 !important;
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
+  }
+  .flip-face.back { transform: rotateY(180deg); }
+
+  /* sombrinha que passa pela folha enquanto ela gira */
+  .flip-face::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background: linear-gradient(90deg, rgba(60,30,10,0.25), transparent 60%);
+    opacity: 0;
+    animation: leafShade 0.8s ease-in-out forwards;
+  }
+  .flip-leaf.prev .flip-face::after {
+    background: linear-gradient(270deg, rgba(60,30,10,0.25), transparent 60%);
+  }
+  @keyframes leafShade {
+    0%, 100% { opacity: 0; }
+    50%      { opacity: 1; }
+  }
+
+  /* coraçõezinhos que voam junto */
+  .flip-heart {
+    position: absolute;
+    z-index: 31;
+    pointer-events: none;
+    font-size: 1.2rem;
+    opacity: 0;
+    animation: heartFloat 1s ease-out forwards;
+  }
+  @keyframes heartFloat {
+    0%   { opacity: 0; transform: translateY(0) scale(0.5); }
+    25%  { opacity: 1; }
+    100% { opacity: 0; transform: translateY(-90px) translateX(var(--dx, 0px)) scale(1.1) rotate(var(--rot, 0deg)); }
+  }
+
   @media (max-width: 768px) {
     .book { flex-direction: column; max-width: 100%; }
     .book-spine { width: 100%; min-height: 22px; }
@@ -1389,7 +1454,7 @@ const defaultChapters = [
   {
     id: 1,
     num: "Capitulo I",
-    title: "O Dia em que Tudo Comecou",
+    title: "O dia em que tudo comecou",
     date: "29 de Janeiro de 2023",
     unlockDate: null,
     unlocked: true,
@@ -1645,7 +1710,7 @@ Mal sabia eu que tinha acabado de conhecer a mulher dos meus sonhos. 💜`
   {
     id: 2,
     num: "Capitulo II",
-    title: "O Começo de Tudo",
+    title: "A  mudança de rotina",
     date: "30 de Janeiro de 2023",
     unlockDate: null,
     unlocked: true,
@@ -3014,6 +3079,12 @@ window.addEventListener("resize", () => {
 /* ========================================================= */
 
 function renderView() {
+  /* "foto" das páginas antes de redesenhar, usada na animação da folha */
+  const snap = lastDir ? {
+    l: document.getElementById("leftContent").innerHTML,
+    r: document.getElementById("rightContent").innerHTML
+  } : null;
+
   updateAuthorBadge();
   updateRibbonVisibility();
   if (currentView === "toc") {
@@ -3027,22 +3098,75 @@ function renderView() {
   }
   updateNavArrows();
   updateDraftPill();
-  animateTurn();
+  animateTurn(snap);
 }
 
-function animateTurn() {
+function animateTurn(snap) {
   if (!lastDir) return;
-  const dx = lastDir === "next" ? 18 : -18;
+  const dir = lastDir;
   lastDir = null;
-  ["leftContent", "rightContent"].forEach(id => {
-    const el = document.getElementById(id);
-    if (el && el.animate) {
-      el.animate(
-        [{ opacity: 0, transform: `translateX(${dx}px)` }, { opacity: 1, transform: "translateX(0)" }],
-        { duration: 320, easing: "ease-out" }
-      );
-    }
-  });
+
+  const book = document.getElementById("book");
+  const pageL = document.getElementById("pageLeft");
+  const pageR = document.getElementById("pageRight");
+  const mobile = window.matchMedia("(max-width: 768px)").matches;
+
+  /* celular: deslize suave pro lado */
+  if (mobile || !snap || !book.animate) {
+    const dx = dir === "next" ? 40 : -40;
+    ["leftContent", "rightContent"].forEach(id => {
+      const el = document.getElementById(id);
+      if (el && el.animate) {
+        el.animate(
+          [{ opacity: 0, transform: `translateX(${dx}px)` }, { opacity: 1, transform: "translateX(0)" }],
+          { duration: 380, easing: "cubic-bezier(.3,1.2,.5,1)" }
+        );
+      }
+    });
+    return;
+  }
+
+  book.querySelectorAll(".flip-leaf, .flip-heart").forEach(n => n.remove());
+
+  const isNext = dir === "next";
+  const src = isNext ? pageR : pageL;
+  const frontHTML = isNext ? snap.r : snap.l;                       // página que está saindo
+  const backHTML  = isNext
+    ? document.getElementById("leftContent").innerHTML              // nova página da esquerda
+    : document.getElementById("rightContent").innerHTML;            // nova página da direita
+
+  const leaf = document.createElement("div");
+  leaf.className = "flip-leaf " + (isNext ? "next" : "prev");
+  leaf.style.left = src.offsetLeft + "px";
+  leaf.style.width = src.offsetWidth + "px";
+  leaf.style.height = src.offsetHeight + "px";
+
+  const frontCls = isNext ? "page page-right" : "page page-left";
+  const backCls  = isNext ? "page page-left"  : "page page-right";
+  leaf.innerHTML =
+    `<div class="${frontCls} flip-face"><div>${frontHTML}</div></div>` +
+    `<div class="${backCls} flip-face back"><div>${backHTML}</div></div>`;
+  book.appendChild(leaf);
+
+  /* corações voando perto da borda da folha */
+  const emojis = ["💕", "💜", "💖", "✨"];
+  for (let i = 0; i < 5; i++) {
+    const h = document.createElement("span");
+    h.className = "flip-heart";
+    h.textContent = emojis[i % emojis.length];
+    const edge = isNext ? src.offsetLeft + src.offsetWidth - 40 : src.offsetLeft + 30;
+    h.style.left = (edge - 40 * i * (isNext ? 1 : -1) + Math.random() * 30) + "px";
+    h.style.top = (src.offsetHeight * (0.45 + Math.random() * 0.4)) + "px";
+    h.style.setProperty("--dx", (Math.random() * 60 - 30) + "px");
+    h.style.setProperty("--rot", (Math.random() * 50 - 25) + "deg");
+    h.style.animationDelay = (0.15 + i * 0.1) + "s";
+    book.appendChild(h);
+  }
+
+  setTimeout(() => {
+    leaf.remove();
+    book.querySelectorAll(".flip-heart").forEach(n => n.remove());
+  }, 1100);
 }
 
 function updateDraftPill() {
