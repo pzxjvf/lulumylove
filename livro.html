@@ -1272,9 +1272,11 @@
     pointer-events: none;
     transform-style: preserve-3d;
     will-change: transform;
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
   }
-  .flip-leaf.next { transform-origin: left center;  animation: leafNext 0.8s cubic-bezier(.45,.05,.25,1) forwards; }
-  .flip-leaf.prev { transform-origin: right center; animation: leafPrev 0.8s cubic-bezier(.45,.05,.25,1) forwards; }
+  .flip-leaf.next { transform-origin: left center;  animation: leafNext 0.55s cubic-bezier(.4,0,.2,1) forwards; }
+  .flip-leaf.prev { transform-origin: right center; animation: leafPrev 0.55s cubic-bezier(.4,0,.2,1) forwards; }
 
   @keyframes leafNext {
     0%   { transform: perspective(2200px) rotateY(0deg); }
@@ -1293,6 +1295,7 @@
     min-height: 0 !important;
     backface-visibility: hidden;
     -webkit-backface-visibility: hidden;
+    overflow: hidden !important;
   }
   .flip-face.back { transform: rotateY(180deg); }
 
@@ -1302,16 +1305,16 @@
     position: absolute;
     inset: 0;
     pointer-events: none;
-    background: linear-gradient(90deg, rgba(60,30,10,0.25), transparent 60%);
+    background: linear-gradient(90deg, rgba(60,30,10,0.22), transparent 55%);
     opacity: 0;
-    animation: leafShade 0.8s ease-in-out forwards;
+    animation: leafShade 0.55s ease-in-out forwards;
   }
   .flip-leaf.prev .flip-face::after {
-    background: linear-gradient(270deg, rgba(60,30,10,0.25), transparent 60%);
+    background: linear-gradient(270deg, rgba(60,30,10,0.22), transparent 55%);
   }
   @keyframes leafShade {
     0%, 100% { opacity: 0; }
-    50%      { opacity: 1; }
+    50%      { opacity: 0.9; }
   }
 
   /* coraçõezinhos que voam junto */
@@ -1319,14 +1322,14 @@
     position: absolute;
     z-index: 31;
     pointer-events: none;
-    font-size: 1.2rem;
+    font-size: 1.1rem;
     opacity: 0;
-    animation: heartFloat 1s ease-out forwards;
+    animation: heartFloat 0.7s ease-out forwards;
   }
   @keyframes heartFloat {
-    0%   { opacity: 0; transform: translateY(0) scale(0.5); }
-    25%  { opacity: 1; }
-    100% { opacity: 0; transform: translateY(-90px) translateX(var(--dx, 0px)) scale(1.1) rotate(var(--rot, 0deg)); }
+    0%   { opacity: 0; transform: translateY(0) scale(0.4); }
+    30%  { opacity: 1; }
+    100% { opacity: 0; transform: translateY(-70px) translateX(var(--dx, 0px)) scale(1) rotate(var(--rot, 0deg)); }
   }
 
   @media (max-width: 768px) {
@@ -2164,6 +2167,36 @@ Foi com esse pensamento que adormeci, querendo acordar logo para falar com ela o
 Porque, naquela semana, eu tinha descoberto uma coisa que ainda não sabia explicar muito bem. Gostar dela era bom. Saber que ela gostava de mim também era bom. Mas descobrir que podíamos sentir tudo aquilo juntos, sem precisar esconder, era melhor do que eu teria imaginado.
 
 E o som do nome dela ecoava na minha mente, era só Luiza Vilarinho ocupado na mente de um cara apaixonado.`
+  },
+
+  /* ========== CAPITULO 4 ========== */
+  {
+    id: 4,
+    num: "Capitulo IV",
+    title: "Depois de 5 de Fevereiro",
+    date: "05 de Fevereiro de 2023",
+    unlockDate: null,
+    unlocked: true,
+    content:
+`Voltar para casa depois daquele domingo foi quase uma injustiça. Eu tinha passado dias descobrindo uma pessoa que, até pouco tempo antes, existia para mim apenas como uma garota bonita que eu observava de longe, e agora precisava voltar à minha rotina como se nada tivesse acontecido. O ônibus, o caminho, as horas passando pela janela: tudo parecia igual ao que tinha sido na ida, mas eu não era exatamente o mesmo cara que havia saído de casa. Dessa vez, eu tinha muito mais coisas para lembrar e, principalmente, alguém em quem pensar durante todo o trajeto. Se antes eu já ocupava cada intervalo do dia com pensamentos sobre a Luiza, depois daquela madrugada ficou difícil até fingir que aquilo era apenas uma paixonite passageira. Acho que foi ali que comecei a imaginá-la como minha namorada. Não porque tivéssemos oficializado alguma coisa, nem porque eu estivesse tentando apressar um relacionamento que mal tinha começado, mas porque, dentro da minha cabeça, ela já ocupava um lugar diferente. Eu não estava mais pensando apenas em conhecer aquela garota. Estava pensando em como seria tê-la comigo, e foi a partir dai que comecei a me mastubar pensando nela, e pensar na buceta dela, no corpo, em satisfazer ela, mas nunca tive coragem de falar algo sobre, nessa época, no máximo falávamos sobre selinhos ou algo assim, nunca em sexo, em mal sabia se ela gostava disso, ou se tinha a mesma energia que eu pra falar sobre sexo. Eu tinha uma vontade de transar com ela, mas nunca falei disso, eu bati uma pra ela em um dia que ela foi resolver algo da festa, aproveitei que estava sozinho pra fazer isso, como eu estava muito tempo sem fazer, eu me sujei mais que eu imaginava, mas assim que ela me mostrou a foto do corpo dela, ela acabou ligando todos os meus neurónios de tesão, foi incrível. O tempo era bom o tempo todo, e era estranho, de um jeito bom, perceber a velocidade com que aquilo estava acontecendo. Eu tinha passado tão pouco tempo com ela, e, ainda assim, já conseguia me imaginar construindo uma rotina que incluísse sua presença. Não precisava de grandes planos. Bastava pensar em acordar e encontrar uma mensagem dela, passar a tarde conversando ou chegar à noite sabendo que ainda teríamos algumas horas para nós dois. Eram coisas simples, mas que começaram a ganhar um significado diferente quando percebi que não queria dividir aquela atenção com mais ninguém. Entrei em uma espécie de período sabático, por assim dizer. Não estava procurando outras garotas, não tinha interesse em conhecer outras pessoas com segundas intenções e tampouco sentia falta disso. Queria respeitar a Luiza, respeitar o que estávamos construindo e dar espaço para que aquela aproximação acontecesse sem a interferência de outras pessoas. Nós ainda não namorávamos, mas já sabíamos que estávamos na mesma página. Para mim, aquilo era suficiente. Eu não precisava de um título para decidir que queria me dedicar àquela garota. Também comecei a descobrir detalhes dela que iam muito além das fotos e das mensagens escritas. A voz, por exemplo. Comigo, foi assim quando comecei a ouvir a voz dela. Era gostosa de ouvir, e imaginar o gemido gostosinho dela. Não precisava que ela dissesse alguma coisa extraordinária, às vezes, o simples fato de ouvi-la já era suficiente. E isso tornava tudo ainda mais concreto. A Luiza deixava de ser apenas a garota das mensagens que eu esperava receber e se tornava alguém cuja presença eu conseguia imaginar com cada vez mais clareza. O que importa para esta parte da história é que, enquanto eu descobria novas formas de me sentir próximo dela, também começava a perceber que a nossa relação tinha uma dinâmica muito própria. Nós gostávamos um do outro, demonstrávamos isso sem grandes dificuldades e, mesmo sem termos oficializado um namoro, parecíamos entender naturalmente o que esperávamos daquela aproximação. Não era necessário passar o tempo inteiro perguntando se estava tudo bem ou tentando decifrar cada atitude. Havia reciprocidade, vontade de estar ali e uma tranquilidade que eu não queria perder. 
+Mas, como acontece com quase tudo que começa a dar certo, nem todo mundo parece confortável em assistir de fora.
+Os primeiros problemas não surgiram por causa de mim e da Luiza. Pelo menos, não diretamente. Vieram de uma pessoa que, até então, fazia parte da nossa vida: a nossa amiga daquela época. No começo, eu não imaginava que a situação pudesse se tornar tão desgastante. Afinal, ela tinha sido justamente a ponte entre nós dois. Se não fosse pela mensagem que me mandou naquele domingo, talvez eu e a Luiza tivéssemos demorado muito mais para nos conhecer, ou talvez nem tivéssemos começado a conversar naquela época. Seria injusto apagar esse fato só porque, mais tarde, as coisas ficaram complicadas. Ela teve um papel importante no início da nossa história, e eu reconheço isso. O problema era que, quando percebeu que a aproximação entre nós estava ficando séria, alguma coisa mudou na maneira como ela lidava conosco. Aquela amiga tinha o hábito de falar muito sobre o que pretendia fazer e, depois, não levar os próprios planos adiante. Era uma coisa que eu já tinha percebido antes, mas nunca tinha me sentido à vontade para comentar. Um exemplo era a maneira como falava sobre os estudos: dizia que se dedicaria bastante durante o semestre, que ia se organizar e mudar a rotina, mas algumas semanas depois acabava procrastinando novamente. Eu não achava que precisava concordar com tudo só para manter a amizade. Se uma pessoa me perguntasse minha opinião, eu preferia responder com sinceridade, mesmo que a resposta não fosse agradável. Na minha cabeça, era melhor ouvir uma verdade desconfortável de alguém que se importava com você do que receber elogios vazios de quem não tinha coragem de dizer o que realmente pensava. Foi assim que, em um domingo aparentemente normal, resolvi conversar seriamente com ela. Eu disse que não achava que estivesse se esforçando de verdade e que já vinha percebendo aquilo havia algum tempo, mas não tinha falado nada antes. Minha intenção era ser sincero, não iniciar uma guerra. Eu sabia que não era fácil ouvir uma crítica de alguém próximo, especialmente quando ela apontava para um comportamento que a própria pessoa talvez preferisse não reconhecer. Mesmo assim, falei o que pensava. A reação dela foi muito mais intensa do que eu esperava, e o que poderia ter sido uma conversa difícil acabou se transformando em uma sequência de discussões que tomou boa parte daquele domingo. Foi nesse contexto que a Luiza também acabou envolvida. Ela concordava comigo e dizia que já tinha observado coisas semelhantes. Não era como se eu tivesse convencido a Luiza a enxergar a amiga de uma maneira negativa, pelo que ela me dizia, havia comportamentos que também a incomodavam. E, quando duas pessoas começam a compartilhar uma vida mais próxima, é natural que passem a conversar sobre o que as afeta, sobre as pessoas ao redor e sobre aquilo que consideram saudável ou não em suas relações. O problema era que a nossa amiga parecia interpretar essa proximidade como uma mudança que precisava ser corrigida, em vez de simplesmente aceitar que nós dois estávamos construindo algo novo.
+Em uma das discussões, ela soltou uma frase que acabou ficando na minha memória:
+
+— Desde que vocês se conheceram, vocês dois mudaram.
+
+Naquele momento, a frase me pareceu quase uma acusação. Como se o fato de eu e a Luiza estarmos passando mais tempo juntos fosse uma prova de que tínhamos feito alguma coisa errada. Mas, olhando para trás, a resposta era bastante simples: é claro que tínhamos mudado. Estávamos conhecendo alguém que despertava nosso interesse, com quem queríamos conversar e para quem começávamos a reservar uma parte importante dos nossos dias. Nossas prioridades estavam se reorganizando. O tempo que antes era distribuído de uma maneira agora encontrava outro destino. Isso não significava que todas as amizades precisavam desaparecer, nem que alguém deveria abandonar os próprios amigos para começar um relacionamento. Significava apenas que uma relação nova estava surgindo e que ela naturalmente ocuparia espaço. O que eu não pretendia fazer era agir como se nada tivesse mudado só para que outra pessoa continuasse recebendo exatamente a mesma atenção de antes. Eu sempre fui do tipo que, quando começa a se envolver de verdade com alguém, passa a priorizar aquela pessoa. A Luiza parecia funcionar de maneira semelhante. Nós gostávamos de conversar, queríamos estar presentes um na vida do outro e não sentíamos necessidade de transformar cada momento nosso em uma atividade coletiva. A nossa amiga tinha outras amizades, outros vínculos e outras pessoas com quem poderia compartilhar seu tempo. Ainda assim, parecia incomodada com o fato de que nós dois estávamos aprendendo a construir um espaço que não girava mais em torno dela. Ela também tinha outras amigas. Havia a Júlia, que, para mim, tinha uma voz tão fina que eu sentia vontade de diminuir o volume do mundo inteiro quando ela começava a falar. E havia a Yara, a quem eu apelidava mentalmente de balão de gás hélio, por motivos que provavelmente não precisam de muita explicação. Também existia a Solange, sobre quem eu não tinha uma opinião muito formada, mas que, na minha percepção da época, parecia ter um pouco mais de bom senso do que as outras duas. Eu não era exatamente a pessoa mais imparcial do mundo para avaliar aquele grupo, especialmente porque já estava irritado com a situação, mas tinha a impressão de que alguns dos conselhos que nossa amiga recebia não estavam ajudando muito. Júlia e Yara, em particular, pareciam incentivar atitudes que eu considerava pouco sensatas. Não eram conselhos que eu enxergasse como capazes de ajudá-la a tomar decisões melhores ou a lidar com os próprios sentimentos de maneira saudável. Às vezes, pareciam apenas alimentar comportamentos que poderiam acabar complicando ainda mais as coisas. Só que existe um detalhe importante quando se trata de adolescência: a gente pode receber o conselho mais sensato do mundo e ainda assim decidir fazer exatamente aquilo que não deveria. Eu certamente não era imune a isso. Naquela época, nós estávamos aprendendo a lidar com sentimentos, expectativas, amizades e relacionamentos enquanto tentávamos entender quem éramos. Era um período em que muita gente confundia insistência com amor, atenção com compromisso e sofrimento com prova de que alguma coisa valia a pena.
+Nossa amiga estava passando por uma situação dessas. Ela gostava de um cara que morava na Espanha, mas, pelo que eu e a Luiza percebíamos, a relação entre os dois estava longe de ser aquilo que ela desejava. Ele parecia tratá-la como alguém com quem podia manter conversas de teor sexual, e que só queria buceta, enquanto ela esperava algo mais profundo. Ela queria uma conexão que fosse além disso, algo que envolvesse presença, interesse e sentimentos, ele, pelo menos da maneira como a situação chegava até nós, não parecia oferecer a mesma coisa. Havia momentos em que os dois sumiam, evitavam conversar ou simplesmente deixavam a relação num estado de incerteza que parecia desgastá-la. Eu e a Luiza percebíamos essa diferença, mas não saíamos apontando o dedo para ela a cada oportunidade. Afinal, era a vida da nossa amiga, e não cabia a nós decidir por quem ela deveria se interessar. Ainda assim, era difícil não notar o contraste entre aquilo que ela vivia e o que começava a acontecer conosco. Enquanto ela parecia ficar presa a uma relação em que precisava esperar, interpretar sinais e tentar descobrir se o outro queria alguma coisa além de conversas ocasionais, eu e a Luiza tínhamos encontrado uma dinâmica que, desde o começo, parecia muito mais natural. Nós conversávamos, demonstrávamos o que sentíamos e sabíamos que o interesse era recíproco. Não precisávamos fazer jogos para provocar ciúmes nem desaparecer para testar se o outro sentiria falta. Gostávamos de estar ali. Era simples assim. Talvez essa diferença incomodasse mais do que ela gostaria de admitir. Não tenho como afirmar tudo o que se passava na cabeça daquela amiga, mas, olhando para os acontecimentos daquela época, eu tinha a impressão de que ela não estava sabendo lidar com a mudança. A nossa proximidade tinha alterado a dinâmica do grupo, e ela parecia querer recuperar o espaço que ocupava antes. Só que, para nós dois, aquele espaço já não era o centro de tudo. A Luiza estava se tornando uma das pessoas mais importantes do meu dia, e eu queria que ela sentisse que podia contar comigo sem precisar negociar cada momento da nossa relação com alguém de fora. Foi assim que começamos a construir uma espécie de bolha. Não era uma decisão oficial, nem um acordo em que sentamos para estabelecer regras. Simplesmente aconteceu. Tínhamos nossas conversas, nossos assuntos, nossas brincadeiras e uma intimidade que não precisava ser compartilhada com todo mundo. As pessoas podiam saber que estávamos nos aproximando, podiam até perceber que existia alguma coisa entre nós, mas não precisavam conhecer todos os detalhes. Havia uma diferença entre esconder a relação por vergonha e preservar uma parte dela porque era nossa. Eu gostava da segunda possibilidade. Nem tudo precisava virar assunto de grupo, nem toda conversa precisava ser explicada e nem todo momento precisava de uma testemunha. Aquela bolha era confortável. Era um lugar em que podíamos ser carinhosos, falar sobre o que sentíamos e aproveitar a novidade sem a sensação de que alguém estava avaliando cada passo. Eu não precisava ficar pensando em como uma mensagem seria interpretada por outra pessoa, e a Luiza também podia viver o que estava acontecendo entre nós sem precisar justificar o tempo que dedicava a mim. Aos poucos, fomos colocando limites mais claros em relação à nossa amiga. Em alguns momentos, a Luiza simplesmente a ignorava, especialmente quando sentia que a interação estava se tornando desgastante. Eu também não fazia questão de trazê-la para tudo o que acontecia entre nós. Não era uma tentativa de puni-la, mas uma maneira de impedir que os problemas dela e as discussões que tínhamos com ela invadissem um espaço que estávamos tentando construir com tranquilidade. E, enquanto aquela confusão acontecia do lado de fora, nós ficávamos cada vez mais próximos. A intimidade crescia sem que precisássemos anunciar isso para ninguém. Nossa intimidade foi crescendo mais ainda, nossas conversas sexuais era meio assim:
+
+— Pegar na tua cintura e desço a mão entre tuas coxas.
+
+ou
+
+— Posso pegar embaixo do teu quadril?.
+
+Era meio engraçado, não falávamos de gozar, nem de fuder, e sim, uma conversa soft mesmo sabendo que eu queria a buceta dela, e ela queria meu pau.
+ O interessante era que nossa relação continuava estável mesmo sem o nome oficial de namoro. Não tínhamos colocado um rótulo naquilo, mas sabíamos o que estávamos fazendo. Estávamos nos conhecendo, aproveitando uma experiência nova e descobrindo até onde aquela conexão poderia chegar. Eu não sentia necessidade de procurar outras pessoas, e, pelo que conversávamos, ela também estava concentrada em nós. Não era uma obrigação imposta; era simplesmente o que queríamos naquele momento. Uma das coisas que eu mais gostava era justamente essa constância. A nossa relação não parecia funcionar em ciclos de aproximação e afastamento, com um de nós tentando adivinhar o que o outro sentia. Havia dias bons, conversas longas, demonstrações de carinho e a vontade de continuar. Claro que ainda tínhamos muito a aprender um sobre o outro, mas a base parecia estar ali. Eu não precisava desaparecer para despertar o interesse dela, e ela não precisava me deixar inseguro para ter certeza de que eu gostava dela. A gente podia demonstrar afeto sem transformar isso em uma disputa. Para alguém que estava acostumado a se preocupar com a possibilidade de gostar mais do que a outra pessoa, aquilo era especialmente bom. Foi também nesse período que soube de uma parte importante do passado dela: a Luiza tinha terminado um namoro algumas semanas antes de me conhecer. Eu não tinha perguntado muito sobre os relacionamentos anteriores, e ela me contou isso em outro momento, quando o assunto apareceu naturalmente. Confesso que, se tivesse descoberto essa informação logo no dia em que começamos a conversar, provavelmente teria ficado com um pé atrás. Eu já tinha visto situações em que alguém saía de um relacionamento e procurava outra pessoa imediatamente, não necessariamente porque estivesse interessado nela, mas porque não queria lidar com o vazio deixado pela relação anterior. Eu tinha receio de ser esse tipo de pessoa para alguém: uma distração, uma maneira de preencher uma ausência ou uma tentativa de esquecer outra história antes mesmo de estar pronto para começar uma nova. Mas a Luiza não me fazia sentir assim. Não parecia que estava conversando comigo apenas para esquecer alguém, nem que eu precisava competir com uma pessoa que ainda ocupava o lugar principal nos pensamentos dela. O que vivíamos tinha uma identidade própria. Nós estávamos construindo nossas conversas, nossas brincadeiras, nossas lembranças e a nossa intimidade. Eu não sentia que estava tentando substituir ninguém, porque não parecia existir uma disputa acontecendo. E, como o que eu via diante de mim era bom, escolhi não deixar que uma informação sobre o passado dela definisse antecipadamente o que eu deveria sentir no presente. Preferi conhecê-la pelo que ela demonstrava comigo. Talvez essa tenha sido uma das decisões mais importantes daquele começo: eu escolhi confiar naquilo que estava acontecendo, em vez de tentar prever todas as maneiras pelas quais poderia dar errado. Não significava que eu fosse ingênuo ou que acreditasse que duas pessoas apaixonadas nunca teriam problemas. Significava apenas que eu não queria começar uma história nova tratando a pessoa que estava diante de mim como se ela já tivesse cometido os erros de outra pessoa. A Luiza merecia ser conhecida por quem era, e eu também queria ter a chance de construir algo sem que o medo do passado ocupasse todo o espaço. Enquanto isso, nossa amiga parecia continuar presa à própria situação com o rapaz da Espanha. A diferença entre as duas relações ficava cada vez mais evidente para mim. Ela tentava conseguir de alguém uma atenção que não parecia vir naturalmente, enquanto eu e a Luiza passávamos horas conversando sem precisar pedir que o outro demonstrasse interesse. Ela queria que aquele rapaz enxergasse nela algo além do que ele parecia procurar, enquanto eu estava descobrindo, dia após dia, novas razões para gostar da garota com quem conversava. Não era necessário comparar as histórias para perceber que eram diferentes, mas era difícil não fazer isso quando a pessoa que estava descontente com a própria relação também parecia incomodada com a nossa. Eu não sabia se ela queria nos afastar deliberadamente ou se estava apenas reagindo mal a uma mudança que não conseguia controlar. Talvez houvesse um pouco das duas coisas. O que eu sabia era que não pretendia abrir mão do que estava construindo com a Luiza para voltar a uma dinâmica em que a nossa amiga ocupasse o mesmo espaço de antes. Eu já tinha encontrado alguém com quem queria passar meu tempo, alguém que me fazia bem e com quem as coisas pareciam funcionar de um jeito natural. Não queria que as dificuldades de uma terceira pessoa se tornassem um problema permanente entre nós. E a Luiza parecia pensar de maneira semelhante. Nós nos escolhíamos nos pequenos detalhes: na decisão de continuar conversando, na maneira como reservávamos tempo um para o outro, na vontade de preservar o que estava acontecendo sem precisar explicar tudo a quem estivesse de fora. Ainda não éramos oficialmente namorados, mas havia uma espécie de compromisso silencioso na maneira como nos tratávamos. Não tínhamos prometido um futuro inteiro, nem precisávamos fazer isso tão cedo. Estávamos apenas vivendo o presente com a intenção de continuar. Eu estava descobrindo a voz dela, o jeito como gostava de conversar, as coisas que a deixavam animada e a forma como ela demonstrava carinho. Ao mesmo tempo, estava descobrindo que gostar de alguém também significava aprender a proteger o espaço que vocês construíam juntos. Nem todo mundo entenderia nossas prioridades, nem todo mundo ficaria feliz com as mudanças, e nem toda amizade continuaria funcionando exatamente como antes. Isso não significava que precisávamos transformar todas as divergências em guerras. Só significava que não podíamos deixar que a expectativa dos outros decidisse o que faríamos com a nossa própria relação. No fim, aquela amiga não conseguiu estourar a nossa bolha. Ela podia reclamar que tínhamos mudado, podia demonstrar insatisfação com a quantidade de tempo que dedicávamos a ela ou tentar fazer com que voltássemos à dinâmica anterior, mas não podia decidir o que a Luiza significava para mim. E eu também não queria decidir por ela. O que existia entre nós precisava ser construído pelos dois, com as nossas escolhas, os nossos sentimentos e a nossa vontade de continuar. Aquela foi uma fase em que aprendi que uma relação não precisa ser oficializada imediatamente para começar a ocupar um lugar importante na vida de alguém. Às vezes, ela começa nas mensagens que você espera receber, nas conversas que atravessam a madrugada e na vontade de contar uma novidade àquela pessoa antes de contar a qualquer outra. Depois, sem perceber, você começa a organizar o dia pensando nela. Passa a guardar histórias para compartilhar, a prestar atenção nas coisas que a fazem feliz e a imaginar como seria tê-la ao seu lado em situações que, até pouco tempo antes, você vivia sozinho. Eu e a Luiza ainda tínhamos muito para descobrir. Havia perguntas que não tínhamos feito, histórias que ainda não conhecíamos e experiências que só viveríamos mais tarde. Mas já existia uma certeza que tornava tudo aquilo especial: nós dois queríamos continuar. Enquanto algumas pessoas ao redor pareciam preocupadas com a mudança que nossa aproximação tinha provocado, eu estava ocupado demais aproveitando o fato de que, pela primeira vez em muito tempo, gostar de alguém não parecia uma disputa. Era só gostar. Era ser correspondido.
+ Era ter encontrado alguém com quem eu queria continuar escrevendo a história — mesmo antes de sabermos qual seria o nome do nosso primeiro capítulo oficial.`
   }
 ];
 /* =========================================================
@@ -2180,10 +2213,21 @@ const SOUND_KEY = "livro_som_v1";
 
 const PATCHES = [
   {
+    id: "v2.2.0",
+    date: "12 de Outubro de 2026",
+    title: "Capítulo IV + Melhorias no Livro",
+    latest: true,
+    items: [
+      { type: "chapter", text: "📖 <b>Capítulo IV</b> liberado — <b>Uma Bolha Só Nossa</b>: a volta para casa, a construção da nossa bolha, a amiga que tentou separar a gente e a certeza de que queríamos continuar juntos." },
+      { type: "feat",    text: "✨ Efeito de virar página <b>mais suave e rápido</b>: agora a folha gira com mais fluidez, sem travar." },
+      { type: "fix",     text: "🛠️ Marcadores de texto <b>consertados</b>: agora as marcações não somem mais ao virar a página e não bugam quando há textos repetidos." }
+    ]
+  },
+  {
     id: "v2.1.0",
     date: "08 de Outubro de 2026",
     title: "Som de Virar Página + Patch Notes no Menu",
-    latest: true,
+    latest: false,
     items: [
       { type: "feat",    text: "🔊 <b>Som de virar página realista</b>: agora o livro toca um áudio de folhear página toda vez que você clica nas setas, voltar a página tem um som diferente (mais grave) de avançar!" },
       { type: "feat",    text: "📰 <b>Patch Notes no Menu Principal</b>: agora todas as atualizações do cantinho aparecem direto na tela inicial, para ela ver tudo o que tem de novo em um lugar só 💜" },
@@ -2431,25 +2475,42 @@ function matchScore(fullText, idx, needleLen, ctxBefore, ctxAfter) {
   return { before, after };
 }
 
+/* Remove todos os spans .marked-text de um container, devolvendo o texto limpo */
+function unwrapAllMarks(containerEl) {
+  const spans = containerEl.querySelectorAll("span.marked-text");
+  spans.forEach(span => {
+    const parent = span.parentNode;
+    while (span.firstChild) parent.insertBefore(span.firstChild, span);
+    parent.removeChild(span);
+  });
+  containerEl.normalize();
+}
+
 /* Procura onde um marcador salvo está dentro do texto de uma página */
 function locateMark(fullText, mark) {
   const needle = mark.anchor || mark.text;
   if (!needle) return null;
   const cb = mark.contextBefore || "";
   const ca = mark.contextAfter || "";
-  const need = Math.min(10, Math.min(8, cb.length) + Math.min(8, ca.length));
-  let best = null, from = 0, idx;
+  const need = Math.min(6, Math.min(5, cb.length) + Math.min(5, ca.length));
+  let best = null, from = 0, idx, firstHit = null;
   while ((idx = fullText.indexOf(needle, from)) !== -1) {
+    if (firstHit === null) firstHit = { idx, len: needle.length };
     const s = matchScore(fullText, idx, needle.length, cb, ca);
     const total = s.before + s.after;
     if (!best || total > best.total) best = { idx, total, len: needle.length };
     from = idx + 1;
   }
-  if (!best || best.total < need) return null;
+  /* se nenhum contexto bateu, usa a primeira ocorrência como fallback
+     (evita que a marcação suma por causa de paginação) */
+  if (!best || best.total < need) return firstHit;
   return best;
 }
 
 function wrapCharRangeInContainer(containerEl, startChar, endChar, markId) {
+  /* O applySavedHighlights já remove todas as marcações no início, então aqui
+     não precisamos limpar nada — se limpássemos, apagaríamos as marcações
+     que já foram re-aplicadas neste mesmo ciclo. */
   const info = getContainerText(containerEl);
   if (startChar < 0 || endChar <= startChar || endChar > info.fullText.length) return false;
 
@@ -2466,7 +2527,7 @@ function wrapCharRangeInContainer(containerEl, startChar, endChar, markId) {
     return wrapRangeWithMark(range, markId);
   }
 
-  const partialNodes = info.nodes.filter(n => n.end > startChar && n.start < endChar && !n.inside);
+  const partialNodes = info.nodes.filter(n => n.end > startChar && n.start < endChar);
   if (partialNodes.length === 0) return false;
   let ok = false;
 
@@ -2682,11 +2743,6 @@ function markSelectedText() {
   }
 
   const markId = ch.id + ":" + side + ":" + hashStr(text + pos.contextBefore + pos.contextAfter) + ":" + Date.now().toString(36);
-  const ok = wrapCharRangeInContainer(containerEl, pos.startChar, pos.endChar, markId);
-  if (!ok) {
-    showToast("⚠️ Não foi possível marcar este trecho. Tente selecionar apenas o texto, sem passar sobre títulos ou divisórias.");
-    return;
-  }
 
   const list = loadBookmarks();
   list.unshift({
@@ -2705,6 +2761,10 @@ function markSelectedText() {
     savedAt: Date.now()
   });
   saveBookmarks(list);
+
+  /* reaplica TODAS as marcações limpas (incluindo a nova) para não sumir nenhuma */
+  applySavedHighlights(chId);
+
   sel.removeAllRanges();
   const tt = document.getElementById("markTooltip");
   if (tt) tt.style.display = "none";
@@ -2746,18 +2806,27 @@ function clearAllMarks() {
 /* Reaplica os marca-textos salvos nas duas páginas visíveis do capítulo */
 function applySavedHighlights(chapterId) {
   const marks = loadBookmarks().filter(b => b.chapterId === chapterId);
-  if (marks.length === 0) return;
   const containers = [
     document.querySelector("#pageLeft .chapter-content"),
     document.querySelector("#pageRight .chapter-content")
   ].filter(Boolean);
   if (containers.length === 0) return;
 
+  /* limpa qualquer marcação visual anterior para evitar spans aninhados */
+  containers.forEach(c => unwrapAllMarks(c));
+
+  if (marks.length === 0) {
+    attachUnmarkHandlers();
+    return;
+  }
+
+  /* cache do texto de cada container para não rodar o TreeWalker várias vezes */
+  const textCache = containers.map(c => ({ c, info: getContainerText(c) }));
+
   const sorted = [...marks].sort((a, b) => (b.anchor || b.text).length - (a.anchor || a.text).length);
   sorted.forEach(mark => {
     let best = null;
-    containers.forEach(c => {
-      const info = getContainerText(c);
+    textCache.forEach(({ c, info }) => {
       const r = locateMark(info.fullText, mark);
       if (r && (!best || r.total > best.total)) best = { c, idx: r.idx, len: r.len, total: r.total };
     });
@@ -3119,7 +3188,7 @@ function animateTurn(snap) {
       if (el && el.animate) {
         el.animate(
           [{ opacity: 0, transform: `translateX(${dx}px)` }, { opacity: 1, transform: "translateX(0)" }],
-          { duration: 380, easing: "cubic-bezier(.3,1.2,.5,1)" }
+          { duration: 280, easing: "cubic-bezier(.4,0,.2,1)" }
         );
       }
     });
@@ -3149,8 +3218,8 @@ function animateTurn(snap) {
   book.appendChild(leaf);
 
   /* corações voando perto da borda da folha */
-  const emojis = ["💕", "💜", "💖", "✨"];
-  for (let i = 0; i < 5; i++) {
+  const emojis = ["💕", "💜", "✨"];
+  for (let i = 0; i < 3; i++) {
     const h = document.createElement("span");
     h.className = "flip-heart";
     h.textContent = emojis[i % emojis.length];
@@ -3159,14 +3228,14 @@ function animateTurn(snap) {
     h.style.top = (src.offsetHeight * (0.45 + Math.random() * 0.4)) + "px";
     h.style.setProperty("--dx", (Math.random() * 60 - 30) + "px");
     h.style.setProperty("--rot", (Math.random() * 50 - 25) + "deg");
-    h.style.animationDelay = (0.15 + i * 0.1) + "s";
+    h.style.animationDelay = (0.08 + i * 0.08) + "s";
     book.appendChild(h);
   }
 
   setTimeout(() => {
-    leaf.remove();
+    if (leaf.parentNode) leaf.remove();
     book.querySelectorAll(".flip-heart").forEach(n => n.remove());
-  }, 1100);
+  }, 620);
 }
 
 function updateDraftPill() {
