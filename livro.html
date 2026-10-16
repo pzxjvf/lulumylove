@@ -28,7 +28,7 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    padding: 16px 15px 16px;
+    padding: 10px 15px;
     overflow: hidden !important;
   }
 
@@ -38,7 +38,7 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 20px;
+    margin-bottom: 10px;
     color: #fff;
     font-family: "Nunito", sans-serif;
     z-index: 10;
@@ -73,8 +73,29 @@
 
   .book-title {
     text-align: center;
-    margin-bottom: 18px;
+    margin-bottom: 8px;
     z-index: 5;
+  }
+
+  /* Ajuste para telas pequenas de notebook (Lenovo etc) */
+  @media (max-height: 820px) {
+    .book-wrapper {
+      transform: scale(0.92);
+      transform-origin: top center;
+      margin-top: -10px;
+    }
+  }
+  @media (max-height: 740px) {
+    .book-wrapper {
+      transform: scale(0.85);
+      margin-top: -20px;
+    }
+  }
+  @media (max-height: 680px) {
+    .book-wrapper {
+      transform: scale(0.78);
+      margin-top: -30px;
+    }
   }
   .book-title h1 {
     font-family: "Dancing Script", cursive;
@@ -243,7 +264,7 @@
   .page-right .page-corner { top: 0; left: 0; border-top-left-radius: 8px; }
 
   .toc-entry {
-    padding: 14px 18px;
+    padding: 10px 16px;
     border-bottom: 1px dashed rgba(107, 68, 35, 0.3);
     display: flex;
     align-items: center;
@@ -252,7 +273,7 @@
     cursor: pointer;
     transition: 0.25s;
     border-radius: 6px;
-    margin-bottom: 4px;
+    margin-bottom: 2px;
     position: relative;
   }
   .toc-entry:hover:not(.locked) {
@@ -325,6 +346,47 @@
     font-size: 1.1em;
     font-weight: 600;
     color: #5a3a1a;
+  }
+
+  /* Navegação do Sumário */
+  .toc-nav {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 20px;
+    margin-top: 15px;
+    font-family: "Nunito", sans-serif;
+  }
+  .toc-nav-btn {
+    background: #c77dff;
+    color: white;
+    border: none;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: 0.3s;
+    font-size: 1.2em;
+    box-shadow: 0 3px 8px rgba(199, 125, 255, 0.3);
+  }
+  .toc-nav-btn:hover:not(:disabled) {
+    background: #9d4edd;
+    transform: scale(1.1);
+  }
+  .toc-nav-btn:disabled {
+    background: #ccc;
+    cursor: not-allowed;
+    opacity: 0.5;
+    box-shadow: none;
+  }
+  .toc-page-info {
+    font-size: 0.85em;
+    font-weight: 700;
+    color: #8a5a2b;
+    letter-spacing: 1px;
   }
 
   .lock-icon {
@@ -2185,6 +2247,66 @@ ou
 Era meio engraçado, não falávamos de gozar, nem de fuder, e sim, uma conversa soft mesmo sabendo que eu queria a buceta dela, e ela queria meu pau.
  O interessante era que nossa relação continuava estável mesmo sem o nome oficial de namoro. Não tínhamos colocado um rótulo naquilo, mas sabíamos o que estávamos fazendo. Estávamos nos conhecendo, aproveitando uma experiência nova e descobrindo até onde aquela conexão poderia chegar. Eu não sentia necessidade de procurar outras pessoas, e, pelo que conversávamos, ela também estava concentrada em nós. Não era uma obrigação imposta; era simplesmente o que queríamos naquele momento. Uma das coisas que eu mais gostava era justamente essa constância. A nossa relação não parecia funcionar em ciclos de aproximação e afastamento, com um de nós tentando adivinhar o que o outro sentia. Havia dias bons, conversas longas, demonstrações de carinho e a vontade de continuar. Claro que ainda tínhamos muito a aprender um sobre o outro, mas a base parecia estar ali. Eu não precisava desaparecer para despertar o interesse dela, e ela não precisava me deixar inseguro para ter certeza de que eu gostava dela. A gente podia demonstrar afeto sem transformar isso em uma disputa. Para alguém que estava acostumado a se preocupar com a possibilidade de gostar mais do que a outra pessoa, aquilo era especialmente bom. Foi também nesse período que soube de uma parte importante do passado dela: a Luiza tinha terminado um namoro algumas semanas antes de me conhecer. Eu não tinha perguntado muito sobre os relacionamentos anteriores, e ela me contou isso em outro momento, quando o assunto apareceu naturalmente. Confesso que, se tivesse descoberto essa informação logo no dia em que começamos a conversar, provavelmente teria ficado com um pé atrás. Eu já tinha visto situações em que alguém saía de um relacionamento e procurava outra pessoa imediatamente, não necessariamente porque estivesse interessado nela, mas porque não queria lidar com o vazio deixado pela relação anterior. Eu tinha receio de ser esse tipo de pessoa para alguém: uma distração, uma maneira de preencher uma ausência ou uma tentativa de esquecer outra história antes mesmo de estar pronto para começar uma nova. Mas a Luiza não me fazia sentir assim. Não parecia que estava conversando comigo apenas para esquecer alguém, nem que eu precisava competir com uma pessoa que ainda ocupava o lugar principal nos pensamentos dela. O que vivíamos tinha uma identidade própria. Nós estávamos construindo nossas conversas, nossas brincadeiras, nossas lembranças e a nossa intimidade. Eu não sentia que estava tentando substituir ninguém, porque não parecia existir uma disputa acontecendo. E, como o que eu via diante de mim era bom, escolhi não deixar que uma informação sobre o passado dela definisse antecipadamente o que eu deveria sentir no presente. Preferi conhecê-la pelo que ela demonstrava comigo. Talvez essa tenha sido uma das decisões mais importantes daquele começo: eu escolhi confiar naquilo que estava acontecendo, em vez de tentar prever todas as maneiras pelas quais poderia dar errado. Não significava que eu fosse ingênuo ou que acreditasse que duas pessoas apaixonadas nunca teriam problemas. Significava apenas que eu não queria começar uma história nova tratando a pessoa que estava diante de mim como se ela já tivesse cometido os erros de outra pessoa. A Luiza merecia ser conhecida por quem era, e eu também queria ter a chance de construir algo sem que o medo do passado ocupasse todo o espaço. Enquanto isso, nossa amiga parecia continuar presa à própria situação com o rapaz da Espanha. A diferença entre as duas relações ficava cada vez mais evidente para mim. Ela tentava conseguir de alguém uma atenção que não parecia vir naturalmente, enquanto eu e a Luiza passávamos horas conversando sem precisar pedir que o outro demonstrasse interesse. Ela queria que aquele rapaz enxergasse nela algo além do que ele parecia procurar, enquanto eu estava descobrindo, dia após dia, novas razões para gostar da garota com quem conversava. Não era necessário comparar as histórias para perceber que eram diferentes, mas era difícil não fazer isso quando a pessoa que estava descontente com a própria relação também parecia incomodada com a nossa. Eu não sabia se ela queria nos afastar deliberadamente ou se estava apenas reagindo mal a uma mudança que não conseguia controlar. Talvez houvesse um pouco das duas coisas. O que eu sabia era que não pretendia abrir mão do que estava construindo com a Luiza para voltar a uma dinâmica em que a nossa amiga ocupasse o mesmo espaço de antes. Eu já tinha encontrado alguém com quem queria passar meu tempo, alguém que me fazia bem e com quem as coisas pareciam funcionar de um jeito natural. Não queria que as dificuldades de uma terceira pessoa se tornassem um problema permanente entre nós. E a Luiza parecia pensar de maneira semelhante. Nós nos escolhíamos nos pequenos detalhes: na decisão de continuar conversando, na maneira como reservávamos tempo um para o outro, na vontade de preservar o que estava acontecendo sem precisar explicar tudo a quem estivesse de fora. Ainda não éramos oficialmente namorados, mas havia uma espécie de compromisso silencioso na maneira como nos tratávamos. Não tínhamos prometido um futuro inteiro, nem precisávamos fazer isso tão cedo. Estávamos apenas vivendo o presente com a intenção de continuar. Eu estava descobrindo a voz dela, o jeito como gostava de conversar, as coisas que a deixavam animada e a forma como ela demonstrava carinho. Ao mesmo tempo, estava descobrindo que gostar de alguém também significava aprender a proteger o espaço que vocês construíam juntos. Nem todo mundo entenderia nossas prioridades, nem todo mundo ficaria feliz com as mudanças, e nem toda amizade continuaria funcionando exatamente como antes. Isso não significava que precisávamos transformar todas as divergências em guerras. Só significava que não podíamos deixar que a expectativa dos outros decidisse o que faríamos com a nossa própria relação. No fim, aquela amiga não conseguiu estourar a nossa bolha. Ela podia reclamar que tínhamos mudado, podia demonstrar insatisfação com a quantidade de tempo que dedicávamos a ela ou tentar fazer com que voltássemos à dinâmica anterior, mas não podia decidir o que a Luiza significava para mim. E eu também não queria decidir por ela. O que existia entre nós precisava ser construído pelos dois, com as nossas escolhas, os nossos sentimentos e a nossa vontade de continuar. Aquela foi uma fase em que aprendi que uma relação não precisa ser oficializada imediatamente para começar a ocupar um lugar importante na vida de alguém. Às vezes, ela começa nas mensagens que você espera receber, nas conversas que atravessam a madrugada e na vontade de contar uma novidade àquela pessoa antes de contar a qualquer outra. Depois, sem perceber, você começa a organizar o dia pensando nela. Passa a guardar histórias para compartilhar, a prestar atenção nas coisas que a fazem feliz e a imaginar como seria tê-la ao seu lado em situações que, até pouco tempo antes, você vivia sozinho. Eu e a Luiza ainda tínhamos muito para descobrir. Havia perguntas que não tínhamos feito, histórias que ainda não conhecíamos e experiências que só viveríamos mais tarde. Mas já existia uma certeza que tornava tudo aquilo especial: nós dois queríamos continuar. Enquanto algumas pessoas ao redor pareciam preocupadas com a mudança que nossa aproximação tinha provocado, eu estava ocupado demais aproveitando o fato de que, pela primeira vez em muito tempo, gostar de alguém não parecia uma disputa. Era só gostar. Era ser correspondido.
  Era ter encontrado alguém com quem eu queria continuar escrevendo a história — mesmo antes de sabermos qual seria o nome do nosso primeiro capítulo oficial.`
+  },
+
+  /* ========== CAPITULO 5 ========== */
+  {
+    id: 5,
+    num: "Capitulo V",
+    title: "A mudança",
+    date: "05 de Fevereiro de 2023",
+    unlockDate: null,
+    unlocked: true,
+    content:
+`Dizem que, quando conhecemos alguém, a nossa vida muda de repente. Eu costumava achar que isso era uma daquelas frases bonitas que as pessoas gostam de dizer quando querem transformar qualquer encontro em destino, como se o universo tivesse passado anos inteiro preparando duas pessoas para finalmente esbarrarem uma na outra. Só que, depois da luiza, comecei a entender que talvez não fosse exatamente assim. Às vezes, a mudança não acontece em um único instante. Ela vai entrando aos poucos, quase sem pedir licença, ocupando espaços que antes estavam vazios e, quando você percebe, já está pensando diferente, agindo diferente e organizando a própria vida em torno de alguém que, poucas semanas antes, sequer fazia parte dela. Foi exatamente isso que aconteceu comigo. Desde que comecei a colocar a Luiza na minha vida, tudo mudou. E, talvez mais importante do que tudo que mudou ao meu redor, foi perceber o quanto eu estava mudando por causa dela.
+
+Com o tempo, fui entendendo que a Luiza não era uma pessoa que todo mundo conseguia compreender facilmente. Havia coisas que ela falava, sentimentos que carregava e maneiras de reagir que, para algumas pessoas, provavelmente pareciam difíceis de acompanhar. Para mim, porém, aquilo começou a se transformar em uma espécie de aprendizado. Eu fui aprendendo a ter compreensão do jeito que ela precisava que eu tivesse. Não porque eu achasse que ela precisava ser tratada como alguém frágil, mas porque comecei a entender que gostar de alguém também significava aprender a enxergar essa pessoa além daquilo que era mais fácil enxergar. Eu queria entender o que ela queria dizer quando dizia alguma coisa, o que existia por trás de determinadas reações, quando era melhor insistir em uma conversa e quando simplesmente estar ali já era suficiente. Talvez tenha sido uma das coisas mais importantes para que nós tivéssemos tão poucas discussões — quase nenhuma, na verdade. Eu não estava tentando transformar a Luiza em alguém mais fácil para mim. Estava tentando aprender a ser alguém melhor para ela.
+
+E acho que foi justamente nesse processo de aprender um ao outro que os nossos vínculos começaram a ficar mais profundos. Não aconteceu de uma hora para outra. Era uma aproximação que ia ganhando novas camadas, uma intimidade que não dependia apenas de estar apaixonado, mas também daquela sensação de que existia um espaço entre nós que ninguém mais ocupava. A gente começou a construir uma conexão que era só nossa, e, com ela, vieram também os vínculos sexuais entre nós.
+
+Não era só por estar apaixonado, e sim porque ela me dá tesão, creio que se fosse uma ficada com um não sabendo o nome do outro, eu também sentiria tesão, a forma como ela escrevia era um pouco íntima, mas dava pra sentir que ela me queria, e eu mais ainda, eu comecei a desejar a buceta dela, e mais que isso, com o tempo eu queria ir provando coisas que não imaginava gostar, mas era muito cedo. Descobri que ela gostava de agressivo também, e eu sempre gostei, tapas na bunda, passar a mão pelo pescoço e apertar, meter com tudo e ver se contorcendo, sempre gostei disso, e ela também, a carinha de santa dela sempre foi algo que gostei, não parecia que ela gostava — apesar de que todos ao redor dela sabe — eu sempre achei isso uma qualidade nela, dela poder disfarçar que senta em um pretinho do jeito que ela gosta. Um dia eu mandei foto de algo do braço pra ela, e meu braço sempre teve veias saltadas, e eu achava isso normal, e saber que ela tocou uma pra mim por causa dessa foto me deixou surpreso, e muito feliz, como homenagem a isso, eu bati uma pensando nela também, sempre fui muito recíproco, o corpo dela me atiçava, os peitos são tão gostosos, eu facilmente ficaria sentado só vendo ela sentar em mim enquanto eu chupo os peitos dela quietinho, só tentando não gozar. É estranho saber que aquela princesinha gatinha queria sentar em mim, achei ela uma caixinha de surpresas, nunca esqueço da primeira imagem dela.
+
+Antes mesmo de tudo isso, havia uma imagem que eu ainda lembrava perfeitamente. Um dia, vi um status da nossa amiga com uma foto da Luiza. Ela estava de lado, com aquele cabelo liso que sempre teve, e estava extremamente linda. Não era uma foto extraordinária. Não precisava ser. Era simplesmente a Luiza existindo em uma tela, e, de algum jeito, aquilo foi suficiente para fazer alguma coisa dentro de mim mudar de lugar. Foi ali que eu percebi que aquela paixão já estava começando a tomar forma, embora eu provavelmente ainda não tivesse coragem de admitir isso nem para mim mesmo.
+
+Durante muito tempo, eu tinha uma ideia completamente errada sobre ela. Eu achava que a Luiza provavelmente preferia os caras brancos, dentro daquele padrão que eu imaginava que combinava com ela. Ela é uma mulher branca, bonita, daquele tipo de beleza que fazia com que eu automaticamente pensasse que existiam homens muito mais interessantes do que eu disputando a atenção dela. E, por causa disso, eu me colocava para baixo antes mesmo de existir qualquer motivo para isso. Na minha cabeça, ela era uma espécie de deusa distante e eu era só o cara que tinha a sorte de estar olhando de longe. Eu achava que estava fora da possibilidade.
+
+O mais engraçado é que, entre todas as meninas, eu sempre acabava prestando atenção nela justamente pelo que a nossa amiga daquela época falava. Eu ouvia as coisas, guardava na cabeça e fingia que não ligava tanto. Nunca perguntava diretamente sobre a Luiza. Parte disso era medo. Eu não queria que ela descobrisse que eu estava perguntando por ela para a nossa amiga. Na minha cabeça, isso entregaria demais. E, sinceramente, eu tinha uma teoria bastante simples sobre aquilo tudo: os guris provavelmente queriam ficar com ela. Não era exatamente uma conclusão absurda. Ela sempre tinha sido uma mulher difícil de conquistar naquela época, e justamente por isso havia algo nela que me atraía ainda mais.
+
+Talvez eu gostasse da ideia de que ela não seria fácil. Talvez eu gostasse do desafio. Talvez houvesse uma parte idiota de mim que achasse fascinante a ideia de conquistar alguém que parecia tão inalcançável. E, quando percebi que, apesar de tudo aquilo que eu imaginava, ela estava começando a ser minha, aquela sensação ganhou uma força que eu não sabia muito bem como explicar. Eu queria aquela proximidade. Queria a sensação de ser alguém especial para ela. Queria saber que, entre todas as possibilidades que existiam, ela tinha escolhido justamente ficar perto de mim.
+
+Eu sempre gostei da ideia de me humilhar por ela, pra comer ela, pra ela poder gozar pra mim — e sinceramente, eu achava perfeito essa ideia — poder se humilhar, aumentar o ego dela, sabendo que ela é toda minha, que ela se rendia pra mim dava mais tesão ainda, e eu sempre tentei dar essa sensação pra ela, de ser uma deusa pra mim, porque ela realmente é.
+
+Depois, comecei a pensar mais sobre o relacionamento anterior dela. Eu me perguntava como tinha sido, o que ela tinha vivido e, principalmente, se ela tinha recebido daquele relacionamento tudo aquilo que merecia. Foi uma surpresa descobrir mais sobre o ex dela e perceber que, na minha visão, ele não tinha sabido valorizar a pessoa que tinha ao lado. Ele era autista, e isso por si só nunca foi o problema para mim. O problema era a maneira como ele a tratava. Existia uma dinâmica em que ela acabava sendo usada só pra o sexo, enquanto a atenção e o cuidado que ela merecia simplesmente não estavam presentes da maneira que deveriam.
+
+Aquilo me incomodou profundamente.
+
+Porque, para mim, parecia absurdo olhar para a Luiza e imaginar que alguém poderia ter uma mulher como ela ao lado e ainda assim não enxergar tudo o que estava ali, era absurdo alguém pensar em só querer comer ela, enquanto eu poderia facilmente pedir algo pra comer, enquanto assisto uma série com ela, e criar um clima naturalmente pra transarmos. Não era apenas uma questão de beleza ou dela ser gostosa, embora fosse impossível negar que ela era linda e extremamente gostosa. Era o conjunto inteiro. A personalidade, a forma como ela sentia as coisas, a maneira como precisava ser compreendida, as pequenas coisas que eu começava a descobrir sobre ela. Eu olhava para tudo aquilo e pensava que queria fazer diferente.
+
+Não queria simplesmente ocupar o lugar de alguém que tinha passado pela vida dela antes de mim. Eu queria ser completamente diferente.
+
+Queria que ela sentisse que eu prestava atenção.
+
+Queria que ela percebesse que eu estava ali não apenas pra ser algo sexual.
+
+Queria compreender aquilo que, para outras pessoas, parecia difícil demais.
+
+E, quanto mais eu conhecia a Luiza, mais essa vontade crescia.
+
+Ela começou a parecer um mundo inteiro para mim. Um mundo que, naquele momento, parecia não ser compreendido por quase ninguém. E eu queria entrar nele de cabeça, seja com a cabeça de cima ou de baixo. Não queria ficar parado na porta tentando descobrir como funcionava. Queria conhecer cada parte, entender as regras, descobrir os caminhos e, principalmente, descobrir onde eu cabia dentro daquele universo.
+
+Eu queria conhecê-la por completo.
+
+E, talvez, essa tenha sido uma das primeiras grandes mudanças em mim. Antes dela, eu achava que gostar de alguém era principalmente aquela sensação de frio na barriga, vontade de conversar, vontade de ver a pessoa, vontade de estar perto. Com a Luiza, comecei a entender que gostar também era aprender. Era observar. Era ter paciência. Era descobrir que uma pessoa podia ser muito mais complexa do que a imagem que você tinha criado dela antes de conhecê-la.
+
+Eu tinha começado achando que ela era bonita demais para mim.
+
+Depois descobri que ela gostava de mim.
+
+Comecei achando que provavelmente nunca teria espaço naquele mundo.
+
+E, quando percebi, eu já estava dentro dele.
+
+E não queria mais sair.`
   }
 ];
 /* =========================================================
@@ -2201,10 +2323,21 @@ const SOUND_KEY = "livro_som_v1";
 
 const PATCHES = [
   {
+    id: "v2.4.0",
+    date: "12 de Outubro de 2026",
+    title: "Capítulo V + Ajustes de Layout 📖",
+    latest: true,
+    items: [
+      { type: "chapter", text: "📖 Capítulo V liberado — A Mudança: a história de como tudo mudou depois da Luiza e a construção de um vínculo mais profundo." },
+      { type: "update", text: "📱 Ajuste de Layout: melhorada a exibição em notebooks (como Lenovo) para evitar scroll desnecessário na tela." },
+      { type: "update", text: "📑 Sumário Paginado: agora o sumário mostra 5 capítulos por vez com setas para navegar, deixando tudo mais organizado." }
+    ]
+  },
+  {
     id: "v2.3.0",
     date: "12 de Outubro de 2026",
     title: "Loja Secreta 💜",
-    latest: true,
+    latest: false,
     items: [
       { type: "feat",   text: "🔐 Loja Secreta: uma parte nova da Loja de Vales que só abre com o nosso código secreto." },
       { type: "feat",   text: "💜 Vales secretos resgatáveis: dá pra resgatar com um toque, com confirmação e contador — e cada um volta a ficar disponível depois de 1 hora." },
@@ -2352,6 +2485,8 @@ let currentSpread = 0;
 let totalSpreads = 1;
 let lastDir = null;
 let fontsReady = false;
+let currentTOCPage = 0;
+const CHAPTERS_PER_TOC_PAGE = 5;
 
 function isAuthorMode() {
   const params = new URLSearchParams(window.location.search);
@@ -3294,13 +3429,20 @@ function renderTOC() {
     </div>`}
   `;
 
+  const totalPages = Math.ceil(chapters.length / CHAPTERS_PER_TOC_PAGE);
+  if (currentTOCPage >= totalPages) currentTOCPage = totalPages - 1;
+  if (currentTOCPage < 0) currentTOCPage = 0;
+
+  const startIdx = currentTOCPage * CHAPTERS_PER_TOC_PAGE;
+  const pageChapters = chapters.slice(startIdx, startIdx + CHAPTERS_PER_TOC_PAGE);
+
   const right = `
     <div class="toc-header">
       <h3>Sumário</h3>
       <div class="toc-decor">✦ ✦ ✦</div>
     </div>
     <div id="tocList">
-      ${chapters.map(ch => {
+      ${pageChapters.map(ch => {
         const isUnlocked = ch.unlocked || checkUnlocked(ch);
         if (!ch.unlocked && isUnlocked) {
           ch.unlocked = true;
@@ -3323,10 +3465,28 @@ function renderTOC() {
         `;
       }).join('')}
     </div>
+
+    ${totalPages > 1 ? `
+    <div class="toc-nav">
+      <button class="toc-nav-btn" onclick="prevTOC()" ${currentTOCPage === 0 ? 'disabled' : ''}>‹</button>
+      <span class="toc-page-info">${currentTOCPage + 1} / ${totalPages}</span>
+      <button class="toc-nav-btn" onclick="nextTOC()" ${currentTOCPage === totalPages - 1 ? 'disabled' : ''}>›</button>
+    </div>
+    ` : ''}
   `;
 
   document.getElementById("leftContent").innerHTML = left;
   document.getElementById("rightContent").innerHTML = right;
+}
+
+function nextTOC() {
+  currentTOCPage++;
+  renderTOC();
+}
+
+function prevTOC() {
+  currentTOCPage--;
+  renderTOC();
 }
 
 function openChapter(id) {
