@@ -329,7 +329,7 @@
         margin: 0;
     }
     .patch-list li {
-        padding: 11px 16px 11px 44px;
+        padding: 11px 16px;
         position: relative;
         margin-bottom: 7px;
         background: rgba(255,255,255,0.75);
@@ -345,23 +345,9 @@
         transform: translateX(4px);
         background: rgba(199, 125, 255, 0.11);
     }
-    .patch-list li::before {
-        content: "💖";
-        position: absolute;
-        left: 13px;
-        top: 50%;
-        transform: translateY(-50%);
-        font-size: 0.95em;
-        filter: drop-shadow(0 1px 2px rgba(199,125,255,0.3));
-    }
-    .patch-list li.feat::before { content: "✨"; }
-    .patch-list li.chapter::before { content: "📖"; }
     .patch-list li.chapter { border-left-color: #ef476f; }
-    .patch-list li.fix::before { content: "🛠️"; }
     .patch-list li.fix { border-left-color: #ffd166; }
-    .patch-list li.game::before { content: "🎮"; }
     .patch-list li.game { border-left-color: #06d6a0; }
-    .patch-list li.update::before { content: "🚀"; }
     .patch-list li.update { border-left-color: #118ab2; }
 
     .patch-footer {
@@ -503,13 +489,24 @@
    ========================================================= */
 const PATCHES = [
   {
+    id: "v2.3.0",
+    date: "12 de Outubro de 2026",
+    title: "Loja Secreta 💜",
+    latest: true,
+    items: [
+      { type: "feat",   text: "🔐 Loja Secreta: uma parte nova da Loja de Vales que só abre com o nosso código secreto." },
+      { type: "feat",   text: "💜 Vales secretos resgatáveis: dá pra resgatar com um toque, com confirmação e contador — e cada um volta a ficar disponível depois de 1 hora." },
+      { type: "update", text: "🔒 O cofre tranca sozinho após 10 minutos sem mexer, e também dá pra fechar na hora no botão \"Fechar cofre\"." }
+    ]
+  },
+  {
     id: "v2.1.0",
     date: "08 de Outubro de 2026",
     title: "Som de Virar Página + Novidades no Menu 💖",
-    latest: true,
+    latest: false,
     items: [
-      { type: "update",  text: "📰 <b>Painel de Novidades no Menu</b>: agora todas as atualizações do cantinho aparecem direto na tela inicial! Você recebe um aviso sempre que tiver algo novo para ver 💜" },
-      { type: "feat",    text: "🔊 <b>Som de virar página realista no Livro</b>: agora o livro toca um áudio de folhear página toda vez que você usa as setas, voltar tem som diferente de avançar!" },
+      { type: "update",  text: "📰 Painel de Novidades no Menu: agora todas as atualizações do cantinho aparecem direto na tela inicial! Você recebe um aviso sempre que tiver algo novo para ver 💜" },
+      { type: "feat",    text: "🔊 Som de virar página realista no Livro: agora o livro toca um áudio de folhear página toda vez que você usa as setas, voltar tem som diferente de avançar!" },
       { type: "fix",     text: "🛠️ Ajustes finos no volume e timing do som para ficar perfeito, sem clicks no começo/fim do áudio." }
     ]
   },
@@ -519,10 +516,10 @@ const PATCHES = [
     title: "Capítulo II + Marcadores no Livro",
     latest: false,
     items: [
-      { type: "chapter", text: "📖 Capítulo II liberado — <b>O Começo de Tudo</b> (30 de Janeiro de 2023): a manhã após a primeira conversa, a pesquisa sobre CMT, a brincadeira dos números e o famoso 'estou perto de ter um crush'...!" },
-      { type: "feat",    text: "✨ <b>Sistema de marcadores de texto</b>: no livro, selecione qualquer trecho com o mouse e clique no botão 💖 roxo, o trecho fica marcado como marca-texto realista permanente." },
-      { type: "feat",    text: "💖 Página <b>Minhas Citações Favoritas</b>: todos os trechos marcados ficam salvos em uma página especial, com referência de qual capítulo e página." },
-      { type: "feat",    text: "🎀 <b>Marcador físico</b> de fita vermelha aparece saindo do topo do livro sempre que você tem marcações salvas, clique na fita para abrir suas citações favoritas." }
+      { type: "chapter", text: "📖 Capítulo II liberado — O Começo de Tudo (30 de Janeiro de 2023): a manhã após a primeira conversa, a pesquisa sobre CMT, a brincadeira dos números e o famoso 'estou perto de ter um crush'...!" },
+      { type: "feat",    text: "✨ Sistema de marcadores de texto: no livro, selecione qualquer trecho com o mouse e clique no botão 💖 roxo, o trecho fica marcado como marca-texto realista permanente." },
+      { type: "feat",    text: "💖 Página Minhas Citações Favoritas: todos os trechos marcados ficam salvos em uma página especial, com referência de qual capítulo e página." },
+      { type: "feat",    text: "🎀 Marcador físico de fita vermelha aparece saindo do topo do livro sempre que você tem marcações salvas, clique na fita para abrir suas citações favoritas." }
     ]
   },
   {
@@ -531,11 +528,11 @@ const PATCHES = [
     title: "Lançamento do Cantinho 💜",
     latest: false,
     items: [
-      { type: "update",  text: "🚀 <b>Lançamento oficial do Nosso Cantinho</b>: o menu inicial com todos os cantinhos especiais ficou disponível, Memórias, Cartinhas, Músicas, Quiz, Jogo, Loja e Nosso Livro!" },
-      { type: "chapter", text: "📖 Capítulo I do Livro liberado <b>O Dia em que Tudo Começou</b> (29 de Janeiro de 2023): a história do domingo de futebol, da mensagem da amiga e do primeiro 'oioi'." },
-      { type: "feat",    text: "🎮 <b>Jogo da Lulu</b>: jogo interativo da Lulu personagem principal, eventos e lojinha de itens!" },
-      { type: "feat",    text: "🛒 <b>Loja de itens</b> para personalizar a experiência do jogo e colecionar mimos 💝" },
-      { type: "feat",    text: "📜 <b>Modo Autor</b> no livro: o escritor da história pode editar rascunhos locais sem publicar antes de estar pronto." }
+      { type: "update",  text: "🚀 Lançamento oficial do Nosso Cantinho: o menu inicial com todos os cantinhos especiais ficou disponível, Memórias, Cartinhas, Músicas, Quiz, Jogo, Loja e Nosso Livro!" },
+      { type: "chapter", text: "📖 Capítulo I do Livro liberado O Dia em que Tudo Começou (29 de Janeiro de 2023): a história do domingo de futebol, da mensagem da amiga e do primeiro 'oioi'." },
+      { type: "feat",    text: "🎮 Jogo da Lulu: jogo interativo da Lulu personagem principal, eventos e lojinha de itens!" },
+      { type: "feat",    text: "🛒 Loja de itens para personalizar a experiência do jogo e colecionar mimos 💝" },
+      { type: "feat",    text: "📜 Modo Autor no livro: o escritor da história pode editar rascunhos locais sem publicar antes de estar pronto." }
     ]
   }
 ];

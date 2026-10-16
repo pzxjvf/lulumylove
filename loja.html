@@ -629,6 +629,168 @@ display: block;
 animation: fadeIn 0.5s ease;
 }
 
+/* =========================================================
+   LOJA SECRETA (com cofre)
+   ========================================================= */
+.loja-secreta {
+margin-top: 30px;
+background: linear-gradient(145deg, rgba(24,14,38,0.82), rgba(52,26,78,0.72));
+border: 2px solid rgba(255,215,64,0.45);
+border-radius: 24px;
+padding: 24px;
+box-shadow: 0 14px 38px rgba(0,0,0,0.38);
+}
+
+.loja-secreta .ls-head {
+display: flex;
+align-items: center;
+gap: 16px;
+flex-wrap: wrap;
+}
+
+.loja-secreta .ls-icon {
+font-size: 2.6rem;
+filter: drop-shadow(0 0 12px rgba(255,215,64,0.5));
+}
+
+.loja-secreta .ls-txt {
+flex: 1;
+min-width: 200px;
+}
+
+.loja-secreta h3 {
+font-size: 1.35rem;
+font-weight: 900;
+color: #fff59d;
+}
+
+.loja-secreta .ls-sub {
+font-size: 0.86rem;
+opacity: 0.85;
+margin-top: 3px;
+}
+
+.loja-secreta .ls-btn {
+border: none;
+border-radius: 50px;
+padding: 12px 24px;
+background: linear-gradient(135deg, #ffd740, #ff6f00);
+color: #3e2723;
+font-family: inherit;
+font-weight: 900;
+cursor: pointer;
+transition: 0.2s;
+}
+
+.loja-secreta .ls-btn:hover {
+transform: scale(1.04);
+}
+
+.loja-secreta .ls-btn.aberto {
+background: rgba(255,255,255,0.16);
+color: #fff;
+}
+
+/* o grid secreto fica escondido até o cofre abrir */
+.loja-secreta .grid-secreto {
+display: none;
+margin-top: 22px;
+}
+
+.loja-secreta .grid-secreto.show {
+display: grid;
+animation: fadeIn 0.5s ease;
+}
+
+.vale.secreto {
+background: linear-gradient(145deg, rgba(255,215,64,0.14), rgba(255,0,85,0.12));
+border-color: rgba(255,215,64,0.5);
+}
+
+.vale.secreto .desc {
+opacity: 0.92;
+}
+
+.vale .preco-tag {
+display: inline-block;
+margin: 6px 0 2px;
+padding: 4px 12px;
+border-radius: 50px;
+background: rgba(255,215,64,0.18);
+color: #fff59d;
+font-size: 0.75rem;
+font-weight: 900;
+}
+
+/* progresso dos resgates */
+.ls-progresso {
+font-size: 0.8rem;
+font-weight: 900;
+color: #fff59d;
+margin-top: 5px;
+}
+
+/* botão resgatar do vale secreto */
+.vale.secreto .resgatar-btn {
+width: 100%;
+margin-top: 12px;
+border: none;
+border-radius: 50px;
+padding: 12px 16px;
+background: linear-gradient(135deg, #ffd740, #ff6f00);
+color: #3e2723;
+font-family: inherit;
+font-weight: 900;
+font-size: 0.92rem;
+cursor: pointer;
+transition: 0.2s;
+}
+
+.vale.secreto .resgatar-btn:hover {
+transform: scale(1.04);
+box-shadow: 0 8px 20px rgba(255,111,0,0.35);
+}
+
+/* estado resgatado */
+.vale.secreto.resgatado {
+border-color: rgba(129,199,132,0.6);
+background: linear-gradient(145deg, rgba(76,175,80,0.16), rgba(255,215,64,0.10));
+}
+
+.vale.secreto .resgatado-tag {
+margin-top: 12px;
+padding: 10px 12px;
+border-radius: 14px;
+background: rgba(76,175,80,0.22);
+border: 1.5px solid rgba(129,199,132,0.6);
+color: #c8f7c5;
+font-weight: 800;
+font-size: 0.8rem;
+text-align: center;
+line-height: 1.4;
+}
+
+.resgatado-tag .cd {
+display: block;
+margin-top: 4px;
+font-weight: 900;
+color: #fff59d;
+}
+
+/* ações do modal do cofre */
+.cofre-acoes {
+display: flex;
+gap: 10px;
+justify-content: center;
+flex-wrap: wrap;
+}
+
+.modal .ok-btn.secundario {
+background: rgba(255,255,255,0.18);
+color: #fff;
+border: 1.5px solid rgba(255,255,255,0.35);
+}
+
 /* Modal especial do Datezinho */
 .date-modal .modal {
 background: linear-gradient(145deg, #ff4081, #7c4dff);
@@ -673,11 +835,11 @@ h1 {
       <!-- <button class="nav-btn" onclick="window.location.href='ranking.html'">🏆 Ranking</button> -->
     </div>
 
-```
+
 <button class="jogar-btn" onclick="window.location.href='jogo/jogo.html'">
   🎮 Ganhar Mais Corações
 </button>
-```
+
 
   </div>
 
@@ -702,11 +864,11 @@ h1 {
       💝 Loja de Vales
     </div>
 
-```
+
 <div class="tab" data-tab="mochila">
   🎁 Minha Mochila (<span id="countMochila">0</span>)
 </div>
-```
+
 
   </div>
 
@@ -714,7 +876,7 @@ h1 {
 
   <div id="painelLoja">
 
-```
+
 <!-- Easter egg secreto -->
 <div class="secret-card" id="secretCard">
   <div class="secret-icon">🔓💜</div>
@@ -731,7 +893,33 @@ h1 {
 </div>
 
 <div class="grid" id="gridVales"></div>
-```
+
+<!-- LOJA SECRETA (com cofre) -->
+<div class="loja-secreta" id="lojaSecreta">
+
+  <div class="ls-head">
+
+    <div class="ls-icon" id="lsIcon">🔐</div>
+
+    <div class="ls-txt">
+      <h3>Loja Secreta</h3>
+      <div class="ls-sub" id="lsSub">
+        Uma parte da loja que só abre com o nosso código.
+        <br>
+        <span style="opacity:0.75;">dica: uma data nossa 💜</span>
+      </div>
+    </div>
+
+    <button class="ls-btn" id="lsBtn" onclick="toggleCofre()">
+      🔐 Abrir cofre
+    </button>
+
+  </div>
+
+  <div class="grid grid-secreto" id="gridSecreto"></div>
+
+</div>
+
 
   </div>
 
@@ -739,7 +927,7 @@ h1 {
 
   <div id="painelMochila">
 
-```
+
 <div class="mochila">
 
   <h2>
@@ -759,7 +947,7 @@ h1 {
   </div>
 
 </div>
-```
+
 
   </div>
 
@@ -773,7 +961,7 @@ h1 {
 
   <div class="modal">
 
-```
+
 <div class="micone" id="mIcone">💌</div>
 
 <h3 id="mTitulo">
@@ -787,7 +975,7 @@ h1 {
 <button class="ok-btn" onclick="fecharModal()">
   💜 Entendido
 </button>
-```
+
 
   </div>
 
@@ -799,7 +987,7 @@ h1 {
 
   <div class="modal">
 
-```
+
 <div class="micone">🍨💜</div>
 
 <h3>
@@ -825,7 +1013,7 @@ h1 {
 <button class="ok-btn" onclick="fecharDateModal()">
   💜 EU ACEITO
 </button>
-```
+
 
   </div>
 
@@ -837,7 +1025,7 @@ h1 {
 
   <div class="modal">
 
-```
+
 <div class="micone">🔐💜</div>
 
 <h3>
@@ -874,7 +1062,27 @@ h1 {
 <button class="ok-btn" onclick="fecharSegredo()">
    Guardar segredo
 </button>
-```
+
+
+  </div>
+
+</div>
+
+<!-- Modal de resgate da loja secreta -->
+
+<div class="modal-bg" id="cofreModal">
+
+  <div class="modal">
+
+    <div class="micone" id="cmIcone">💜</div>
+
+    <h3 id="cmTitulo">
+      Resgatar esse vale?
+    </h3>
+
+    <div class="linha" id="cmTexto"></div>
+
+    <div class="cofre-acoes" id="cmAcoes"></div>
 
   </div>
 
@@ -936,14 +1144,7 @@ const VALES = [
     raro: false,
   },
 
-  {
-    id: 'v_semanasexo',
-    nome: 'Semana de sxo',
-    desc: 'João fará de tudo com lanches e muitoooo daquilo pra lulu.',
-    emoji: '🌅',
-    preco: 200,
-    raro: true,
-  },
+
 
   {
     id: 'v_datezinho',
@@ -2077,6 +2278,495 @@ document
   };
 
 
+document
+  .getElementById('cofreModal')
+  .onclick = (e) => {
+
+    if (
+      e.target.id === 'cofreModal'
+    ) {
+
+      fecharCofreModal();
+
+    }
+
+  };
+
+
+/* =========================================================
+   LOJA SECRETA (com cofre)
+   ========================================================= */
+
+/*
+ * Mesmo código do nosso cofre.
+ * (a data da nossa primeira noite 💜)
+ */
+const COFRE_SECRETO = '0502';
+
+const LS_COFRE_LOJA = 'amor_loja_secreta_cofre';
+
+/* resgates feitos (nome do vale -> data) */
+const LS_RESGATES = 'amor_loja_secreta_resgates';
+
+/*
+ * Depois de resgatado, o vale fica bloqueado
+ * por 1 hora e depois libera de novo.
+ */
+const RESGATE_COOLDOWN_MS = 60 * 60 * 1000;
+
+/*
+ * O cofre trava sozinho depois de 10 minutos
+ * sem nenhuma interação.
+ */
+const COFRE_INATIVIDADE_MS = 10 * 60 * 1000;
+
+/*
+ * Vales da loja secreta.
+ * ficam escondidos até o cofre ser aberto.
+ */
+const VALES_SECRETOS = [
+
+  {
+    emoji: '',
+    nome: 'Crédito a buceta',
+    desc: 'Dar a buceta em troca de aumento por crédito.',
+    precoTexto: 'Quando quiser',
+  },
+
+  {
+    emoji: '',
+    nome: 'Lanche a buceta',
+    desc: 'Buceta em troca de lanche (xis, doce, salgado, etc.).',
+    precoTexto: 'Quando quiser',
+  },
+
+  {
+    emoji: '',
+    nome: 'Presente a buceta',
+    desc: 'Buceta em troca de presente.',
+    precoTexto: 'Quando quiser',
+  },
+
+  {
+    emoji: '',
+    nome: 'Final de semana só de putaria',
+    desc: 'Final de semana inteirinho só de putaria.',
+    precoTexto: 'Final de semana inteira',
+  },
+
+  {
+    emoji: '',
+    nome: 'Rapidinha a pix',
+    desc: 'Uma rapidinha de 15/20 minutos ao troco de pix .',
+    precoTexto: 'Quando quiser',
+  },
+
+  {
+    emoji: '',
+    nome: 'Cuzinho a qualquer coisa',
+    desc: 'Dar o cuzinho em troca de pix, presente, lanches.',
+    precoTexto: 'Quando quiser',
+  },
+
+];
+
+
+function abrirCofreLoja() {
+
+  /* já destravado nessa sessão/navegador */
+  if (localStorage.getItem(LS_COFRE_LOJA) === 'true') {
+
+    revelarLojaSecreta();
+
+    return;
+
+  }
+
+  const senha =
+    prompt('🔐 Digite o código do nosso cofre:');
+
+  if (senha === null) return;
+
+  if (senha.trim() === COFRE_SECRETO) {
+
+    localStorage.setItem(LS_COFRE_LOJA, 'true');
+
+    revelarLojaSecreta();
+
+    toast('🔓 Loja Secreta destravada 💜');
+
+  } else {
+
+    toast('🔒 Código incorreto... tenta uma data nossa.');
+
+  }
+
+}
+
+
+/* abre ou fecha o cofre (mesmo botão) */
+function toggleCofre() {
+
+  if (localStorage.getItem(LS_COFRE_LOJA) === 'true') {
+
+    fecharCofreLoja(false);
+
+  } else {
+
+    abrirCofreLoja();
+
+  }
+
+}
+
+
+function fecharCofreLoja(porInatividade) {
+
+  localStorage.removeItem(LS_COFRE_LOJA);
+
+  if (countdownTimer) clearInterval(countdownTimer);
+
+  const grid =
+    document.getElementById('gridSecreto');
+
+  grid.classList.remove('show');
+  grid.innerHTML = '';
+
+  document.getElementById('lsIcon').textContent = '🔐';
+
+  document.getElementById('lsSub').innerHTML =
+    'Uma parte da loja que só abre com o nosso código.' +
+    '<br>' +
+    '<span style="opacity:0.75;">dica: uma data nossa 💜</span>';
+
+  const btn =
+    document.getElementById('lsBtn');
+
+  btn.textContent = '🔐 Abrir cofre';
+  btn.classList.remove('aberto');
+
+  toast(
+    porInatividade
+      ? '🔒 Cofre travado por inatividade.'
+      : '🔒 Cofre fechado.'
+  );
+
+}
+
+
+let countdownTimer = null;
+
+function revelarLojaSecreta() {
+
+  const grid =
+    document.getElementById('gridSecreto');
+
+  const resgates = getResgates();
+
+  const agora = Date.now();
+
+  grid.innerHTML = VALES_SECRETOS.map((v, i) => {
+
+    const data = resgates[v.nome];
+
+    const restante =
+      data
+        ? (new Date(data).getTime() +
+           RESGATE_COOLDOWN_MS) - agora
+        : 0;
+
+    const bloqueado = restante > 0;
+
+    return `
+
+      <div class="vale secreto ${bloqueado ? 'resgatado' : ''}">
+
+        ${
+          v.emoji
+            ? `<div class="icone">${v.emoji}</div>`
+            : ''
+        }
+
+        <div class="nome">
+          ${v.nome}
+        </div>
+
+        <div class="desc">
+          ${v.desc}
+        </div>
+
+        <div class="preco-tag">
+          💜 ${v.precoTexto}
+        </div>
+
+        ${
+          bloqueado
+            ? `<div class="resgatado-tag">
+                 ✅ Resgatado ${fmtDataHora(data)}
+                 <span
+                   class="cd"
+                   data-fim="${
+                     new Date(data).getTime() +
+                     RESGATE_COOLDOWN_MS
+                   }"
+                 >
+                   ${textoTempo(restante)}
+                 </span>
+               </div>`
+            : `<button
+                 class="resgatar-btn"
+                 onclick="abrirResgateSecreto(${i})"
+               >
+                 💜 Resgatar
+               </button>`
+        }
+
+      </div>
+
+    `;
+
+  }).join('');
+
+  grid.classList.add('show');
+
+  document.getElementById('lsIcon').textContent = '🔓';
+
+  const total = VALES_SECRETOS.length;
+
+  const emEspera =
+    VALES_SECRETOS.filter(v => {
+
+      const d = resgates[v.nome];
+
+      return (
+        d &&
+        (new Date(d).getTime() +
+         RESGATE_COOLDOWN_MS) > agora
+      );
+
+    }).length;
+
+  document.getElementById('lsSub').innerHTML =
+    `Só nosso. Ninguém mais vê o que tem aqui 💜` +
+    `<div class="ls-progresso">` +
+      `💜 ${total - emEspera} disponíveis · ` +
+      `${emEspera} em espera` +
+    `</div>`;
+
+  const btn =
+    document.getElementById('lsBtn');
+
+  btn.textContent = '� Fechar cofre';
+  btn.classList.add('aberto');
+
+  iniciarCountdown();
+
+}
+
+
+/* texto do tempo restante (ex: "volta em 59:12") */
+function textoTempo(ms) {
+
+  const s = Math.max(0, Math.ceil(ms / 1000));
+
+  const m = Math.floor(s / 60);
+
+  const seg = s % 60;
+
+  return (
+    'volta em ' +
+    m +
+    ':' +
+    String(seg).padStart(2, '0')
+  );
+
+}
+
+
+/* atualiza a contagem e libera os vales quando o tempo acaba */
+function iniciarCountdown() {
+
+  if (countdownTimer) clearInterval(countdownTimer);
+
+  countdownTimer =
+    setInterval(atualizarCountdowns, 1000);
+
+}
+
+
+function atualizarCountdowns() {
+
+  const spans =
+    document.querySelectorAll('#gridSecreto .cd');
+
+  if (!spans.length) return;
+
+  const agora = Date.now();
+
+  let expirou = false;
+
+  spans.forEach(sp => {
+
+    const restante =
+      parseInt(sp.dataset.fim, 10) - agora;
+
+    if (restante <= 0) {
+
+      expirou = true;
+
+    } else {
+
+      sp.textContent = textoTempo(restante);
+
+    }
+
+  });
+
+  /* algum liberou? renderiza de novo */
+  if (expirou) revelarLojaSecreta();
+
+}
+
+
+/* =========================================================
+   RESGATE DOS VALES SECRETOS
+   ========================================================= */
+
+function getResgates() {
+
+  try {
+    return JSON.parse(
+      localStorage.getItem(LS_RESGATES) || '{}'
+    );
+  } catch {
+    return {};
+  }
+
+}
+
+
+function setResgates(v) {
+
+  localStorage.setItem(
+    LS_RESGATES,
+    JSON.stringify(v)
+  );
+
+}
+
+
+function fmtDataHora(iso) {
+
+  try {
+
+    const d = new Date(iso);
+
+    return (
+      d.toLocaleDateString(
+        'pt-BR',
+        { day:'2-digit', month:'2-digit' }
+      ) +
+      ' às ' +
+      d.toLocaleTimeString(
+        'pt-BR',
+        { hour:'2-digit', minute:'2-digit' }
+      )
+    );
+
+  } catch {
+
+    return '';
+
+  }
+
+}
+
+
+let resgateAtual = null;
+
+function abrirResgateSecreto(i) {
+
+  const v = VALES_SECRETOS[i];
+
+  if (!v) return;
+
+  resgateAtual = i;
+
+  document.getElementById('cmIcone').textContent =
+    v.emoji || '💜';
+
+  document.getElementById('cmTitulo').textContent =
+    'Resgatar esse vale?';
+
+  document.getElementById('cmTexto').innerHTML = `
+
+    <div style="text-align:center; font-size:1.05rem; font-weight:900;">
+      ${v.nome}
+    </div>
+
+    <div style="margin-top:10px; text-align:center;">
+      ${v.desc}
+    </div>
+
+    <div style="margin-top:12px; text-align:center; font-weight:900; color:#fff59d;">
+      Depois é só cumprir 💜
+    </div>
+
+  `;
+
+  document.getElementById('cmAcoes').innerHTML = `
+
+    <button
+      class="ok-btn secundario"
+      onclick="fecharCofreModal()"
+    >
+      Agora não
+    </button>
+
+    <button
+      class="ok-btn"
+      onclick="confirmarResgateSecreto()"
+    >
+      💜 Resgatar
+    </button>
+
+  `;
+
+  document.getElementById('cofreModal').classList.add('show');
+
+}
+
+
+function confirmarResgateSecreto() {
+
+  const v = VALES_SECRETOS[resgateAtual];
+
+  if (!v) return;
+
+  const resgates = getResgates();
+
+  resgates[v.nome] = new Date().toISOString();
+
+  setResgates(resgates);
+
+  fecharCofreModal();
+
+  toast(`💜 Vale resgatado: ${v.nome}!`);
+
+  revelarLojaSecreta();
+
+}
+
+
+function fecharCofreModal() {
+
+  document
+    .getElementById('cofreModal')
+    .classList.remove('show');
+
+}
+
+
 /* =========================================================
    RENDER GERAL
    ========================================================= */
@@ -2103,6 +2793,53 @@ function renderTudo() {
 }
 
 renderTudo();
+
+/* se o cofre já foi aberto alguma vez, mostra a loja secreta */
+if (localStorage.getItem(LS_COFRE_LOJA) === 'true') {
+
+  revelarLojaSecreta();
+
+}
+
+
+/* =========================================================
+   TRAVA AUTOMÁTICA DO COFRE POR INATIVIDADE (10 min)
+   ========================================================= */
+
+let ultimaAtividade = Date.now();
+
+[
+  'mousemove',
+  'mousedown',
+  'click',
+  'keydown',
+  'scroll',
+  'touchstart'
+].forEach(ev => {
+
+  document.addEventListener(
+    ev,
+    () => { ultimaAtividade = Date.now(); },
+    { passive: true }
+  );
+
+});
+
+setInterval(() => {
+
+  const aberto =
+    localStorage.getItem(LS_COFRE_LOJA) === 'true';
+
+  if (
+    aberto &&
+    Date.now() - ultimaAtividade > COFRE_INATIVIDADE_MS
+  ) {
+
+    fecharCofreLoja(true);
+
+  }
+
+}, 20000);
 
 </script>
 

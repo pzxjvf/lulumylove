@@ -1192,7 +1192,7 @@
     margin: 0;
   }
   .patch-list li {
-    padding: 9px 14px 9px 40px;
+    padding: 9px 14px;
     position: relative;
     margin-bottom: 6px;
     background: rgba(255,255,255,0.7);
@@ -1208,19 +1208,7 @@
     transform: translateX(3px);
     background: rgba(199, 125, 255, 0.1);
   }
-  .patch-list li::before {
-    content: "💖";
-    position: absolute;
-    left: 12px;
-    top: 50%;
-    transform: translateY(-50%);
-    font-size: 0.9em;
-    filter: drop-shadow(0 1px 2px rgba(199,125,255,0.3));
-  }
-  .patch-list li.feat::before { content: "✨"; }
-  .patch-list li.chapter::before { content: "📖"; border-left-color: #ef476f; }
   .patch-list li.chapter { border-left-color: #ef476f; }
-  .patch-list li.fix::before { content: "🛠️"; }
   .patch-list li.fix { border-left-color: #ffd166; }
 
   .patch-footer {
@@ -2213,14 +2201,25 @@ const SOUND_KEY = "livro_som_v1";
 
 const PATCHES = [
   {
+    id: "v2.3.0",
+    date: "12 de Outubro de 2026",
+    title: "Loja Secreta 💜",
+    latest: true,
+    items: [
+      { type: "feat",   text: "🔐 Loja Secreta: uma parte nova da Loja de Vales que só abre com o nosso código secreto." },
+      { type: "feat",   text: "💜 Vales secretos resgatáveis: dá pra resgatar com um toque, com confirmação e contador — e cada um volta a ficar disponível depois de 1 hora." },
+      { type: "update", text: "🔒 O cofre tranca sozinho após 10 minutos sem mexer, e também dá pra fechar na hora no botão \"Fechar cofre\"." }
+    ]
+  },
+  {
     id: "v2.2.0",
     date: "12 de Outubro de 2026",
     title: "Capítulo IV + Melhorias no Livro",
-    latest: true,
+    latest: false,
     items: [
-      { type: "chapter", text: "📖 <b>Capítulo IV</b> liberado — <b>Uma Bolha Só Nossa</b>: a volta para casa, a construção da nossa bolha, a amiga que tentou separar a gente e a certeza de que queríamos continuar juntos." },
-      { type: "feat",    text: "✨ Efeito de virar página <b>mais suave e rápido</b>: agora a folha gira com mais fluidez, sem travar." },
-      { type: "fix",     text: "🛠️ Marcadores de texto <b>consertados</b>: agora as marcações não somem mais ao virar a página e não bugam quando há textos repetidos." }
+      { type: "chapter", text: "📖 Capítulo IV liberado — Uma Bolha Só Nossa: a volta para casa, a construção da nossa bolha, a amiga que tentou separar a gente e a certeza de que queríamos continuar juntos." },
+      { type: "feat",    text: "✨ Efeito de virar página mais suave e rápido: agora a folha gira com mais fluidez, sem travar." },
+      { type: "fix",     text: "🛠️ Marcadores de texto consertados: agora as marcações não somem mais ao virar a página e não bugam quando há textos repetidos." }
     ]
   },
   {
@@ -2229,8 +2228,8 @@ const PATCHES = [
     title: "Som de Virar Página + Patch Notes no Menu",
     latest: false,
     items: [
-      { type: "feat",    text: "🔊 <b>Som de virar página realista</b>: agora o livro toca um áudio de folhear página toda vez que você clica nas setas, voltar a página tem um som diferente (mais grave) de avançar!" },
-      { type: "feat",    text: "📰 <b>Patch Notes no Menu Principal</b>: agora todas as atualizações do cantinho aparecem direto na tela inicial, para ela ver tudo o que tem de novo em um lugar só 💜" },
+      { type: "feat",    text: "🔊 Som de virar página realista: agora o livro toca um áudio de folhear página toda vez que você clica nas setas, voltar a página tem um som diferente (mais grave) de avançar!" },
+      { type: "feat",    text: "📰 Patch Notes no Menu Principal: agora todas as atualizações do cantinho aparecem direto na tela inicial, para ela ver tudo o que tem de novo em um lugar só 💜" },
       { type: "fix",     text: "🛠️ Ajustes finos no volume e timing do som para ficar perfeito, sem clicks no começo/fim do áudio." }
     ]
   },
@@ -2240,10 +2239,10 @@ const PATCHES = [
     title: "Capítulo II + Marcadores de Texto",
     latest: false,
     items: [
-      { type: "chapter", text: "📖 Capítulo II liberado — <b>O Começo de Tudo</b> (30 de Janeiro de 2023): a manhã após a primeira conversa, o bom dia, a pesquisa sobre CMT, a brincadeira dos números e o 'estou perto de ter um crush'...!" },
-      { type: "feat",    text: "✨ Sistema de <b>marcadores de texto</b>: selecione qualquer trecho com o mouse e clique no botão 💖 roxo que aparece — o trecho fica marcado em roxo permanentemente, como um marca-texto!" },
-      { type: "feat",    text: "💖 Página <b>Minhas Citações Favoritas</b>: todos os trechos que ela marcar ficam salvos em uma página especial, com referência de qual capítulo e página." },
-      { type: "feat",    text: "🎀 <b>Marcador físico</b> de fita 💖 aparece saindo do topo do livro quando ela tem marcações salvas — clique na fita para abrir suas citações favoritas." },
+      { type: "chapter", text: "📖 Capítulo II liberado — O Começo de Tudo (30 de Janeiro de 2023): a manhã após a primeira conversa, o bom dia, a pesquisa sobre CMT, a brincadeira dos números e o 'estou perto de ter um crush'...!" },
+      { type: "feat",    text: "✨ Sistema de marcadores de texto: selecione qualquer trecho com o mouse e clique no botão 💖 roxo que aparece — o trecho fica marcado em roxo permanentemente, como um marca-texto!" },
+      { type: "feat",    text: "💖 Página Minhas Citações Favoritas: todos os trechos que ela marcar ficam salvos em uma página especial, com referência de qual capítulo e página." },
+      { type: "feat",    text: "🎀 Marcador físico de fita 💖 aparece saindo do topo do livro quando ela tem marcações salvas — clique na fita para abrir suas citações favoritas." },
       { type: "fix",     text: "🛠️ Tooltip do marca-texto agora fica mais longe da seleção para não cobrir o texto, com seta apontando sempre para a seleção." }
     ]
   },
@@ -2253,7 +2252,7 @@ const PATCHES = [
     title: "Lançamento do Livro",
     latest: false,
     items: [
-      { type: "chapter", text: "📖 Capítulo I — <b>O Dia em que Tudo Começou</b> (29 de Janeiro de 2023): a história de como nos conhecemos, do 'oioi' até a conversa de 3 horas!" },
+      { type: "chapter", text: "📖 Capítulo I — O Dia em que Tudo Começou (29 de Janeiro de 2023): a história de como nos conhecemos, do 'oioi' até a conversa de 3 horas!" },
       { type: "feat",    text: "✨ Livro com duas páginas interativas, visual super realista de livro físico com sombra, textura e efeitos de página." },
       { type: "feat",    text: "🔒 Sumário inteligente com capítulos liberados por data — cada capítulo novo só libera na data programada." },
     ]
