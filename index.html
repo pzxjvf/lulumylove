@@ -17,7 +17,10 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            height: 100vh;
+            min-height: 100vh;
+            min-height: 100dvh;
+            padding: 20px 0;
+            box-sizing: border-box;
         }
 
         .login-container {
@@ -27,9 +30,21 @@
             border-radius: 18px;
             color: #fff;
             text-align: center;
-            width: 340px;
+            width: min(340px, 92vw);
+            box-sizing: border-box;
             border: 2px solid rgba(255, 255, 255, 0.25);
             animation: fadeIn 1s ease-in-out;
+        }
+
+        @media (max-width: 420px) {
+            .login-container { padding: 24px 20px; }
+            h1 { font-size: 1.6rem; }
+            .hint { font-size: 0.85em; }
+        }
+
+        @media (max-height: 520px) {
+            body { align-items: flex-start; }
+            .login-container { padding: 20px; }
         }
 
         @keyframes fadeIn {

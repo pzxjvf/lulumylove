@@ -122,6 +122,21 @@
         background: linear-gradient(to right, #38b000, #7b2cbf);
         font-weight: 600;
     }
+
+    /* ================= RESPONSIVO ================= */
+    @media (max-width: 600px) {
+        body { padding: 26px 0; }
+        .container { width: 92%; }
+        h1 { font-size: 1.75rem; margin-bottom: 28px; }
+        .music-card { padding: 16px; margin-bottom: 18px; }
+        .player { gap: 8px; }
+        .time { min-width: 52px; font-size: 0.7rem; }
+    }
+    @media (max-width: 380px) {
+        h1 { font-size: 1.5rem; }
+        .music-card { padding: 14px; }
+        .play-btn { width: 38px; height: 38px; }
+    }
     </style>
     </head>
     <body>

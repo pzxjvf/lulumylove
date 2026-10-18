@@ -123,6 +123,116 @@
     50% { background-position: 100% 50%; }
   }
 
+  /* ===== CAPA = LIVRO FECHADO ===== */
+  /* abertura: a largura do livro e a da página esquerda crescem juntas e no mesmo
+     ritmo, então a página da capa mantém a mesma largura (nada de "esmagar" o texto) */
+  .book { transition: max-width 0.7s cubic-bezier(.34, .06, .2, 1); }
+  .page-left {
+    transition: flex-grow 0.7s cubic-bezier(.34, .06, .2, 1),
+                padding 0.7s cubic-bezier(.34, .06, .2, 1);
+  }
+
+  /* estado fechado: o livro vira só a capa (largura de uma página) */
+  .book.closed { max-width: 494px; }
+  .book.closed .page-left { flex-grow: 0; min-width: 0; padding: 0; border: none; }
+  .book.closed .page-right { padding: 0; }
+  .book.closed .page-number,
+  .book.closed .page-corner,
+  .book.closed .bookmark-ribbon { display: none !important; }
+
+  /* conteúdo da página esquerda só aparece quando o livro já abriu */
+  .book.cover-opening #leftContent { opacity: 0; }
+  #leftContent { transition: opacity 0.45s ease; }
+
+  .cover-closed {
+    position: absolute;
+    inset: 0;
+    cursor: pointer;
+    overflow: hidden;
+    border-radius: 0 8px 8px 0;
+  }
+  .cover-img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  /* verniz/brilho da capa */
+  .cover-closed::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background: linear-gradient(115deg,
+      rgba(255, 255, 255, 0.14) 0%, transparent 30%,
+      transparent 70%, rgba(255, 255, 255, 0.05) 100%);
+  }
+  /* sombra junto à lombada */
+  .cover-closed::before {
+    content: "";
+    position: absolute;
+    top: 0; left: 0; bottom: 0;
+    width: 26px;
+    z-index: 2;
+    pointer-events: none;
+    background: linear-gradient(to right,
+      rgba(0, 0, 0, 0.45), rgba(0, 0, 0, 0.05) 60%, transparent);
+  }
+
+  .cover-closed-hint {
+    position: absolute;
+    left: 50%;
+    bottom: 26px;
+    transform: translateX(-50%);
+    font-family: "Nunito", sans-serif;
+    font-weight: 700;
+    font-size: 0.85em;
+    letter-spacing: 1px;
+    color: rgba(255, 255, 255, 0.92);
+    background: rgba(20, 0, 40, 0.45);
+    border: 1.5px solid rgba(255, 255, 255, 0.35);
+    padding: 8px 18px;
+    border-radius: 25px;
+    backdrop-filter: blur(6px);
+    white-space: nowrap;
+    z-index: 3;
+    animation: hintPulse 2s ease-in-out infinite;
+  }
+  @keyframes hintPulse {
+    0%, 100% { opacity: 0.7; }
+    50% { opacity: 1; }
+  }
+
+  /* folha da capa que gira na abertura (presa à viewport) */
+  .cover-leaf {
+    transform-origin: left center;
+    pointer-events: none;
+    will-change: transform;
+    transform-style: preserve-3d;
+    /* a capa mostra as DUAS faces: a imagem na frente e a "guarda" no verso */
+    backface-visibility: visible !important;
+    -webkit-backface-visibility: visible !important;
+  }
+  .cover-leaf .flip-face::after { display: none; }   /* sombrinha própria abaixo */
+  /* frente: sombra que atravessa a capa conforme ela gira */
+  .cover-leaf .flip-face.cover-face-front::after {
+    display: block;
+    background: linear-gradient(90deg,
+      rgba(0, 0, 0, 0.8), rgba(0, 0, 0, 0.2) 55%, transparent 85%);
+    animation: coverFaceShade 0.7s cubic-bezier(.34, .06, .2, 1) forwards;
+  }
+  @keyframes coverFaceShade {
+    0%   { opacity: 0; }
+    55%  { opacity: 0.9; }
+    100% { opacity: 0.12; }
+  }
+  /* verso: a guarda do livro, com a sombrinha da lombada */
+  .cover-leaf .cover-face-back {
+    box-shadow: inset 18px 0 28px -16px rgba(0, 0, 0, 0.45);
+  }
+
+  body.cover-mode .nav-arrows { display: none !important; }
+
   .book-wrapper {
     perspective: 2000px;
     width: 100%;
@@ -1384,6 +1494,7 @@
 
   @media (max-width: 768px) {
     .book { flex-direction: column; max-width: 100%; }
+    .book.closed .page-left { display: none; }
     .book-spine { width: 100%; min-height: 22px; }
     .book-spine::before, .book-spine::after { display: none; }
     .page {
@@ -1422,7 +1533,7 @@
 </div>
 
 <div class="book-wrapper">
-  <div class="book" id="book">
+  <div class="book closed" id="book">
     <div class="book-spine"></div>
 
     <div class="page page-left" id="pageLeft">
@@ -2328,6 +2439,7 @@ const PATCHES = [
     title: "Capítulo V + Ajustes de Layout 📖",
     latest: true,
     items: [
+      { type: "feat",    text: "📕 Capa do livro: agora o livro abre com a nossa capa de verdade — é só tocar nela pra abrir 💜" },
       { type: "chapter", text: "📖 Capítulo V liberado — A Mudança: a história de como tudo mudou depois da Luiza e a construção de um vínculo mais profundo." },
       { type: "update", text: "📱 Ajuste de Layout: melhorada a exibição em notebooks (como Lenovo) para evitar scroll desnecessário na tela." },
       { type: "update", text: "📑 Sumário Paginado: agora o sumário mostra 5 capítulos por vez com setas para navegar, deixando tudo mais organizado." }
@@ -2487,6 +2599,7 @@ let lastDir = null;
 let fontsReady = false;
 let currentTOCPage = 0;
 const CHAPTERS_PER_TOC_PAGE = 5;
+let bookClosed = true;   /* livro começa fechado, mostrando a capa */
 
 function isAuthorMode() {
   const params = new URLSearchParams(window.location.search);
@@ -3290,7 +3403,14 @@ function renderView() {
 
   updateAuthorBadge();
   updateRibbonVisibility();
-  if (currentView === "toc") {
+  const showingCover = (currentView === "toc" && bookClosed);
+  document.getElementById("book").classList.toggle("closed", showingCover);
+  document.body.classList.toggle("cover-mode", showingCover);
+
+  if (showingCover) {
+    renderCover();
+    document.getElementById("pageIndicator").textContent = "📖 O Livro da Nossa História";
+  } else if (currentView === "toc") {
     renderTOC();
     document.getElementById("pageIndicator").textContent = "📖 Sumário";
   } else if (currentView === "favorites") {
@@ -3479,6 +3599,18 @@ function renderTOC() {
   document.getElementById("rightContent").innerHTML = right;
 }
 
+function renderCover() {
+  document.getElementById("pageLeftNum").textContent = "";
+  document.getElementById("pageRightNum").textContent = "";
+  document.getElementById("leftContent").innerHTML = "";
+  document.getElementById("rightContent").innerHTML = `
+    <div class="cover-closed" onclick="openBookCover()" title="Toque para abrir o livro">
+      <img src="img/capa.png" alt="Capa do Livro da Nossa História" class="cover-img">
+      <div class="cover-closed-hint">✨ toque para abrir ✨</div>
+    </div>
+  `;
+}
+
 function nextTOC() {
   currentTOCPage++;
   renderTOC();
@@ -3487,6 +3619,86 @@ function nextTOC() {
 function prevTOC() {
   currentTOCPage--;
   renderTOC();
+}
+
+function openBookCover() {
+  if (!bookClosed) return;
+
+  const book = document.getElementById("book");
+  const pageR = document.getElementById("pageRight");
+  const rect = pageR.getBoundingClientRect();          /* posição da capa (fechado) */
+  const coverHTML = document.getElementById("rightContent").innerHTML;
+  const isMobile = window.matchMedia("(max-width: 768px)").matches;
+
+  /* a folha da capa fica presa à viewport pra não "andar" junto com o livro,
+     que cresce de uma página (466px) pra duas durante a abertura */
+  const leaf = document.createElement("div");
+  leaf.className = "flip-leaf cover-leaf";
+  leaf.style.position = "fixed";
+  leaf.style.left = rect.left + "px";
+  leaf.style.top = rect.top + "px";
+  leaf.style.width = rect.width + "px";
+  leaf.style.height = rect.height + "px";
+  leaf.style.zIndex = 45;
+  leaf.innerHTML =
+    `<div class="page page-right flip-face cover-face-front">${coverHTML}</div>` +
+    `<div class="page page-left flip-face back cover-face-back"></div>`;
+  document.body.appendChild(leaf);
+
+  const hint = leaf.querySelector(".cover-closed-hint");
+  if (hint) hint.remove();               /* a dica não deve girar junto com a capa */
+
+  /* revela o sumário por baixo da capa */
+  bookClosed = false;
+  lastDir = null;
+  currentView = "toc";
+  book.classList.add("cover-opening");
+  renderView();
+  playPageFlipSound("next");
+
+  if (isMobile) {
+    /* no celular o layout é empilhado, então um cross-fade suave fica melhor */
+    const D = 420;
+    book.animate([{ opacity: 0.2 }, { opacity: 1 }], { duration: D, easing: "ease-out" });
+    leaf.animate([{ opacity: 1 }, { opacity: 0 }],
+      { duration: D, easing: "ease-out", fill: "forwards" });
+    setTimeout(() => book.classList.remove("cover-opening"), D * 0.55);
+    setTimeout(() => { if (leaf.parentNode) leaf.remove(); }, D + 160);
+    return;
+  }
+
+  /* mesma duração e curva da transição de largura do livro: assim a dobra
+     (translateX = dx × progresso) fica colada na capa durante todo o giro */
+  const DUR = 700;
+  const EASE = "cubic-bezier(.34, .06, .2, 1)";
+  const dx = rect.width / 2;             /* a dobra caminha dx até o centro do livro aberto */
+
+  const kf = (off, rot, z) => ({
+    offset: off,
+    transform:
+      `translateX(${(dx * off).toFixed(2)}px) perspective(2400px) ` +
+      `translateZ(${z}px) rotateY(${rot}deg)`
+  });
+
+  leaf.animate(
+    [
+      kf(0.00,    0,   0),   /* capa fechada */
+      kf(0.13,  -14,  30),   /* descola da pilha e levanta */
+      kf(0.55, -100,  22),   /* giro principal */
+      kf(0.82, -184,  10),   /* passa do ponto (a capa "cai" plana) */
+      kf(0.91, -175,   4),   /* assentadinha */
+      kf(1.00, -180,   0)    /* encaixa por trás da página esquerda */
+    ],
+    { duration: DUR, easing: EASE, fill: "forwards" }
+  );
+
+  /* assim que a capa passa dos 90° ela mergulha PRA TRÁS das páginas:
+     desce um nível de empilhamento e o livro passa a cobri-la */
+  setTimeout(() => { leaf.style.zIndex = "-1"; }, DUR * 0.32);
+
+  /* o sumário surge enquanto a capa ainda termina de encaixar atrás da página */
+  setTimeout(() => book.classList.remove("cover-opening"), DUR * 0.72);
+  setTimeout(() => { if (leaf.parentNode) leaf.remove(); }, DUR + 60);
 }
 
 function openChapter(id) {
@@ -4122,6 +4334,7 @@ function attachPageClickHandlers() {
     const sel = window.getSelection();
     if (sel && sel.toString().trim().length > 0) return;
     if (Math.abs(dx) > 60 && Math.abs(dy) < 60) {
+      if (bookClosed) { openBookCover(); return; }
       if (dx < 0) navNext(); else navPrev();
     }
   }, { passive: true });

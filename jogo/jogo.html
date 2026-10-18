@@ -309,8 +309,8 @@
     border-radius: 50px;
     font-weight: 800;
     font-size: 0.9rem;
-    backdrop-filter: blur(6px);
-    -webkit-backdrop-filter: blur(6px);
+    /* sem backdrop-filter: o HUD fica sobre um canvas que redesenha todo frame,
+       então o navegador teria que reborrar o fundo a cada frame (custo alto) */
     display: flex;
     align-items: center;
     gap: 6px;
@@ -444,11 +444,24 @@
      ATUALIZAÇÃO 2.0
      ========================= */
   .hud-chip.combo-bg { background: rgba(255, 64, 129, 0.88); }
-  .hud-chip.diva-bg { background: linear-gradient(135deg, rgba(255,64,129,0.92), rgba(124,77,255,0.92)); }
-  .hud-chip.diva-bg.active { animation: divaPulse 0.7s infinite alternate; }
+  .hud-chip.diva-bg { background: linear-gradient(135deg, rgba(255,64,129,0.92), rgba(124,77,255,0.92)); position: relative; }
+  /* O brilho do Modo Diva agora é um anel animado só com transform/opacity.
+     Antes era um box-shadow animado: isso repinta o chip TODO frame e, como ele
+     ficava sobre o canvas, derrubava o FPS do jogo inteiro durante o Modo Diva. */
+  .hud-chip.diva-bg::after {
+    content: "";
+    position: absolute;
+    inset: -3px;
+    border-radius: 50px;
+    border: 2px solid rgba(255,64,129,0.9);
+    opacity: 0;
+    pointer-events: none;
+    will-change: transform, opacity;
+  }
+  .hud-chip.diva-bg.active::after { animation: divaPulse 0.7s ease-out infinite; }
   @keyframes divaPulse {
-    from { box-shadow: 0 4px 14px rgba(0,0,0,0.2), 0 0 0 rgba(255,64,129,0); }
-    to { box-shadow: 0 4px 14px rgba(0,0,0,0.2), 0 0 22px rgba(255,64,129,0.8); }
+    0%   { transform: scale(1);    opacity: 0.9; }
+    100% { transform: scale(1.35); opacity: 0; }
   }
 
   #eventBanner {
@@ -667,9 +680,26 @@
     }
   }
 
+  /* só transform: box-shadow animado aqui repintava o botão todo frame */
   @keyframes pulseBtn {
-    0%, 100% { transform: translateX(-50%) scale(1); box-shadow: 0 10px 30px rgba(124,77,255,0.55), 0 0 0 0 rgba(255,64,129,0.55); }
-    50%      { transform: translateX(-50%) scale(1.06); box-shadow: 0 10px 30px rgba(124,77,255,0.55), 0 0 0 16px rgba(255,64,129,0); }
+    0%, 100% { transform: translateX(-50%) scale(1); }
+    50%      { transform: translateX(-50%) scale(1.06); }
+  }
+  /* o "ping" vira um anel animado só com transform/opacity */
+  #btnPular::after {
+    content: "";
+    position: absolute;
+    inset: -6px;
+    border-radius: 999px;
+    border: 4px solid rgba(255,64,129,0.7);
+    opacity: 0;
+    pointer-events: none;
+    will-change: transform, opacity;
+    animation: pulseRing 1.8s ease-in-out infinite;
+  }
+  @keyframes pulseRing {
+    0%, 100% { transform: scale(0.98); opacity: 0.7; }
+    50%      { transform: scale(1.14); opacity: 0; }
   }
   #btnPular:active { transform: translateX(-50%) scale(0.92) !important; filter: brightness(1.2); }
   #btnPular:hover  { filter: brightness(1.08); }
@@ -2115,11 +2145,17 @@ function spawn() {
   }
 }
 
+/* Estas funções rodam todo frame, então só mexemos no DOM quando algo MUDOU.
+   Escrever no DOM a cada frame invalida o layout e trava o jogo. */
 function updateComboHUD() {
   const el = document.getElementById('comboVal');
-  if (el) el.textContent = combo;
+  const txt = String(combo);
+  if (el && el.textContent !== txt) el.textContent = txt;
   const chip = document.getElementById('chipCombo');
-  if (chip) chip.style.transform = combo >= 3 ? 'scale(1.06)' : 'scale(1)';
+  if (chip) {
+    const t = combo >= 3 ? 'scale(1.06)' : 'scale(1)';
+    if (chip.style.transform !== t) chip.style.transform = t;
+  }
 }
 
 function updateDivaHUD() {
@@ -2127,17 +2163,20 @@ function updateDivaHUD() {
   const value = document.getElementById('divaVal');
   if (!chip || !value) return;
 
+  let active, txt;
   if (divaUntil > tickCount) {
-    chip.classList.add('active');
-    const seconds = Math.max(0, Math.ceil((divaUntil - tickCount) / 60));
-    value.textContent = `${seconds}s`;
+    active = true;
+    txt = `${Math.max(0, Math.ceil((divaUntil - tickCount) / 60))}s`;
   } else if (divaUsed) {
-    chip.classList.remove('active');
-    value.textContent = 'OK';
+    active = false;
+    txt = 'OK';
   } else {
-    chip.classList.remove('active');
-    value.textContent = 'DIVA';
+    active = false;
+    txt = 'DIVA';
   }
+
+  if (chip.classList.contains('active') !== active) chip.classList.toggle('active', active);
+  if (value.textContent !== txt) value.textContent = txt;
 }
 
 function showEvent(title, sub) {
@@ -2643,8 +2682,35 @@ function render() {
   }
 }
 
-function loop() { update(); render(); requestAnimationFrame(loop); }
-loop();
+/* Loop com PASSO FIXO.
+   Antes: update() rodava 1x por frame. Se o FPS caísse (ex.: durante o Modo Diva),
+   o jogo inteiro entrava em câmera lenta e voltava ao normal quando o efeito acabava.
+   Agora a lógica roda sempre a 60 passos/s, independente de quantos frames o navegador
+   conseguir desenhar — assim a velocidade fica constante mesmo com queda de FPS. */
+const STEP_MS = 1000 / 60;
+const MAX_STEPS = 5;        // limite p/ evitar "espiral da morte" em lag extremo
+let _lastFrame = 0;
+let _acc = 0;
+
+function loop(now) {
+  if (!_lastFrame) _lastFrame = now;
+  let delta = now - _lastFrame;
+  _lastFrame = now;
+  if (delta > 250) delta = 250;   // aba voltou de suspensão/segundo plano
+
+  _acc += delta;
+  let steps = 0;
+  while (_acc >= STEP_MS && steps < MAX_STEPS) {
+    update();
+    _acc -= STEP_MS;
+    steps++;
+  }
+  if (steps === MAX_STEPS) _acc = 0;
+
+  render();
+  requestAnimationFrame(loop);
+}
+requestAnimationFrame(loop);
 
 (function initMenuClouds() {
   clouds = [];

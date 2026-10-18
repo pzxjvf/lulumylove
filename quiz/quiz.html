@@ -21,6 +21,7 @@
             justify-content: center;
             align-items: center;
             height: 100vh;
+            height: 100dvh;
             color: #fff;
             overflow: hidden;
         }
@@ -194,6 +195,22 @@
             to { transform: scale(1); opacity: 1; }
         }
 
+        /* ================= RESPONSIVO ================= */
+        @media (max-width: 600px) {
+            .quiz-container { width: 92%; padding: 26px 20px; border-radius: 24px; }
+            .question { font-size: 1.3rem; margin-bottom: 20px; }
+            .option-btn { padding: 14px; font-size: 1rem; }
+            #feedbackCard { padding: 12px 22px; font-size: 0.9rem; width: max-content; max-width: 90%; }
+            .reward-icon { font-size: 3.6rem; margin: 14px 0; }
+            #claimBtn { padding: 15px; font-size: 1.05rem; }
+            .modal-content { padding: 24px 20px; }
+        }
+        @media (max-height: 560px) {
+            .question { font-size: 1.15rem; margin-bottom: 14px; }
+            .options { gap: 10px; }
+            .option-btn { padding: 11px; }
+            .reward-icon { font-size: 2.8rem; margin: 8px 0; }
+        }
     </style>
 </head>
 <body>
