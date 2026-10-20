@@ -2,7 +2,7 @@
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>📖 O Livro da Nossa História</title>
 
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400&family=Dancing+Script:wght@600;700&family=Nunito:wght@400;700&display=swap" rel="stylesheet">
@@ -41,7 +41,8 @@
     margin-bottom: 10px;
     color: #fff;
     font-family: "Nunito", sans-serif;
-    z-index: 10;
+    position: relative;
+    z-index: 60;
   }
 
   .back-btn {
@@ -1126,6 +1127,87 @@
     opacity: 0.9;
   }
 
+  /* Tabs e Paginação para Citações */
+  .fav-tabs {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 18px;
+    border-bottom: 1.5px solid rgba(138, 90, 43, 0.1);
+    padding-bottom: 10px;
+  }
+  .fav-tab {
+    padding: 6px 12px;
+    border-radius: 12px;
+    font-family: "Nunito", sans-serif;
+    font-size: 0.72em;
+    font-weight: 700;
+    cursor: pointer;
+    transition: 0.25s;
+    border: 1.5px solid rgba(138, 90, 43, 0.2);
+    color: #8a5a2b;
+    background: rgba(255, 255, 255, 0.5);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+  .fav-tab.active {
+    background: linear-gradient(135deg, #c9184a, #ff4d6d);
+    color: white;
+    border-color: transparent;
+    box-shadow: 0 4px 10px rgba(201, 24, 74, 0.25);
+  }
+  .fav-tab.active.tab-semrumo {
+    background: linear-gradient(135deg, #15803d, #22c55e);
+    box-shadow: 0 4px 10px rgba(21, 128, 61, 0.25);
+  }
+  .fav-tab:not(.active):hover {
+    background: rgba(199, 125, 255, 0.08);
+    border-color: rgba(138, 90, 43, 0.4);
+  }
+  .fav-pagination {
+     display: flex;
+     justify-content: center;
+     align-items: center;
+     gap: 20px;
+     padding-top: 15px;
+     border-top: 1.5px solid rgba(138, 90, 43, 0.1);
+     z-index: 10;
+     background: transparent;
+   }
+  .fav-pag-btn {
+    background: white;
+    border: 1.5px solid #e2d1c3;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: 0.25s;
+    color: #6b4423;
+    font-size: 1.1em;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+  }
+  .fav-pag-btn:hover:not(:disabled) {
+    background: #c9184a;
+    color: white;
+    border-color: #c9184a;
+    transform: scale(1.1);
+  }
+  .fav-pag-btn:disabled {
+    opacity: 0.25;
+    cursor: not-allowed;
+    box-shadow: none;
+  }
+  .fav-pag-info {
+    font-family: "Nunito", sans-serif;
+    font-size: 0.8em;
+    color: #8a5a2b;
+    font-weight: 800;
+    min-width: 80px;
+    text-align: center;
+  }
+
   .toc-quick-fav {
     display: flex;
     align-items: center;
@@ -1492,44 +1574,1377 @@
     100% { opacity: 0; transform: translateY(-70px) translateX(var(--dx, 0px)) scale(1) rotate(var(--rot, 0deg)); }
   }
 
-  @media (max-width: 768px) {
-    .book { flex-direction: column; max-width: 100%; }
-    .book.closed .page-left { display: none; }
-    .book-spine { width: 100%; min-height: 22px; }
-    .book-spine::before, .book-spine::after { display: none; }
-    .page {
-      min-height: auto;
-      padding: 28px 30px 70px 22px;
-      height: 72vh;
-      max-height: 72vh;
-      overflow: hidden !important;
-    }
-    .bookmark-ribbon { right: 4px; width: 20px; }
-    .page-left, .page-right { box-shadow: none; border: none; }
-    .page-left { border-bottom: 1px solid rgba(139, 90, 43, 0.15); }
-    .page-number { display: none; }
-    .book-title h1 { font-size: 2.2rem; }
-    .chapter-header h2 { font-size: 1.3em; }
-    .chapter-content { font-size: 1.05em; }
-    .toc-title { font-size: 1.1em; }
-    .nav-arrows { bottom: 15px; }
+  .fav-list-container {
+    display: flex;
+    flex-direction: column;
+    height: 400px;
   }
+  .fav-list-scroll {
+    flex-grow: 1;
+    overflow-y: auto;
+    padding-right: 8px;
+    margin-bottom: 10px;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(138, 90, 43, 0.3) transparent;
+  }
+
+  .btn-icon { display: none; }
+  .btn-text { display: inline; }
+
+  @media (max-width: 768px) {
+    .btn-text { display: none; }
+    .btn-icon { display: inline; font-size: 1.2em; }
+    .back-btn { padding: 8px 12px !important; }
+    .top-bar {
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 10px;
+      padding: 5px 0;
+      margin-bottom: 5px;
+    }
+    .top-bar > div:first-child {
+      justify-content: center !important;
+      flex: 0 0 100% !important;
+      order: 1;
+    }
+    .page-indicator {
+      order: 2;
+      margin: 0 !important;
+      max-width: none !important;
+      font-size: 0.8em;
+      padding: 6px 12px;
+      white-space: nowrap;
+    }
+    #authorSlot {
+      order: 3;
+      flex: 0 0 auto !important;
+    }
+
+    .book-title { margin-top: 10px; }
+    .book-title h1 { font-size: 1.6rem; line-height: 1.2; }
+    .book-title p { display: none; }
+
+    .book-wrapper {
+      margin-top: 5px;
+      transform: none !important;
+    }
+
+    .book {
+      flex-direction: column;
+      max-width: 92vw;
+      height: auto !important;
+      min-height: auto !important;
+      margin-bottom: 80px;
+    }
+    .book.closed .page-left { display: none; }
+    .book-spine { width: 100%; min-height: 12px; height: 12px; }
+    .book-spine::before, .book-spine::after { display: none; }
+    
+    .page {
+      width: 100% !important;
+      min-height: 350px !important;
+      height: auto !important;
+      max-height: none !important;
+      padding: 25px 20px 60px !important;
+      overflow: visible !important;
+    }
+    .page-left { border-bottom: 1px solid rgba(139, 90, 43, 0.15); border-right: none; }
+    .page-right { border-left: none; }
+    
+    .bookmark-ribbon { right: 10px; width: 18px; height: 50px; }
+    .bookmark-ribbon::after { top: 10px; font-size: 0.7em; }
+    .page-number { display: none; }
+    
+    .book-title h1 { font-size: 1.8rem; }
+    .book-title p { font-size: 0.8em; letter-spacing: 1px; }
+    
+    .chapter-header h2 { font-size: 1.2em; }
+    .chapter-content { font-size: 1.02em; line-height: 1.5; }
+    .chapter-content p { text-align: left; }
+    
+    .nav-arrows { bottom: 10px; gap: 20px; }
+    .nav-arrow { width: 42px; height: 42px; }
+
+    /* Ajuste para permitir scroll no corpo se necessário (celulares pequenos) */
+    html, body { overflow: auto !important; height: auto !important; }
+    body { padding-bottom: 30px; }
+
+    /* Estante Mobile */
+    .shelf-head h2 { font-size: 1.8rem; }
+    .shelf-row { gap: 20px; }
+    .shelf-book { width: 150px; height: 215px; }
+    .shelf-item { gap: 10px; }
+    .shelf-label-title { font-size: 0.85em; }
+
+    /* Favoritos Mobile */
+    .fav-tabs { flex-wrap: wrap; }
+    .fav-card { padding: 10px 14px; }
+    .fav-card-text { font-size: 1em; }
+    .fav-list-container { height: 50vh; }
+
+    .toast {
+      top: 10px;
+      right: 10px;
+      left: 10px;
+      max-width: none;
+      font-size: 0.85em;
+      padding: 10px 18px;
+    }
+  }
+
+  /* =========================================================
+     📚 ESTANTE — escolher qual livro abrir
+     ========================================================= */
+  #shelf {
+    position: fixed;
+    inset: 0;
+    z-index: 45;
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 30px 18px;
+    overflow-y: auto;
+    background:
+      radial-gradient(ellipse at 50% -10%, rgba(120, 45, 200, 0.5) 0%, transparent 55%),
+      radial-gradient(ellipse at 50% 110%, rgba(6, 78, 59, 0.55) 0%, transparent 55%),
+      linear-gradient(160deg, #150726 0%, #1b0a33 45%, #06140e 100%);
+  }
+  body.shelf-mode #shelf { display: flex; }
+  body.shelf-mode .book-wrapper,
+  body.shelf-mode .book-title,
+  body.shelf-mode .nav-arrows,
+  body.shelf-mode .news-btn,
+  body.shelf-mode #estanteBtn,
+  body.shelf-mode #favsBtn { display: none !important; }
+
+  .shelf-head { text-align: center; margin-bottom: 34px; }
+  .shelf-head h2 {
+    font-family: "Dancing Script", cursive;
+    font-size: clamp(2rem, 6vw, 3.2rem);
+    margin: 0;
+    color: #fff;
+    text-shadow: 0 0 30px rgba(199, 125, 255, 0.35);
+  }
+  .shelf-head p {
+    font-family: "Nunito", sans-serif;
+    color: rgba(255,255,255,0.7);
+    font-size: 0.9em;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin: 8px 0 0;
+  }
+
+  .shelf-row {
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    gap: clamp(24px, 7vw, 80px);
+    flex-wrap: wrap;
+  }
+  .shelf-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
+    cursor: pointer;
+    transition: transform 0.35s ease;
+    border-radius: 12px;
+  }
+  .shelf-item:hover { transform: translateY(-10px); }
+  .shelf-item:focus-visible { outline: 2px solid #fff; outline-offset: 6px; }
+
+  .shelf-book {
+    position: relative;
+    width: 190px;
+    height: 272px;
+    border-radius: 4px 12px 12px 4px;
+    transform: perspective(1100px) rotateY(-16deg);
+    transform-origin: left center;
+    transition: transform 0.45s cubic-bezier(.3,.9,.3,1), box-shadow 0.45s;
+    overflow: hidden;
+    background: #2a1a3a;
+    box-shadow: 14px 18px 34px rgba(0,0,0,0.55);
+  }
+  .shelf-item:hover .shelf-book {
+    transform: perspective(1100px) rotateY(-6deg) scale(1.03);
+    box-shadow: 20px 26px 46px rgba(0,0,0,0.6);
+  }
+  .shelf-book::before {
+    content: "";
+    position: absolute;
+    left: 0; top: 0; bottom: 0;
+    width: 18px;
+    z-index: 3;
+    background: linear-gradient(to right, rgba(0,0,0,0.55), rgba(0,0,0,0.05) 70%, transparent);
+  }
+  .shelf-book::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: 2;
+    pointer-events: none;
+    background: linear-gradient(115deg,
+      rgba(255,255,255,0.18) 0%, transparent 28%,
+      transparent 72%, rgba(255,255,255,0.06) 100%);
+  }
+  .shelf-book img { width: 100%; height: 100%; object-fit: cover; display: block; }
+
+  .shelf-cover-green {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 14px;
+    text-align: center;
+    padding: 22px 16px;
+    background:
+      radial-gradient(ellipse at 50% 15%, rgba(255,255,255,0.18), transparent 55%),
+      linear-gradient(160deg, #1c7a3f 0%, #14532d 55%, #0b3d1f 100%);
+  }
+  .shelf-cover-green .green-leaf { font-size: 1.6rem; }
+  .shelf-cover-green .green-title {
+    font-family: "Cormorant Garamond", serif;
+    font-weight: 700;
+    font-size: 1.2em;
+    line-height: 1.25;
+    color: #fff;
+  }
+  .shelf-cover-green .green-sub {
+    font-family: "Nunito", sans-serif;
+    font-size: 0.62em;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.8);
+  }
+  .shelf-cover-green .green-line {
+    width: 46px; height: 2px; border-radius: 2px;
+    background: rgba(255,255,255,0.75);
+  }
+
+  .shelf-label { text-align: center; max-width: 220px; }
+  .shelf-label .shelf-label-title {
+    font-family: "Cormorant Garamond", serif;
+    font-weight: 600;
+    font-size: 1.15em;
+    color: #fff;
+  }
+  .shelf-label .shelf-label-sub {
+    font-family: "Nunito", sans-serif;
+    font-size: 0.68em;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.6);
+    margin-top: 4px;
+  }
+  .shelf-label .shelf-open {
+    display: inline-block;
+    margin-top: 10px;
+    font-family: "Nunito", sans-serif;
+    font-weight: 700;
+    font-size: 0.72em;
+    letter-spacing: 1px;
+    padding: 6px 16px;
+    border-radius: 20px;
+    border: 1.5px solid rgba(255,255,255,0.4);
+    color: #fff;
+    background: rgba(255,255,255,0.1);
+    opacity: 0;
+    transform: translateY(4px);
+    transition: 0.3s;
+  }
+  .shelf-item:hover .shelf-open,
+  .shelf-item:focus-visible .shelf-open { opacity: 1; transform: translateY(0); }
+
+  .shelf-plank {
+    width: min(620px, 92vw);
+    height: 14px;
+    margin-top: 26px;
+    border-radius: 7px;
+    background: linear-gradient(180deg, #6b4a2a 0%, #4a3018 60%, #2f1d0e 100%);
+    box-shadow: 0 12px 26px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.15);
+  }
+
+  /* =========================================================
+     🌿 LIVRO SEM RUMO — tema verde e branco
+     ========================================================= */
+  .book.semrumo {
+    background: #14532d;
+    box-shadow:
+      0 0 0 2px #0b3d1f,
+      0 0 0 5px #166534,
+      0 25px 60px rgba(0,0,0,0.6),
+      0 15px 30px rgba(0,0,0,0.5),
+      inset 0 0 80px rgba(22,101,52,0.12);
+  }
+  .book.semrumo .book-spine {
+    background: linear-gradient(to right,
+      #072b16 0%, #0f4326 25%, #1c7a3f 50%, #0f4326 75%, #072b16 100%);
+  }
+  .book.semrumo .book-spine::before { background: linear-gradient(180deg, #ffffff, #a7f3d0); }
+  .book.semrumo .book-spine::after  { background: linear-gradient(180deg, #a7f3d0, #ffffff); }
+
+  .book.semrumo .page-left,
+  .book.semrumo .page-right {
+    background:
+      linear-gradient(to right, rgba(22,101,52,0.05) 0%, transparent 6%, transparent 94%, rgba(22,101,52,0.04) 100%),
+      radial-gradient(ellipse at 25% 8%, rgba(255,255,255,1), transparent 55%),
+      linear-gradient(180deg, #ffffff 0%, #f6fbf7 55%, #eef7f0 100%);
+    box-shadow: inset 0 0 40px rgba(21,128,61,0.06);
+  }
+  .book.semrumo .page-left { border-right: 1px solid rgba(22,101,52,0.14); }
+  .book.semrumo .page-right { border-left: 1px solid rgba(22,101,52,0.14); }
+  .book.semrumo .page-number { color: #15803d; }
+  body.theme-semrumo .bookmark-ribbon { display: none !important; }
+
+  .book.semrumo .chapter-header {
+    text-align: left;
+    border-bottom: none;
+    padding-bottom: 0;
+    margin-bottom: 22px;
+  }
+  .book.semrumo .chapter-header .ch-num { color: #15803d; letter-spacing: 4px; }
+  .book.semrumo .chapter-header h2 {
+    font-family: "Cormorant Garamond", serif;
+    font-weight: 700;
+    font-size: 2.1em;
+    color: #0f3d20;
+    letter-spacing: 0.5px;
+  }
+  .book.semrumo .chapter-header::after {
+    content: "";
+    display: block;
+    width: 58px;
+    height: 3px;
+    border-radius: 2px;
+    background: linear-gradient(90deg, #15803d, #86efac);
+    margin-top: 14px;
+  }
+  .book.semrumo .chapter-content { color: #1e2b23; }
+  /* layout de texto diferente: sem letra capitular, parágrafos espaçados */
+  .book.semrumo .chapter-content p.dropcap::first-letter {
+    font-family: inherit;
+    font-size: inherit;
+    float: none;
+    line-height: inherit;
+    padding: 0;
+    color: inherit;
+    font-weight: inherit;
+  }
+  .book.semrumo .chapter-content p { text-indent: 0; margin: 0 0 13px; }
+  .book.semrumo .chapter-content .quote {
+    border-left-color: #15803d;
+    background: rgba(21,128,61,0.07);
+    color: #14532d;
+  }
+  .book.semrumo .chapter-content .scene-break { color: #15803d; }
+  .book.semrumo .end-ornament { color: #15803d; }
+  .book.semrumo .back-toc {
+    color: #15803d;
+    background: rgba(21,128,61,0.1);
+    border-color: rgba(21,128,61,0.35);
+  }
+  .book.semrumo .back-toc:hover { background: rgba(21,128,61,0.2); }
+
+  body.theme-semrumo .book-title h1 {
+    background: linear-gradient(135deg, #ffffff, #a7f3d0, #22c55e, #ffffff);
+    background-size: 300% 300%;
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    text-shadow: 0 0 30px rgba(34,197,94,0.25);
+    animation: shimmer 4s ease infinite;
+  }
+  body.theme-semrumo .nav-arrow {
+    background: linear-gradient(135deg, #22c55e, #15803d);
+    box-shadow: 0 6px 18px rgba(21,128,61,0.5);
+  }
+  body.theme-semrumo .toc-nav-btn { background: #15803d; box-shadow: 0 3px 8px rgba(21,128,61,0.3); }
+  body.theme-semrumo .toc-nav-btn:hover:not(:disabled) { background: #166534; }
+
+  /* abertura do livro sem rumo */
+  .sr-open { display: flex; flex-direction: column; justify-content: center; height: 100%; }
+  .sr-open .sr-kicker {
+    font-family: "Nunito", sans-serif;
+    font-size: 0.7em;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: #15803d;
+    font-weight: 700;
+  }
+  .sr-open .sr-title {
+    font-family: "Cormorant Garamond", serif;
+    font-weight: 700;
+    font-size: 1.9em;
+    line-height: 1.2;
+    color: #0f3d20;
+    margin: 8px 0 16px;
+  }
+  .sr-open .sr-rule {
+    width: 64px; height: 3px; border-radius: 2px;
+    background: linear-gradient(90deg, #15803d, #86efac);
+    margin-bottom: 22px;
+  }
+  .sr-open .sr-quote {
+    font-family: "Cormorant Garamond", serif;
+    font-style: italic;
+    font-size: 1.15em;
+    line-height: 1.6;
+    color: #35503f;
+  }
+  .sr-entry {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 12px 16px;
+    border-radius: 8px;
+    border: 1.5px solid rgba(21,128,61,0.25);
+    background: rgba(21,128,61,0.05);
+    cursor: pointer;
+    transition: 0.25s;
+    margin-bottom: 10px;
+  }
+  .sr-entry:hover { background: rgba(21,128,61,0.13); transform: translateX(4px); }
+  .sr-entry .sr-entry-num {
+    font-family: "Nunito", sans-serif;
+    font-size: 0.68em;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: #15803d;
+    font-weight: 700;
+  }
+  .sr-entry .sr-entry-title {
+    font-family: "Cormorant Garamond", serif;
+    font-size: 1.3em;
+    font-weight: 600;
+    color: #12301e;
+  }
+  .sr-entry .sr-leaf { font-size: 1.2em; }
+
+  /* =========================================================
+     📱 RESPONSIVIDADE EXTRA — CELULAR / TELAS PEQUENAS
+     Mantém o layout de livro no desktop e reorganiza tudo no
+     celular sem alterar a lógica/paginação do JavaScript.
+     ========================================================= */
+
+  @media (max-width: 768px) {
+    :root {
+      --mobile-side: 12px;
+      --mobile-book-width: min(94vw, 560px);
+      --mobile-page-height: min(620px, max(390px, calc(100svh - 175px)));
+    }
+
+    html {
+      width: 100%;
+      min-height: 100%;
+      overflow-x: hidden !important;
+      overflow-y: auto !important;
+      -webkit-text-size-adjust: 100%;
+    }
+
+    body {
+      width: 100%;
+      min-width: 0;
+      min-height: 100svh;
+      height: auto;
+      padding: max(8px, env(safe-area-inset-top)) var(--mobile-side)
+               calc(92px + env(safe-area-inset-bottom));
+      overflow-x: hidden !important;
+      overflow-y: auto !important;
+      align-items: center;
+    }
+
+    /* Barra superior: no celular vira uma barra compacta em duas linhas. */
+    .top-bar {
+      width: 100%;
+      max-width: 560px;
+      min-height: 42px;
+      margin: 0 0 4px;
+      padding: 2px 0;
+      gap: 6px;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      position: relative;
+    }
+
+    .top-bar > div:first-child {
+      width: auto;
+      flex: 1 1 auto !important;
+      min-width: 0;
+      justify-content: flex-start !important;
+      gap: 5px !important;
+      order: 1;
+    }
+
+    #authorSlot {
+      width: auto;
+      flex: 0 0 auto !important;
+      order: 2;
+    }
+
+    .page-indicator {
+      order: 3;
+      flex: 1 0 100%;
+      max-width: 100%;
+      min-width: 0;
+      margin: 0 !important;
+      padding: 5px 10px;
+      font-size: 0.72em;
+      line-height: 1.15;
+      text-align: center;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .back-btn {
+      min-width: 40px;
+      min-height: 38px;
+      padding: 7px 10px !important;
+      border-radius: 20px;
+      font-size: 0.78em;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      touch-action: manipulation;
+    }
+
+    .author-badge {
+      min-height: 38px;
+      padding: 7px 10px;
+      font-size: 0.68em;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    /* Título ocupa pouco espaço para não empurrar o livro para baixo. */
+    .book-title {
+      width: 100%;
+      max-width: 560px;
+      margin: 4px auto 8px;
+      padding: 0 6px;
+    }
+
+    .book-title h1 {
+      font-size: clamp(1.45rem, 7vw, 2rem) !important;
+      line-height: 1.05;
+      overflow-wrap: anywhere;
+    }
+
+    .book-title p {
+      display: none;
+    }
+
+    /* O livro passa a ocupar praticamente toda a largura disponível. */
+    .book-wrapper {
+      width: 100%;
+      max-width: 560px;
+      margin: 0 auto;
+      padding: 0;
+      transform: none !important;
+      perspective: 1400px;
+      display: flex;
+      justify-content: center;
+    }
+
+    .book,
+    .book.closed {
+      width: 100%;
+      max-width: var(--mobile-book-width) !important;
+      min-width: 0;
+      min-height: 0 !important;
+      height: auto !important;
+      margin: 0 auto 8px;
+      border-radius: 8px;
+      display: flex;
+      flex-direction: column;
+      overflow: visible;
+    }
+
+    .book.closed .page-left {
+      display: none;
+    }
+
+    /* Lombada horizontal no celular. */
+    .book-spine {
+      order: 0;
+      width: 100% !important;
+      height: 10px !important;
+      min-height: 10px !important;
+      flex: 0 0 10px;
+      border-radius: 6px 6px 0 0;
+    }
+
+    .book-spine::before,
+    .book-spine::after {
+      display: none;
+    }
+
+    /* Cada página mantém uma altura mensurável para a paginação JS.
+       O corpo da página continua rolável entre os spreads. */
+    .page {
+      width: 100% !important;
+      min-width: 0;
+      height: var(--mobile-page-height) !important;
+      min-height: var(--mobile-page-height) !important;
+      max-height: var(--mobile-page-height) !important;
+      flex: 0 0 var(--mobile-page-height);
+      padding: clamp(20px, 4.5vw, 30px)
+               clamp(15px, 5vw, 28px)
+               clamp(56px, 10vw, 70px) !important;
+      overflow: hidden !important;
+      position: relative;
+    }
+
+    .page-left {
+      border-right: none !important;
+      border-bottom: 1px solid rgba(139, 90, 43, 0.15);
+      box-shadow: inset 0 10px 22px -20px rgba(0,0,0,0.35);
+    }
+
+    .page-right {
+      border-left: none !important;
+      box-shadow: inset 0 -10px 22px -20px rgba(0,0,0,0.35);
+    }
+
+    /* Na capa, a página direita continua sendo a única página visível. */
+    .book.closed .page-right {
+      padding: 0 !important;
+      border: 0 !important;
+      height: min(620px, calc(100svh - 170px)) !important;
+      min-height: min(620px, calc(100svh - 170px)) !important;
+      max-height: min(620px, calc(100svh - 170px)) !important;
+      flex-basis: min(620px, calc(100svh - 170px));
+    }
+
+    .cover-closed {
+      border-radius: 0 8px 8px 8px;
+    }
+
+    .cover-closed-hint {
+      max-width: calc(100% - 28px);
+      bottom: 18px;
+      padding: 8px 13px;
+      font-size: 0.75em;
+      white-space: normal;
+      text-align: center;
+    }
+
+    .cover-closed::before {
+      width: 18px;
+    }
+
+    .bookmark-ribbon {
+      right: 8px;
+      width: 19px;
+      height: 52px;
+    }
+
+    .bookmark-ribbon::before {
+      border-left-width: 9.5px;
+      border-right-width: 9.5px;
+    }
+
+    .bookmark-ribbon::after {
+      top: 9px;
+      font-size: 0.68em;
+    }
+
+    .page-number {
+      display: none !important;
+    }
+
+    /* Conteúdo do livro */
+    .toc-header {
+      margin-bottom: 16px;
+    }
+
+    .toc-header h3 {
+      font-size: clamp(1.55rem, 7vw, 2rem);
+    }
+
+    .toc-header .toc-decor {
+      letter-spacing: 6px;
+    }
+
+    .toc-entry {
+      min-height: 58px;
+      padding: 9px 10px;
+      gap: 7px;
+      margin-bottom: 4px;
+    }
+
+    .toc-chapter {
+      font-size: 0.62em;
+      letter-spacing: 1px;
+    }
+
+    .toc-title {
+      font-size: clamp(1rem, 4.5vw, 1.18rem);
+      line-height: 1.12;
+    }
+
+    .toc-date {
+      min-width: 66px;
+    }
+
+    .toc-date .date-label {
+      font-size: 0.58em;
+      letter-spacing: 0.6px;
+    }
+
+    .toc-date .date-value {
+      font-size: 0.9em;
+    }
+
+    .lock-icon {
+      font-size: 1.15em;
+      margin-left: 2px;
+    }
+
+    .toc-nav {
+      gap: 14px;
+      margin-top: 10px;
+    }
+
+    .toc-nav-btn {
+      width: 38px;
+      height: 38px;
+      flex: 0 0 38px;
+    }
+
+    .toc-quick-fav {
+      margin-top: 10px;
+      padding: 10px 12px;
+      font-size: 0.76em;
+      text-align: center;
+    }
+
+    .chapter-header {
+      margin-bottom: 17px;
+      padding-bottom: 12px;
+    }
+
+    .chapter-header .ch-num {
+      font-size: 0.62em;
+      letter-spacing: 2px;
+    }
+
+    .chapter-header h2 {
+      font-size: clamp(1.25rem, 6vw, 1.65rem);
+      line-height: 1.15;
+    }
+
+    .chapter-header .ch-date {
+      font-size: 0.9em;
+      margin-top: 7px;
+    }
+
+    .chapter-header .ch-heart {
+      margin-top: 8px;
+      font-size: 1em;
+      letter-spacing: 5px;
+    }
+
+    .chapter-content {
+      font-size: clamp(1rem, 4.25vw, 1.1rem);
+      line-height: 1.48;
+    }
+
+    .chapter-content p {
+      text-align: left;
+      text-indent: 1.25em;
+      margin-bottom: 7px;
+      overflow-wrap: break-word;
+    }
+
+    .chapter-content p.dropcap::first-letter {
+      font-size: 3em;
+      padding-right: 6px;
+    }
+
+    .chapter-content .quote {
+      padding: 7px 12px;
+      margin: 10px 0;
+    }
+
+    .chapter-content .scene-break {
+      letter-spacing: 5px;
+      margin: 7px 0;
+    }
+
+    .back-toc {
+      min-height: 36px;
+      margin-bottom: 10px;
+      padding: 7px 11px;
+      font-size: 0.72em;
+    }
+
+    .dedication {
+      padding: 12px 0 18px;
+    }
+
+    .dedication-text {
+      font-size: 1.2em;
+    }
+
+    .locked-cover {
+      min-height: 0;
+      height: 100%;
+      padding: 15px 8px;
+    }
+
+    .locked-big {
+      font-size: clamp(3rem, 18vw, 5rem);
+      margin-bottom: 12px;
+    }
+
+    .locked-title {
+      font-size: 1.55em;
+    }
+
+    .locked-subtitle {
+      font-size: 0.72em;
+      letter-spacing: 1.3px;
+    }
+
+    .countdown {
+      max-width: 100%;
+      padding: 12px 10px;
+    }
+
+    .countdown-numbers {
+      font-size: 1.35em;
+    }
+
+    .countdown-numbers span {
+      min-width: 45px;
+    }
+
+    /* Livro sem rumo */
+    .sr-open {
+      height: 100%;
+    }
+
+    .sr-open .sr-title {
+      font-size: clamp(1.5rem, 7vw, 2rem);
+    }
+
+    .sr-open .sr-quote {
+      font-size: 1.03em;
+      line-height: 1.5;
+    }
+
+    .sr-entry {
+      gap: 8px;
+      padding: 10px 11px;
+    }
+
+    .sr-entry .sr-entry-title {
+      font-size: 1.08em;
+      line-height: 1.15;
+    }
+
+    /* Favoritos */
+    .favorites-header {
+      gap: 8px;
+      align-items: flex-start;
+    }
+
+    .favorites-title {
+      font-size: 1.35em;
+      flex-wrap: wrap;
+    }
+
+    .clear-fav {
+      flex: 0 0 auto;
+      padding: 5px 8px;
+      font-size: 0.62em;
+    }
+
+    .fav-tabs {
+      gap: 5px;
+      flex-wrap: wrap;
+      margin-bottom: 10px;
+      padding-bottom: 8px;
+    }
+
+    .fav-tab {
+      flex: 1 1 auto;
+      min-height: 34px;
+      padding: 6px 8px;
+      font-size: 0.64em;
+    }
+
+    .fav-list-container {
+      height: calc(var(--mobile-page-height) - 155px);
+      min-height: 170px;
+    }
+
+    .fav-list-scroll {
+      padding-right: 3px;
+    }
+
+    .fav-card {
+      padding: 10px 12px;
+      margin-bottom: 9px;
+    }
+
+    .fav-card-text {
+      padding-right: 25px;
+      font-size: 0.98em;
+      line-height: 1.48;
+    }
+
+    .fav-card-ref {
+      font-size: 0.62em;
+      letter-spacing: 0.8px;
+    }
+
+    .fav-pagination {
+      gap: 12px;
+      padding-top: 9px;
+    }
+
+    .fav-pag-btn {
+      width: 38px;
+      height: 38px;
+    }
+
+    .fav-pag-info {
+      min-width: 60px;
+      font-size: 0.72em;
+    }
+
+    /* Editor */
+    .edit-area {
+      min-height: 140px;
+      font-size: 1em;
+      line-height: 1.55;
+      padding: 12px;
+    }
+
+    .edit-actions {
+      flex-direction: column-reverse;
+      gap: 7px;
+    }
+
+    .btn-edit {
+      width: 100%;
+      min-height: 42px;
+    }
+
+    /* Navegação: botões ficam acima da área de gesto/home do celular. */
+    .nav-arrows {
+      position: fixed;
+      left: 50%;
+      bottom: calc(10px + env(safe-area-inset-bottom));
+      transform: translateX(-50%);
+      width: auto;
+      gap: 12px;
+      z-index: 100;
+      padding: 5px 8px;
+      border-radius: 28px;
+      background: rgba(25, 4, 45, 0.55);
+      border: 1px solid rgba(255,255,255,0.14);
+      backdrop-filter: blur(12px);
+    }
+
+    .nav-arrow {
+      width: 46px;
+      height: 46px;
+      flex: 0 0 46px;
+      font-size: 1.25em;
+      touch-action: manipulation;
+    }
+
+    /* Botão de atualizações não cobre mais o livro no celular. */
+    .news-btn {
+      position: fixed;
+      top: auto;
+      right: 10px;
+      bottom: calc(70px + env(safe-area-inset-bottom));
+      padding: 7px 10px;
+      max-width: calc(100vw - 20px);
+      font-size: 0.68em;
+      z-index: 95;
+    }
+
+    .news-btn .news-dot {
+      width: 7px;
+      height: 7px;
+    }
+
+    /* Rascunho vai para cima dos controles inferiores. */
+    .draft-pill {
+      left: 10px;
+      bottom: calc(72px + env(safe-area-inset-bottom));
+      max-width: calc(100vw - 20px);
+      padding: 8px 11px;
+      font-size: 0.68em;
+      z-index: 96;
+    }
+
+    .toast {
+      top: calc(8px + env(safe-area-inset-top));
+      right: 8px;
+      left: 8px;
+      max-width: none;
+      width: auto;
+      padding: 10px 13px;
+      font-size: 0.78em;
+      border-radius: 12px;
+    }
+
+    /* Tooltip de marcação: nunca pode ultrapassar a tela. */
+    .mark-tooltip {
+      max-width: calc(100vw - 16px);
+      white-space: normal;
+      text-align: center;
+      padding: 9px 13px;
+      font-size: 0.76em;
+    }
+
+    /* Modal de atualizações ocupa quase toda a tela. */
+    .patch-overlay {
+      padding: 10px;
+      align-items: center;
+    }
+
+    .patch-modal {
+      width: 100%;
+      max-width: 560px;
+      max-height: calc(100svh - 20px);
+      border-radius: 20px;
+    }
+
+    .patch-header {
+      padding: 22px 42px 16px;
+    }
+
+    .patch-icon {
+      font-size: 2.4em;
+    }
+
+    .patch-title {
+      font-size: clamp(1.65rem, 8vw, 2.15rem);
+    }
+
+    .patch-subtitle {
+      font-size: 0.68em;
+      letter-spacing: 2px;
+    }
+
+    .patch-body {
+      padding: 16px 13px;
+    }
+
+    .patch-entry {
+      margin-bottom: 16px;
+    }
+
+    .patch-entry-head {
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+
+    .patch-entry-title {
+      width: 100%;
+      margin-left: 0;
+      font-size: 1.25em;
+    }
+
+    .patch-footer {
+      padding: 12px 13px 15px;
+    }
+
+    .patch-note {
+      font-size: 1.05em;
+    }
+
+    .patch-btn-ok {
+      min-height: 46px;
+      padding: 11px 15px;
+      font-size: 0.82em;
+    }
+
+    /* Estante */
+    #shelf {
+      padding: calc(18px + env(safe-area-inset-top)) 12px
+               calc(24px + env(safe-area-inset-bottom));
+      justify-content: flex-start;
+    }
+
+    .shelf-head {
+      margin: 10px 0 24px;
+    }
+
+    .shelf-head h2 {
+      font-size: clamp(1.9rem, 9vw, 2.7rem);
+    }
+
+    .shelf-head p {
+      font-size: 0.68em;
+      letter-spacing: 1.3px;
+    }
+
+    .shelf-row {
+      width: 100%;
+      gap: 22px 14px;
+      justify-content: center;
+      align-items: flex-start;
+    }
+
+    .shelf-item {
+      width: min(43vw, 180px);
+      gap: 9px;
+    }
+
+    .shelf-book {
+      width: min(42vw, 170px);
+      height: min(60vw, 245px);
+      transform: perspective(900px) rotateY(-10deg);
+    }
+
+    .shelf-label {
+      width: 100%;
+      max-width: 100%;
+    }
+
+    .shelf-label .shelf-label-title {
+      font-size: 0.92em;
+      line-height: 1.2;
+    }
+
+    .shelf-label .shelf-label-sub {
+      font-size: 0.58em;
+      letter-spacing: 1px;
+    }
+
+    .shelf-open {
+      opacity: 1 !important;
+      transform: none !important;
+      font-size: 0.64em !important;
+      padding: 5px 12px !important;
+    }
+
+    .shelf-plank {
+      width: min(92vw, 500px);
+      margin-top: 20px;
+    }
+  }
+
+  /* Celulares muito estreitos: uma coluna na estante e controles ainda menores. */
+  @media (max-width: 420px) {
+    :root {
+      --mobile-page-height: min(600px, max(390px, calc(100svh - 168px)));
+    }
+
+    body {
+      padding-left: 8px;
+      padding-right: 8px;
+    }
+
+    .top-bar {
+      max-width: 100%;
+    }
+
+    .back-btn {
+      min-width: 37px;
+      min-height: 36px;
+      padding: 6px 8px !important;
+    }
+
+    .author-badge {
+      min-height: 36px;
+      padding: 6px 8px;
+    }
+
+    .page {
+      padding-left: 14px !important;
+      padding-right: 14px !important;
+    }
+
+    .toc-entry {
+      padding-left: 8px;
+      padding-right: 8px;
+    }
+
+    .toc-date {
+      min-width: 58px;
+    }
+
+    .toc-title {
+      font-size: 0.98em;
+    }
+
+    .chapter-content {
+      font-size: 0.98rem;
+    }
+
+    .chapter-content p {
+      text-indent: 1em;
+    }
+
+    .news-btn {
+      right: 8px;
+      left: auto;
+      max-width: 48px;
+      width: 48px;
+      height: 42px;
+      padding: 0;
+      justify-content: center;
+      overflow: hidden;
+    }
+
+    .news-btn > span:last-child {
+      font-size: 0;
+    }
+
+    .news-btn > span:last-child::after {
+      content: "📰";
+      font-size: 1.25rem;
+    }
+
+    .shelf-row {
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .shelf-item {
+      width: min(68vw, 210px);
+    }
+
+    .shelf-book {
+      width: min(64vw, 200px);
+      height: min(91vw, 285px);
+    }
+
+    .shelf-plank {
+      margin-top: 16px;
+    }
+  }
+
+  /* Paisagem em celulares: aproveita melhor a largura sem criar scroll lateral. */
+  @media (max-width: 768px) and (orientation: landscape) {
+    body {
+      padding-bottom: calc(72px + env(safe-area-inset-bottom));
+    }
+
+    .book-title {
+      margin-top: 0;
+      margin-bottom: 3px;
+    }
+
+    .book-title h1 {
+      font-size: 1.35rem !important;
+    }
+
+    .top-bar {
+      margin-bottom: 0;
+    }
+
+    :root {
+      --mobile-page-height: min(560px, calc(100svh - 105px));
+    }
+
+    .page {
+      padding-top: 16px !important;
+      padding-bottom: 50px !important;
+    }
+
+    .news-btn {
+      bottom: calc(62px + env(safe-area-inset-bottom));
+    }
+
+    .draft-pill {
+      bottom: calc(62px + env(safe-area-inset-bottom));
+    }
+  }
+
+  /* Touch: remove efeitos de hover que ficam presos após um toque. */
+  @media (hover: none) and (pointer: coarse) {
+    .toc-entry:hover:not(.locked),
+    .fav-card:hover,
+    .sr-entry:hover,
+    .editor-placeholder:hover,
+    .marked-text:hover,
+    .news-btn:hover,
+    .nav-arrow:hover:not(:disabled),
+    .shelf-item:hover,
+    .shelf-item:hover .shelf-book,
+    .shelf-item:hover .shelf-open {
+      transform: none;
+    }
+
+    .marked-text::after {
+      display: none;
+    }
+  }
+
 </style>
 </head>
-<body>
+<body class="shelf-mode">
 
 <div class="top-bar">
-  <div style="flex:1; display:flex; gap:8px; align-items:center;">
-    <button class="back-btn" onclick="goBack()">← Voltar</button>
+  <div style="flex:1; display:flex; gap:6px; align-items:center;">
+    <button class="back-btn" onclick="goBack()" title="Voltar"><span class="btn-text">← Voltar</span><span class="btn-icon">←</span></button>
     <button class="back-btn" id="soundBtn" onclick="toggleSound()" title="Som ao virar a página" style="padding:8px 14px;">🔊</button>
+    <button class="back-btn" id="estanteBtn" onclick="showShelf()" title="Voltar para a estante"><span class="btn-text">📚 Estante</span><span class="btn-icon">📚</span></button>
+    <button class="back-btn" id="favsBtn" onclick="openFavoritesView()" title="Minhas citações favoritas" style="background: rgba(199, 125, 255, 0.2); border-color: rgba(199, 125, 255, 0.4);"><span class="btn-text">💖 Citações</span><span class="btn-icon">💖</span></button>
   </div>
   <div class="page-indicator" id="pageIndicator">📖 Sumário</div>
   <div style="flex:1; display:flex; justify-content:flex-end;" id="authorSlot"></div>
 </div>
 
 <div class="book-title">
-  <h1>O Livro da Nossa História</h1>
-  <p>✨ Cada capítulo, um pedaço do nosso amor ✨</p>
+  <h1 id="bookTitleH1">O Livro da Nossa História</h1>
+  <p id="bookTitleSub">✨ Cada capítulo, um pedaço do nosso amor ✨</p>
+</div>
+
+<div id="shelf" aria-label="Escolha um livro para abrir">
+  <div class="shelf-head">
+    <h2>Nossa Estante</h2>
+    <p>dois livros, uma história só</p>
+  </div>
+  <div class="shelf-row">
+    <div class="shelf-item" tabindex="0" role="button" aria-label="Abrir O Livro da Nossa História"
+         onclick="openBook('historia')"
+         onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();openBook('historia');}">
+      <div class="shelf-book">
+        <img src="img/capa.png" alt="Capa do Livro da Nossa História">
+      </div>
+      <div class="shelf-label">
+        <div class="shelf-label-title">O Livro da Nossa História</div>
+        <div class="shelf-label-sub">para você, minha Lulu</div>
+        <span class="shelf-open">abrir ›</span>
+      </div>
+    </div>
+
+    <div class="shelf-item" tabindex="0" role="button" aria-label="Abrir um livro sem rumo (não exatamente)"
+         onclick="openBook('semrumo')"
+         onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();openBook('semrumo');}">
+      <div class="shelf-book">
+        <div class="shelf-cover-green">
+          <div class="green-leaf">🌿</div>
+          <div class="green-line"></div>
+          <div class="green-title">um livro<br>sem rumo</div>
+          <div class="green-sub">(não exatamente)</div>
+          <div class="green-line"></div>
+        </div>
+      </div>
+      <div class="shelf-label">
+        <div class="shelf-label-title">um livro sem rumo (não exatamente)</div>
+        <div class="shelf-label-sub">escrito por mim, sobre ela</div>
+        <span class="shelf-open">abrir ›</span>
+      </div>
+    </div>
+  </div>
+  <div class="shelf-plank"></div>
 </div>
 
 <div class="book-wrapper">
@@ -1586,7 +3001,6 @@
     </div>
   </div>
 </div>
-
 <script>
 /* =========================================================
    🌟 AREA PARA EDITAR O LIVRO 🌟
@@ -2420,6 +3834,47 @@ E, quando percebi, eu já estava dentro dele.
 E não queria mais sair.`
   }
 ];
+
+/* =========================================================
+   🌿 LIVRO SEM RUMO (NÃO EXATAMENTE) — escrito por você
+   Livro separado, tema verde e branco, sem capa por enquanto.
+   ========================================================= */
+const LIVRO_SEM_RUMO = {
+  tituloGeral: "um livro sem rumo (não exatamente)",
+  subtituloGeral: "🌿 escrito por mim, sobre ela 🌿",
+};
+
+const defaultChaptersSemRumo = [
+  {
+    id: 1,
+    num: "Capítulo Um",
+    title: "A única",
+    content:
+`Desde que comecei a escrever, tenho pensado em como os autores famosos tinham tanta criatividade assim. Com certeza eles tinham rumos para cada capítulo, e talvez isso ajudasse muito na hora de escrever. O meu rumo tem sido uma pessoa. Não só na escrita de livros, mas na vida.
+
+Nos livros, era como se eu tivesse ido a um lugar lindo, perfeito, confortável, que me deixasse calmo sempre, e que tinha olhos castanhos escuro, cabelo liso, respirasse. Não era qualquer lugar. Era uma pessoa, especificamente, que poderia ser um lugar pra mim, exclusivamente para mim.
+
+Sempre tive uma mania de falar sobre exclusividade, sobre o pensamento de sempre me referir a ela como um ser único existente. O mundo foi feito dessa forma. Cada pessoa respira, cada pessoa tem personalidades únicas, pensamentos únicos, que podem até ser iguais aos de outras pessoas. Mas esse não é o motivo de eu sempre me referir a ela como um ser único. O motivo, de fato, é que eu endeuso ela, pode ser absurdo para muitas pessoas, mas para mim não.
+
+Ela é única não só na minha vida, mas, com certeza, é única no mundo por ser um ser humano totalmente diferente entre milhões de iguais. Ou melhor, bilhões. Acho uma honra ter uma vida, poder viver, mas uma honra maior ainda é poder dividir uma vida com alguém que é única em tudo.
+
+Eu sempre quis saber se ela consegue entender a grandeza que ela é de fato. E tudo bem se não consegue ver. Às vezes, temos que ser humildes com tudo. Mas, para mim, é motivo de pisar em todo mundo e falar: "Eu sou maravilhosa. Eu sou perfeita. Eu sou gostosa." E tá tudo bem. Isso está certo. Não estou falando nenhuma mentira.
+
+A mudança que ela causou na minha vida é perceptível, seja na forma de agir, seja até na maneira como percebo uma aliança no dedo. E eu não vou generalizar. Eu estaria ofendendo indiretamente a quem eu pertenço, e eu não quero em hipótese alguma fazer isso. Seria um desrespeito que, para mim, seria errado.
+
+Seria errado eu falar para alguém que ela respira igual a outra pessoa. Não. Ela não respira igual a outra. Pode ser pelo verbo "respirar", foi difícil achar este verbo, mas a forma dela respirar é diferente. E é por isso que eu digo que a forma de respirar é única. Não existe isso de alguém ser igual a ela.
+
+E tá tudo bem se você pensar: "Mas, de fato, nem todas as pessoas são iguais." Eu concordaria, em geral. Mas não estou me referindo a ela em geral, porque o nome dela deveria ser uma categoria. Pode estar se perguntando: "Como assim, categoria?" Uma categoria da qual somente uma pessoa poderia ser referência. Botar o nome dela completo, de fato, pode significar somente uma pessoa com aquele nome, mas o motivo de ela ser uma categoria existe porque ela é um ser humano único. E a mudança que esse ser causou na minha vida diz muito sobre isso.
+
+Eu não lembro do dia em que ficava de bobeira na cama antes de acordar. De bobeira como se fosse uma pedra, sem pensar, olhando para o teto. Não me recordo. Mas sei que o atual é muito melhor.
+
+Poder pensar. Querer estar sempre do lado. Querer estar grudado. Essa sempre foi minha vontade, em qualquer momento. Querer saber de tudo também foi uma das coisas. Eu vivo em uma crise na minha cabeça quando acontece de eu não saber de algum dia ou de algo que aconteceu. Não sei como isso surgiu, mas sinto que é uma necessidade. Uma combustão. Parece que eu levo a vida de outro jeito quando sei.
+
+Acho que qualquer homem consciente iria agir assim com ela. Digo isso sendo o mais humilde possível. Não acho que o que faço seja algo espetacular a ponto de me aplaudirem no dia do juízo final e falarem que estou absolvido da justiça divina de qualquer acusação, mesmo tendo cometido um crime em vida. Seria a obrigação de qualquer um.
+
+Mas sempre fui convencido por ela, pelo que ela diz. Não sei como, não sei por quê, mas sempre fui. E é isso que de fato me incendeia. E isto é um sentimento "único".`
+  }
+];
 /* =========================================================
    FIM DA AREA DE EDICAO
    (o resto do arquivo e layout - so mexer se quiser mudar
@@ -2591,7 +4046,7 @@ function updateNewsBadge() {
 }
 
 let chapters = loadChapters();
-let currentView = "toc";
+let currentView = "shelf";
 let editingCh1 = false;
 let currentSpread = 0;
 let totalSpreads = 1;
@@ -2600,6 +4055,17 @@ let fontsReady = false;
 let currentTOCPage = 0;
 const CHAPTERS_PER_TOC_PAGE = 5;
 let bookClosed = true;   /* livro começa fechado, mostrando a capa */
+
+/* qual livro está aberto: null (na estante) | "historia" | "semrumo" */
+let currentBook = null;
+const srChapters = defaultChaptersSemRumo;
+let srSpread = 0;
+let srTotalSpreads = 1;
+
+/* Controle da visualização de favoritos */
+let currentFavBook = "historia";
+let currentFavPage = 0;
+const FAVS_PER_PAGE = 10; // Aumentado para 10 por página como solicitado
 
 function isAuthorMode() {
   const params = new URLSearchParams(window.location.search);
@@ -2804,7 +4270,11 @@ function wrapCharRangeInContainer(containerEl, startChar, endChar, markId) {
 }
 
 function getCurrentChapterId() {
-  if (typeof currentView === "string" && currentView.startsWith("chapter-")) {
+  if (typeof currentView !== "string") return null;
+  if (currentView.startsWith("chapter-")) {
+    return parseInt(currentView.split("-")[1]);
+  }
+  if (currentView.startsWith("semrumo-") && currentView !== "semrumo-toc") {
     return parseInt(currentView.split("-")[1]);
   }
   return null;
@@ -2956,7 +4426,8 @@ function attachHandlerToSpan(span) {
 function markSelectedText() {
   const chId = getCurrentChapterId();
   if (chId == null) return;
-  const ch = chapters.find(c => c.id === chId);
+  const isSemRumo = currentBook === "semrumo";
+  const ch = (isSemRumo ? srChapters : chapters).find(c => c.id === chId);
   if (!ch) return;
 
   const sel = window.getSelection();
@@ -2976,6 +4447,7 @@ function markSelectedText() {
   const pos = getRangeInContainer(range, containerEl);
 
   const duplicate = loadBookmarks().find(b =>
+    b.book === (currentBook || "historia") &&
     b.chapterId === chId &&
     b.text === text &&
     b.contextBefore === pos.contextBefore &&
@@ -2994,6 +4466,7 @@ function markSelectedText() {
   const list = loadBookmarks();
   list.unshift({
     id: markId,
+    book: currentBook || "historia",
     chapterId: ch.id,
     chapterNum: ch.num,
     chapterTitle: ch.title,
@@ -3034,9 +4507,15 @@ function removeMark(id) {
 }
 
 function clearAllMarks() {
-  if (confirm("Tem certeza que quer apagar todos os marcadores? 💔")) {
-    const list = loadBookmarks();
-    list.forEach(b => {
+  const currentB = currentFavBook || "historia";
+  const bookLabel = currentB === "semrumo" ? "deste livro" : "do livro principal";
+  
+  if (confirm(`Tem certeza que quer apagar todos os marcadores ${bookLabel}? 💔`)) {
+    const all = loadBookmarks();
+    const toClear = all.filter(b => b.book === currentB || (currentB === "historia" && !b.book));
+    const toKeep = all.filter(b => b.book !== currentB && !(currentB === "historia" && !b.book));
+
+    toClear.forEach(b => {
       document.querySelectorAll(`span.marked-text[data-mark-id="${CSS.escape(b.id)}"]`).forEach(span => {
         const parent = span.parentNode;
         while (span.firstChild) parent.insertBefore(span.firstChild, span);
@@ -3044,15 +4523,17 @@ function clearAllMarks() {
         parent.normalize();
       });
     });
-    saveBookmarks([]);
-    showToast("💔 Todos os marcadores foram removidos");
+
+    saveBookmarks(toKeep);
+    showToast(`💔 Marcadores ${bookLabel} foram removidos`);
     if (currentView === "favorites") renderFavoritesView();
   }
 }
 
 /* Reaplica os marca-textos salvos nas duas páginas visíveis do capítulo */
 function applySavedHighlights(chapterId) {
-  const marks = loadBookmarks().filter(b => b.chapterId === chapterId);
+  const currentB = currentBook || "historia";
+  const marks = loadBookmarks().filter(b => b.chapterId === chapterId && b.book === currentB);
   const containers = [
     document.querySelector("#pageLeft .chapter-content"),
     document.querySelector("#pageRight .chapter-content")
@@ -3201,7 +4682,14 @@ function blockHTML(type, text, opts) {
   return `<p${cls ? ` class="${cls}"` : ""}>${body}</p>`;
 }
 
-function chapterHeaderHTML(ch) {
+function chapterHeaderHTML(ch, variant) {
+  if (variant === "semrumo") {
+    return `<button class="back-toc" onclick="backToSemRumoTOC()">← Sumário</button>
+    <div class="chapter-header">
+      <div class="ch-num">${ch.num}</div>
+      <h2>${ch.title}</h2>
+    </div>`;
+  }
   const decor = "💕".repeat(5);
   return `<button class="back-toc" onclick="backToTOC()">← Sumário</button>
     <div class="chapter-header">
@@ -3214,7 +4702,7 @@ function chapterHeaderHTML(ch) {
 
 const END_ORNAMENT = '<div class="end-ornament">✦ ✦ ✦ ✦ ✦</div>';
 
-function paginateText(ch) {
+function paginateText(ch, variant) {
   const page = document.getElementById("pageLeft");
   const cs = getComputedStyle(page);
   const width = page.clientWidth - parseFloat(cs.paddingLeft) - parseFloat(cs.paddingRight);
@@ -3222,7 +4710,9 @@ function paginateText(ch) {
 
   const m = document.createElement("div");
   m.style.cssText = `position:absolute;left:-10000px;top:0;width:${width}px;visibility:hidden;pointer-events:none;`;
-  document.body.appendChild(m);
+  /* mede dentro da própria página: assim os estilos de cada tema
+     (ex.: o layout verde do livro sem rumo) entram na medição */
+  page.appendChild(m);
 
   const sides = [];
   let htmlList = [];
@@ -3234,7 +4724,7 @@ function paginateText(ch) {
     return t.firstElementChild;
   };
   const reset = () => {
-    m.innerHTML = (sides.length === 0 ? chapterHeaderHTML(ch) : "") + '<div class="chapter-content"></div>';
+    m.innerHTML = (sides.length === 0 ? chapterHeaderHTML(ch, variant) : "") + '<div class="chapter-content"></div>';
     contentEl = m.lastElementChild;
     htmlList = [];
   };
@@ -3324,17 +4814,18 @@ function paginateText(ch) {
   if (lastIdx % 2 === 1) footerOk = fits(END_ORNAMENT);
   sides.push(htmlList.join(""));
 
-  document.body.removeChild(m);
+  page.removeChild(m);
   return { sides, footerOk, totalSpreads: Math.max(1, Math.ceil(sides.length / 2)) };
 }
 
-function getPagination(ch) {
+function getPagination(ch, variant) {
   const page = document.getElementById("pageLeft");
   const sig = page.clientWidth + "x" + page.clientHeight + "|" + (fontsReady ? 1 : 0);
-  const c = pageCache[ch.id];
+  const key = (variant || "historia") + ":" + ch.id;
+  const c = pageCache[key];
   if (c && c.sig === sig && c.content === ch.content) return c.result;
-  const result = paginateText(ch);
-  pageCache[ch.id] = { sig, content: ch.content, result };
+  const result = paginateText(ch, variant);
+  pageCache[key] = { sig, content: ch.content, result };
   return result;
 }
 
@@ -3401,8 +4892,38 @@ function renderView() {
     r: document.getElementById("rightContent").innerHTML
   } : null;
 
+  /* ESTANTE: só os dois livros, nada do livro aberto */
+  if (currentView === "shelf") {
+    document.body.classList.add("shelf-mode");
+    document.body.classList.remove("cover-mode", "theme-semrumo");
+    document.getElementById("book").classList.remove("closed", "semrumo");
+    document.getElementById("pageIndicator").textContent = "📚 Escolha um livro";
+    updateNavArrows();
+    return;
+  }
+  document.body.classList.remove("shelf-mode");
+
+  const isSemRumo = currentBook === "semrumo";
+  document.getElementById("book").classList.toggle("semrumo", isSemRumo);
+  document.body.classList.toggle("theme-semrumo", isSemRumo);
+  updateBookTitle();
   updateAuthorBadge();
   updateRibbonVisibility();
+
+  /* LIVRO SEM RUMO: abertura própria, sem capa */
+  if (isSemRumo) {
+    document.body.classList.remove("cover-mode");
+    document.getElementById("book").classList.remove("closed");
+    if (currentView === "semrumo-toc") {
+      renderSemRumoTOC();
+    } else {
+      renderSemRumoChapter(parseInt(currentView.replace("semrumo-", "")));
+    }
+    updateNavArrows();
+    animateTurn(snap);
+    return;
+  }
+
   const showingCover = (currentView === "toc" && bookClosed);
   document.getElementById("book").classList.toggle("closed", showingCover);
   document.body.classList.toggle("cover-mode", showingCover);
@@ -3714,10 +5235,159 @@ function backToTOC() {
   playPageFlipSound("prev");
   lastDir = "prev";
   editingCh1 = false;
-  currentView = "toc";
-  currentSpread = 0;
-  totalSpreads = 1;
+  if (currentBook === "semrumo") {
+    currentView = "semrumo-toc";
+    srSpread = 0;
+  } else {
+    currentView = "toc";
+    currentSpread = 0;
+    totalSpreads = 1;
+  }
   renderView();
+}
+
+/* =========================================================
+   🌿 LIVRO SEM RUMO — estante, abertura e capítulos
+   ========================================================= */
+function updateBookTitle() {
+  const h1 = document.getElementById("bookTitleH1");
+  const sub = document.getElementById("bookTitleSub");
+  if (!h1 || !sub) return;
+  if (currentBook === "semrumo") {
+    h1.textContent = LIVRO_SEM_RUMO.tituloGeral;
+    sub.textContent = LIVRO_SEM_RUMO.subtituloGeral;
+  } else {
+    h1.textContent = "O Livro da Nossa História";
+    sub.textContent = "✨ Cada capítulo, um pedaço do nosso amor ✨";
+  }
+}
+
+function showShelf() {
+  currentBook = null;
+  currentView = "shelf";
+  bookClosed = true;
+  lastDir = null;
+  renderView();
+}
+
+function openBook(which) {
+  playPageFlipSound("next");
+  lastDir = null;
+  if (which === "semrumo") {
+    currentBook = "semrumo";
+    currentView = "semrumo-toc";
+    bookClosed = false;
+    srSpread = 0;
+  } else {
+    currentBook = "historia";
+    currentView = "toc";
+    bookClosed = true;
+    currentTOCPage = 0;
+    currentSpread = 0;
+    totalSpreads = 1;
+  }
+  renderView();
+}
+
+function backToSemRumoTOC() {
+  playPageFlipSound("prev");
+  lastDir = "prev";
+  currentView = "semrumo-toc";
+  srSpread = 0;
+  renderView();
+}
+
+function openSemRumoChapter(id) {
+  playPageFlipSound("next");
+  lastDir = "next";
+  currentView = "semrumo-" + id;
+  srSpread = 0;
+  renderView();
+}
+
+function renderSemRumoTOC() {
+  const favCount = loadBookmarks().length;
+  document.getElementById("pageLeftNum").textContent = "";
+  document.getElementById("pageRightNum").textContent = "";
+  document.getElementById("pageIndicator").textContent = "🌿 um livro sem rumo";
+
+  document.getElementById("leftContent").innerHTML = `
+    <div class="sr-open">
+      <div class="sr-kicker">um livro sem rumo</div>
+      <div class="sr-title">(não exatamente)</div>
+      <div class="sr-rule"></div>
+      <div class="sr-quote">
+        "Eu sempre quis saber se ela consegue<br>
+        entender a grandeza que ela é de fato."<br><br>
+        — para a única
+      </div>
+    </div>
+  `;
+
+  document.getElementById("rightContent").innerHTML = `
+    <div>
+      <div style="font-family:'Nunito',sans-serif;font-size:0.75em;letter-spacing:3px;text-transform:uppercase;color:#15803d;font-weight:700;text-align:center;margin-bottom:16px;">Sumário</div>
+      ${srChapters.map(ch => `
+        <div class="sr-entry" onclick="openSemRumoChapter(${ch.id})">
+          <div>
+            <div class="sr-entry-num">${ch.num}</div>
+            <div class="sr-entry-title">${ch.title}</div>
+          </div>
+          <span class="sr-leaf">🌿</span>
+        </div>
+      `).join("")}
+
+      ${favCount > 0 ? `
+      <div class="toc-quick-fav" style="border-color: rgba(21, 128, 61, 0.3); background: linear-gradient(135deg, rgba(34, 197, 94, 0.08), rgba(21, 128, 61, 0.08)); color: #15803d; margin-top: 24px;" onclick="openFavoritesView()">
+        <span class="pulse-dot" style="background: #15803d;"></span>
+        💖 ${favCount} citaç${favCount === 1 ? "ão" : "ões"} marcada${favCount === 1 ? "" : "s"} — ver favoritas
+      </div>` : `
+      <div class="toc-quick-fav" style="border-color: rgba(21, 128, 61, 0.3); background: linear-gradient(135deg, rgba(34, 197, 94, 0.08), rgba(21, 128, 61, 0.08)); color: #15803d; margin-top: 24px;" onclick="openFavoritesView()">
+        💖 Suas citações favoritas aparecem aqui
+      </div>`}
+    </div>
+  `;
+}
+
+function renderSemRumoChapter(id) {
+  const ch = srChapters.find(c => c.id === id);
+  if (!ch) { renderSemRumoTOC(); return; }
+
+  const pag = getPagination(ch, "semrumo");
+  srTotalSpreads = pag.totalSpreads;
+  if (srSpread >= srTotalSpreads) srSpread = srTotalSpreads - 1;
+  if (srSpread < 0) srSpread = 0;
+
+  const leftNo = srSpread * 2 + 1;
+  document.getElementById("pageLeftNum").textContent = leftNo.toString();
+  document.getElementById("pageRightNum").textContent = (leftNo + 1).toString();
+  const spreadLabel = srTotalSpreads > 1 ? ` · pág ${srSpread + 1}/${srTotalSpreads}` : "";
+  document.getElementById("pageIndicator").textContent = `🌿 ${ch.title}${spreadLabel}`;
+
+  const leftSide = pag.sides[srSpread * 2];
+  const rightSide = pag.sides[srSpread * 2 + 1];
+  const isFirst = srSpread === 0;
+  const isLast = srSpread === srTotalSpreads - 1;
+
+  document.getElementById("leftContent").innerHTML =
+    (isFirst ? chapterHeaderHTML(ch, "semrumo") : "") +
+    `<div class="chapter-content">${leftSide || ""}</div>`;
+
+  if (rightSide !== undefined) {
+    document.getElementById("rightContent").innerHTML =
+      `<div class="chapter-content">${rightSide}</div>` +
+      (isLast && pag.footerOk ? '<div class="end-ornament">🌿 ✦ 🌿 ✦ 🌿</div>' : "");
+  } else {
+    document.getElementById("rightContent").innerHTML = `
+      <div style="height:100%; display:flex; flex-direction:column; justify-content:center; align-items:center; text-align:center; opacity:0.9;">
+        <div style="font-family:'Cormorant Garamond',serif; font-style:italic; font-size:1.5em; color:#14532d; line-height:1.6; margin-bottom:18px;">
+          "E isto é um sentimento único."
+        </div>
+        <div style="font-size:2rem; opacity:0.5;">🌿</div>
+        <div class="end-ornament" style="margin-top:20px;">✦ ✦ ✦ ✦ ✦</div>
+      </div>
+    `;
+  }
 }
 
 function renderChapter(id) {
@@ -3903,8 +5573,29 @@ function showToast(msg) {
   }, 3800);
 }
 
+function changeFavBook(book) {
+  currentFavBook = book;
+  currentFavPage = 0;
+  renderFavoritesView();
+}
+
+function changeFavPage(dir) {
+  currentFavPage += dir;
+  renderFavoritesView();
+}
+
 function renderFavoritesView() {
-  const favs = loadBookmarks();
+  const allFavs = loadBookmarks();
+  // Filtra por livro
+  const bookFavs = allFavs.filter(f => f.book === currentFavBook || (currentFavBook === "historia" && !f.book));
+  
+  const totalPages = Math.ceil(bookFavs.length / FAVS_PER_PAGE);
+  if (currentFavPage >= totalPages && totalPages > 0) currentFavPage = totalPages - 1;
+  if (currentFavPage < 0) currentFavPage = 0;
+
+  const startIndex = currentFavPage * FAVS_PER_PAGE;
+  const pageFavs = bookFavs.slice(startIndex, startIndex + FAVS_PER_PAGE);
+
   document.getElementById("pageIndicator").textContent = "💖 Minhas Citações";
   document.getElementById("pageLeftNum").textContent = "";
   document.getElementById("pageRightNum").textContent = "";
@@ -3932,40 +5623,59 @@ function renderFavoritesView() {
     <div class="favorites-header">
       <div class="favorites-title">
         📚 Citações Marcadas
-        <span class="fav-count">${favs.length}</span>
+        <span class="fav-count">${bookFavs.length}</span>
       </div>
-      ${favs.length > 0 ? `<button class="clear-fav" onclick="clearAllMarks()">🗑️ Limpar tudo</button>` : ""}
+      ${bookFavs.length > 0 ? `<button class="clear-fav" onclick="clearAllMarks()">🗑️ Limpar tudo</button>` : ""}
+    </div>
+
+    <div class="fav-tabs">
+      <div class="fav-tab ${currentFavBook === 'historia' ? 'active' : ''}" onclick="changeFavBook('historia')">Livro I</div>
+      <div class="fav-tab ${currentFavBook === 'semrumo' ? 'active' : ''} tab-semrumo" onclick="changeFavBook('semrumo')">Livro II</div>
     </div>
   `;
 
-  if (favs.length === 0) {
+  if (bookFavs.length === 0) {
     right += `
       <div class="fav-empty">
-        <div class="fav-empty-icon">💖📖</div>
+        <div class="fav-empty-icon">${currentFavBook === 'semrumo' ? '🌿📖' : '💖📖'}</div>
         <div class="fav-empty-text">
-          Ainda não há citações marcadas.<br>
-          Passe pelos capítulos do livro e<br>
-          marque os trechos que mais tocarem o seu coração.
+          Ainda não há citações marcadas neste livro.<br>
+          Passe pelos capítulos e marque os trechos que mais tocarem o seu coração.
         </div>
-        <div class="fav-empty-hint">SELECIONE UM TRECHO COM O MOUSE E CLIQUE NO BOTÃO 💖</div>
+        <div class="fav-empty-hint">SELECIONE UM TRECHO E CLIQUE NO BALÃO 💖</div>
       </div>
     `;
   } else {
-    right += `<div style="max-height: 62vh; overflow-y: auto; padding-right: 8px;">`;
-    favs.forEach((f, i) => {
+    // Container com altura fixa para permitir scroll na lista sem empurrar a paginação para fora
+    right += `<div class="fav-list-container">`;
+    right += `<div class="fav-list-scroll">`;
+    pageFavs.forEach((f, i) => {
       const safeText = escapeHtml(f.text);
       const safeId = escapeHtml(f.id);
       const safeNum = escapeHtml(f.chapterNum || "");
       const safeTitle = escapeHtml(f.chapterTitle || "");
+      const isSR = f.book === "semrumo";
+      
       right += `
-        <div class="fav-card" style="animation: fadeInUp 0.4s ease backwards; animation-delay: ${i * 0.06}s;">
+        <div class="fav-card" style="border-left-color: ${isSR ? '#15803d' : '#c9184a'}; animation: fadeInUp 0.4s ease backwards; animation-delay: ${i * 0.06}s;">
           <button class="fav-unmark" title="Remover esta citação" onclick="removeMark(&quot;${safeId}&quot;)">✕</button>
           <div class="fav-card-text">"${safeText.replace(/\n/g, "<br>")}"</div>
-          <div class="fav-card-ref">— ${safeNum} · ${safeTitle}</div>
+          <div class="fav-card-ref" style="color: ${isSR ? '#15803d' : '#c9184a'}">— ${safeNum} · ${safeTitle}</div>
         </div>
       `;
     });
-    right += `</div>`;
+    right += `</div>`; // fim do scrollable list
+
+    if (totalPages > 1) {
+      right += `
+        <div class="fav-pagination" style="flex-shrink: 0; padding-top: 15px; margin-top: auto;">
+          <button class="fav-pag-btn" onclick="changeFavPage(-1)" ${currentFavPage === 0 ? 'disabled' : ''} title="Página anterior">←</button>
+          <div class="fav-pag-info">${currentFavPage + 1} / ${totalPages}</div>
+          <button class="fav-pag-btn" onclick="changeFavPage(1)" ${currentFavPage === totalPages - 1 ? 'disabled' : ''} title="Próxima página">→</button>
+        </div>
+      `;
+    }
+    right += `</div>`; // fim do flex container
   }
 
   document.getElementById("leftContent").innerHTML = left;
@@ -3975,6 +5685,21 @@ function renderFavoritesView() {
 function updateNavArrows() {
   const prev = document.getElementById("prevBtn");
   const next = document.getElementById("nextBtn");
+  if (currentView === "shelf") {
+    prev.disabled = true;
+    next.disabled = true;
+    return;
+  }
+  if (currentBook === "semrumo") {
+    if (currentView === "semrumo-toc") {
+      prev.disabled = true;
+      next.disabled = srChapters.length === 0;
+    } else {
+      prev.disabled = false;
+      next.disabled = srSpread >= srTotalSpreads - 1;
+    }
+    return;
+  }
   if (currentView === "toc" || currentView === "favorites") {
     prev.disabled = true;
     const nextUnlocked = chapters.find(c => c.unlocked || checkUnlocked(c));
@@ -4232,6 +5957,20 @@ function playPageFlipSound(direction) {
 }
 
 function navPrev() {
+  if (currentView === "shelf") return;
+  if (currentBook === "semrumo") {
+    if (currentView === "semrumo-toc") return;
+    lastDir = "prev";
+    playPageFlipSound("prev");
+    if (srSpread > 0) {
+      srSpread--;
+    } else {
+      currentView = "semrumo-toc";
+      srSpread = 0;
+    }
+    renderView();
+    return;
+  }
   if (currentView === "toc") return;
   lastDir = "prev";
   if (currentView === "favorites") {
@@ -4272,6 +6011,25 @@ function navPrev() {
 
 function navNext() {
   lastDir = "next";
+  if (currentView === "shelf") return;
+  if (currentBook === "semrumo") {
+    if (currentView === "semrumo-toc") {
+      const first = srChapters[0];
+      if (first) {
+        playPageFlipSound("next");
+        currentView = "semrumo-" + first.id;
+        srSpread = 0;
+        renderView();
+      }
+      return;
+    }
+    if (srSpread < srTotalSpreads - 1) {
+      playPageFlipSound("next");
+      srSpread++;
+      renderView();
+    }
+    return;
+  }
   if (currentView === "toc" || currentView === "favorites") {
     const first = chapters.find(c => c.unlocked || checkUnlocked(c));
     if (first) {
