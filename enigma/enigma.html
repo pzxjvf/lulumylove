@@ -49,9 +49,9 @@ button{font-family:inherit}
 .candle{width:16px;height:54px;background:#e8dcc0;border:3px solid #000;position:relative;margin-top:26px}
 .candle.lit::after{content:"";position:absolute;top:-30px;left:1px;width:8px;height:18px;background:radial-gradient(#fff,#ffb703);border-radius:50% 50% 50% 50%/60% 60% 40% 40%;box-shadow:0 0 18px #ffb703;animation:flick .5s infinite alternate}
 @keyframes flick{to{transform:scale(1.08,.92)}}
-.moons{display:flex;gap:16px;margin-top:20px}
+.moons{display:flex;gap:16px;margin-top:20px;flex-wrap:wrap;justify-content:center}
 .moonslot{width:90px;height:90px;border:4px solid #000;border-radius:50%;background:#1a1a1a;display:flex;align-items:center;justify-content:center;font-size:3rem;cursor:pointer;box-shadow:inset 0 0 0 3px #333}
-.legend{color:#ccc;font-size:.85rem;margin-top:10px}
+.legend{color:#ccc;font-size:.85rem;margin-top:10px;text-align:center;max-width:90%}
 .dark{position:absolute;inset:0;z-index:50;background:rgba(0,0,0,.99);pointer-events:none}
 .dark.lit{background:radial-gradient(circle at var(--x,50%) var(--y,50%),transparent 0,transparent 45px,rgba(0,0,0,.99) 150px)}
 .uvg{position:absolute;color:#c77dff;font-weight:900;z-index:40;font-size:3.4rem;text-shadow:0 0 14px #7b2cbf,0 0 30px #7b2cbf}
@@ -101,7 +101,7 @@ button{font-family:inherit}
 .cbox{width:220px;height:140px;background:#3a3a3a;border:6px solid #000;display:flex;align-items:center;justify-content:center;font-size:3rem;cursor:pointer;box-shadow:10px 10px 0 rgba(0,0,0,.35)}
 .cipher{font-family:monospace;font-size:1.4rem;color:#c77dff;background:#000;border:3px solid #333;padding:10px 16px;letter-spacing:3px;text-align:center;max-width:90%;word-break:break-word}
 .cipher.dec{color:#7CFC00;margin-top:8px}
-.txt{background:#000;color:#fff;border:3px solid #333;padding:10px 14px;font-size:1.1rem;font-weight:800;text-transform:uppercase;text-align:center;outline:none;width:200px}
+.txt{background:#000;color:#fff;border:3px solid #333;padding:10px 14px;font-size:1.1rem;font-weight:800;text-transform:uppercase;text-align:center;outline:none;width:200px;user-select:text;-webkit-user-select:text}
 .sliding{display:grid;grid-template-columns:repeat(3,90px);grid-template-rows:repeat(3,90px);gap:6px;background:#000;padding:8px;border:6px solid #000;box-shadow:12px 12px 0 rgba(0,0,0,.35)}
 .tile{background:linear-gradient(135deg,#7b2cbf,#4a1a75);color:#fff;font-size:2.2rem;font-weight:800;display:flex;align-items:center;justify-content:center;border:3px solid #000;cursor:pointer}
 .tile.empty{background:#111;cursor:default}
@@ -112,9 +112,27 @@ button{font-family:inherit}
 .card{height:78px;background:#4a2f22;border:4px solid #000;font-size:2.2rem;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:.25s}
 .card.open{background:#e8dcc0;cursor:default}
 .card.match{background:#7CFC00;opacity:.7}
+/* novos capítulos */
+.cell{width:62px;height:62px;background:#222;border:3px solid #000;color:#fff;font-size:1.8rem;font-weight:800;display:flex;align-items:center;justify-content:center;cursor:pointer}
+.cell.fix{background:#4a2f22;color:#ffd166;cursor:default}
+.cgrid{display:grid;gap:4px;background:#000;padding:8px;border:6px solid #000;box-shadow:10px 10px 0 rgba(0,0,0,.35)}
+.cgrid.g4{grid-template-columns:repeat(4,62px)}.cgrid.g3{grid-template-columns:repeat(3,62px)}.cgrid.g5{grid-template-columns:repeat(5,62px)}
+.cell.sepR{border-right-color:#c77dff}.cell.sepB{border-bottom-color:#c77dff}
+.hanoi{display:flex;gap:26px;flex-wrap:wrap;justify-content:center}
+.peg{width:140px;height:150px;border-bottom:8px solid #000;display:flex;flex-direction:column-reverse;align-items:center;cursor:pointer;background:rgba(0,0,0,.25);padding-bottom:2px}
+.peg.sel{box-shadow:0 0 16px #fff}
+.disc{height:24px;margin-top:3px;border:3px solid #000;border-radius:4px}
+.maze{display:grid;grid-template-columns:repeat(7,38px);gap:2px;background:#000;padding:6px;border:6px solid #000}
+.mc{height:38px;background:#000;display:flex;align-items:center;justify-content:center;font-size:1.3rem}
+.mc.w{background:#5d4037}.mc.p{background:#e0c9a6}.mc.e{background:#7CFC00}
+.bank{min-width:150px;min-height:120px;background:rgba(0,0,0,.45);border:4px solid #000;padding:10px;display:flex;flex-direction:column;gap:8px;align-items:center;color:#fff;font-weight:800}
+.river{width:60px;align-self:stretch;background:repeating-linear-gradient(0deg,#1d4e89 0 10px,#2a6cb5 10px 20px);border:3px solid #000}
+.bulb{width:70px;height:90px;background:#222;border:3px solid #444;cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center;font-size:1.8rem;color:#999;font-weight:800;transition:.2s}
+.bulb.on{background:#ffd166;color:#000;border-color:#fff;box-shadow:0 0 22px #ffb703}
+.opt{text-align:left;max-width:min(560px,85vw);margin-top:10px;display:block;width:100%}
 .message-box{position:absolute;bottom:34px;left:50%;transform:translateX(-50%);background:#000;color:#fff;padding:12px 24px;border:3px solid #fff;font-size:1.3rem;z-index:500;opacity:0;transition:.3s;pointer-events:none;font-family:'Dancing Script',cursive;max-width:80vw;text-align:center}
 .message-box.show{opacity:1}
-#modal{position:fixed;inset:0;background:rgba(0,0,0,.8);z-index:900;display:none;align-items:center;justify-content:center;padding:20px}
+#modal{position:fixed;inset:0;background:rgba(0,0,0,.8);z-index:1100;display:none;align-items:center;justify-content:center;padding:20px}
 .modal-box{background:#1a1a1a;border:4px solid #fff;border-radius:10px;padding:22px;color:#fff;max-width:520px;width:100%;max-height:85vh;overflow:auto}
 .modal-box h2{margin:0 0 12px;font-family:'Dancing Script',cursive;font-size:2rem}
 .note-item{padding:8px 0;border-bottom:1px solid #333;font-size:.95rem;line-height:1.45}
@@ -156,7 +174,7 @@ label.hard{color:#ffd166;font-weight:800;font-size:.9rem;cursor:pointer}
 
 <div id="menu">
   <div class="menu-title">O Enigma do Cantinho</div>
-  <div class="menu-sub">Você acordou trancado em uma mansão. Doze cômodos, doze enigmas, uma saída.</div>
+  <div class="menu-sub">Você acordou trancado em uma mansão. Vinte e nove cômodos, vinte e nove enigmas, uma saída.</div>
   <div class="stage-list" id="stageList"></div>
   <div class="menu-foot">
     <a href="../jogos_hub.html" class="pill">← Sair</a>
@@ -196,7 +214,7 @@ label.hard{color:#ffd166;font-weight:800;font-size:.9rem;cursor:pointer}
 </div>
 
 <script>
-const LS_KEY='enigma_cantinho_v4';
+const LS_KEY='enigma_cantinho_v5';
 const DEF=()=>({unlocked:1,frag:{},notes:[],items:[],sec:0,hints:0,errors:0,hard:false});
 function loadProgress(){try{const d=JSON.parse(localStorage.getItem(LS_KEY));if(d&&d.unlocked)return Object.assign(DEF(),d)}catch(e){}return DEF()}
 const S={stage:0,inv:[],sel:null,p:loadProgress(),muted:false,hintIdx:0,busy:false,done:false,kp:null};
@@ -211,6 +229,7 @@ const rnd=(a,b)=>a+Math.floor(Math.random()*(b-a+1));
 function shuffle(a){a=[...a];for(let i=a.length-1;i>0;i--){const j=rnd(0,i);[a[i],a[j]]=[a[j],a[i]]}return a}
 const pickDistinct=(n,lo,hi)=>shuffle(Array.from({length:hi-lo+1},(_,i)=>lo+i)).slice(0,n);
 const fmt=s=>String(Math.floor(s/60)).padStart(2,'0')+':'+String(s%60).padStart(2,'0');
+const norm=s=>s.normalize('NFD').replace(/[\u0300-\u036f]/g,'').trim().toUpperCase();
 
 /* som: efeitos + zumbido ambiente */
 let actx=null,drone=null;
@@ -318,7 +337,7 @@ const clockHTML=(cls,id)=>`<div class="clock hand-drawn ${cls}" id="${id}">${TIC
 function setHands(el,h,m){el.querySelector('.hand.h').style.transform=`rotate(${(h%12)*30+m*.5}deg)`;el.querySelector('.hand.m').style.transform=`rotate(${m*6}deg)`}
 
 /* menu e progresso */
-const ICONS=['🗝️','🌙','🔦','🔐','📚','🪞','🎹','📜','🧩','⚡','🖼️','🚪'];
+const ICONS=['🗝️','🌙','🔦','🔐','📚','🪞','🎹','📜','🧩','⚡','🖼️','🗿','🔢','🏺','🗼','❓','📡','🧭','🔳','🕵️','🎚️','🕯️','✨','🔤','🛶','💡','🗺️','🔌','🚪'];
 function renderMenu(){
   const list=$id('stageList');list.innerHTML='';
   STAGES.forEach((st,i)=>{
@@ -332,8 +351,20 @@ function renderMenu(){
 }
 function openMenu(){S.kp=null;renderMenu();$id('menu').style.display='flex'}
 function setHard(v){S.p.hard=v;saveProgress()}
-function resetProgress(){if(!confirm('Reiniciar todo o progresso?'))return;const h=S.p.hard;S.p=DEF();S.p.hard=h;saveProgress();renderMenu()}
-function replay(){$id('ending').style.display='none';const h=S.p.hard;S.p=DEF();S.p.hard=h;saveProgress();openMenu()}
+/* reinício: usa modal próprio (confirm() falha em iframes) e limpa todo o estado em memória */
+function doReset(){
+  const h=S.p.hard;S.p=DEF();S.p.hard=h;
+  S.inv=[];S.sel=null;S.stage=0;S.done=false;S.kp=null;S.hintIdx=0;selectHook=null;
+  sceneEl.innerHTML='';sceneEl.onpointermove=sceneEl.onpointerdown=null;sceneEl.style.touchAction='';
+  $id('chTitle').textContent='';$id('progT').textContent='';$id('bar').firstChild.style.width='0%';
+  renderInv();saveProgress();openMenu();
+}
+function resetProgress(){
+  openModal('<h2>Reiniciar progresso?</h2><p>Capítulos, tempo, dicas, erros e anotações serão apagados.</p><div style="text-align:center"><button class="btn" id="rsOk">Sim, reiniciar</button></div>',b=>{
+    b.querySelector('#rsOk').onclick=()=>{closeModal();doReset()};
+  });
+}
+function replay(){$id('ending').style.display='none';doReset()}
 
 setInterval(()=>{
   const active=S.stage>0&&$id('menu').style.display==='none'&&$id('ending').style.display!=='flex';
@@ -377,6 +408,17 @@ const doorPad=(title,len,ok,onOk)=>openModal(`<h2>${title}</h2><div id="kp" styl
   if(v===ok){closeModal();onOk();return true}
   S.p.errors++;saveProgress();sfx.bad();return false;
 }));
+
+/* auxiliares dos capítulos novos */
+const win=(n,msg,o)=>{showMsg(msg);completeStage(n,o)};
+function textQuiz(root,pre,items,done){
+  let i=0;
+  root.innerHTML=`<div class="paper">${pre}</div><div class="cipher" id="q" style="margin-top:16px"></div><div class="clock-ctrl"><input class="txt" id="a" maxlength="20" placeholder="resposta" autocomplete="off"><button class="btn" id="ok">Responder</button></div><div class="sub" id="qi"></div>`;
+  const show=()=>{$('#q').innerHTML=items[i][0];$('#qi').textContent=`Pergunta ${i+1} de ${items.length}`;$('#a').value=''};
+  const send=()=>{if(S.done)return;const a=norm($('#a').value);
+    if(items[i][1].includes(a)){sfx.pick();if(++i>=items.length)done();else show()}else fail('Resposta incorreta.')};
+  $('#ok').onclick=send;$('#a').onkeydown=e=>{if(e.key==='Enter')send()};show();
+}
 
 const STAGES=[
 /* 1 */
@@ -542,7 +584,7 @@ const STAGES=[
     const dec=()=>{$('#sv').textContent=s;$('#dec').textContent=caesar(enc,-s)};
     $('#sm').onclick=()=>{s=(s+25)%26;sfx.click();dec()};$('#sp').onclick=()=>{s=(s+1)%26;sfx.click();dec()};
     const send=()=>{
-      const a=$('#ans').value.normalize('NFD').replace(/[\u0300-\u036f]/g,'').trim().toUpperCase();
+      const a=norm($('#ans').value);
       if(['PIANO','UM PIANO','O PIANO'].includes(a)){showMsg('A caixa se abriu.');completeStage(8,{note:'REGRA FINAL: ordene os quatro fragmentos do menor para o maior.'})}else fail('Resposta incorreta.');
     };
     $('#ok').onclick=send;$('#ans').onkeydown=e=>{if(e.key==='Enter')send()};dec();
@@ -569,7 +611,7 @@ const STAGES=[
   };
   draw();
  }},
-/* 10 — NOVA */
+/* 10 */
 {nome:'O Fusível',story:'A energia da mansão caiu. A caixa de fusíveis liga e desliga seus vizinhos.',
  hints:['Clicar num fusível inverte ele e os vizinhos de cima, baixo, esquerda e direita.','Objetivo: apagar todas as luzes.','Resolva linha por linha: apague a de cima usando a linha de baixo.'],
  build(root){
@@ -585,7 +627,7 @@ const STAGES=[
   };
   draw();
  }},
-/* 11 — NOVA */
+/* 11 */
 {nome:'A Galeria',story:'Quadros em duplas, virados para a parede. Só a memória mostra o caminho.',
  hints:['Vire duas cartas por vez e encontre os pares iguais.','Memorize a posição das cartas viradas.','Errar aqui não custa pontos. Tente com calma.'],
  build(root){
@@ -600,27 +642,229 @@ const STAGES=[
       lock=true;const[a,b]=open;open=[];
       if(cards[a]===cards[b]){
         [a,b].forEach(x=>{const e=$$('.card')[x];e.classList.add('match');e.classList.remove('open')});sfx.pick();pairs++;$('#gm').textContent=`Pares: ${pairs} / ${n}`;lock=false;
-        if(pairs===n){showMsg('Os quadros se alinharam.');completeStage(11,{note:'A galeria revelou a porta final.'})}
+        if(pairs===n){showMsg('Os quadros se alinharam.');completeStage(11,{note:'A galeria revelou uma passagem para os andares inferiores.'})}
       }else{await wait(800);[a,b].forEach(x=>{const e=$$('.card')[x];e.classList.remove('open');e.textContent=''});lock=false}
     }
   });
  }},
 /* 12 */
+{nome:'As Estátuas',story:'Três estátuas guardam três portas. Só uma leva adiante, e elas não são confiáveis.',
+ hints:['Teste cada porta e conte quantas frases ficam verdadeiras.','Exatamente UMA frase pode ser verdadeira.','Se a saída fosse a porta 1, duas frases seriam verdadeiras.'],
+ build(root){
+  root.innerHTML=`<div class="paper"><b>Inscrição no pedestal</b><br>Exatamente uma estátua diz a verdade.<br>Estátua A: “A saída é a porta 1.”<br>Estátua B: “A saída não é a porta 1.”<br>Estátua C: “A saída não é a porta 3.”</div>
+    <div class="moons">${[1,2,3].map(n=>`<button class="btn" data-n="${n}">Porta ${n}</button>`).join('')}</div><div class="sub">Qual porta você abre?</div>`;
+  $$('.btn').forEach(b=>b.onclick=()=>{if(S.done)return;sfx.click();if(b.dataset.n==='3')win(12,'A porta 3 se abriu.');else fail('Essa porta não cede.')});
+ }},
+/* 13 */
+{nome:'Os Números',story:'Placas de bronze trazem sequências incompletas. Descubra o padrão.',
+ hints:['Veja a diferença entre números vizinhos.','Algumas sequências somam os dois últimos; outras multiplicam ou usam quadrados.','1,4,9,16 são quadrados perfeitos.'],
+ build(root){
+  const Q=shuffle([['2, 6, 12, 20, 30, ?',['42']],['1, 1, 2, 3, 5, 8, ?',['13']],['3, 6, 12, 24, ?',['48']],['1, 4, 9, 16, ?',['25']],['2, 3, 5, 7, 11, ?',['13']],['1, 2, 4, 7, 11, ?',['16']],['1, 3, 7, 15, ?',['31']]]).slice(0,S.p.hard?4:3);
+  textQuiz(root,'<b>Placas de bronze</b><br>Qual número vem a seguir?',Q,()=>win(13,'As placas se encaixaram.'));
+ }},
+/* 14 */
+{nome:'Os Jarros',story:'Dois jarros e uma fonte. O guardião exige uma medida exata.',
+ hints:['Você só pode encher, esvaziar ou verter um jarro no outro.','Encha o de 5L e verta no de 3L: sobram 2L.','Esvazie o de 3L, passe os 2L para ele, encha o de 5L e complete o de 3L.'],
+ build(root){
+  let a=0,b=0;
+  const acts={'Encher 3L':()=>a=3,'Encher 5L':()=>b=5,'Esvaziar 3L':()=>a=0,'Esvaziar 5L':()=>b=0,'Verter 3L → 5L':()=>{const t=Math.min(a,5-b);a-=t;b+=t},'Verter 5L → 3L':()=>{const t=Math.min(b,3-a);b-=t;a+=t}};
+  root.innerHTML=`<div class="paper"><b>Desafio</b><br>Deixe exatamente 4 litros no jarro de 5L.</div><div class="cipher" id="js" style="margin-top:16px"></div>
+    <div class="moons">${Object.keys(acts).map(k=>`<button class="btn" data-k="${k}">${k}</button>`).join('')}</div>`;
+  const draw=()=>$('#js').textContent=`Jarro 3L: ${a}/3   ·   Jarro 5L: ${b}/5`;draw();
+  $$('.btn').forEach(x=>x.onclick=()=>{if(S.done)return;sfx.click();acts[x.dataset.k]();draw();if(b===4)win(14,'Medida exata. O guardião se curvou.')});
+ }},
+/* 15 */
+{nome:'A Torre',story:'Três pedestais e três discos de pedra. Mova a torre para o pedestal da direita.',
+ hints:['Clique num pedestal para escolher o disco do topo e clique em outro para soltar.','Um disco maior nunca pode ficar sobre um menor.','São necessários no mínimo 7 movimentos. Comece movendo o menor disco para a direita.'],
+ build(root){
+  let p=[[3,2,1],[],[]],sel=-1,mv=0;const cols=['','#fcbf49','#3a86ff','#c1121f'];
+  root.innerHTML=`<div class="hanoi" id="hn"></div><div class="sub" id="hm">Movimentos: 0</div>`;
+  const draw=()=>{
+    $('#hn').innerHTML=p.map((s,i)=>`<div class="peg ${sel===i?'sel':''}" data-i="${i}">${s.map(d=>`<div class="disc" style="width:${40+d*26}px;background:${cols[d]}"></div>`).join('')}</div>`).join('');
+    $$('.peg').forEach(g=>g.onclick=()=>{
+      if(S.done)return;const i=+g.dataset.i;sfx.click();
+      if(sel<0){if(p[i].length)sel=i}
+      else{
+        if(sel!==i){const d=p[sel][p[sel].length-1],t=p[i][p[i].length-1];
+          if(t&&t<d)fail('Um disco maior não pode ficar sobre um menor.');
+          else{p[sel].pop();p[i].push(d);mv++;$('#hm').textContent='Movimentos: '+mv}}
+        sel=-1;
+      }
+      draw();if(p[2].length===3)win(15,'A torre foi movida.');
+    });
+  };draw();
+ }},
+/* 16 */
+{nome:'As Charadas',story:'Três vozes sussurram nas paredes. Cada uma faz uma pergunta.',
+ hints:['Pense em coisas do dia a dia.','Primeira: algo que se cava. Segunda: algo que representa lugares.','Terceira: algo que se usa depois do banho.'],
+ build(root){
+  textQuiz(root,'<b>Sussurros</b><br>Responda com uma palavra.',[
+   ['Quanto mais você tira de mim, maior eu fico. O que sou?',['BURACO','UM BURACO','O BURACO']],
+   ['Tenho cidades, mas não tenho casas. Tenho rios, mas não tenho água. O que sou?',['MAPA','UM MAPA','O MAPA']],
+   ['Quanto mais seca, mais molhada fica. O que é?',['TOALHA','A TOALHA','UMA TOALHA']]],()=>win(16,'As vozes se calaram.'));
+ }},
+/* 17 */
+{nome:'O Telégrafo',story:'Um telégrafo antigo bate pontos e traços. Alguém tenta falar com você.',
+ hints:['Cada letra é separada por um espaço.','Use a tabela. Ponto é . e traço é -','Comece pelas letras curtas: E é só um ponto, T é só um traço.'],
+ build(root){
+  const T='A.-,B-...,C-.-.,D-..,E.,F..-.,G--.,H....,I..,J.---,K-.-,L.-..,M--,N-.,O---,P.--.,Q--.-,R.-.,S...,T-,U..-,V...-,W.--,X-..-,Y-.--,Z--..'.split(',');
+  const M={};T.forEach(x=>M[x[0]]=x.slice(1));
+  const W=shuffle(['LUZ','CHAVE','PORTA','SOMBRA','VELA','RELOGIO']).slice(0,S.p.hard?4:3);
+  textQuiz(root,'<b>Tabela</b><div style="font-size:.75rem;font-weight:700;letter-spacing:1px">'+T.map(x=>x[0]+' '+x.slice(1)).join(' · ')+'</div>',W.map(w=>[[...w].map(c=>M[c]).join('&nbsp;&nbsp;&nbsp;'),[w]]),()=>win(17,'A mensagem foi entendida.'));
+ }},
+/* 18 */
+{nome:'O Labirinto',story:'Um subsolo sem luz. Você só enxerga o que está ao seu redor.',
+ hints:['Use as setas do teclado ou os botões.','As áreas que você já viu continuam visíveis.','A saída verde fica no canto superior direito.'],
+ build(root){
+  const M=['#######','#S..#E#','#.#.#.#','#.#...#','#.###.#','#.....#','#######'];
+  let py=1,px=1;const seen=new Set();
+  root.innerHTML=`<div class="maze hand-drawn" id="mz"></div><div class="clock-ctrl"><button class="btn sm" data-d="L">◀</button><button class="btn sm" data-d="U">▲</button><button class="btn sm" data-d="D">▼</button><button class="btn sm" data-d="R">▶</button></div><div class="sub">Você só vê ao redor.</div>`;
+  const reveal=()=>{for(let a=-1;a<=1;a++)for(let b=-1;b<=1;b++)seen.add((py+a)+','+(px+b))};
+  const draw=()=>{reveal();$('#mz').innerHTML=M.map((r,y)=>[...r].map((c,x)=>{
+    if(!seen.has(y+','+x))return'<div class="mc"></div>';
+    if(y===py&&x===px)return'<div class="mc p">🧍</div>';
+    return`<div class="mc ${c==='#'?'w':c==='E'?'e':'p'}"></div>`}).join('')).join('')};
+  const mv=(dy,dx)=>{
+    if(S.done)return;const ny=py+dy,nx=px+dx;
+    if(M[ny][nx]==='#'){tone(120,.1,'square',.06);return}
+    py=ny;px=nx;tone(300,.05,'square',.04);draw();
+    if(M[py][px]==='E')win(18,'Você achou a saída do labirinto.');
+  };
+  const D={L:[0,-1],R:[0,1],U:[-1,0],D:[1,0]};
+  $$('.btn[data-d]').forEach(b=>b.onclick=()=>mv(...D[b.dataset.d]));
+  S.kp=k=>{const m={ArrowLeft:'L',ArrowRight:'R',ArrowUp:'U',ArrowDown:'D'}[k];if(m)mv(...D[m])};
+  draw();
+ }},
+/* 19 */
+{nome:'O Sudoku',story:'Quatro por quatro. Um mosaico de azulejos precisa ficar equilibrado.',
+ hints:['Clique numa casa vazia para trocar o número de 1 a 4.','Cada linha, coluna e quadrado 2×2 tem 1, 2, 3 e 4, sem repetir.','Comece pela linha 1: faltam 2 e 3, e a coluna decide onde cada um vai.'],
+ build(root){
+  const G=[[1,0,3,4],[0,4,1,0],[0,1,4,0],[4,0,0,1]],v=G.map(r=>[...r]);
+  root.innerHTML=`<div class="cgrid g4 hand-drawn" id="sg"></div><div class="sub">Linhas, colunas e quadrados 2×2: 1 a 4 sem repetir.</div>`;
+  const ok=()=>{const s=a=>[...new Set(a)].length===4&&a.every(x=>x>0);
+    for(let i=0;i<4;i++){if(!s(v[i])||!s(v.map(r=>r[i])))return false}
+    for(let a=0;a<4;a+=2)for(let b=0;b<4;b+=2)if(!s([v[a][b],v[a][b+1],v[a+1][b],v[a+1][b+1]]))return false;return true};
+  const draw=()=>{
+    $('#sg').innerHTML=v.map((r,y)=>r.map((c,x)=>`<div class="cell ${G[y][x]?'fix':''} ${x===1?'sepR':''} ${y===1?'sepB':''}" data-y="${y}" data-x="${x}">${c||''}</div>`).join('')).join('');
+    $$('.cell').forEach(e=>e.onclick=()=>{const y=+e.dataset.y,x=+e.dataset.x;if(S.done||G[y][x])return;sfx.click();v[y][x]=(v[y][x]+1)%5;draw();if(ok())win(19,'O mosaico se completou.')});
+  };draw();
+ }},
+/* 20 */
+{nome:'O Culpado',story:'Alguém roubou o relógio do salão. Quatro suspeitos, e só um fala a verdade.',
+ hints:['Teste cada suspeito como culpado e conte as frases verdadeiras.','Exatamente UMA frase é verdadeira.','Lembre: se Bruno é culpado, a frase dele é falsa, mas “Bruno mente” (Carla) é verdadeira.'],
+ build(root){
+  root.innerHTML=`<div class="paper"><b>Depoimentos</b><br>Exatamente um suspeito diz a verdade. Só um é culpado.<br>Ana: “Foi o Bruno.”<br>Bruno: “Foi a Carla.”<br>Carla: “O Bruno está mentindo.”<br>Davi: “Não fui eu.”</div>
+    <div class="moons">${['Ana','Bruno','Carla','Davi'].map(n=>`<button class="btn" data-n="${n}">${n}</button>`).join('')}</div><div class="sub">Quem é o culpado?</div>`;
+  $$('.btn').forEach(b=>b.onclick=()=>{if(S.done)return;sfx.click();if(b.dataset.n==='Davi')win(20,'Davi confessou.');else fail('Isso gera frases verdadeiras demais.')});
+ }},
+/* 21 */
+{nome:'O Cadeado',story:'Um cadeado de três dígitos e um bilhete rasgado com pistas.',
+ hints:['Chame os dígitos de a, b e c.','Se a = 2b e c = b, então a + b + c = 4b.','4b = 12, logo b = 3.'],
+ build(root){
+  root.innerHTML=`<div class="paper"><b>Bilhete</b><br>1. O primeiro dígito é o dobro do segundo.<br>2. O terceiro é igual ao segundo.<br>3. A soma dos três é 12.</div><div id="kp" style="margin-top:16px"></div>`;
+  mountKeypad($('#kp'),3,v=>{if(v==='633'){win(21,'O cadeado abriu.');return true}S.p.errors++;saveProgress();sfx.bad();return false});
+ }},
+/* 22 */
+{nome:'Os Palitos',story:'Um velho joga contra você. Ele nunca perdeu uma partida.',
+ hints:['Quem pega o último palito perde.','Deixe sempre um número que sobra 1 quando dividido por 4: 21, 17, 13, 9, 5, 1.','Comece pegando 1 palito. Depois, some sempre 4 com a jogada dele.'],
+ build(root){
+  let n=22,busy=false;
+  root.innerHTML=`<div class="paper"><b>Regras</b><br>Há 22 palitos. Cada um pega 1, 2 ou 3 por vez. Você começa. Quem pegar o último perde.</div><div class="cipher" id="st" style="margin-top:16px"></div>
+    <div class="moons">${[1,2,3].map(t=>`<button class="btn" data-t="${t}">Pegar ${t}</button>`).join('')}</div><div class="sub" id="sm"></div>`;
+  const draw=()=>$('#st').textContent=n>0?'| '.repeat(n)+`  (${n})`:'—';draw();
+  $$('.btn').forEach(b=>b.onclick=async()=>{
+    if(S.done||busy)return;const t=+b.dataset.t;if(t>n)return;sfx.click();n-=t;draw();
+    if(n===0){fail('Você pegou o último palito. Recomeçando.');n=22;await wait(800);draw();return}
+    busy=true;await wait(700);
+    let m=[1,2,3].find(x=>x<=n&&(n-x)%4===1)||rnd(1,Math.min(3,n));n-=m;draw();$('#sm').textContent=`O velho pegou ${m}.`;
+    if(n===0){win(22,'O velho pegou o último. Você venceu!');return}
+    busy=false;
+  });
+ }},
+/* 23 */
+{nome:'O Quadrado',story:'Um quadrado mágico com buracos. Todas as somas devem se igualar.',
+ hints:['Clique nas casas vazias para trocar o número de 1 a 9.','Linhas, colunas e as duas diagonais somam 15, sem repetir números.','Comece pela linha de cima: 2 + ? + 6 = 15.'],
+ build(root){
+  const G=[[2,0,6],[0,5,0],[4,0,8]],v=G.map(r=>[...r]);
+  root.innerHTML=`<div class="cgrid g3 hand-drawn" id="mg"></div><div class="sub">Todas as linhas, colunas e diagonais somam 15. Sem repetir.</div>`;
+  const sum=a=>a.reduce((x,y)=>x+y,0);
+  const ok=()=>{const f=v.flat();if(f.includes(0)||new Set(f).size!==9)return false;
+    return[0,1,2].every(i=>sum(v[i])===15&&sum(v.map(r=>r[i]))===15)&&v[0][0]+v[1][1]+v[2][2]===15&&v[0][2]+v[1][1]+v[2][0]===15};
+  const draw=()=>{
+    $('#mg').innerHTML=v.map((r,y)=>r.map((c,x)=>`<div class="cell ${G[y][x]?'fix':''}" data-y="${y}" data-x="${x}">${c||''}</div>`).join('')).join('');
+    $$('.cell').forEach(e=>e.onclick=()=>{const y=+e.dataset.y,x=+e.dataset.x;if(S.done||G[y][x])return;sfx.click();v[y][x]=(v[y][x]+1)%10;draw();if(ok())win(23,'O quadrado se equilibrou.')});
+  };draw();
+ }},
+/* 24 */
+{nome:'Os Números Secretos',story:'Inscrições numéricas em um velho diário. Cada número esconde uma letra.',
+ hints:['A = 1, B = 2, C = 3 e assim por diante.','Z = 26. Traduza número por número.','13 é M, 1 é A, 14 é N...'],
+ build(root){
+  textQuiz(root,'<b>Diário</b><br>A=1, B=2, C=3 … Z=26. Escreva a palavra.',[
+   ['13 - 1 - 14 - 19 - 1 - 15',['MANSAO','A MANSAO']],
+   ['3 - 8 - 1 - 22 - 5',['CHAVE','A CHAVE']],
+   ['19 - 1 - 9 - 4 - 1',['SAIDA','A SAIDA']]],()=>win(24,'O diário foi decifrado.'));
+ }},
+/* 25 */
+{nome:'A Travessia',story:'Um barqueiro, um lobo, uma cabra e um repolho. A margem oposta é a única saída.',
+ hints:['O barco leva você e, no máximo, mais um item.','O lobo come a cabra e a cabra come o repolho se ficarem sozinhos.','Leve a cabra primeiro. Depois volte e traga o lobo, mas traga a cabra de volta.'],
+ build(root){
+  const N=['🧑‍🌾 Barqueiro','🐺 Lobo','🐐 Cabra','🥬 Repolho'];let side=[0,0,0,0];
+  root.innerHTML=`<div class="clocks"><div class="bank" id="b0"></div><div class="river"></div><div class="bank" id="b1"></div></div><div class="clock-ctrl"><button class="btn" id="alone">Atravessar sozinho</button></div><div class="sub">Clique num item da margem do barqueiro para levá-lo.</div>`;
+  const draw=()=>{[0,1].forEach(s=>$('#b'+s).innerHTML=`<div>${s?'Margem direita':'Margem esquerda'}</div>`+N.map((n,i)=>side[i]===s?`<button class="btn sm" data-i="${i}" ${i&&side[i]===side[0]?'':'disabled'}>${n}</button>`:'').join(''));
+    $$('.bank .btn').forEach(b=>b.onclick=()=>go(+b.dataset.i))};
+  const go=i=>{
+    if(S.done)return;sfx.click();const from=side[0];side[0]^=1;if(i)side[i]^=1;
+    const [,L,C,R]=side;
+    if((L===C&&L!==side[0])||(C===R&&C!==side[0])){draw();fail('Algo foi devorado. Recomeçando.');side=[0,0,0,0];setTimeout(draw,600);return}
+    draw();if(side.every(x=>x===1))win(25,'Todos atravessaram.');
+  };
+  $('#alone').onclick=()=>go(0);draw();
+ }},
+/* 26 */
+{nome:'O Binário',story:'Cinco lâmpadas valem 16, 8, 4, 2 e 1. Acenda o número que o painel exige.',
+ hints:['Cada lâmpada acesa soma o seu valor.','Os valores são potências de 2: 16, 8, 4, 2, 1.','Comece pela maior lâmpada que cabe no alvo e vá descendo.'],
+ build(root){
+  const T=rnd(11,30),V=[16,8,4,2,1],on=[0,0,0,0,0];
+  root.innerHTML=`<div class="cipher">ALVO: ${T}</div><div class="moons">${V.map((v,i)=>`<div class="bulb" data-i="${i}"><span>💡</span><span>${v}</span></div>`).join('')}</div><div class="clock-ctrl"><button class="btn" id="ok">Confirmar</button></div>`;
+  $$('.bulb').forEach(b=>b.onclick=()=>{if(S.done)return;sfx.click();const i=+b.dataset.i;on[i]^=1;b.classList.toggle('on',!!on[i])});
+  $('#ok').onclick=()=>{if(S.done)return;if(on.reduce((s,x,i)=>s+x*V[i],0)===T)win(26,'O painel aceitou o número.');else fail('Valor incorreto.')};
+ }},
+/* 27 */
+{nome:'O Mapa',story:'Um mapa do tesouro com instruções em passos. Clique onde o tesouro está.',
+ hints:['Norte é para cima, Sul para baixo, Leste para a direita, Oeste para a esquerda.','Comece em S, no canto inferior esquerdo, e siga cada passo.','Cada passo move uma casa. Conte devagar, uma instrução por vez.'],
+ build(root){
+  root.innerHTML=`<div class="paper"><b>Instruções</b><br>Comece em S. Ande 3 casas ao Norte, 4 ao Leste, 2 ao Sul e 1 ao Oeste. O tesouro está onde você parar.</div><div class="cgrid g5 hand-drawn" id="mp" style="margin-top:16px"></div>`;
+  $('#mp').innerHTML=Array.from({length:25},(_,i)=>`<div class="cell" data-y="${Math.floor(i/5)}" data-x="${i%5}">${i===20?'S':''}</div>`).join('');
+  $$('.cell').forEach(c=>c.onclick=()=>{if(S.done)return;sfx.click();if(+c.dataset.y===3&&+c.dataset.x===3){c.textContent='💰';win(27,'Você encontrou o tesouro.')}else fail('Nada aqui.')});
+ }},
+/* 28 */
+{nome:'Os Interruptores',story:'Três interruptores aqui fora e uma lâmpada incandescente numa sala fechada.',
+ hints:['Você só pode entrar na sala uma única vez.','Lâmpadas incandescentes esquentam quando ficam acesas.','Use o calor como segunda informação além da luz.'],
+ build(root){
+  const O=shuffle([
+   ['Ligar o 1 por alguns minutos, desligar, ligar o 2 e entrar. Acesa = 2, apagada e quente = 1, apagada e fria = 3.',1],
+   ['Ligar os três ao mesmo tempo e entrar para ver qual deles controla a lâmpada.',0],
+   ['Ligar só o 1 e entrar: se acender é o 1, senão é o 2 ou o 3.',0],
+   ['Ligar o 1 e o 2 juntos por alguns minutos e entrar.',0]]);
+  root.innerHTML=`<div class="paper"><b>Enigma</b><br>Qual plano garante descobrir qual interruptor controla a lâmpada?</div><div style="margin-top:12px">${O.map((o,i)=>`<button class="btn opt" data-i="${i}">${o[0]}</button>`).join('')}</div>`;
+  $$('.opt').forEach(b=>b.onclick=()=>{if(S.done)return;sfx.click();if(O[+b.dataset.i][1])win(28,'Perfeito. O calor revelou a resposta.');else fail('Esse plano não garante a resposta.')});
+ }},
+/* 29 */
 {nome:'A Saída',story:'Só resta uma porta. A mansão guardou a resposta em fragmentos.',
  hints:['Leia o Caderno: há quatro fragmentos e uma regra final.','Os fragmentos são: Lua, Livros, Tempo e Painel.','Ordene os números do menor para o maior.'],
  build(root){
   const code=[2,5,6,9].map(n=>S.p.frag[n]).filter(v=>v!=null).sort((a,b)=>a-b).join('');
   root.innerHTML=`<div id="kp"></div><div class="sub">A última porta tem uma fechadura de 4 dígitos.<br>Consulte o Caderno.</div>`;
   mountKeypad($('#kp'),4,v=>{
-    if(code.length===4&&v===code){showMsg('A porta principal se abriu...');completeStage(12);return true}
+    if(code.length===4&&v===code){showMsg('A porta principal se abriu...');completeStage(29);return true}
     S.p.errors++;saveProgress();sfx.bad();showMsg('A fechadura não cede.');return false;
   });
  }}
 ];
 
 function finish(){
-  const pts=Math.max(0,4000-S.p.sec*2-S.p.hints*100-S.p.errors*15+(S.p.hard?500:0));
-  const rank=pts>=3200?'S':pts>=2400?'A':pts>=1400?'B':'C';
+  const pts=Math.max(0,8000-S.p.sec*2-S.p.hints*100-S.p.errors*15+(S.p.hard?500:0));
+  const rank=pts>=6400?'S':pts>=4800?'A':pts>=2800?'B':'C';
   $id('endText').textContent='As portas da mansão se abriram. O Enigma do Cantinho foi resolvido.'+(S.p.hard?' E no Modo Difícil!':'');
   $id('endRank').textContent=rank;
   $id('endStats').textContent=`Tempo ${fmt(S.p.sec)} · Dicas ${S.p.hints} · Erros ${S.p.errors} · ${pts} pontos`;
