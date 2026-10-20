@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Nossos Jogos 💜</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;800;900&family=Dancing+Script:wght@700&display=swap" rel="stylesheet">
+<style>
+    body {
+        margin: 0;
+        background: linear-gradient(135deg, #ff0055, #4a00e0);
+        font-family: "Nunito", sans-serif;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        min-height: 100vh;
+        color: #fff;
+        overflow-x: hidden;
+        position: relative;
+        animation: fadeIn 0.8s ease-in-out;
+    }
+
+    .container {
+        text-align: center;
+        z-index: 10;
+        padding: 20px;
+    }
+
+    h1 {
+        font-weight: 900;
+        font-size: clamp(2rem, 5vw, 3rem);
+        margin-bottom: 40px;
+        text-shadow: 0 4px 15px rgba(0,0,0,0.3);
+        letter-spacing: 1px;
+    }
+
+    .game-cards {
+        display: flex;
+        gap: 30px;
+        justify-content: center;
+        flex-wrap: wrap;
+        max-width: 1000px;
+    }
+
+    .game-card {
+        width: 280px;
+        background: rgba(255, 255, 255, 0.15);
+        backdrop-filter: blur(15px);
+        border-radius: 30px;
+        border: 2px solid rgba(255, 255, 255, 0.3);
+        padding: 30px;
+        cursor: pointer;
+        transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        text-decoration: none;
+        color: inherit;
+    }
+
+    .game-card:hover {
+        transform: translateY(-10px) scale(1.05);
+        background: rgba(255, 255, 255, 0.25);
+        box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+        border-color: #fff;
+    }
+
+    .game-icon {
+        font-size: 4.5rem;
+        margin-bottom: 20px;
+        filter: drop-shadow(0 5px 10px rgba(0,0,0,0.2));
+    }
+
+    .game-title {
+        font-size: 1.6rem;
+        font-weight: 800;
+        margin-bottom: 10px;
+    }
+
+    .game-desc {
+        font-size: 0.95rem;
+        opacity: 0.9;
+        line-height: 1.4;
+    }
+
+    .back-btn {
+        position: fixed;
+        top: 25px;
+        left: 25px;
+        background: rgba(255, 255, 255, 0.15);
+        border: 1.5px solid rgba(255, 255, 255, 0.3);
+        color: white;
+        padding: 10px 20px;
+        border-radius: 25px;
+        text-decoration: none;
+        font-weight: 700;
+        transition: 0.3s;
+        backdrop-filter: blur(5px);
+        z-index: 100;
+    }
+
+    .back-btn:hover {
+        background: rgba(255, 255, 255, 0.3);
+        transform: translateX(-5px);
+    }
+
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(20px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+
+    @media (max-width: 650px) {
+        .game-card { width: 85vw; }
+    }
+</style>
+</head>
+<body>
+
+    <a href="menu.html" class="back-btn">← Voltar ao Menu</a>
+
+    <div class="container">
+        <h1>🎮 Escolha sua Aventura 💜</h1>
+
+        <div class="game-cards">
+            <a href="jogo/jogo.html" class="game-card">
+                <div class="game-icon">🏃‍♀️</div>
+                <div class="game-title">Jogo da Lulu</div>
+                <div class="game-desc">Ajude a Lulu a coletar corações e mimos neste desafio de reflexos!</div>
+            </a>
+
+            <a href="enigma/enigma.html" class="game-card">
+                <div class="game-icon">🕵️‍♂️</div>
+                <div class="game-title">Enigma do Cantinho</div>
+                <div class="game-desc">Desafie sua mente com mistérios estilo escape room em 5 fases únicas.</div>
+            </a>
+        </div>
+    </div>
+
+</body>
+</html>

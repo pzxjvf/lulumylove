@@ -1,0 +1,633 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>O Enigma do Cantinho — Rusty Edition 🕵️‍♂️</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;800&family=Dancing+Script:wght@700&display=swap" rel="stylesheet">
+<style>
+:root{--wall:#3e4a3d;--purple:#7b2cbf;--paper:#e0c9a6}
+*{box-sizing:border-box}
+html,body{margin:0;width:100%;height:100%;background:#0a0a0a;font-family:'Nunito',sans-serif;overflow:hidden;user-select:none;-webkit-user-select:none}
+button{font-family:inherit}
+#game{position:fixed;inset:0;background:var(--wall);border:14px solid #000;overflow:hidden}
+.wallpaper{position:absolute;inset:0;opacity:.3;pointer-events:none;background-image:url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M30 0c15 0 30 15 30 30S45 60 30 60 0 45 0 30 15 0 30 0zm0 10c-10 0-20 10-20 20s10 20 20 20 20-10 20-20-10-20-20-20z' fill='%23000' fill-opacity='0.2' fill-rule='evenodd'/%3E%3C/svg%3E")}
+.vignette{position:absolute;inset:0;background:radial-gradient(circle,transparent 25%,rgba(0,0,0,.55) 70%,rgba(0,0,0,.9) 100%);pointer-events:none;z-index:100}
+.hand-drawn{filter:url(#rough-edge)}
+#scene{position:absolute;inset:0;padding:70px 120px 20px 20px;display:flex;flex-direction:column;align-items:center;justify-content:center}
+#scene.shake{animation:shake .4s}
+@keyframes shake{25%{transform:translateX(-9px)}75%{transform:translateX(9px)}}
+.title{position:absolute;top:50px;left:0;right:110px;text-align:center;color:rgba(255,255,255,.45);font-family:'Dancing Script',cursive;font-size:clamp(1.5rem,3.6vw,2.6rem);letter-spacing:2px;pointer-events:none;z-index:60}
+.sub{margin-top:18px;color:#fff;font-family:'Dancing Script',cursive;font-size:clamp(1.1rem,2.2vw,1.6rem);text-align:center;max-width:85%}
+.paper{background:var(--paper);color:#000;border:3px solid #000;padding:12px 18px;font-weight:800;font-size:.95rem;line-height:1.5;box-shadow:6px 6px 0 rgba(0,0,0,.35);transform:rotate(-1deg);max-width:min(520px,80vw)}
+.paper b{font-family:'Dancing Script',cursive;font-size:1.3rem}
+.topbar{position:absolute;top:14px;left:14px;right:14px;display:flex;gap:10px;z-index:400;align-items:center;flex-wrap:wrap}
+.pill{color:#fff;text-decoration:none;font-weight:800;border:2px solid #fff;padding:8px 16px;border-radius:30px;background:rgba(0,0,0,.5);cursor:pointer;font-size:.9rem;transition:.25s}
+.pill:hover{background:#fff;color:#000}
+.spacer{flex:1}
+#timer,#prog{color:#fff;font-weight:800;font-family:monospace;background:rgba(0,0,0,.5);padding:6px 12px;border-radius:20px;border:2px solid #555}
+#prog{display:flex;align-items:center;gap:8px}
+#bar{width:90px;height:8px;background:#222;border-radius:4px;overflow:hidden}
+#bar i{display:block;height:100%;background:linear-gradient(90deg,#7b2cbf,#c77dff);transition:width .6s}
+.inventory{position:absolute;right:16px;top:50%;transform:translateY(-50%);width:88px;background:rgba(0,0,0,.85);border:4px solid #000;border-radius:10px;display:flex;flex-direction:column;padding:12px 10px;gap:10px;z-index:200;max-height:80vh;overflow:auto}
+.inv-slot{width:62px;height:62px;flex:none;background:#222;border:3px solid #444;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:1.9rem;cursor:pointer;transition:.2s}
+.inv-slot.active{border-color:#fff;background:#333;box-shadow:0 0 15px rgba(255,255,255,.35)}
+.room{position:relative;width:min(860px,calc(100vw - 180px));height:min(500px,62vh)}
+.object,.interactive{cursor:pointer;transition:transform .2s,filter .2s}
+.object:hover,.interactive:hover{filter:brightness(1.2)}
+.cabinet{position:absolute;width:300px;height:380px;background:#5d4037;bottom:0;left:6%;box-shadow:14px 14px 0 rgba(0,0,0,.3);border:5px solid #000;max-height:100%}
+.drawer{width:250px;height:88px;background:#3e2723;border:5px solid #000;position:absolute;left:50%;transform:translateX(-50%);box-shadow:inset 5px 5px 0 rgba(0,0,0,.2)}
+.drawer-handle{width:50px;height:15px;background:#1a1a1a;position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);border-radius:8px;border:2px solid #333}
+.vase{position:absolute;width:86px;height:130px;background:linear-gradient(#2d5a4c,#1e3a32);bottom:380px;left:calc(6% + 105px);border-radius:15px 15px 50px 50px;border:4px solid #000;z-index:10;transition:transform .6s}
+.vase.moved{transform:translate(70px,-6px) rotate(14deg)}
+.key{position:absolute;left:calc(6% + 112px);bottom:382px;font-size:2.4rem;display:none;z-index:5;animation:bob 1.4s infinite;cursor:pointer}
+@keyframes bob{50%{transform:translateY(-6px)}}
+.rug{position:absolute;left:48%;bottom:0;width:230px;height:60px;background:repeating-linear-gradient(90deg,#7a1f2b 0 20px,#a63446 20px 40px);border:4px solid #000;border-radius:6px}
+.door{position:absolute;right:2%;bottom:0;width:150px;height:300px;background:#2b1a12;border:6px solid #000}
+.knob{position:absolute;left:14px;top:50%;width:18px;height:18px;border-radius:50%;background:#c9a227;border:3px solid #000}
+.candles{position:absolute;left:44%;top:30px;display:flex;gap:16px;padding:8px 14px;background:#4a2f22;border:4px solid #000;align-items:flex-end}
+.candle{width:16px;height:54px;background:#e8dcc0;border:3px solid #000;position:relative;margin-top:26px}
+.candle.lit::after{content:"";position:absolute;top:-30px;left:1px;width:8px;height:18px;background:radial-gradient(#fff,#ffb703);border-radius:50% 50% 50% 50%/60% 60% 40% 40%;box-shadow:0 0 18px #ffb703;animation:flick .5s infinite alternate}
+@keyframes flick{to{transform:scale(1.08,.92)}}
+.moons{display:flex;gap:16px;margin-top:20px}
+.moonslot{width:90px;height:90px;border:4px solid #000;border-radius:50%;background:#1a1a1a;display:flex;align-items:center;justify-content:center;font-size:3rem;cursor:pointer;box-shadow:inset 0 0 0 3px #333}
+.legend{color:#ccc;font-size:.85rem;margin-top:10px}
+.dark{position:absolute;inset:0;z-index:50;background:rgba(0,0,0,.99);pointer-events:none}
+.dark.lit{background:radial-gradient(circle at var(--x,50%) var(--y,50%),transparent 0,transparent 45px,rgba(0,0,0,.99) 150px)}
+.uvg{position:absolute;color:#c77dff;font-weight:900;z-index:40;font-size:3.4rem;text-shadow:0 0 14px #7b2cbf,0 0 30px #7b2cbf}
+.uvg.msg{font-size:1.1rem;letter-spacing:4px}
+.uvg.seen{z-index:55;opacity:.6}
+.uvhint{position:absolute;bottom:24px;left:0;right:110px;text-align:center;color:#fff;z-index:120;font-style:italic;font-family:'Dancing Script';font-size:1.4rem}
+.wall-btn{position:absolute;bottom:64px;left:50%;transform:translateX(-80px);z-index:130}
+.safe-keypad{background:#222;padding:20px;border:6px solid #000;border-radius:5px;display:inline-block}
+.safe-keypad.shake{animation:shake .4s}
+.safe-display{width:100%;height:50px;background:#000;border:3px solid #333;color:#0f0;font-family:monospace;font-size:2rem;text-align:right;padding:5px 15px;margin-bottom:15px;letter-spacing:6px}
+.safe-display.ok{color:#7CFC00;box-shadow:0 0 20px #7CFC00}
+.safe-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.safe-btn{width:62px;height:62px;background:#333;border:3px solid #000;color:#fff;font-size:1.5rem;cursor:pointer;font-weight:800}
+.safe-btn:active{background:#666}
+.mm{display:flex;flex-direction:column;align-items:center;gap:10px}
+.mm-hist{background:rgba(0,0,0,.55);border:3px solid #000;padding:10px 16px;min-width:300px;height:190px;overflow:auto;font-family:monospace;color:#fff;font-size:1.2rem}
+.mm-row{display:flex;justify-content:space-between;gap:20px;letter-spacing:6px}
+.pg{color:#7CFC00}.pw{color:#ffd166}
+.mm-cur{font-family:monospace;font-size:2rem;background:#000;border:3px solid #333;color:#0f0;padding:4px 20px;letter-spacing:10px;min-width:200px;text-align:center}
+.mm-keys{display:flex;gap:8px;flex-wrap:wrap;justify-content:center}
+.btn{background:#222;color:#fff;border:3px solid #000;padding:10px 16px;font-weight:800;font-size:1rem;cursor:pointer;border-radius:6px}
+.btn:hover{background:#444}
+.btn.sm{padding:8px 12px;min-width:48px}
+.shelf{display:flex;align-items:flex-end;gap:10px;padding:20px 24px 0;background:#4a2f22;border:6px solid #000;box-shadow:12px 12px 0 rgba(0,0,0,.35)}
+.shelf-base{height:16px;background:#2b1a12;width:min(420px,70vw)}
+.book{width:52px;height:160px;border:4px solid #000;border-radius:4px 4px 0 0;cursor:pointer;transition:transform .25s;display:flex;align-items:center;justify-content:center}
+.book span{writing-mode:vertical-rl;font-weight:800;font-size:.8rem;color:rgba(0,0,0,.75);letter-spacing:2px}
+.book.up{transform:translateY(-22px);box-shadow:0 0 14px #fff}
+.clocks{display:flex;gap:40px;align-items:center;flex-wrap:wrap;justify-content:center}
+.clock-box{text-align:center;color:#ddd;font-size:.85rem;font-weight:800}
+.clock{width:180px;height:180px;border-radius:50%;background:#efe6d2;border:8px solid #000;position:relative;box-shadow:10px 10px 0 rgba(0,0,0,.35);margin:6px auto}
+.clock.mirror{transform:scaleX(-1);background:#cfe3e8}
+.tick{position:absolute;left:50%;top:0;width:3px;height:100%;margin-left:-1.5px}
+.tick::before{content:"";position:absolute;top:5px;left:0;width:3px;height:10px;background:#000}
+.hand{position:absolute;left:50%;bottom:50%;transform-origin:50% 100%;background:#000;border-radius:3px}
+.hand.h{width:6px;height:46px;margin-left:-3px}
+.hand.m{width:3px;height:70px;margin-left:-1.5px}
+.pin{position:absolute;left:50%;top:50%;width:14px;height:14px;margin:-7px;background:#7a1f2b;border-radius:50%}
+.clock-ctrl{display:flex;gap:8px;margin-top:14px;align-items:center;flex-wrap:wrap;justify-content:center}
+.digital{font-family:monospace;color:#0f0;background:#000;border:3px solid #333;padding:6px 14px;font-size:1.3rem}
+.keys{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
+.pkey{width:96px;height:150px;border:5px solid #000;border-radius:0 0 12px 12px;cursor:pointer;transition:.15s;opacity:.75;box-shadow:0 8px 0 rgba(0,0,0,.4)}
+.pkey.lit{opacity:1;filter:brightness(1.5);transform:translateY(6px);box-shadow:0 2px 0 rgba(0,0,0,.4)}
+.dots{margin-top:16px;display:flex;gap:8px}
+.dot{width:14px;height:14px;border-radius:50%;border:3px solid #fff}
+.dot.f{background:#fff}
+.cbox{width:220px;height:140px;background:#3a3a3a;border:6px solid #000;display:flex;align-items:center;justify-content:center;font-size:3rem;cursor:pointer;box-shadow:10px 10px 0 rgba(0,0,0,.35)}
+.cipher{font-family:monospace;font-size:1.4rem;color:#c77dff;background:#000;border:3px solid #333;padding:10px 16px;letter-spacing:3px;text-align:center;max-width:90%;word-break:break-word}
+.cipher.dec{color:#7CFC00;margin-top:8px}
+.txt{background:#000;color:#fff;border:3px solid #333;padding:10px 14px;font-size:1.1rem;font-weight:800;text-transform:uppercase;text-align:center;outline:none;width:200px}
+.sliding{display:grid;grid-template-columns:repeat(3,90px);grid-template-rows:repeat(3,90px);gap:6px;background:#000;padding:8px;border:6px solid #000;box-shadow:12px 12px 0 rgba(0,0,0,.35)}
+.tile{background:linear-gradient(135deg,#7b2cbf,#4a1a75);color:#fff;font-size:2.2rem;font-weight:800;display:flex;align-items:center;justify-content:center;border:3px solid #000;cursor:pointer}
+.tile.empty{background:#111;cursor:default}
+.fuse{display:grid;grid-template-columns:repeat(3,90px);gap:8px;background:#000;padding:10px;border:6px solid #000}
+.fz{height:90px;background:#222;border:3px solid #444;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:2.2rem;transition:.2s}
+.fz.on{background:#ffd166;border-color:#fff;box-shadow:0 0 22px #ffb703}
+.gal{display:grid;grid-template-columns:repeat(4,78px);gap:8px}
+.card{height:78px;background:#4a2f22;border:4px solid #000;font-size:2.2rem;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:.25s}
+.card.open{background:#e8dcc0;cursor:default}
+.card.match{background:#7CFC00;opacity:.7}
+.message-box{position:absolute;bottom:34px;left:50%;transform:translateX(-50%);background:#000;color:#fff;padding:12px 24px;border:3px solid #fff;font-size:1.3rem;z-index:500;opacity:0;transition:.3s;pointer-events:none;font-family:'Dancing Script',cursive;max-width:80vw;text-align:center}
+.message-box.show{opacity:1}
+#modal{position:fixed;inset:0;background:rgba(0,0,0,.8);z-index:900;display:none;align-items:center;justify-content:center;padding:20px}
+.modal-box{background:#1a1a1a;border:4px solid #fff;border-radius:10px;padding:22px;color:#fff;max-width:520px;width:100%;max-height:85vh;overflow:auto}
+.modal-box h2{margin:0 0 12px;font-family:'Dancing Script',cursive;font-size:2rem}
+.note-item{padding:8px 0;border-bottom:1px solid #333;font-size:.95rem;line-height:1.45}
+.note-item.frag{color:#ffd166;font-weight:800}
+#intro{position:fixed;inset:0;z-index:1800;background:#000;display:none;flex-direction:column;align-items:center;justify-content:center;color:#fff;text-align:center;padding:30px;pointer-events:none}
+#intro .n{color:#c77dff;letter-spacing:4px;font-weight:800}
+#intro h1{font-family:'Dancing Script',cursive;font-size:clamp(2.6rem,8vw,5rem);margin:6px 0}
+#intro p{color:#bbb;font-style:italic;max-width:520px;font-size:1.1rem}
+#intro.go{display:flex;animation:intro 2.2s forwards}
+@keyframes intro{0%{opacity:0}18%,75%{opacity:1}100%{opacity:0}}
+.pt{position:absolute;width:9px;height:9px;border-radius:2px;z-index:600;pointer-events:none}
+#menu{position:fixed;inset:0;background:radial-gradient(circle,#1b221a,#000 75%);z-index:1000;display:flex;flex-direction:column;align-items:center;justify-content:center;color:#fff;padding:20px;overflow:auto}
+.menu-title{font-family:'Dancing Script',cursive;font-size:clamp(2.4rem,6vw,4rem);margin-bottom:6px;text-shadow:0 0 20px rgba(255,255,255,.5);text-align:center}
+.menu-sub{color:#999;margin-bottom:22px;font-style:italic;text-align:center}
+.stage-list{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:14px;width:min(920px,100%)}
+.stage-card{padding:16px 10px;background:#1a1a1a;border:3px solid #333;border-radius:10px;cursor:pointer;transition:.3s;text-align:center}
+.stage-card:hover:not(.locked){border-color:#fff;transform:translateY(-6px);background:#222}
+.stage-card.locked{opacity:.3;cursor:not-allowed}
+.stage-card.done{border-color:#7b2cbf}
+.stage-card .num{font-size:.7rem;color:#888;letter-spacing:2px}
+.stage-card .ico{font-size:1.7rem;margin:6px 0}
+.stage-card .name{font-size:1rem;font-weight:800}
+.menu-foot{margin-top:24px;display:flex;gap:12px;flex-wrap:wrap;justify-content:center;align-items:center}
+.menu-stats{margin-top:16px;color:#aaa;font-size:.9rem}
+label.hard{color:#ffd166;font-weight:800;font-size:.9rem;cursor:pointer}
+.fade{position:fixed;inset:0;background:#000;z-index:2000;pointer-events:none;opacity:0;transition:.7s}
+#ending{position:fixed;inset:0;z-index:1500;background:radial-gradient(circle,#1d2a1c,#000);display:none;flex-direction:column;align-items:center;justify-content:center;color:#fff;text-align:center;padding:30px}
+#ending h1{font-family:'Dancing Script',cursive;font-size:clamp(2.4rem,7vw,4.4rem);margin:0 0 14px;text-shadow:0 0 25px #7CFC00}
+#ending p{max-width:600px;font-size:1.15rem;line-height:1.6}
+.rank{font-size:5rem;font-weight:800;color:#ffd166;text-shadow:0 0 20px #ffd166;margin:6px 0}
+@media(max-width:700px){#scene{padding:70px 100px 10px 6px}.inventory{width:76px}.inv-slot{width:52px;height:52px}.room{transform:scale(.7);transform-origin:top center}}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<svg style="display:none"><filter id="rough-edge"><feTurbulence type="fractalNoise" baseFrequency="0.04" numOctaves="3" result="n"/><feDisplacementMap in="SourceGraphic" in2="n" scale="2"/></filter></svg>
+<div class="fade" id="fade"></div>
+<div id="intro"><div class="n" id="inN"></div><h1 id="inT"></h1><p id="inS"></p></div>
+
+<div id="menu">
+  <div class="menu-title">O Enigma do Cantinho</div>
+  <div class="menu-sub">Você acordou trancado em uma mansão. Doze cômodos, doze enigmas, uma saída.</div>
+  <div class="stage-list" id="stageList"></div>
+  <div class="menu-foot">
+    <a href="../jogos_hub.html" class="pill">← Sair</a>
+    <label class="hard"><input type="checkbox" id="hardChk" onchange="setHard(this.checked)"> Modo Difícil (sem dicas, menos tentativas, sequências maiores)</label>
+    <button class="pill" onclick="resetProgress()">Reiniciar progresso</button>
+  </div>
+  <div class="menu-stats" id="menuStats"></div>
+</div>
+
+<div id="game">
+  <div class="wallpaper"></div><div class="vignette"></div>
+  <div class="topbar">
+    <button class="pill" onclick="openMenu()">☰ Capítulos</button>
+    <button class="pill" onclick="showNotebook()">📓 Caderno</button>
+    <button class="pill" onclick="showHint()">💡 Dica</button>
+    <div class="spacer"></div>
+    <div id="prog"><span id="progT"></span><div id="bar"><i></i></div></div>
+    <div id="timer">⏱ 00:00</div>
+    <button class="pill" id="muteBtn" onclick="toggleMute()">🔊</button>
+  </div>
+  <div class="title" id="chTitle"></div>
+  <div class="message-box" id="msgBox"></div>
+  <div class="inventory" id="inventory"></div>
+  <div id="scene"></div>
+</div>
+<div id="modal"></div>
+
+<div id="ending">
+  <h1>Você escapou!</h1>
+  <p id="endText"></p>
+  <div class="rank" id="endRank"></div>
+  <p id="endStats" style="color:#aaa;font-size:1rem"></p>
+  <div style="margin-top:26px;display:flex;gap:12px">
+    <button class="pill" onclick="location.href='../jogos_hub.html'">Voltar ao hub</button>
+    <button class="pill" onclick="replay()">Jogar de novo</button>
+  </div>
+</div>
+
+<script>
+const LS_KEY='enigma_cantinho_v4';
+const DEF=()=>({unlocked:1,frag:{},notes:[],items:[],sec:0,hints:0,errors:0,hard:false});
+function loadProgress(){try{const d=JSON.parse(localStorage.getItem(LS_KEY));if(d&&d.unlocked)return Object.assign(DEF(),d)}catch(e){}return DEF()}
+const S={stage:0,inv:[],sel:null,p:loadProgress(),muted:false,hintIdx:0,busy:false,done:false,kp:null};
+const saveProgress=()=>{try{localStorage.setItem(LS_KEY,JSON.stringify(S.p))}catch(e){}};
+
+/* utilidades */
+const $id=id=>document.getElementById(id);
+const sceneEl=$id('scene'),msgBox=$id('msgBox'),fade=$id('fade');
+const $=(s,r=sceneEl)=>r.querySelector(s), $$=(s,r=sceneEl)=>[...r.querySelectorAll(s)];
+const wait=ms=>new Promise(r=>setTimeout(r,ms));
+const rnd=(a,b)=>a+Math.floor(Math.random()*(b-a+1));
+function shuffle(a){a=[...a];for(let i=a.length-1;i>0;i--){const j=rnd(0,i);[a[i],a[j]]=[a[j],a[i]]}return a}
+const pickDistinct=(n,lo,hi)=>shuffle(Array.from({length:hi-lo+1},(_,i)=>lo+i)).slice(0,n);
+const fmt=s=>String(Math.floor(s/60)).padStart(2,'0')+':'+String(s%60).padStart(2,'0');
+
+/* som: efeitos + zumbido ambiente */
+let actx=null,drone=null;
+function ac(){if(!actx){try{actx=new(window.AudioContext||window.webkitAudioContext)()}catch(e){}}return actx}
+function tone(f,dur=.15,type='sine',vol=.12,delay=0){
+  if(S.muted)return;const c=ac();if(!c)return;
+  const t=c.currentTime+delay,o=c.createOscillator(),g=c.createGain();
+  o.type=type;o.frequency.value=f;g.gain.setValueAtTime(vol,t);g.gain.exponentialRampToValueAtTime(.001,t+dur);
+  o.connect(g);g.connect(c.destination);o.start(t);o.stop(t+dur);
+}
+function startDrone(){
+  const c=ac();if(!c||drone)return;
+  const g=c.createGain();g.gain.value=S.muted?0:.025;g.connect(c.destination);
+  [55,82.5,110.7].forEach(f=>{const o=c.createOscillator();o.type='sine';o.frequency.value=f;o.connect(g);o.start()});
+  drone=g;
+}
+const sfx={click:()=>tone(300,.05,'square',.05),pick(){tone(660,.1,'triangle');tone(880,.15,'triangle',.1,.08)},
+  ok(){[523,659,784,1047].forEach((f,i)=>tone(f,.25,'triangle',.12,i*.1))},bad(){tone(140,.3,'sawtooth',.1);navigator.vibrate&&navigator.vibrate(80)},
+  creak(){tone(90,.5,'sawtooth',.06);tone(120,.4,'sawtooth',.05,.2)}};
+function toggleMute(){S.muted=!S.muted;$id('muteBtn').textContent=S.muted?'🔇':'🔊';if(drone)drone.gain.value=S.muted?0:.025}
+
+/* efeitos visuais */
+function burst(n=40){
+  const g=$id('game'),w=g.clientWidth/2,h=g.clientHeight/2;
+  for(let i=0;i<n;i++){
+    const p=document.createElement('i');p.className='pt';p.style.cssText=`left:${w}px;top:${h}px;background:hsl(${rnd(0,360)},90%,60%)`;g.appendChild(p);
+    const a=Math.random()*6.28,d=rnd(120,380);
+    p.animate([{transform:'translate(0,0)',opacity:1},{transform:`translate(${Math.cos(a)*d}px,${Math.sin(a)*d+120}px) rotate(540deg)`,opacity:0}],{duration:rnd(800,1400),easing:'ease-out'}).onfinish=()=>p.remove();
+  }
+}
+function shakeScene(){sceneEl.classList.remove('shake');void sceneEl.offsetWidth;sceneEl.classList.add('shake')}
+
+/* mensagens, erro, caderno */
+let msgTimer;
+function showMsg(t,ms=3000){msgBox.textContent=t;msgBox.classList.add('show');clearTimeout(msgTimer);msgTimer=setTimeout(()=>msgBox.classList.remove('show'),ms)}
+function fail(msg){S.p.errors++;saveProgress();sfx.bad();shakeScene();showMsg(msg)}
+function addNote(t){if(!S.p.notes.includes(t)){S.p.notes.push(t);saveProgress()}}
+function openModal(html,onMount){
+  const m=$id('modal');
+  m.innerHTML=`<div class="modal-box">${html}<div style="margin-top:16px;text-align:center"><button class="btn" id="mclose">Fechar</button></div></div>`;
+  m.style.display='flex';$id('mclose').onclick=closeModal;if(onMount)onMount(m.querySelector('.modal-box'));
+}
+function closeModal(){$id('modal').style.display='none';S.kp=null}
+function showNotebook(){
+  if(!S.stage)return;const n=S.p.notes;
+  openModal('<h2>📓 Caderno</h2>'+(n.length?n.map(t=>`<div class="note-item ${t.startsWith('Fragmento')?'frag':''}">${t}</div>`).join(''):'<div class="note-item">Ainda não há anotações.</div>'));
+}
+addEventListener('keydown',e=>{
+  if(e.key==='Escape')closeModal();
+  else if(S.kp)S.kp(e.key);
+});
+
+/* inventário */
+const RECIPES=[{a:'Bilhete (A)',b:'Bilhete (B)',res:'Bilhete Completo',icon:'📜',note:'Bilhete: “A porta responde a três números: as velas acesas, as velas apagadas e o total de velas.”'}];
+function addItem(id,icon,persist=false){
+  if(S.inv.find(i=>i.id===id))return;S.inv.push({id,icon});
+  if(persist&&!S.p.items.find(i=>i.id===id)){S.p.items.push({id,icon});saveProgress()}
+  renderInv();sfx.pick();showMsg('Você obteve: '+id);
+}
+function removeItem(id){S.inv=S.inv.filter(i=>i.id!==id);S.p.items=S.p.items.filter(i=>i.id!==id);saveProgress();if(S.sel===id)S.sel=null;renderInv()}
+function tryCombine(x,y){
+  const r=RECIPES.find(r=>(r.a===x&&r.b===y)||(r.a===y&&r.b===x));
+  if(!r){S.sel=null;renderInv();sfx.bad();showMsg('Esses itens não se combinam.');return}
+  S.inv=S.inv.filter(i=>i.id!==x&&i.id!==y);S.sel=null;
+  addItem(r.res,r.icon);if(r.note)addNote(r.note);showMsg('Você juntou os itens: '+r.res+'. Leia o Caderno.',3500);
+}
+let selectHook=null;
+function renderInv(){
+  const el=$id('inventory');el.innerHTML='';
+  for(let i=0;i<Math.max(5,S.inv.length);i++){
+    const it=S.inv[i],d=document.createElement('div');
+    d.className='inv-slot'+(it&&S.sel===it.id?' active':'');
+    if(it){d.textContent=it.icon;d.title=it.id;d.onclick=()=>{
+      sfx.click();
+      if(S.sel&&S.sel!==it.id){tryCombine(S.sel,it.id);if(selectHook)selectHook();return}
+      S.sel=S.sel===it.id?null:it.id;renderInv();
+      if(S.sel)showMsg('Selecionado: '+it.id+' (clique em outro item para combinar)',1800);
+      if(selectHook)selectHook();
+    }}
+    el.appendChild(d);
+  }
+}
+
+/* teclado numérico (aceita teclado físico) */
+function mountKeypad(box,len,onSubmit){
+  box.innerHTML=`<div class="safe-keypad hand-drawn"><div class="safe-display">${'-'.repeat(len)}</div><div class="safe-grid">${['1','2','3','4','5','6','7','8','9','C','0','E'].map(k=>`<button class="safe-btn" data-k="${k}">${k}</button>`).join('')}</div></div>`;
+  let val='';const disp=box.querySelector('.safe-display'),kp=box.querySelector('.safe-keypad');
+  const press=k=>{
+    tone(500+(+k||0)*40,.08,'square',.06);
+    if(k==='C')val='';
+    else if(k==='E'){
+      if(val.length<len)return;
+      if(onSubmit(val)){disp.classList.add('ok');S.kp=null}
+      else{shakeScene();kp.classList.add('shake');setTimeout(()=>kp.classList.remove('shake'),400);val=''}
+    }else if(val.length<len)val+=k;
+    disp.textContent=val.padEnd(len,'-');
+  };
+  box.querySelectorAll('.safe-btn').forEach(b=>b.onclick=()=>press(b.dataset.k));
+  S.kp=k=>{if(/^\d$/.test(k))press(k);else if(k==='Enter')press('E');else if(k==='Backspace'||k==='Delete'||k==='c')press('C')};
+}
+
+/* relógio */
+const TICKS=[...Array(12).keys()].map(i=>`<div class="tick" style="transform:rotate(${i*30}deg)"></div>`).join('');
+const clockHTML=(cls,id)=>`<div class="clock hand-drawn ${cls}" id="${id}">${TICKS}<div class="hand h"></div><div class="hand m"></div><div class="pin"></div></div>`;
+function setHands(el,h,m){el.querySelector('.hand.h').style.transform=`rotate(${(h%12)*30+m*.5}deg)`;el.querySelector('.hand.m').style.transform=`rotate(${m*6}deg)`}
+
+/* menu e progresso */
+const ICONS=['🗝️','🌙','🔦','🔐','📚','🪞','🎹','📜','🧩','⚡','🖼️','🚪'];
+function renderMenu(){
+  const list=$id('stageList');list.innerHTML='';
+  STAGES.forEach((st,i)=>{
+    const n=i+1,locked=n>S.p.unlocked,done=n<S.p.unlocked,c=document.createElement('div');
+    c.className='stage-card'+(locked?' locked':'')+(done?' done':'');
+    c.innerHTML=`<div class="num">CAPÍTULO ${n}</div><div class="ico">${locked?'🔒':ICONS[i]}</div><div class="name">${st.nome}</div>`;
+    if(!locked)c.onclick=()=>startStage(n);list.appendChild(c);
+  });
+  $id('hardChk').checked=S.p.hard;
+  $id('menuStats').textContent=`Tempo: ${fmt(S.p.sec)} · Dicas usadas: ${S.p.hints} · Erros: ${S.p.errors}`;
+}
+function openMenu(){S.kp=null;renderMenu();$id('menu').style.display='flex'}
+function setHard(v){S.p.hard=v;saveProgress()}
+function resetProgress(){if(!confirm('Reiniciar todo o progresso?'))return;const h=S.p.hard;S.p=DEF();S.p.hard=h;saveProgress();renderMenu()}
+function replay(){$id('ending').style.display='none';const h=S.p.hard;S.p=DEF();S.p.hard=h;saveProgress();openMenu()}
+
+setInterval(()=>{
+  const active=S.stage>0&&$id('menu').style.display==='none'&&$id('ending').style.display!=='flex';
+  if(active){S.p.sec++;if(S.p.sec%5===0)saveProgress()}
+  $id('timer').textContent='⏱ '+fmt(S.p.sec);
+},1000);
+
+/* fases */
+async function startStage(n){
+  if(S.busy)return;S.busy=true;ac();startDrone();
+  try{
+    fade.style.opacity=1;await wait(700);
+    $id('menu').style.display='none';closeModal();
+    S.stage=n;S.sel=null;S.hintIdx=0;S.done=false;selectHook=null;
+    S.inv=S.p.items.map(i=>({id:i.id,icon:i.icon}));
+    sceneEl.innerHTML='';sceneEl.onpointermove=sceneEl.onpointerdown=null;sceneEl.style.touchAction='';
+    const st=STAGES[n-1];
+    $id('chTitle').textContent=`Capítulo ${n}: ${st.nome}`;
+    $id('progT').textContent=`${n}/${STAGES.length}`;$id('bar').firstChild.style.width=((n-1)/STAGES.length*100)+'%';
+    st.build(sceneEl);renderInv();
+    $id('inN').textContent=`CAPÍTULO ${n}`;$id('inT').textContent=st.nome;$id('inS').textContent=st.story;
+    const it=$id('intro');it.classList.remove('go');void it.offsetWidth;it.classList.add('go');
+    fade.style.opacity=0;await wait(2200);it.classList.remove('go');
+  }finally{S.busy=false;fade.style.opacity=0}
+}
+async function completeStage(n,o={}){
+  if(S.done)return;S.done=true;
+  if(o.frag!=null)S.p.frag[n]=o.frag;if(o.note)addNote(o.note);
+  if(S.p.unlocked<n+1&&n<STAGES.length)S.p.unlocked=n+1;
+  saveProgress();sfx.ok();burst();$id('bar').firstChild.style.width=(n/STAGES.length*100)+'%';
+  await wait(2300);
+  if(n<STAGES.length)startStage(n+1);else finish();
+}
+function showHint(){
+  if(!S.stage)return;
+  if(S.p.hard){showMsg('Modo Difícil: dicas desativadas.');return}
+  const h=STAGES[S.stage-1].hints;S.p.hints++;saveProgress();
+  showMsg('💡 '+h[Math.min(S.hintIdx,h.length-1)]+'  (−100 pontos)',5000);S.hintIdx++;
+}
+const doorPad=(title,len,ok,onOk)=>openModal(`<h2>${title}</h2><div id="kp" style="text-align:center"></div>`,box=>mountKeypad(box.querySelector('#kp'),len,v=>{
+  if(v===ok){closeModal();onOk();return true}
+  S.p.errors++;saveProgress();sfx.bad();return false;
+}));
+
+const STAGES=[
+/* 1 */
+{nome:'O Escritório',story:'Você acorda no chão frio. A porta está trancada e as velas ainda queimam.',
+ hints:['Nem tudo está à vista. Procure atrás e embaixo das coisas.','Há duas metades de algo. Selecione uma no inventário e clique na outra para juntar.','Conte as velas acesas e as apagadas. O código da porta tem 3 números.'],
+ build(root){
+  const litN=rnd(2,3),litIdx=shuffle([0,1,2,3,4]).slice(0,litN),code=`${litN}${5-litN}5`;
+  root.innerHTML=`<div class="room">
+    <div class="candles hand-drawn">${[0,1,2,3,4].map(i=>`<div class="candle ${litIdx.includes(i)?'lit':''}"></div>`).join('')}</div>
+    <div class="rug object hand-drawn" id="rug"></div>
+    <div class="cabinet object hand-drawn"><div class="drawer object" id="d1" style="top:40px"><div class="drawer-handle"></div></div><div class="drawer object" id="d2" style="top:150px"><div class="drawer-handle"></div></div></div>
+    <div class="vase object" id="vase"></div><div class="key" id="key">🔑</div>
+    <div class="door object hand-drawn" id="door"><div class="knob"></div></div></div>`;
+  let gotA=false,gotB=false;
+  $('#d2').onclick=()=>{sfx.click();showMsg('Vazia. Só poeira.')};
+  $('#vase').onclick=()=>{if($('#vase').classList.contains('moved'))return;sfx.creak();$('#vase').classList.add('moved');$('#key').style.display='block';showMsg('Havia algo atrás do vaso.')};
+  $('#key').onclick=()=>{$('#key').style.display='none';addItem('Chave de Bronze','🔑')};
+  $('#d1').onclick=()=>{
+    if(gotA){showMsg('A gaveta já está vazia.');return}
+    if(S.sel==='Chave de Bronze'){sfx.creak();gotA=true;removeItem('Chave de Bronze');addItem('Bilhete (A)','📄')}else fail('Está trancada.');
+  };
+  $('#rug').onclick=()=>{if(gotB){showMsg('Só um tapete.');return}gotB=true;sfx.click();addItem('Bilhete (B)','📃')};
+  $('#door').onclick=()=>{sfx.click();doorPad('Porta trancada',3,code,()=>{showMsg('A fechadura estalou. A porta se abriu.');completeStage(1)})};
+ }},
+/* 2 */
+{nome:'A Lua',story:'Do outro lado da porta, um quadro antigo guarda um segredo noturno.',
+ hints:['Clique em cada círculo para trocar a fase da lua.','A Crescente, a Cheia e a Minguante ficam em sequência, nessa ordem.','A Nova só pode estar na primeira posição.'],
+ build(root){
+  const ph=['','🌑','🌒','🌕','🌘'],names={'🌑':'Nova','🌒':'Crescente','🌕':'Cheia','🌘':'Minguante'};
+  root.innerHTML=`<div class="paper"><b>Inscrição no quadro</b><br>1. A Cheia vem logo depois da Crescente e logo antes da Minguante.<br>2. A Nova não é a última.<br>3. A Crescente não é a primeira.</div>
+    <div class="moons">${[0,1,2,3].map(i=>`<div class="moonslot interactive"></div>`).join('')}</div>
+    <div class="legend">🌑 Nova · 🌒 Crescente · 🌕 Cheia · 🌘 Minguante</div><div class="sub">Posicione as fases na ordem certa.</div>`;
+  const st=[0,0,0,0],slots=$$('.moonslot');let lock=false;
+  slots.forEach((s,i)=>s.onclick=async()=>{
+    if(lock||S.done)return;st[i]=(st[i]+1)%5;s.textContent=ph[st[i]];tone(300+st[i]*80,.1,'triangle');
+    if(st.every(v=>v>0)){
+      if(st.map(v=>names[ph[v]]).join()==='Nova,Crescente,Cheia,Minguante'){showMsg('O quadro se moveu, revelando uma passagem escura.');completeStage(2,{frag:3,note:'Fragmento da Lua: 3'})}
+      else{lock=true;fail('Nada aconteceu. A ordem está errada.');await wait(500);st.fill(0);slots.forEach(x=>x.textContent='');lock=false}
+    }
+  });
+ }},
+/* 3 */
+{nome:'A Luz',story:'O corredor está um breu. Algo brilha fraco, esperando uma luz especial.',
+ hints:['Selecione a lanterna UV e varra a parede devagar.','São 3 números e vários símbolos falsos. Só os números importam.','A mensagem escondida diz como ler os números. Depois clique em “Inserir código”.'],
+ build(root){
+  const digs=pickDistinct(3,1,9),ys=[20,46,70],xs=shuffle([16,44,70]);
+  const decoys=[['✦',30,33],['Ω',64,57],['⌘',20,82],['☾',80,33],['✧',48,8]];
+  root.innerHTML=`${digs.map((d,i)=>`<div class="uvg" data-t="d" style="left:${xs[i]}%;top:${ys[i]}%">${d}</div>`).join('')}
+    ${decoys.map(([c,x,y])=>`<div class="uvg" data-t="x" style="left:${x}%;top:${y}%">${c}</div>`).join('')}
+    <div class="uvg msg" data-t="m" style="left:50%;top:92%;transform:translateX(-50%)">DE CIMA PARA BAIXO</div>
+    <div class="dark" id="dark"></div><div class="uvhint" id="uvhint">Selecione a lanterna no inventário e explore a escuridão...</div>
+    <button class="btn wall-btn" id="codeBtn" style="display:none">⌨ Inserir código</button>`;
+  addItem('Lanterna UV','🔦');
+  sceneEl.style.touchAction='none';
+  const dark=$('#dark');let found=[],warned=false;
+  selectHook=()=>dark.classList.toggle('lit',S.sel==='Lanterna UV');
+  root.onpointermove=root.onpointerdown=e=>{
+    if(S.sel!=='Lanterna UV'){if(!warned){warned=true;showMsg('Está escuro demais. Preciso da lanterna.')}return}
+    const r=root.getBoundingClientRect(),x=e.clientX-r.left,y=e.clientY-r.top;
+    dark.style.setProperty('--x',x+'px');dark.style.setProperty('--y',y+'px');
+    $$('.uvg:not(.seen)').forEach(g=>{
+      const b=g.getBoundingClientRect(),cx=b.left-r.left+b.width/2,cy=b.top-r.top+b.height/2;
+      if(Math.hypot(x-cx,y-cy)<65){
+        g.classList.add('seen');
+        if(g.dataset.t==='d'){found.push(g.textContent);sfx.pick();$('#uvhint').textContent='Números encontrados: '+found.join(' · ');if(found.length===3)$('#codeBtn').style.display='block'}
+        else if(g.dataset.t==='m'){sfx.pick();addNote('Mensagem UV: “DE CIMA PARA BAIXO”');showMsg('Uma mensagem apareceu. Veja o Caderno.')}
+        else tone(180,.12,'square',.06);
+      }
+    });
+  };
+  $('#codeBtn').onclick=()=>doorPad('Painel da parede',3,digs.join(''),()=>{showMsg('A parede se abriu.');completeStage(3)});
+ }},
+/* 4 */
+{nome:'O Cofre',story:'Um cofre embutido na parede. Ele troca de código se você falhar demais.',
+ hints:['Cada tentativa mostra ● (número e posição certos) e ○ (número certo, posição errada).','Os números vão de 1 a 6 e não se repetem.','Comece com dois palpites bem diferentes para eliminar números.'],
+ build(root){
+  let code=pickDistinct(4,1,6).join('');const max=S.p.hard?7:10;let tries=0,cur='';
+  root.innerHTML=`<div class="mm"><div class="mm-hist hand-drawn" id="hist"></div><div class="mm-cur" id="cur">----</div>
+    <div class="mm-keys">${[1,2,3,4,5,6].map(n=>`<button class="btn sm" data-k="${n}">${n}</button>`).join('')}<button class="btn sm" data-k="D">⌫</button><button class="btn sm" data-k="OK">OK</button></div></div><div class="sub" id="info"></div>`;
+  const info=()=>$('#info').textContent=`Tentativas restantes: ${max-tries}   ·   ● posição certa   ○ número certo, lugar errado`;
+  info();
+  $$('.mm-keys .btn').forEach(b=>b.onclick=()=>{
+    const k=b.dataset.k;sfx.click();
+    if(k==='D')cur=cur.slice(0,-1);
+    else if(k==='OK'){
+      if(cur.length<4||S.done)return;tries++;
+      let ex=0,co=0;for(let i=0;i<4;i++){if(cur[i]===code[i])ex++;else if(code.includes(cur[i]))co++}
+      $('#hist').innerHTML+=`<div class="mm-row"><span>${cur}</span><span><span class="pg">${'●'.repeat(ex)}</span><span class="pw">${'○'.repeat(co)}</span></span></div>`;
+      $('#hist').scrollTop=9999;
+      if(ex===4){showMsg('O cofre destravou!');completeStage(4);return}
+      S.p.errors++;saveProgress();sfx.bad();
+      if(tries>=max){showMsg('Sem tentativas. O cofre trocou o código.',3500);shakeScene();code=pickDistinct(4,1,6).join('');tries=0;setTimeout(()=>{$('#hist').innerHTML='';info()},900)}
+      cur='';info();
+    }else if(cur.length<4&&!cur.includes(k))cur+=k;
+    $('#cur').textContent=cur.padEnd(4,'-');
+  });
+ }},
+/* 5 */
+{nome:'A Biblioteca',story:'Livros demais, e nenhum no lugar certo. Um bilhete pede ordem.',
+ hints:['Clique em dois livros para trocá-los de lugar.','O Verde está numa ponta e à esquerda do Azul, então é o primeiro.','Ordem: Verde, Vermelho, Azul, Amarelo, Roxo.'],
+ build(root){
+  const books={V:['#2a9d8f','Verde'],R:['#c1121f','Vermelho'],A:['#3a86ff','Azul'],Y:['#fcbf49','Amarelo'],P:['#7b2cbf','Roxo']},sol='VRAYP';
+  let order;do{order=shuffle(['V','R','A','Y','P'])}while(order.join('')===sol);
+  root.innerHTML=`<div class="paper"><b>Bilhete preso à estante</b><br>1. O Verde está numa das pontas.<br>2. O Azul está logo à direita do Vermelho.<br>3. O Amarelo não é vizinho do Verde.<br>4. O Roxo está em algum lugar à direita do Amarelo.<br>5. O Vermelho não está em nenhuma das pontas.<br>6. O Verde está à esquerda do Azul.</div>
+    <div class="shelf hand-drawn" id="shelf" style="margin-top:22px"></div><div class="shelf-base"></div><div class="clock-ctrl"><button class="btn" id="ok">Confirmar ordem</button></div>`;
+  let pick=-1;
+  const draw=()=>{
+    $('#shelf').innerHTML=order.map((k,i)=>`<div class="book ${pick===i?'up':''}" data-i="${i}" style="background:${books[k][0]}"><span>${books[k][1]}</span></div>`).join('');
+    $$('.book').forEach(b=>b.onclick=()=>{const i=+b.dataset.i;sfx.click();if(pick<0)pick=i;else{if(pick!==i)[order[pick],order[i]]=[order[i],order[pick]];pick=-1}draw()});
+  };
+  draw();
+  $('#ok').onclick=()=>{if(order.join('')===sol){showMsg('Um compartimento se abriu atrás dos livros!');completeStage(5,{frag:7,note:'Fragmento dos Livros: 7'})}else fail('Nada aconteceu. Releia as regras do bilhete.')};
+ }},
+/* 6 */
+{nome:'O Espelho',story:'O espelho não mostra a hora de verdade. Ele mente ao contrário.',
+ hints:['O relógio de cima é o reflexo no espelho. Ele mostra a hora invertida.','A hora real é 12:00 menos a hora que o espelho mostra.','Ex.: se o espelho marca 8:25, a hora real é 3:35.'],
+ build(root){
+  const hs=[1,2,3,4,5,7,8,9,10,11],T={h:hs[rnd(0,hs.length-1)],m:rnd(1,11)*5};
+  root.innerHTML=`<div class="clocks"><div class="clock-box">REFLEXO NO ESPELHO${clockHTML('mirror','cm')}</div>
+    <div class="clock-box">RELÓGIO REAL (ajuste)${clockHTML('','cr')}
+    <div class="clock-ctrl"><button class="btn sm" id="hm1">‹ h</button><button class="btn sm" id="hp1">h ›</button><div class="digital" id="dig"></div><button class="btn sm" id="mm1">‹ min</button><button class="btn sm" id="mp1">min ›</button></div>
+    <div class="clock-ctrl"><button class="btn" id="ok">Confirmar</button></div></div></div><div class="sub">O espelho mostra uma hora. Que horas são de verdade?</div>`;
+  setHands($('#cm'),T.h,T.m);let h=12,m=0;
+  const draw=()=>{setHands($('#cr'),h,m);$('#dig').textContent=String(h).padStart(2,'0')+':'+String(m).padStart(2,'0')};
+  const step=(dh,dm)=>{sfx.click();m+=dm;if(m>=60){m=0;h++}if(m<0){m=55;h--}h+=dh;if(h>23)h=0;if(h<0)h=23;draw()};
+  $('#hp1').onclick=()=>step(1,0);$('#hm1').onclick=()=>step(-1,0);$('#mp1').onclick=()=>step(0,5);$('#mm1').onclick=()=>step(0,-5);
+  $('#ok').onclick=()=>{if(h%12===T.h%12&&m===T.m){showMsg('Clique. O espelho se abriu.');completeStage(6,{frag:1,note:'Fragmento do Tempo: 1'})}else fail('O tempo não parou. Hora errada.')};
+  draw();
+ }},
+/* 7 */
+{nome:'O Piano',story:'Um piano desafinado toca sozinho. Ele quer que você o acompanhe.',
+ hints:['Repita as notas na mesma ordem. A cada rodada entra uma nota nova.','Observe a cor de cada tecla, não só o som.','Se errar, a rodada recomeça com a mesma sequência.'],
+ build(root){
+  const cols=['#c1121f','#fcbf49','#2a9d8f','#3a86ff'],freqs=[262,330,392,523],N=S.p.hard?10:8,seq=Array.from({length:N},()=>rnd(0,3));
+  root.innerHTML=`<div class="keys">${cols.map((c,i)=>`<div class="pkey" data-i="${i}" style="background:${c}"></div>`).join('')}</div>
+    <div class="dots" id="dots">${seq.map(()=>'<div class="dot"></div>').join('')}</div><div style="margin-top:16px"><button class="btn" id="rep">↻ Repetir rodada</button></div><div class="sub" id="rnd"></div>`;
+  let round=1,pos=0,playing=false;const keys=$$('.pkey');
+  const flash=async(i,d=360)=>{keys[i].classList.add('lit');tone(freqs[i],d/1000,'triangle',.18);await wait(d);keys[i].classList.remove('lit')};
+  const dots=()=>$$('.dot').forEach((d,i)=>d.classList.toggle('f',i<round-1));
+  const play=async()=>{if(playing||S.done)return;playing=true;pos=0;dots();$('#rnd').textContent=`Rodada ${round} de ${N}`;await wait(500);for(let i=0;i<round;i++){await flash(seq[i]);await wait(140)}playing=false};
+  $('#rep').onclick=play;
+  keys.forEach(k=>k.onclick=()=>{
+    if(playing)return;const i=+k.dataset.i;flash(i,230);
+    if(i===seq[pos]){pos++;if(pos===round){
+      if(round===N){playing=true;dots();showMsg('A tampa do piano se ergueu.');addItem('Disco de Cifra','💿',true);completeStage(7);return}
+      round++;setTimeout(play,700)}}
+    else{fail('Nota errada.');setTimeout(play,900)}
+  });
+  setTimeout(play,800);
+ }},
+/* 8 */
+{nome:'A Cifra',story:'Dentro do piano havia um disco. Em algum lugar, uma caixa espera por ele.',
+ hints:['Selecione o Disco de Cifra e clique na caixa.','É uma Cifra de César. A chave de deslocamento está no seu Caderno.','Use o Fragmento da Lua como deslocamento.'],
+ build(root){
+  const key=S.p.frag[2]||3,plain='O QUE TEM TECLAS E UMA MELODIA';
+  const caesar=(t,s)=>t.replace(/[A-Z]/g,c=>String.fromCharCode((c.charCodeAt(0)-65+s+26)%26+65)),enc=caesar(plain,key);
+  root.innerHTML=`<div class="cbox object hand-drawn" id="cbox">📦</div><div class="sub">Uma caixa com uma fenda em forma de disco.</div>`;
+  $('#cbox').onclick=()=>{
+    if(S.sel!=='Disco de Cifra'){fail('A caixa tem uma fenda circular. Falta algo.');return}
+    sfx.ok();let s=0;
+    root.innerHTML=`<div class="cipher hand-drawn">${enc}</div><div class="clock-ctrl"><button class="btn sm" id="sm">‹</button><div class="digital" id="sv">0</div><button class="btn sm" id="sp">›</button></div>
+      <div class="cipher dec hand-drawn" id="dec"></div><div class="clock-ctrl"><input class="txt" id="ans" maxlength="20" placeholder="resposta"><button class="btn" id="ok">Responder</button></div><div class="sub">Decifre a mensagem e responda a charada.</div>`;
+    const dec=()=>{$('#sv').textContent=s;$('#dec').textContent=caesar(enc,-s)};
+    $('#sm').onclick=()=>{s=(s+25)%26;sfx.click();dec()};$('#sp').onclick=()=>{s=(s+1)%26;sfx.click();dec()};
+    const send=()=>{
+      const a=$('#ans').value.normalize('NFD').replace(/[\u0300-\u036f]/g,'').trim().toUpperCase();
+      if(['PIANO','UM PIANO','O PIANO'].includes(a)){showMsg('A caixa se abriu.');completeStage(8,{note:'REGRA FINAL: ordene os quatro fragmentos do menor para o maior.'})}else fail('Resposta incorreta.');
+    };
+    $('#ok').onclick=send;$('#ans').onkeydown=e=>{if(e.key==='Enter')send()};dec();
+  };
+ }},
+/* 9 */
+{nome:'O Painel',story:'A caixa escondia um painel com blocos soltos. Falta encaixar cada um.',
+ hints:['Deslize os blocos para o espaço vazio.','Monte a ordem 1 a 8, com o vazio no canto inferior direito.','Resolva primeiro a linha de cima, depois a do meio.'],
+ build(root){
+  let arr;const solved='1,2,3,4,5,6,7,8,0';
+  const nb=i=>{const r=Math.floor(i/3),c=i%3,o=[];if(r>0)o.push(i-3);if(r<2)o.push(i+3);if(c>0)o.push(i-1);if(c<2)o.push(i+1);return o};
+  do{let e=8,prev=-1;arr=[1,2,3,4,5,6,7,8,0];
+    for(let n=0;n<(S.p.hard?160:100);n++){const o=nb(e).filter(x=>x!==prev),t=o[rnd(0,o.length-1)];[arr[e],arr[t]]=[arr[t],arr[e]];prev=e;e=t}
+  }while(arr.join()===solved);
+  root.innerHTML=`<div class="sliding hand-drawn" id="grid"></div><div class="sub" id="mv">Movimentos: 0</div>`;
+  let moves=0;
+  const draw=()=>{
+    $('#grid').innerHTML=arr.map((v,i)=>`<div class="tile ${v?'':'empty'}" data-i="${i}">${v||''}</div>`).join('');
+    $$('.tile').forEach(t=>t.onclick=()=>{
+      const i=+t.dataset.i,e=arr.indexOf(0);if(S.done||!nb(e).includes(i))return;
+      [arr[e],arr[i]]=[arr[i],arr[e]];moves++;tone(260+moves%5*30,.06,'square',.05);$('#mv').textContent='Movimentos: '+moves;draw();
+      if(arr.join()===solved){showMsg('O painel se acendeu.');completeStage(9,{frag:5,note:'Fragmento do Painel: 5'})}
+    });
+  };
+  draw();
+ }},
+/* 10 — NOVA */
+{nome:'O Fusível',story:'A energia da mansão caiu. A caixa de fusíveis liga e desliga seus vizinhos.',
+ hints:['Clicar num fusível inverte ele e os vizinhos de cima, baixo, esquerda e direita.','Objetivo: apagar todas as luzes.','Resolva linha por linha: apague a de cima usando a linha de baixo.'],
+ build(root){
+  let g;const tog=(i)=>{const r=Math.floor(i/3),c=i%3;[i,r>0&&i-3,r<2&&i+3,c>0&&i-1,c<2&&i+1].forEach(x=>{if(x!==false)g[x]^=1})};
+  do{g=Array(9).fill(0);for(let n=0;n<rnd(6,10);n++)tog(rnd(0,8))}while(!g.some(v=>v));
+  root.innerHTML=`<div class="fuse hand-drawn" id="fz"></div><div class="sub" id="fm">Apague todas as luzes.</div>`;
+  const draw=()=>{
+    $('#fz').innerHTML=g.map((v,i)=>`<div class="fz ${v?'on':''}" data-i="${i}">${v?'💡':''}</div>`).join('');
+    $$('.fz').forEach(z=>z.onclick=()=>{
+      if(S.done)return;tog(+z.dataset.i);tone(200+rnd(0,300),.08,'square',.06);draw();
+      if(!g.some(v=>v)){showMsg('A energia voltou.');completeStage(10,{note:'Os fusíveis foram restaurados. A mansão ganhou luz.'})}
+    });
+  };
+  draw();
+ }},
+/* 11 — NOVA */
+{nome:'A Galeria',story:'Quadros em duplas, virados para a parede. Só a memória mostra o caminho.',
+ hints:['Vire duas cartas por vez e encontre os pares iguais.','Memorize a posição das cartas viradas.','Errar aqui não custa pontos. Tente com calma.'],
+ build(root){
+  const pool=['🌹','🗿','🦉','🕯️','👑','🎭','🔮','🐍'],n=S.p.hard?8:6,cards=shuffle([...pool.slice(0,n),...pool.slice(0,n)]);
+  root.innerHTML=`<div class="gal" id="gal"></div><div class="sub" id="gm">Pares: 0 / ${n}</div>`;
+  let open=[],pairs=0,lock=false;
+  $('#gal').innerHTML=cards.map((c,i)=>`<div class="card" data-i="${i}"></div>`).join('');
+  $$('.card').forEach(el=>el.onclick=async()=>{
+    const i=+el.dataset.i;if(lock||S.done||el.classList.contains('open')||el.classList.contains('match'))return;
+    el.classList.add('open');el.textContent=cards[i];tone(400+i*20,.08,'triangle',.08);open.push(i);
+    if(open.length===2){
+      lock=true;const[a,b]=open;open=[];
+      if(cards[a]===cards[b]){
+        [a,b].forEach(x=>{const e=$$('.card')[x];e.classList.add('match');e.classList.remove('open')});sfx.pick();pairs++;$('#gm').textContent=`Pares: ${pairs} / ${n}`;lock=false;
+        if(pairs===n){showMsg('Os quadros se alinharam.');completeStage(11,{note:'A galeria revelou a porta final.'})}
+      }else{await wait(800);[a,b].forEach(x=>{const e=$$('.card')[x];e.classList.remove('open');e.textContent=''});lock=false}
+    }
+  });
+ }},
+/* 12 */
+{nome:'A Saída',story:'Só resta uma porta. A mansão guardou a resposta em fragmentos.',
+ hints:['Leia o Caderno: há quatro fragmentos e uma regra final.','Os fragmentos são: Lua, Livros, Tempo e Painel.','Ordene os números do menor para o maior.'],
+ build(root){
+  const code=[2,5,6,9].map(n=>S.p.frag[n]).filter(v=>v!=null).sort((a,b)=>a-b).join('');
+  root.innerHTML=`<div id="kp"></div><div class="sub">A última porta tem uma fechadura de 4 dígitos.<br>Consulte o Caderno.</div>`;
+  mountKeypad($('#kp'),4,v=>{
+    if(code.length===4&&v===code){showMsg('A porta principal se abriu...');completeStage(12);return true}
+    S.p.errors++;saveProgress();sfx.bad();showMsg('A fechadura não cede.');return false;
+  });
+ }}
+];
+
+function finish(){
+  const pts=Math.max(0,4000-S.p.sec*2-S.p.hints*100-S.p.errors*15+(S.p.hard?500:0));
+  const rank=pts>=3200?'S':pts>=2400?'A':pts>=1400?'B':'C';
+  $id('endText').textContent='As portas da mansão se abriram. O Enigma do Cantinho foi resolvido.'+(S.p.hard?' E no Modo Difícil!':'');
+  $id('endRank').textContent=rank;
+  $id('endStats').textContent=`Tempo ${fmt(S.p.sec)} · Dicas ${S.p.hints} · Erros ${S.p.errors} · ${pts} pontos`;
+  $id('ending').style.display='flex';sfx.ok();burst(80);
+  setTimeout(()=>[784,988,1175,1568].forEach((f,i)=>tone(f,.5,'triangle',.12,i*.15)),400);
+}
+renderMenu();
+</script>
+</body>
+</html>
