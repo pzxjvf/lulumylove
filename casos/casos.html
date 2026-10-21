@@ -12,7 +12,7 @@ button{font-family:inherit;cursor:pointer}
 h1,h2,h3{font-family:'Dancing Script',cursive;text-align:center;margin:8px 0;text-shadow:0 0 16px #c1121f}
 h1{font-size:clamp(2.2rem,6.5vw,3.6rem)}
 .w{max-width:980px;margin:0 auto;padding:14px 14px 40px}
-.sub{color:#c9c2c2;text-align:center;margin:8px auto;max-width:660px;line-height:1.5}
+.sub{color:#c9c2c2;text-align:center;margin:8px auto;max-width:660px;line-height:1.5;font-style:italic;opacity:0.8}
 .btn{background:#241f1f;color:#fff;border:2px solid #6f6f6f;border-radius:9px;padding:9px 14px;font-weight:800;margin:3px;font-size:.95rem;transition:.18s}
 .btn:hover:not(:disabled){background:#fff;color:#000}
 .btn:disabled{opacity:.3;cursor:not-allowed}
@@ -78,10 +78,10 @@ h1{font-size:clamp(2.2rem,6.5vw,3.6rem)}
 .note:hover{transform:scale(1.05) rotate(0deg);z-index:10}
 .note.pick{border:3px solid #c1121f;box-shadow:0 0 15px rgba(193,18,31,0.6);background:#fff}
 /* ---- timeline ---- */
-.items{display:flex;flex-direction:column;gap:6px}
-/* ---- penal ---- */
-.item{padding:9px 0;border-bottom:1px solid #2a1a1a;font-size:.95rem;line-height:1.45}
-.item.frag{color:#ffd166;font-weight:800}
+.items{display:flex;flex-direction:column;gap:8px;padding:10px 0}
+.item{padding:10px 12px;background:rgba(255,255,255,0.05);border-left:4px solid #7CFC00;font-size:.95rem;line-height:1.45;color:#eee;animation:slideIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);margin-bottom:4px;box-shadow:inset 0 0 10px rgba(0,0,0,0.2)}
+@keyframes slideIn{from{opacity:0;transform:translateX(-10px)}to{opacity:1;transform:translateX(0)}}
+.item.frag{color:#ffd166;font-weight:800;border-left-color:#ffd166}
 .tabs{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:8px;justify-content:center}
 /* ---- efeitos ---- */
 #fd{position:fixed;inset:0;background:#000;opacity:0;pointer-events:none;transition:.6s;z-index:60}
@@ -944,8 +944,12 @@ function notebook(){
  const c=CS[cur]||null;
  if(!c){modal('<h2>📓 Caderno</h2><p class="sub">Entre em um caso para usar o caderno.</p><div style="text-align:center"><button class="btn" onclick="closeM()">Fechar</button></div>');return}
  modal(`<h2>📓 Caderno — ${c.n}</h2>
-  <div class="say">${(cs.nt||[]).map(x=>`<div class="item">${x}</div>`).join('')||'Ainda sem anotações.'}</div>
-  <div style="text-align:center"><button class="btn" onclick="closeM()">Fechar</button></div>`);
+  <div style="background:#fdf6e3;color:#2a2320;padding:20px;border-radius:2px;box-shadow:inset 0 0 10px rgba(0,0,0,0.1);min-height:200px;font-family:'Nunito',sans-serif">
+   <div style="border-left:2px solid #eec;padding-left:15px">
+    ${(cs.nt||[]).map(x=>`<div style="margin-bottom:10px;border-bottom:1px dashed #dcd6bc;padding-bottom:5px">📝 ${x}</div>`).join('')||'<i>Ainda sem anotações. Explore os cenários e interrogue suspeitos para registrar pistas.</i>'}
+   </div>
+  </div>
+  <div style="text-align:center;margin-top:15px"><button class="btn" onclick="closeM()">Fechar</button></div>`);
 }
 
 /* ===================== MURAL DE DEDUÇÕES ===================== */
@@ -958,7 +962,7 @@ function mural(){
   <div id="mk1" class="mural">${cs.f.map(k=>`<div class="note" data-k="${k}">${c.C[k]}</div>`).join('')||'Sem provas.'}</div>
   <div id="dsc" class="say" style="border-color:#7CFC00;color:#cfe8b8">Nenhuma dedução ainda.</div>
   <b>Deduções feitas:</b>
-  <div class="items">${combos.map(x=>`<div class="item">✔ ${x}</div>`).join('')||'—'}</div>
+  <div class="items">${cs.combos.map(x=>`<div class="item">${x}</div>`).join('')||'<div class="sub">Nenhuma dedução realizada ainda.</div>'}</div>
   <div style="text-align:center"><button class="btn" onclick="closeM()">Fechar</button></div>`);
  let pick=[];
  $$('#mk1 .note').forEach(n=>n.onclick=()=>{
