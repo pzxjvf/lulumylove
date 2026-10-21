@@ -47,10 +47,10 @@ h1{font-size:clamp(2.2rem,6.5vw,3.6rem)}
 .warm .ov{background:radial-gradient(circle at 50% 50%,rgba(255,150,100,.18),transparent 60%);animation:fs 5s ease-in-out infinite alternate}
 .dust .ov{background:repeating-linear-gradient(70deg,transparent 0 14px,rgba(255,240,200,.08) 14px 15px)}
 .vg{position:absolute;inset:0;pointer-events:none;background:radial-gradient(circle,transparent 38%,rgba(0,0,0,.78))}
-.sp2{position:absolute;transform:translate(-50%,-50%);background:none;border:none;font-size:2.5rem;filter:drop-shadow(0 4px 6px #000);animation:fl2 3s ease-in-out infinite;color:#fff;padding:0}
+.sp2{position:absolute;transform:translate(-50%,-50%);background:none;border:none;font-size:2.5rem;line-height:1;overflow:visible;filter:drop-shadow(0 4px 6px #000);animation:fl2 3s ease-in-out infinite;color:#fff;padding:0}
 .sp2:hover{transform:translate(-50%,-50%) scale(1.22);filter:drop-shadow(0 0 12px #ffd166)}
 .sp2.done{opacity:.42;animation:none}
-.sp2 small{display:block;font-size:.62rem;font-weight:800;background:#000b;border:1px solid #ffffff22;border-radius:6px;padding:1px 6px;white-space:nowrap}
+.sp2 small{position:absolute;top:calc(100% + 2px);left:50%;transform:translateX(-50%);pointer-events:none;font-size:.62rem;font-weight:800;background:#000b;border:1px solid #ffffff22;border-radius:6px;padding:1px 6px;white-space:nowrap}
 .sp2.per{font-size:3rem}
 @keyframes fl2{50%{margin-top:-5px}}
 /* ---- log ---- */
@@ -223,7 +223,7 @@ helena:{nm:'Helena',e:'💃',x:14,y:62,Q:[
     cinzas:{a:'Ele queimou papéis hoje à tarde. Perguntei e ele disse que era lixo.',n:12},
     planilha:{a:'Se ele roubava a própria empresa... então não mataram por dinheiro. Mataram para esconder.',n:16},
     luva:{a:'Luva de couro? Não é minha, nem do Eduardo.',n:10}}},
-marcos:{nm:'Marcos',e:'🧔',x:88,y:62,Q:[
+marcos:{nm:'Marcos',e:'🧔',x:74,y:80,Q:[
  {q:'Quando você chegou?',a:'Às 23h, junto com a polícia. Uma tragédia.'},
  {q:'Sobre a M&M Consultoria?',a:'Negócios comuns, nada demais.'},
  {q:'E o seu carro?',a:'No mecânico desde ontem.'},
@@ -246,7 +246,7 @@ marcos:{nm:'Marcos',e:'🧔',x:88,y:62,Q:[
     portao:{a:'"O portão vive arrombado. Isso não tem nada a ver comigo."',n:6},
     jantar:{a:'"Eu não janto aqui. Isso é coisa de família."',n:6},
     planilha:{need:55,a:'Ele desmorona na cadeira. "Ele ia me denunciar! Eu só queria conversar... ele puxou o meu braço, caiu e a cabeça bateu no relógio. Eu jurei que ia consertar tudo..." Marcos cai de joelhos.',n:30,g:'conf'}}},
-cida:{nm:'Dona Cida',e:'👵',x:52,y:66,Q:[
+cida:{nm:'Dona Cida',e:'👵',x:52,y:52,Q:[
  {q:'A senhora viu algo?',a:'Vi a dona Helena sair às 21h. Depois, um carro prata entrou com os faróis apagados.'},
  {q:'Conhece o carro?',a:'Não vi a placa, filha. Mas era grande e prata.'},
  {q:'O patrão tinha manias?',a:'Tinha orgulho do que construiu. Usava o ano de fundação da empresa pra tudo, até em senha.'},
@@ -324,7 +324,7 @@ rita:{nm:'Rita',e:'👩‍🍳',x:55,y:70,Q:[
     alibiR:{a:'Viu? Eu nunca sairia dali. Nem se quisesse.',n:10},
     caixa:{a:'Contrabando? Se soubesse, eu denunciava. Nando era gente boa.',n:8},
     caderno:{a:'A letra é dele, sim. Ele escrevia tudo, até o que não devia.',n:10}}},
-dede:{nm:'Dedé',e:'🧓',x:26,y:68,Q:[
+dede:{nm:'Dedé',e:'🧓',x:28,y:84,Q:[
  {q:'Viu algo?',a:'Estava no bar do Zé até tarde. Nando e eu éramos rivais, mas nunca o machucaria.'},
  {q:'Rivalidade de quê?',a:'Ponto de pesca. Coisa de quem vive do mar, não de quem mata.'},
  {q:'Conhece o Tonho?',a:'Todo mundo conhece. Ninguém admite.'},
@@ -334,7 +334,7 @@ dede:{nm:'Dedé',e:'🧓',x:26,y:68,Q:[
  X:{alibiD:{a:'Aí está a comanda. Nunca me envolvi nisso.',n:10},
     lanterna:{a:'Eu não ando de lanterna, tenho olho de pescador.',n:8},
     faca:{a:'Essa faca é do Tonho. Todo mundo sabe que ele guarda as dele ali.',n:12}}},
-zeca:{nm:'Zeca',e:'🧒',x:14,y:66,Q:[
+zeca:{nm:'Zeca',e:'🧒',x:14,y:55,Q:[
  {q:'Viu algo?',a:'Vi o seu Tonho andando no cais de madrugada, com a faca de cortar rede.'},
  {q:'O que mais viu?',a:'Ele subiu no barco do Nando e depois saiu correndo. Eu tava escondido.'},
  {q:'Por que não contou?',a:'Eu tenho medo. Ele é dono de metade do cais.'},
@@ -439,7 +439,7 @@ bia:{nm:'Bia',e:'🎭',x:55,y:62,Q:[
  X:{roteiro:{a:'Esse roteiro... eu me recusei a assinar mentiras.',n:12},
     bilhete:{a:'Eu escrevi, sim. Não ia mentir sobre o roteiro.',n:12},
     remedio:{a:'Ele tomava remédio pra dormir. Estava no limite.',n:10}}},
-vera:{nm:'Vera',e:'👩‍💼',x:30,y:66,Q:[
+vera:{nm:'Vera',e:'👩‍💼',x:30,y:74,Q:[
  {q:'Seu interesse na crítica?',a:'Uma boa crítica vende ingressos. Mas eu jamais machucaria alguém por isso.'},
  {q:'Onde estava?',a:'Recebendo os patrocinadores no saguão a noite inteira.'},
  {q:'Conhece a Lara?',a:'Detesto o que ela escreve. Mas isso é trabalho.'},
@@ -485,7 +485,7 @@ L:[
  {e:'🧤',x:70,y:60,t:'Luvas de trabalho',r:'Um par de luvas brancas de luvas de mordomo, com poeira do porão.'},
  {e:'📖',x:18,y:78,t:'Livro de contas',r:'Pagamentos regulares a um "conserto de joia". Horroroso: prova que a troca já durava meses.',c:'conserto'}],pe:[]}],
 P:{
-livia:{nm:'Lívia',e:'🥀',x:18,y:62,Q:[
+livia:{nm:'Lívia',e:'🥀',x:25,y:75,Q:[
  {q:'Onde estava às 21h50?',a:'Dançando com Zélia. Quando a luz caiu, fiquei parada onde estava.'},
  {q:'Ícaro tinha inimigos?',a:'Todos queriam o colar. Até o Bento insistia em avaliá-lo.'},
  {q:'Você é noiva dele?',a:'Era. Agora sou só a mulher que achou o corpo.'},
@@ -497,7 +497,7 @@ livia:{nm:'Lívia',e:'🥀',x:18,y:62,Q:[
     lista:{a:'Eu vim de prata, e fiquei no salão.',n:10},
     energia:{a:'Alguém conhecia a casa para achar o disjuntor no escuro.',n:12},
     sapato:{a:'Não é meu. E a tinta dourada... isso não sai fácil.',n:14}}},
-bento:{nm:'Dr. Bento',e:'⚖️',x:72,y:62,Q:[
+bento:{nm:'Dr. Bento',e:'⚖️',x:68,y:58,Q:[
  {q:'Qual a sua relação com Ícaro?',a:'Advogado dele há 20 anos. Cuidava de tudo.'},
  {q:'Viu algo no escuro?',a:'Estava no bar. Não vi nada.'},
  {q:'Por que sua máscara é dourada?',a:'Foi um pedido dele. Todos escolheram as cores.'},
@@ -528,7 +528,7 @@ zelia:{nm:'Madame Zélia',e:'🕶️',x:52,y:62,Q:[
     lista:{a:'Eu vim de preta, como uma viúva alegre.',n:8},
     replica:{a:'Um colar de vidro! Quem seria capaz?',n:12},
     conserto:{a:'Conserto? Isso é linguagem de quem troca pedra por vidro.',n:14}}},
-tavinho:{nm:'Tavinho',e:'🍷',x:48,y:70,Q:[
+tavinho:{nm:'Tavinho',e:'🍷',x:40,y:70,Q:[
  {q:'Viu algo?',a:'Vi alguém de máscara dourada subindo a escadaria no escuro.'},
  {q:'E o disjuntor?',a:'Estava servindo. Não mexi em nada.'},
  {q:'Quem usa dourado?',a:'Só o doutor Bento veio de dourado.'},
@@ -574,7 +574,7 @@ L:[
  {e:'📓',x:68,y:60,t:'Livro de receitas',r:'A receita da moqueca, escrita à mão pelo chef, com uma observação: "só o dendê comprado por mim".',c:'receita'},
  {e:'🕯️',x:50,y:80,t:'Mesa 4',r:'A mesa onde Fábio sempre sentava. Fica de frente para a passagem da cozinha.'}],pe:[]}],
 P:{
-neusa:{nm:'Neusa',e:'👩‍🍳',x:25,y:60,Q:[
+neusa:{nm:'Neusa',e:'👩‍🍳',x:14,y:68,Q:[
  {q:'Brigou com o chef?',a:'Discutimos feio sobre o cardápio. Mas eu o admirava demais.'},
  {q:'Onde estava às 21h?',a:'Na boca do forno, com a equipe toda me vendo.'},
  {q:'Quem entrava na cozinha?',a:'Só a equipe. E o Fábio, uma vez, para falar com o chef.'},
@@ -654,7 +654,7 @@ L:[
  {e:'💌',x:30,y:45,t:'Carta na cama',n:'letra',nr:'Uma carta sem remetente na sua cama. Você ainda não tem com o que comparar a letra.',r:'A mesma letra da lista: "...e o coração roubado sempre foi o meu." ',c:'carta2'},
  {e:'🧸',x:70,y:62,t:'Ursinho',r:'O ursinho que você ganhou há anos, colocado na posição de quem espera.'}],pe:[]}],
 P:{
-neide:{nm:'Dona Neide',e:'👵',x:30,y:65,Q:[
+neide:{nm:'Dona Neide',e:'👵',x:12,y:74,Q:[
  {q:'Viu alguém estranho?',a:'Vi o rapaz entrando às escondidas, cheio de sacolas, ensaiando um discurso na porta.'},
  {q:'Quem é o ladrão?',a:'Não sei, mas ele só falava de você.'},
  {q:'Ele estava nervoso?',a:'Tremia mais que varal em ventania. Fofo.'},
