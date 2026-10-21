@@ -288,424 +288,501 @@ esc:'Sem provas suficientes, Marcos some do país com o dinheiro. O caso Valverd
 {n:'O Cais Não Dorme',ic:'⚓',tg:'Contrabando, silêncio e maré alta.',
 intro:'Madrugada no cais de Salvador. Seu Nando, pescador de 40 anos de mar, foi achado morto no barco Maré Mansa. Ninguém quer falar, mas todos viram alguma coisa.',
 intro2:'A fama do caso Valverde chegou ao cais — e os seus erros deixaram todos desconfiados. As pessoas falam pouco e olham de lado.',
+tide:{name:'MARÉ',steps:['vazando','baixa','enchendo','cheia'],every:2},
 L:[
 {id:'c',nm:'Cais',ic:'🌊',fx:'sea',bg:'linear-gradient(#3a5c7a,#0d2231)',S:[
- {e:'🧵',x:25,y:62,t:'Rede cortada',r:'Cortada com faca serrilhada, não rasgada pelo mar.',c:'rede'},
- {e:'🛶',x:62,y:55,t:'Casco',r:'O nome Maré Mansa e o número pintado: 047.',c:'num'},
- {e:'🪝',x:85,y:30,t:'Poste de amarra',r:'Marcas frescas de uma corda grossa, ainda com fibra solta.',c:'corda'},
- {e:'🌊',x:45,y:82,t:'Tábua de marés',r:'A maré subiu às 3h. O corpo foi achado às 2h, na maré baixa: dava para caminhar até o barco.',c:'mare'},
- {e:'🪶',x:10,y:25,t:'Pena negra',r:'Uma pena negra presa numa corda. Na haste, uma letra: "E".',f:'E'}],pe:['dede']},
+ {e:'🧵',x:25,y:62,t:'Rede cortada',r:'Corte de faca serrilhada — o mar não rasgou isso. Há sangue seco na linha.',c:'rede'},
+ {e:'🛶',x:62,y:52,t:'Casco',tide:0,tideMsg:'🌊 A maré está alta: o casco some sob a água barrenta. Espere ela baixar.',r:'Na popa, o nome Maré Mansa e o número pintado: 047. A tinta é fresca — repintaram depois do crime.',c:'num'},
+ {e:'🪝',x:85,y:30,t:'Poste de amarra',r:'Marcas frescas de corda grossa, com fibra solta. Nó feito às pressas.',c:'corda'},
+ {e:'🌊',x:45,y:84,t:'Tábua de marés',r:'Maré baixa às 2h: dava pra caminhar até o barco. Subiu às 3h, com o corpo já achado.',c:'mare'},
+ {e:'🪶',x:10,y:25,t:'Pena negra',r:'Uma pena negra presa numa corda. Na haste, uma letra a nanquim: "E".',f:'E'}],pe:['dede']},
 {id:'b',nm:'Barco',ic:'🛶',fx:'sea',bg:'linear-gradient(#5a432a,#1e140a)',S:[
  {e:'📓',x:30,y:40,t:'Caderno encharcado',r:'Anotação de Nando: "Caixa azul no galpão não é peixe. T. paga em dinheiro vivo."',c:'caderno'},
- {e:'🧰',x:72,y:66,t:'Baú trancado',n:'num',nr:'O cadeado pede um número de 3 dígitos. Esse barco deve ter uma identificação...',pz:{t:'code',q:'O cadeado pede o número do barco.',a:'047'},r:'Dentro, uma foto de Tonho entregando pacotes a um desconhecido.',c:'foto2'},
- {e:'🔦',x:50,y:24,t:'Lanterna',r:'Quebrada, com sangue seco na borda. Nando foi atingido por trás.',c:'lanterna'},
+ {e:'👢',x:72,y:66,t:'Pegadas no convés',r:'Marcas de bota prensadas na tinta nova do convés. Só uma pessoa no cais calça 44 e pinta o próprio barco de azul.',c:'rastro'},
+ {e:'🔦',x:50,y:24,t:'Lanterna',r:'Quebrada, com sangue seco na borda. Nando foi atingido por trás, sem chance de reagir.',c:'lanterna'},
  {e:'⚓',x:20,y:76,t:'Âncora',r:'Levantada e limpa às pressas. Alguém tentou dar ao barco um ar de acidente.'}],pe:['zeca']},
 {id:'x',nm:'Galpão',ic:'📦',fx:'flick',bg:'linear-gradient(#444,#111)',S:[
  {e:'📦',x:30,y:60,t:'Caixa azul',n:'caderno',nr:'Há uma caixa azul, mas você não sabe o que procura. Falta uma pista do barco.',r:'Cheia de cigarros contrabandeados, com etiquetas do galpão do Tonho.',c:'caixa'},
  {e:'🗄️',x:75,y:35,t:'Gaveta',r:'Recibos: Tonho pagava Nando em dinheiro. O último foi ontem.',c:'contas'},
  {e:'🔪',x:50,y:22,t:'Suporte de facas',n:'rede',nr:'Facas e mais facas. Você ainda não sabe qual procurar.',r:'Falta uma faca serrilhada no suporte. A etiqueta do gancho é de Tonho.',c:'faca'},
- {e:'⛽',x:18,y:78,t:'Galão de combustível',r:'Combustível para um barco a motor. Nando só usava remo.'}],pe:['tonho']},
+ {e:'🕳️',x:18,y:78,t:'Fundo da caixa',pz:{t:'choice',q:'A caixa azul tem carga demais para o tamanho. Onde Tonho esconderia o que não pode ser achado?',opts:['No meio dos cigarros','Num fundo falso, sob a carga','Do lado de fora, no caminhão']},r:'Fundo falso: uma foto de Tonho entregando pacotes a um desconhecido de terno. Aqui se compra gente.',c:'foto2'}],pe:['tonho']},
 {id:'m',nm:'Mercado de Peixe',ic:'🐟',fx:'steam',bg:'linear-gradient(#35553f,#0f1d14)',S:[
- {e:'⚖️',x:30,y:55,t:'Balança de Rita',r:'Registro: Rita pesou peixe às 23h e às 23h40. Estava no mercado, com fiscal presente.',c:'alibiR'},
- {e:'🍺',x:72,y:60,t:'Comanda do bar do Zé',r:'Dedé pagou a conta no cartão até 1h: não estava no cais na hora do crime.',c:'alibiD'},
- {e:'🛒',x:50,y:28,t:'Carrinho de peixe',r:'Peixe fresco entregue por Nando na tarde anterior. Ele reclamou do preço.'}],pe:['rita']},
+ {e:'⚖️',x:30,y:55,t:'Balança de Rita',r:'Registro: Rita pesou peixe às 23h e às 23h40. Estava no mercado, com fiscal presente. O álibi dela é de ferro.',c:'alibiR'},
+ {e:'🍺',x:72,y:60,t:'Comanda do bar do Zé',r:'Dedé pagou a conta no cartão até 1h: não estava no cais na hora do crime. O álibi dele também fecha.',c:'alibiD'},
+ {e:'🛒',x:50,y:28,t:'Carrinho de peixe',r:'Peixe fresco entregue por Nando na tarde anterior. Ele reclamou do preço e saiu brigado.'}],pe:['rita']},
 {id:'f',nm:'Farol',ic:'🗼',fx:'calm',bg:'linear-gradient(#26313f,#080c11)',S:[
  {e:'🪟',x:40,y:30,t:'Janela do farol',r:'Do alto vê-se o cais inteiro. Quem subisse aqui veria tudo o que aconteceu.',c:'farol'},
- {e:'🗒️',x:70,y:62,t:'Livro de rondas',r:'A ronda das 2h não foi assinada. O faroleiro faltou justamente nesta noite.'}],pe:[]}],
+ {e:'🗒️',x:70,y:62,t:'Livro de rondas',r:'A ronda das 2h não foi assinada. O faroleiro faltou justamente nesta noite.'},
+ {e:'🧭',x:12,y:24,t:'Mesa de mapas',pz:{t:'match',q:'Daqui de cima, ligue cada marca do cais a quem a deixou.',pairs:[['Corte na rede','Faca serrilhada de Tonho'],['Nó no poste','Dedé (fibra e acabamento)'],['Bota na tinta','Tonho no convés']]},r:'Cada marca tem dono — e os donos não são os mesmos. Nando não morreu por causa de rede.',c:'sintese'}],pe:[]}],
 P:{
-rita:{nm:'Rita',e:'👩‍🍳',x:55,y:70,Q:[
- {q:'Brigou com Nando?',a:'Ele me devia peixe, mas isso é coisa de rua. À noite eu estava no mercado, o fiscal viu.'},
- {q:'Quem queria mal a ele?',a:'Ninguém aqui fala disso. Mas o Tonho andava de olho grande nele.'},
- {q:'O que Nando achou?',a:'Ele me disse uma vez: "vi uma caixa que não era peixe". Não quis falar mais nada.'},
- {q:'Você tem faca serrilhada?',a:'Não. Eu uso faca de escamar, lisa.',ev:''},
- {q:'Onde estava à 1h?',a:'Fechando a barraca. O fiscal assinou o registro comigo.'},
- {q:'Tonho paga em dinheiro?',req:'contas',a:'Dinheiro vivo, sempre. E ninguém aqui pergunta de onde vem.'}],
- X:{rede:{a:'Faca serrilhada? Eu uso faca de escamar, lisa.',n:8},
-    alibiR:{a:'Viu? Eu nunca sairia dali. Nem se quisesse.',n:10},
-    caixa:{a:'Contrabando? Se soubesse, eu denunciava. Nando era gente boa.',n:8},
-    caderno:{a:'A letra é dele, sim. Ele escrevia tudo, até o que não devia.',n:10}}},
-dede:{nm:'Dedé',e:'🧓',x:28,y:84,Q:[
- {q:'Viu algo?',a:'Estava no bar do Zé até tarde. Nando e eu éramos rivais, mas nunca o machucaria.'},
- {q:'Rivalidade de quê?',a:'Ponto de pesca. Coisa de quem vive do mar, não de quem mata.'},
- {q:'Conhece o Tonho?',a:'Todo mundo conhece. Ninguém admite.'},
- {q:'Você usa lanterna?',a:'Não. Eu tenho olho de pescador.',ev:''},
- {q:'Quem estava no cais de madrugada?',a:'Vi uma luz e um vulto grande. Não era Nando, ele era pequeno.'},
- {q:'E o farol?',req:'farol',a:'Nesta noite ninguém subiu. Foi a primeira vez em anos.'}],
- X:{alibiD:{a:'Aí está a comanda. Nunca me envolvi nisso.',n:10},
-    lanterna:{a:'Eu não ando de lanterna, tenho olho de pescador.',n:8},
-    faca:{a:'Essa faca é do Tonho. Todo mundo sabe que ele guarda as dele ali.',n:12}}},
-zeca:{nm:'Zeca',e:'🧒',x:14,y:55,Q:[
- {q:'Viu algo?',a:'Vi o seu Tonho andando no cais de madrugada, com a faca de cortar rede.'},
- {q:'O que mais viu?',a:'Ele subiu no barco do Nando e depois saiu correndo. Eu tava escondido.'},
- {q:'Por que não contou?',a:'Eu tenho medo. Ele é dono de metade do cais.'},
- {q:'Era mesmo o Tonho?',a:'Era. A luz do farol bateu no rosto dele.',ev:''},
- {q:'Você viu alguém mais?',a:'O Zeca... quer dizer, eu. Só ele.'},
- {q:'E a corda do poste?',req:'corda',a:'Ele amarrou o barco naquele poste. Eu vi a corda grossa.'}],
- X:{rede:{a:'Foi essa a faca, eu vi. A mesma do corte.',n:12},
-    caderno:{a:'Ele escrevia tudo, nunca soube ler direito o que escrevia.',n:10},
-    faca:{a:'Era essa faca mesmo, de cabo azul. O Tonho quebrou o cabo semana passada.',n:16},
-    corda:{a:'Foi ele que amarrou. Eu vi a corda no poste.',n:12}}},
-tonho:{nm:'Tonho',e:'🧔‍♂️',x:55,y:68,Q:[
- {q:'Sobre Nando?',a:'Um velho teimoso. Eu o respeitava, não tinha motivo nenhum.'},
- {q:'O que há na caixa azul?',a:'Mercadoria legal. Só isso.',ev:''},
- {q:'Você paga em dinheiro?',a:'Eu ajudo amigos, oras.'},
- {q:'Onde você estava à 2h?',a:'Em casa, dormindo. Minha mulher confirma.'},
- {q:'E a sua faca?',req:'faca',a:'Perdi essa faca faz tempo. Deve ter sido roubada.'},
- {q:'O Zeca diz que te viu no cais.',a:'Um moleque inventando história pra aparecer.'},
- {q:'Por que Nando te incomodava?',req:'caderno',a:'Ele inventava coisas sobre mim. Nada provado.'},
- {q:'Você o ameaçou?',tone:'firme',a:'Ameaçar é uma coisa. Fazer é outra. Você não tem nada.'}],
- X:{caixa:{a:'Mercadoria legal, só isso.',n:8},
-    caderno:{a:'Nando inventava coisas. Nunca provou nada.',n:12},
-    contas:{a:'Eu ajudava um amigo! Isso não é crime.',n:12},
-    faca:{a:'Perdi essa faca faz tempo, deve ter sido roubada.',n:14},
-    lanterna:{a:'E eu com isso? Uma lanterna qualquer.',n:8},
-    rede:{a:'Rede arrebenta todo dia, rapaz.',n:8},
-    corda:{a:'Eu amarro meu barco ali há vinte anos.',n:10},
-    mare:{a:'Maré baixa... qualquer um podia andar até lá.',n:12},
-    farol:{a:'O faroleiro faltou. Não é problema meu.',n:10},
-    foto2:{need:50,a:'Ele fica branco. "Ele ia me entregar, eu o segui no barco... foi no calor da discussão, foi uma faca que eu nem lembro de ter pego." Tonho baixa a cabeça.',n:30,g:'conf'}}}},
+rita:{nm:'Rita',e:'👩‍🍳',x:56,y:76,alibi:'Fechando a barraca, no mercado, com o fiscal olhando. Não saí de lá.',
+ Q:[
+ {q:'Brigou com Nando?',a:'Oxe, briguei. Ele me devia peixe, e peixe aqui é dinheiro. Mas isso é coisa de rua, meu rei — não mata ninguém.'},
+ {q:'Quem queria mal a ele?',a:'Ninguém fala disso em voz alta. Mas o Tonho andava de olho grande no Nando. Olho grande e boca pequena.'},
+ {q:'O que Nando achou?',a:'Ele me disse uma vez: "vi uma caixa que não era peixe". Fez que não era nada e nunca mais tocou no assunto. Eu devia ter perguntado.'},
+ {q:'Você tem faca serrilhada?',a:'Tenho não, painho. Faca de escamar é lisa. Quem corta rede com serrilha é quem corta carga.',ev:''},
+ {q:'Tonho paga em dinheiro?',req:'contas',a:'Dinheiro vivo, cheiro de peixe e de mistério. E ninguém aqui pergunta de onde vem, não.'},
+ {q:'Por que você some à noite?',ab:1,a:'Tá... eu pego peixe do rancho dos outros. Furto, tá? Furto de peixe. Foi por isso que eu menti. Mas eu não subi naquele barco, juro por minha filha.'}],
+ X:{rede:{a:'Corte de serrilha. Quem faz isso não é gente de peixe — é gente de carga.',n:8},
+    alibiR:{a:'Viu? Nunca sairia dali. Nem se quisesse, nem se me pagassem.',n:10},
+    caixa:{a:'Contrabando? Se eu soubesse, denunciava. Nando era gente boa, merecia respeito.',n:8},
+    caderno:{a:'A letra é dele, sim. Ele escrevia tudo, até o que não devia escrever. Isso o perdeu.',n:10},
+    faca:{a:'Essa não é minha. A minha é lisa, e tá na barraca pra quem quiser ver.',n:10},
+    rastro:{a:'Isso não é pé de pescador. Pescador não pisa no convés de bota, escorrega. Isso é gente de terra.',n:14},
+    mare:{a:'Maré baixa de madrugada... qualquer um que soubesse da tábua chegava no barco a pé. Qualquer um.',n:12}}},
+dede:{nm:'Dedé',e:'🧓',x:28,y:84,alibi:'Estava no bar do Zé até tarde, tomando uma. Nunca cheguei perto do barco do Nando.',
+ ab:'corda',abTxt:'Tá. Eu amarrei algo naquele poste, sim — mas não foi o Maré Mansa. Foi outro barco, o meu. Só que... alguém usou o meu nó. Copiou o meu jeito. Isso me dá calafrio.',
+ abC:'corda',
+ Q:[
+ {q:'Rivalidade de quê?',a:'Ponto de pesca, oxente. Coisa de quem vive do mar, não de quem vive da morte.'},
+ {q:'Conhece o Tonho?',a:'Todo mundo conhece. Ninguém admite. É assim que funciona por aqui.'},
+ {q:'Você usa lanterna?',a:'Não ando com lanterna, tenho olho de pescador. Enxergo a noite igual gato.',ev:''},
+ {q:'Quem estava no cais de madrugada?',a:'Vi uma luz e um vulto grande. Não era o Nando, ele era pequeno que só. O vulto subiu no barco.'},
+ {q:'E o farol?',req:'farol',a:'Nesta noite ninguém subiu. Foi a primeira vez em anos que o farol dormiu. E não foi por acaso, não.'},
+ {q:'Quem copiaria o seu nó?',ab:1,a:'Quem já me viu amarrar mil vezes. O Tonho descarrega no poste que é meu vizinho, passa ali todo dia. Só ele repara nessas coisas.'},
+ {q:'Você mexeu no corpo do Nando?',ab:1,tone:'empatico',a:'Não, oxente. Mas eu vi a luz da lanterna dele acesa, e o Nando não usava lanterna de mão. Ele tinha medo do escuro, o coitado.'}],
+ X:{alibiD:{a:'Aí está a comanda, olha a hora. Nunca me envolvi nisso, palavra de pescador.',n:10},
+    lanterna:{a:'Eu não ando de lanterna, tenho olho de pescador. E quem carregou aquela luz não era do cais.',n:8},
+    faca:{a:'Essa faca é do Tonho. Todo mundo sabe que ele guarda as dele ali no gancho. Falta uma, num é?',n:12},
+    rastro:{a:'Bota 44, pintada de azul. Só tem um homem no cais que calça isso e tem tinta azul na mão.',n:16},
+    rede:{a:'Rede não se rasga assim com a mão. Isso foi faca, e foi com raiva.',n:8}}},
+zeca:{nm:'Zeca',e:'🧒',x:14,y:58,Q:[
+ {q:'Viu algo?',a:'Vi o seu Tonho andando no cais de madrugada... cum a faca de cortar rede na mão. Fiquei com medo e me escondi.'},
+ {q:'O que mais viu?',a:'Ele subiu no barco do Nando. Depois desceu e saiu correndo, tropeçando na corda. A luz do farol bateu nele.'},
+ {q:'Por que não contou?',a:'Oxe, eu tenho medo! Ele é dono de metade do cais. Se eu abro a boca, minha mãe perde a banca.'},
+ {q:'Seu Tonho usava bota?',a:'Usava, sim. Aquela bota de trabalho, suja de tinta azul do barco dele. Num esqueço aquele barulho.'},
+ {q:'Você viu alguém mais?',a:'Só ele. Quer dizer... eu. Só eu tava lá, escondido atrás das caixas.'},
+ {q:'E a corda do poste?',req:'corda',a:'Ele amarrou o barco naquele poste. Vi ele fazendo o nó com as duas mãos, com pressa.'},
+ {q:'Você mexeu em algo no barco?',req:'lanterna',truth:'Fui eu que peguei a lanterna pra me esconder melhor. Joguei ela lá depois. Mas o sangue já tava nela, eu juro! Eu só toquei depois.',rc:38,a:'Não! Eu não subi naquele barco. Fiquei no chão o tempo todo.'}],
+ X:{rede:{a:'Foi essa faca, foi. A mesma do corte. Tenho certeza.',n:12},
+    caderno:{a:'Ele escrevia tudo num caderninho. Eu não sei ler direito, mas ele mostrava pra ninguém.',n:10},
+    faca:{a:'Era essa faca mesmo, de cabo azul. O Tonho quebrou o cabo semana passada e consertou com fita.',n:16},
+    rastro:{a:'Bota grande, pisa fundo. É dele, sim. Eu vi aquela bota entrando no barco.',n:16},
+    corda:{a:'Foi ele que amarrou, vi com esses olhos. E ainda olhou pra trás antes de correr.',n:12},
+    lanterna:{a:'Eu devia ter deixado a lanterna quieta... foi mal. Mas eu tinha medo de ficar no escuro.',n:14}}},
+tonho:{nm:'Tonho',e:'🧔‍♂️',x:55,y:68,alibi:'Estava em casa, dormindo, às 2h. E nunca subi naquele barco na minha vida.',
+ ab:'rastro',abTxt:'...Tá bom. Tá bom! Eu subi. Fui lá falar com ele, cara a cara, porque ele tava me ameaçando de denúncia. Mas eu jurei que era só conversa. Só conversa.',
+ Q:[
+ {q:'Sobre Nando?',a:'Um velho teimoso. Eu respeitava ele. Não tinha motivo nenhum pra fazer mal a um homem daqueles.'},
+ {q:'O que há na caixa azul?',a:'Mercadoria legal. Só isso. Cigarro, tempero. Coisa de comércio.',ev:''},
+ {q:'Você paga em dinheiro?',a:'Eu ajudo amigos, oras. Amigo que tá apertado, a gente dá uma força. Isso é crime agora?'},
+ {q:'E a sua faca?',req:'faca',a:'Perdi essa faca faz tempo. Deve ter sido roubada. Tem muita mão leve por aqui, num tem?'},
+ {q:'Use bota 44 e tinta azul?',ab:1,a:'Calço 44 desde os dezoito. E a tinta é do meu barco. Isso não prova nada, rapaz.'},
+ {q:'O Zeca diz que te viu no cais.',ab:1,a:'Um moleque inventando história pra aparecer. Você vai acreditar em criança ou em homem que trabalha?'},
+ {q:'Por que Nando te incomodava?',req:'caderno',a:'Ele inventava coisas sobre mim. Nunca provou nada. Nunca. E agora tá morto, então cala a boca pra sempre.'},
+ {q:'Você o ameaçou?',tone:'firme',ab:1,truth:'Ameacei, sim. E subi no barco. Cortei a rede dele, amarrei tudo no poste do Dedé pra ninguém desconfiar. Mas foi uma discussão que fugiu da mão, rapaz. Uma discussão. Eu não queria que ele morresse.',rc:50,a:'Subi por um minuto e desci. O Nando estava vivo quando eu saí. Isso eu garanto.'}],
+ X:{caixa:{a:'Mercadoria legal, só isso. E você não tem mandato pra abrir minha caixa.',n:8},
+    caderno:{a:'Nando inventava coisas. Nunca provou nada. Nunca.',n:12},
+    contas:{a:'Eu ajudava um amigo! Isso não é crime, é caridade.',n:12},
+    faca:{a:'Perdi essa faca faz tempo, deve ter sido roubada. Repara que o cabo tá com fita nova, nem é minha.',n:14},
+    lanterna:{a:'E eu com isso? Uma lanterna qualquer. Qualquer um tem lanterna.',n:8},
+    rede:{a:'Rede arrebenta todo dia, rapaz. O mar não tem dó.',n:8},
+    corda:{a:'Eu amarro meu barco ali há vinte anos. O nó é meu, mas a pressa não foi minha.',n:10},
+    sintese:{a:'Ele vê o quadro completo e sua mão aperta a borda da mesa. Não tem resposta.',n:18},
+    mare:{a:'Maré baixa... qualquer um podia andar até lá. Inclusive o senhor, que sabe ler tábua de maré.',n:12},
+    farol:{a:'O faroleiro faltou. Não é problema meu. Cada um que cuide da sua torre.',n:10},
+    foto2:{need:60,a:'Ele fica branco e a mão treme. "Ele ia me entregar, eu o segui no barco... foi no calor da discussão, foi uma faca que eu nem lembro de ter pegado. Eu só queria dar um susto, rapaz." Tonho baixa a cabeça e para de olhar nos seus olhos.',n:30,g:'conf'}}}},
 combos:[
  {a:'rede',b:'faca',r:'A faca serrilhada de Tonho casa exatamente com o corte da rede.',c:'arma'},
  {a:'caderno',b:'caixa',r:'A "caixa azul que não era peixe" é a carga do galpão de Tonho.',c:'carga'},
- {a:'foto2',b:'contas',r:'Tonho pagava Nando em dinheiro vivo para que ele se calasse.',c:'pagamento'}],
-C:{rede:'Rede cortada por faca serrilhada',num:'Barco número 047',corda:'Corda grossa amarrada no poste',mare:'Tábua de marés: dava para caminhar até o barco',caderno:'Caderno: caixa azul, T. paga em dinheiro vivo',foto2:'Foto de Tonho entregando pacotes',lanterna:'Lanterna com sangue: golpe por trás',caixa:'Caixa azul: contrabando do galpão do Tonho',contas:'Recibos de dinheiro de Tonho a Nando',faca:'Faca serrilhada que falta no suporte de Tonho',alibiR:'Álibi de Rita pela balança',alibiD:'Álibi de Dedé pela comanda',farol:'O farol ficou sem vigia nesta noite',arma:'Dedução: a arma do crime',carga:'Dedução: a carga da caixa azul',pagamento:'Dedução: Tonho comprava o silêncio de Nando',conf:'Confissão de Tonho'},
-key:['rede','faca','foto2','caixa','contas'],cul:'tonho',
-mot:['Calar Nando antes que ele o denunciasse','Disputa por pontos de pesca','Vingança por uma antiga dívida','Ciúme profissional'],
+ {a:'foto2',b:'contas',r:'Tonho pagava Nando em dinheiro vivo para que ele se calasse.',c:'pagamento'},
+ {a:'rastro',b:'mare',r:'A maré baixa deu o caminho, e a bota 44 de Tonho deixou a assinatura no convés.',c:'bota'}],
+C:{rede:'Rede cortada por faca serrilhada',num:'Barco número 047',corda:'Nó no poste: marca de Dedé, copiada por outra mão',mare:'Tábua de marés: a maré baixa abriu o caminho até o barco',caderno:'Caderno: caixa azul, T. paga em dinheiro vivo',foto2:'Foto de Tonho entregando pacotes a um desconhecido',lanterna:'Lanterna com sangue: golpe por trás',rastro:'Pegadas de bota 44 na tinta azul do convés',caixa:'Caixa azul: contrabando do galpão do Tonho',contas:'Recibos de dinheiro de Tonho a Nando',faca:'Faca serrilhada que falta no suporte de Tonho',alibiR:'Álibi de Rita: a balança do mercado',alibiD:'Álibi de Dedé: a comanda do bar',farol:'O farol ficou sem vigia nesta noite',sintese:'Dedução: o cais conta três histórias diferentes',arma:'Dedução: a arma do crime',carga:'Dedução: a carga da caixa azul',pagamento:'Dedução: Tonho comprava o silêncio de Nando',bota:'Dedução: a bota 44 no convés',conf:'Confissão de Tonho'},
+key:['faca','rastro','foto2'],
+cul:'tonho',
+D:{
+ como:{opts:['Um golpe único por trás, com a faca serrilhada','Ele se afogou ao cair do barco','Levou uma pancada e caiu no porão','Foi envenenado antes de embarcar'],a:0,need:'faca'},
+ porq:{opts:['Vingança por uma dívida de jogo','Ciúme da filha de Nando','Silenciar Nando, que ia denunciar o contrabando','Roubar os motores do barco'],a:2}},
 W:{rita:'Rita é presa e perde a barraca. O cais vira as costas para quem a acusou e ninguém mais fala com você.',dede:'Dedé é preso e o barco dele apodrece no porto. O cais te chama de "a delegada de araque".',zeca:'O jovem Zeca é levado pela polícia. A mãe dele jura que você destruiu um garoto inocente.'},
 ok:'Tonho é preso. O cais respira: Nando não morreu à toa. O contrabando é desmontado e os pescadores voltam a conversar nas calçadas.',
+okAlt:'Tonho é preso — mas tarde. Antes disso, alguém que não devia já pagou o preço dos seus erros, e o cais não esquece. Você acertou, e vai carregar isso por muito tempo.',
 esc:'Tonho cobre os rastros e ninguém fala mais. O cais volta a dormir com o segredo.'},
 
 /* ================= CASO 3 ================= */
-{n:'A Última Sessão',ic:'🎬',tg:'Um plágio, uma crítica e a luz do projetor.',
-intro:'Estreia de um filme em Salvador. No fim da sessão, a crítica Lara Moura é achada sem vida na cabine de projeção. O diretor Caio, a atriz Bia, o projecionista Leo e a produtora Vera estavam no prédio.',
-intro2:'Os jornais já comentam seus erros anteriores. A produtora exige resultados e a pressão sobre você é enorme.',
+{n:'A Última Sessão',ic:'🎬',tg:'Um plágio, um projetor e a crítica que não se calou.',
+intro:'Estreia de "Maremoto" no Cine Gloria. No fim da sessão, a crítica Lara Moura é achada sem vida na cabine de projeção, sob o zumbido do projetor. O diretor Caio, a atriz Bia, o projecionista Leo e a produtora Vera estavam no prédio.',
+intro2:'A imprensa já te chama de "a detetive que erra". A produtora exige resultado antes do amanhecer, e todos aqui sabem falar bonito — o difícil é saber quem está mentindo.',
 L:[
-{id:'s',nm:'Sala',ic:'🎟️',fx:'flick',bg:'linear-gradient(#3a0d14,#0d0407)',S:[
- {e:'🎟️',x:30,y:50,t:'Ingresso de Lara',r:'Anotado à mão: "Cópia de Aurora, de 1987. Confirmar na cabine."',c:'ingresso'},
- {e:'👜',x:65,y:70,t:'Bolsa de Lara',r:'Aberta e revirada. O notebook dela sumiu.',c:''},
- {e:'🎬',x:50,y:16,t:'Tela',r:'Nos créditos, o nome de Caio como único roteirista.'},
- {e:'🍿',x:80,y:78,t:'Poltrona 12',r:'O assento de Lara. No chão, um brinco que não é dela.'}],pe:['caio']},
+{id:'s',nm:'Sala de projeção',ic:'🎟️',fx:'flick',bg:'linear-gradient(#3a0d14,#0d0407)',S:[
+ {e:'🎟️',x:28,y:52,t:'Ingresso de Lara',r:'No verso, escrito à caneta: "Maremoto = Aurora (1987), plano a plano. Confirmar na cabine."',c:'ingresso'},
+ {e:'👜',x:64,y:72,t:'Bolsa de Lara',r:'Revirada às pressas. O notebook dela não está aqui — e a alça está molhada de refrigerante.',c:''},
+ {e:'🎬',x:50,y:16,t:'A tela',r:'Nos créditos, um único nome de roteiro: Caio Rangel. Vinte anos de carreira resumidos a uma mentira.',c:'tela'},
+ {e:'🍿',x:80,y:78,t:'Poltrona 12',r:'O lugar de Lara. No chão, um brinco de pérola que não é dela.',c:'brinco'}],pe:['caio']},
 {id:'c',nm:'Cabine',ic:'📽️',fx:'flick',bg:'linear-gradient(#222,#050505)',S:[
- {e:'📼',x:25,y:55,t:'Lata "Aurora"',n:'ingresso',nr:'Há muitas latas, você não sabe qual procurar.',r:'Um filme de 1987. A cena central é igual à do filme de hoje, plano a plano.',c:'aurora'},
- {e:'🔒',x:75,y:50,t:'Cofre de latas',n:'aurora',nr:'Um cofre com senha de 4 dígitos. Talvez a cópia do filme original ajude a entender.',pz:{t:'code',q:'Digite o ano do filme original de "Aurora".',a:'1987'},r:'Dentro, o notebook de Lara, com a crítica pronta: "Um plágio descarado."',c:'notebook'},
- {e:'🏆',x:50,y:80,t:'Estatueta',r:'Uma estatueta suja de sangue. Na base: "C.R. — Melhor Roteiro 2019".',c:'estatueta'},
- {e:'📖',x:85,y:22,t:'Diário do Leo',n:'estatueta',nr:'Um caderno de horários do projecionista, mas você ainda não tem material para checar.',pz:{t:'order',q:'Ordene a noite segundo o diário e os depoimentos.',items:['A sessão começa (20h)','Caio sobe à cabine (21h40)','O filme termina (22h)','Lara é encontrada (22h10)']},r:'Caio subiu à cabine ANTES do fim do filme e ficou lá por 20 minutos.',c:'diario'},
- {e:'🧤',x:12,y:70,t:'Luvas',r:'Do Leo. Limpas, nada de errado.'}],pe:['leo']},
+ {e:'📼',x:22,y:56,t:'Lata "Aurora"',n:'ingresso',nr:'Prateleiras cheias de latas antigas, todas parecidas. Você precisa saber qual procurar.',r:'A lata do filme de 1987. Você põe um trecho na moviola: a sequência do farol é idêntica à de "Maremoto".',c:'aurora'},
+ {e:'🔒',x:76,y:48,t:'Cofre de latas',n:'aurora',nr:'Um cofre de 4 dígitos, antigo e pesado. O número deve estar em algum registro do filme.',pz:{t:'code',q:'O cofre guarda o material que Lara recolheu. Digite o ano do filme original "Aurora".',a:'1987'},r:'Dentro: o notebook de Lara, aberto na crítica inacabada — "Um plágio descarado, e eu vou provar."',c:'notebook'},
+ {e:'🏆',x:50,y:80,t:'Estatueta',r:'Uma estatueta de "melhor roteiro" com a base manchada de sangue seco. A ponta está lascada.',c:'estatueta'},
+ {e:'📖',x:86,y:22,t:'Diário de rondas do Leo',n:'estatueta',nr:'O caderno de horários do projecionista. Falta uma referência na cena para conferir os horários.',pz:{t:'order',q:'Reconstrua a noite pelo diário do Leo, do mais cedo ao mais tarde.',items:['A sessão começa (20h00)','Caio sobe à cabine (21h40)','O filme acaba (22h00)','Lara é encontrada (22h10)']},r:'O diário mostra Caio entrando na cabine às 21h40 — antes do fim do filme — e saindo às 22h00.',c:'diario'},
+ {e:'🧤',x:12,y:72,t:'Luvas de projecionista',r:'Do Leo. Limpas, guardadas no gancho certo. Nada de errado com elas.'}],pe:['leo']},
 {id:'m',nm:'Camarim',ic:'💄',fx:'flick',bg:'linear-gradient(#4a2a3a,#150b11)',S:[
- {e:'📜',x:30,y:48,t:'Roteiro rasurado',r:'Na primeira versão, o título é "Aurora". A caligrafia sobre a rasura é de Caio.',c:'roteiro'},
- {e:'💌',x:72,y:65,t:'Bilhete no espelho',r:'De Bia a Caio: "Estou fora disso. Não vou mentir por você."',c:'bilhete'},
- {e:'💊',x:18,y:76,t:'Caixa de comprimidos',r:'Ansiolíticos, receita recente em nome de Caio. A caixa está quase vazia.',c:'remedio'},
- {e:'🪶',x:15,y:30,t:'Pena negra',r:'Uma pena negra sobre a penteadeira. Uma letra a nanquim: "A".',f:'A'}],pe:['bia']},
+ {e:'📜',x:30,y:48,t:'Roteiro rasurado',r:'A primeira página traz o título "Aurora", riscado e reescrito à mão como "Maremoto". A caligrafia é de Caio.',c:'roteiro'},
+ {e:'💌',x:72,y:66,t:'Bilhete no espelho',r:'De Bia a Caio: "Estou fora disso. Não vou assinar uma mentira — nem por você."',c:'bilhete'},
+ {e:'💊',x:18,y:76,t:'Caixa de comprimidos',r:'Ansiolíticos, receita recente em nome de Caio. A caixa está quase vazia, apesar de nova.',c:'remedio'},
+ {e:'🪶',x:15,y:30,t:'Pena negra',r:'Uma pena negra sobre a penteadeira. Na haste, a nanquim: "A".',f:'A'}],pe:['bia']},
+{id:'a',nm:'Arquivo',ic:'🗄️',fx:'calm',bg:'linear-gradient(#2a2418,#0b0906)',S:[
+ {e:'🎞️',x:30,y:40,t:'Duas latas iguais',pz:{t:'choice',q:'Duas latas sem etiqueta, ambas chamadas "Aurora". Uma traz o selo do laboratório de 1987; a outra tem o selo recente, refeito por cima. Qual é a cópia?',opts:['A do selo de 1987','A do selo recente, refeito por cima','As duas são originais'],a:1,fail:'A emulsão antiga amarela com o tempo. O selo refeito por cima denuncia a cópia.'},r:'A cópia foi feita do negativo original. Quem copiou teve acesso ao arquivo do laboratório — coisa de quem manda no filme.',c:'copia'},
+ {e:'📋',x:70,y:64,t:'Ficha do laboratório',r:'Retirada do negativo de "Aurora" assinada por "C. Rangel", três meses antes da estreia.',c:'ficha'},
+ {e:'🗃️',x:50,y:24,t:'Fotos de imprensa',r:'Caio e Lara, anos atrás, sorrindo numa entrevista. Parceiros, no início.'}],pe:[]},
 {id:'r',nm:'Saguão',ic:'🍿',fx:'warm',bg:'linear-gradient(#4a3a1a,#15100a)',S:[
- {e:'💸',x:30,y:50,t:'Envelope de Vera',r:'Um contrato: se a crítica saísse boa, Vera receberia bônus. Dinheiro de patrocínio, nada ilegal.',c:'bonus'},
- {e:'🕐',x:70,y:68,t:'Relógio de ponto',r:'O porteiro marcou a saída de Caio às 22h05 — antes de Lara ser encontrada.',c:'ponto'},
- {e:'🍿',x:50,y:84,t:'Bomboniere',r:'Pipoca fria. Nada aqui.'}],pe:['vera']}],
+ {e:'💸',x:28,y:50,t:'Envelope de Vera',r:'Contrato de bônus: se a crítica saísse boa, Vera receberia um extra. Dinheiro de patrocínio — nada ilegal.',c:'bonus'},
+ {e:'🕐',x:70,y:68,t:'Relógio de ponto',r:'O porteiro marcou a saída de Caio às 22h05, correndo — cinco minutos antes de Lara ser encontrada.',c:'ponto'},
+ {e:'📋',x:50,y:26,t:'Controle de sessões',pz:{t:'match',q:'O porteiro anotou, embaralhado, onde cada um disse que estaria. Ligue cada pessoa ao seu posto.',pairs:[['Caio (diretor)','Cabine de projeção'],['Bia (atriz)','Camarim'],['Vera (produtora)','Saguão']]},r:'Cruzando os depoimentos, só uma pessoa tinha motivo para subir à cabine naquela hora — e não era o projecionista.',c:'escala'},
+ {e:'🥤',x:50,y:86,t:'Bomboniere',r:'Um copo de refrigerante derramado e uma alça de bolsa molhada. Nada além disso.'}],pe:['vera']}],
 P:{
-caio:{nm:'Caio',e:'🎩',x:20,y:62,Q:[
- {q:'Conhecia Lara?',a:'Uma crítica severa. Mas eu nunca faria mal a ela.'},
- {q:'O que achou da crítica?',a:'Eu ainda não li. Ela só publicaria amanhã.'},
- {q:'De onde veio a ideia do filme?',a:'Da minha cabeça. Anos de trabalho.'},
- {q:'Você já subiu à cabine?',a:'Nunca. Não é meu lugar.'},
- {q:'Por que esse roteiro tem outro título?',req:'roteiro',a:'Referências existem em todo roteiro. Isso não é plágio.'},
- {q:'E os comprimidos?',req:'remedio',a:'Ansiedade. A estreia me consome.'},
- {q:'O ingresso de Lara diz "Aurora".',req:'ingresso',a:'Ela estava obcecada por filmes antigos. Coincidência.'},
- {q:'O Leo te viu subir.',req:'diario',a:'Subi para checar o som. Só isso. Vinte minutos passa rápido.'}],
- X:{ingresso:{a:'Isso é só uma anotação dela.',n:10},
-    roteiro:{a:'Referências existem em todo roteiro...',n:12},
-    aurora:{a:'Ele hesita. "Foi uma homenagem, todo mundo homenageia."',n:18},
-    estatueta:{a:'"Qualquer um podia ter pego aquela estatueta."',n:12},
-    diario:{a:'"Subi para checar o som. Só isso."',n:20},
+caio:{nm:'Caio Rangel',e:'🎩',x:20,y:64,alibi:'Fiquei no saguão com os patrocinadores, o tempo todo. Não subo à cabine desde a montagem.',
+ ab:'diario',abTxt:'Tá... tá certo. Eu subi. Subi às 21h40, o Leo anotou. Fui falar com ela, cara a cara. E ela riu de mim. Riu, você entende?',
+ abC:'roteiro',
+ Q:[
+ {q:'O que "Maremoto" tem a ver com "Aurora"?',a:'Referências, detetive. Todo autor bebe de algum lugar. Chamar isso de plágio é vulgar.'},
+ {q:'De onde veio a ideia?',a:'Da minha cabeça. Anos e anos de uma ideia só minha.',tone:'firme'},
+ {q:'Você já subiu à cabine?',a:'Nunca. Cabine é lugar de projecionista. Eu dirijo; não fico atrás da luz.'},
+ {q:'O ingresso de Lara diz "Aurora".',req:'ingresso',a:'Ela era obcecada por filmes antigos. Vê plágio em tudo — é o trabalho dela, não é?'},
+ {q:'E esses comprimidos?',req:'remedio',a:'Ansiedade. Toda estreia me consome. Isso não faz de mim um assassino.'},
+ {q:'Por que rasurar o próprio título?',req:'roteiro',a:'Reescrevi. Roteiros mudam de nome, detetive. Isso é cinema, não cartório.'},
+ {q:'O bilhete da Bia fala de mentira.',req:'bilhete',a:'A Bia é dramática. Ela não sabia de nada. Deixe a Bia fora disso.'},
+ {q:'O Leo anotou sua entrada na cabine.',ab:1,tone:'empatico',a:'Vinte minutos. Só isso. Entrei, discutimos, saí. Quando eu saí, ela ainda estava viva — e isso é o que importa.'},
+ {q:'Você tirou o negativo de "Aurora" do laboratório?',req:'ficha',ab:1,truth:'Fui eu. Copiei cada plano, um por um, e ela descobriu. Mas eu jurei que ia só conversar, pedir que ela esperasse... ela não esperou. Ela nunca espera.',rc:45,a:'Negativo de 1987? Deve haver engano na ficha. Essas fichas se trocam.'}],
+ X:{ingresso:{a:'Uma anotação. Nada mais que uma anotação.',n:10},
+    tela:{a:'Ele olha a tela onde só o nome dele aparece, e não diz nada.',n:12},
+    roteiro:{a:'"Mudar de título não é crime. É decência de mercado."',n:12},
+    aurora:{a:'Ele hesita. "Todo diretor presta homenagem. É uma tradição."',n:18},
+    copia:{a:'A voz falha. "Isso... isso podia ser qualquer um com acesso ao arquivo."',n:20},
+    ficha:{a:'"Assinatura? Qualquer um assina uma ficha de laboratório."',n:18},
+    estatueta:{a:'"Essa estatueta ficava numa estante. Qualquer um alcançava."',n:12},
+    diario:{a:'"Vinte minutos. Um café dura mais que isso."',n:20},
+    escala:{a:'Ele lê o controle do porteiro e engole seco.',n:16},
     ponto:{a:'Ele olha o relógio de ponto e fica pálido.',n:16},
-    remedio:{a:'"Eu não sou um homem violento porque tomo remédio."',n:10},
+    remedio:{a:'"Não sou violento só porque tomo remédio pra dormir."',n:10},
     bilhete:{a:'"A Bia não sabia de nada. Não misture ela nisso."',n:14},
-    notebook:{need:70,a:'Ele perde a voz. "Ela ia me destruir. Vinte anos de carreira... eu só queria falar com ela, e ela riu de mim naquela cabine." Caio confessa, chorando.',n:30,g:'conf'}}},
-leo:{nm:'Leo',e:'📽️',x:50,y:60,Q:[
- {q:'Viu algo?',a:'Vi Caio subir à cabine uns minutos antes de a Lara ser achada.'},
- {q:'Alguém mais subiu?',a:'Só os dois. Eu conheço o som de cada degrau.'},
- {q:'Você mexeu no projetor?',a:'Não. O projetor estava normal.'},
- {q:'E sua estatueta?',a:'Não é minha. Essa ficava na estante do Caio.',ev:''},
- {q:'Onde você estava?',a:'Na sala de máquinas, colado no projetor, a noite inteira.'},
- {q:'A lata Aurora é rara?',req:'aurora',a:'Raríssima. Só o Caio pediu pra ver aquela lata. Duas vezes na semana.'}],
- X:{aurora:{a:'Essa lata é rara, só o Caio pediu para ver.',n:12},
-    estatueta:{a:'Essa estatueta ficava na estante do Caio.',n:12},
-    diario:{a:'Meu diário não mente. Anoto tudo, é o meu trabalho.',n:10}}},
-bia:{nm:'Bia',e:'🎭',x:55,y:62,Q:[
- {q:'O que sabe?',a:'O Caio andava apavorado com a estreia. Mais do que o normal.'},
- {q:'Por que ele estava assim?',a:'Ele não dormia. Falava sozinho sobre "a crítica".'},
- {q:'Você e o Caio?',tone:'empatico',a:'A gente teve algo. Acabou. Ele não aceitou bem.'},
- {q:'Você escreveu esse bilhete?',req:'bilhete',a:'Escrevi, sim. Não ia mentir sobre o roteiro.'},
- {q:'Onde estava às 22h?',a:'No camarim, me preparando pro brinde. Sozinha.'},
- {q:'Você sabia do plágio?',req:'roteiro',a:'Eu desconfiava. Ele copiou cenário por cenário. Eu me recusei a assinar.'}],
- X:{roteiro:{a:'Esse roteiro... eu me recusei a assinar mentiras.',n:12},
-    bilhete:{a:'Eu escrevi, sim. Não ia mentir sobre o roteiro.',n:12},
-    remedio:{a:'Ele tomava remédio pra dormir. Estava no limite.',n:10}}},
-vera:{nm:'Vera',e:'👩‍💼',x:30,y:74,Q:[
- {q:'Seu interesse na crítica?',a:'Uma boa crítica vende ingressos. Mas eu jamais machucaria alguém por isso.'},
- {q:'Onde estava?',a:'Recebendo os patrocinadores no saguão a noite inteira.'},
- {q:'Conhece a Lara?',a:'Detesto o que ela escreve. Mas isso é trabalho.'},
- {q:'E o contrato de bônus?',req:'bonus',a:'Era um bônus honesto, de patrocínio. Eu preciso do filme, não da morte dela.'},
- {q:'O Caio é confiável?',a:'Ele é um gênio insuportável. Nunca vi ele agredir ninguém, mas nunca vi ele tão desesperado.'},
- {q:'Alguém saiu mais cedo?',req:'ponto',a:'O Caio saiu às 22h05. Eu vi ele atravessando o saguão correndo.'}],
- X:{bonus:{a:'Era um bônus honesto, de patrocínio. Eu preciso do filme, não da morte dela.',n:10},
-    aurora:{a:'Eu não sabia disso. O Caio nunca me disse nada.',n:12},
-    ponto:{a:'Sim, ele saiu correndo. Eu achei que era euforia.',n:14}}}},
+    brinco:{a:'"Um brinco? O cinema inteiro usa brinco, detetive."',n:10},
+    notebook:{need:70,a:'Ele perde a voz. "Ela ia me destruir. Vinte anos... e ela ia apagar tudo com um texto. Eu só queria que ela me ouvisse. Ela riu. E a estatueta estava ali na estante." Caio confessa, os olhos vermelhos.',n:30,g:'conf'}}},
+leo:{nm:'Leo',e:'📽️',x:50,y:62,Q:[
+ {q:'Você viu Caio subir?',a:'Vi. Um pouco antes de a Lara ser achada. Conheço o som de cada degrau desta cabine — e aquele passo era o dele.'},
+ {q:'Alguém mais subiu?',a:'Só ele e a Lara. Ninguém mais pisa aqui sem eu saber.'},
+ {q:'Você mexeu no projetor?',a:'Não. E olha: o projetor estava quente, mas o filme tinha acabado. Alguém ficou aqui depois da sessão.'},
+ {q:'De quem é essa estatueta?',a:'Não é minha. Essa ficava na estante do Caio. Eu limpo cabine, não prêmios.'},
+ {q:'Onde você estava?',a:'Colado no projetor, a noite toda. É o meu posto. É o que eu sou.'},
+ {q:'A lata "Aurora" é rara?',req:'aurora',a:'Raríssima. E sabe de uma coisa? Foi o Caio que pediu pra ver aquela lata. Duas vezes essa semana. Duas.'}],
+ X:{aurora:{a:'"Só o Caio pediu pra ver aquela lata. Duas vezes essa semana."',n:12},
+    estatueta:{a:'"Essa estatueta ficava na estante do Caio."',n:12},
+    diario:{a:'"Meu diário não mente. Anoto tudo — é o meu trabalho."',n:10},
+    copia:{a:'"Cópia? Aqui o material antigo é tratado como relíquia. Quem fez isso conhecia o arquivo."',n:14}}},
+bia:{nm:'Bia',e:'🎭',x:56,y:64,Q:[
+ {q:'O que você sabe?',a:'Que o Caio estava apavorado. Mais do que uma estreia justifica.'},
+ {q:'Por que apavorado?',a:'Ele não dormia. Falava sozinho sobre "a crítica". Como se uma resenha pudesse matar alguém.'},
+ {q:'Você e o Caio?',tone:'empatico',a:'A gente teve algo. Acabou quando eu me recusei a assinar o roteiro. Ele não aceitou bem.'},
+ {q:'Esse bilhete é seu?',req:'bilhete',a:'É. Escrevi no dia em que entendi de onde vinha o filme. Eu não ia mentir sobre isso.'},
+ {q:'Onde você estava às 22h?',a:'No camarim, sozinha, me preparando pro brinde. Sozinha é a palavra-chave, detetive.'},
+ {q:'Você sabia do plágio?',req:'roteiro',a:'Desconfiava. Ele copiou cenário por cenário, plano por plano. Eu me recusei a assinar aquilo.'},
+ {q:'A Lara te procurou?',req:'ingresso',tone:'gentil',a:'Ela me ligou naquela tarde. Perguntou se eu assinaria um roteiro que não era meu. Eu disse que não. Ela disse que também não.'}],
+ X:{roteiro:{a:'"Eu me recusei a assinar mentiras."',n:12},
+    bilhete:{a:'"Eu escrevi. Não ia mentir sobre o roteiro."',n:12},
+    remedio:{a:'"Ele tomava remédio pra dormir. Estava no limite."',n:10},
+    brinco:{a:'Ela olha o brinco e morde o lábio. "Pérola... a Vera usa pérolas."',n:16}}},
+vera:{nm:'Vera',e:'👩‍💼',x:32,y:76,Q:[
+ {q:'Seu interesse na crítica?',a:'Uma boa crítica vende ingresso. Mas eu não mato por bilheteria, detetive.'},
+ {q:'Onde você estava?',a:'No saguão, com os patrocinadores. A noite inteira. Pergunte a qualquer um deles.'},
+ {q:'Você conhece a Lara?',a:'Detesto o que ela escreve. Mas isso é trabalho, não sangue.'},
+ {q:'E o contrato de bônus?',req:'bonus',a:'Bônus honesto, de patrocínio. Eu preciso do filme vivo, não da crítica morta.'},
+ {q:'Isso é seu?',req:'brinco',tone:'firme',a:'...É. Um brinco de pérola. Eu perdi no saguão. Mas o saguão é longe da cabine, e você sabe disso.'},
+ {q:'O Caio é confiável?',a:'Um gênio insuportável. Nunca vi ele agredir ninguém — mas nunca vi ele tão desesperado.'}],
+ X:{bonus:{a:'"Bônus honesto, de patrocínio. Eu preciso do filme, não da morte dela."',n:10},
+    aurora:{a:'"Eu não sabia disso. O Caio nunca me disse nada."',n:12},
+    brinco:{a:'"É meu, sim. Eu perdi no saguão. Isso faz de mim o quê, detetive?"',n:14},
+    copia:{a:'"Uma cópia do arquivo? Isso custa caro. Só quem manda no filme paga por isso."',n:12}}}},
 combos:[
- {a:'aurora',b:'roteiro',r:'O filme de hoje é cópia plano a plano de "Aurora" (1987) — e o roteiro original tinha esse nome.',c:'plagio'},
- {a:'diario',b:'ponto',r:'Caio esteve na cabine entre 21h40 e 22h, e saiu correndo às 22h05.',c:'janela_caio'},
- {a:'estatueta',b:'notebook',r:'A arma tem o nome de Caio, e o motivo está escrito por Lara.',c:'arma_caio'}],
-C:{ingresso:'Ingresso: "Cópia de Aurora (1987)"',aurora:'Filme "Aurora" (1987), cena idêntica',notebook:'Notebook de Lara: crítica de plágio',roteiro:'Roteiro com título original "Aurora"',estatueta:'Estatueta de Caio com sangue',diario:'Caio subiu à cabine antes do fim do filme',bilhete:'Bilhete de Bia a Caio',bonus:'Contrato de bônus de Vera',remedio:'Ansiolíticos de Caio',ponto:'Caio saiu às 22h05, às pressas',plagio:'Dedução: o plágio comprovado',janela_caio:'Dedução: a janela de Caio na cabine',arma_caio:'Dedução: a arma e o motivo',conf:'Confissão de Caio'},
-key:['aurora','notebook','roteiro','estatueta','diario'],cul:'caio',
-mot:['Evitar que a crítica revelasse o plágio','Ciúme da atriz Bia','Briga por bilheteria','Vingança por uma crítica antiga'],
-W:{bia:'Bia é presa e a carreira acaba. Meses depois o bilhete dela é entendido, mas ela nunca mais atua.',leo:'Leo é demitido e perde a licença de projecionista. O cinema fecha as portas.',vera:'Vera é presa e a produtora quebra. A verdade vem depois — mas dezenas de funcionários já perderam o emprego.'},
-ok:'Caio é preso. "Aurora" volta às telas e Lara é lembrada como a crítica que não se curvou. Bia assume o papel principal da próxima produção.',
-esc:'Caio consegue um bom advogado e o filme ainda ganha prêmios. A verdade fica guardada nos arquivos.'},
+ {a:'aurora',b:'roteiro',r:'"Maremoto" é "Aurora" (1987), plano a plano — e o roteiro original tinha esse nome.',c:'plagio'},
+ {a:'diario',b:'ponto',r:'Caio esteve na cabine entre 21h40 e 22h00, e saiu às pressas às 22h05.',c:'janela'},
+ {a:'estatueta',b:'notebook',r:'A arma tem o nome de Caio gravado na base, e o motivo está escrito por Lara.',c:'armamotivo'}],
+C:{ingresso:'Ingresso: "Maremoto = Aurora (1987)"',tela:'Créditos: só Caio como roteirista',brinco:'Brinco de pérola na poltrona 12',aurora:'Lata "Aurora" (1987): cena idêntica',notebook:'Notebook de Lara: a crítica de plágio',copia:'Cópia feita do negativo original',ficha:'Ficha do laboratório assinada por C. Rangel',roteiro:'Roteiro com o título "Aurora" rasurado',estatueta:'Estatueta de roteiro de Caio, com sangue',diario:'Caio subiu à cabine antes do fim do filme',escala:'Controle de sessões: quem estava onde',bilhete:'Bilhete de Bia a Caio',bonus:'Contrato de bônus de Vera',remedio:'Ansiolíticos de Caio',ponto:'Caio saiu às 22h05, às pressas',plagio:'Dedução: o plágio comprovado',janela:'Dedução: a janela de Caio na cabine',armamotivo:'Dedução: a arma e o motivo',conf:'Confissão de Caio Rangel'},
+cul:'caio',
+D:{
+ como:{opts:['Um golpe na nuca com a estatueta de roteiro','Uma queda da escada da cabine','Asfixia com a fita do projetor','Veneno no refrigerante do brinde'],a:0,need:'estatueta'},
+ porq:{opts:['Silenciar Lara, que ia publicar o plágio de "Aurora"','Ciúme da atriz Bia','Vingança por uma crítica antiga','Briga por bilheteria no fim de semana'],a:0}},
+W:{bia:'Bia é presa e a carreira acaba antes do amanhecer. Anos depois o bilhete dela é entendido — e ninguém devolve os anos perdidos.',leo:'Leo é demitido e perde a licença de projecionista. O Cine Gloria fecha as portas e vira estacionamento.',vera:'Vera é presa e a produtora quebra. A verdade aparece tarde demais — e dezenas de funcionários já perderam o emprego.'},
+ok:'Caio é preso. "Aurora" volta às telas com o nome de Lara nos créditos, e o Cine Gloria reabre para uma sessão só dela.',
+okAlt:'Caio é preso, mas a dúvida fica pairando sobre o cinema. Alguém que você acusou antes ainda paga o preço — e Bia te olha como quem calcula o custo da verdade.',
+esc:'O advogado de Caio transforma o caso em "acidente na cabine". O filme ainda ganha prêmios, e a verdade fica guardada nos arquivos.'},
 
 /* ================= CASO 4 ================= */
 {n:'O Baile da Estrela do Mar',ic:'🎭',tg:'Máscaras, escuridão e um colar que não existe.',
-intro:'Baile de máscaras no casarão do colecionador Ícaro Santana, no Pelourinho. Às 21h50, as luzes caem. Às 21h55, um grito: Ícaro está morto ao pé da escadaria e o colar "Estrela do Mar" desapareceu. Todos usavam máscaras.',
-intro2:'Os convidados já sabem dos seus erros. Cochicham atrás das máscaras e ninguém parece confiar em você.',
+intro:'Baile de máscaras no casarão dos Santana, no Pelourinho. Às 21h50, as luzes caem. Às 21h55, um grito: Ícaro está morto ao pé da escadaria, e o colar "Estrela do Mar" sumiu. Todos usavam máscaras — ninguém viu nada.',
+intro2:'Os convidados cochicham atrás das máscaras: sabem dos seus tropeços anteriores. Nesta casa, ninguém confia em ninguém.',
 L:[
 {id:'s',nm:'Salão de Baile',ic:'🎭',fx:'fest',bg:'linear-gradient(#4a1a3a,#12060f)',S:[
- {e:'📜',x:28,y:30,t:'Lista de convidados',r:'Cada convidado registrou a cor da máscara: Lívia, prata. Bento, dourada. Zélia, preta. O garçom Tavinho, uniforme.',c:'lista'},
- {e:'⚡',x:12,y:62,t:'Quadro de energia',r:'O disjuntor foi desligado à mão às 21h50. Alguém queria escuridão.',c:'energia'},
- {e:'🕰️',x:55,y:20,t:'Relógio do salão',n:'energia',nr:'Um relógio de parede. Você ainda não sabe o que checar.',pz:{t:'order',q:'Ordene os acontecimentos da noite.',items:['Brinde do anfitrião (21h00)','Disjuntor é desligado (21h50)','Alguém sobe a escadaria no escuro','Grito de Lívia: Ícaro está morto (21h55)']},r:'O assassino agiu durante os cinco minutos de escuridão.',c:'ordem'},
- {e:'👠',x:78,y:78,t:'Sapato no chão',r:'Um sapato de salto preso na escada. A fivela tem tinta dourada.',c:'sapato'}],pe:['livia','bento']},
+ {e:'📜',x:26,y:30,t:'Lista de convidados',r:'Cada convidado anotou a cor da máscara: Lívia, prata. Bento, dourada. Zélia, preta. O garçom Tavinho, sem máscara.',c:'lista'},
+ {e:'⚡',x:12,y:62,t:'Quadro de energia',r:'O disjuntor foi desligado à mão às 21h50. Sem pressa, sem tropeço: quem fez isso conhecia a casa.',c:'energia'},
+ {e:'🕰️',x:56,y:20,t:'Relógio do salão',n:'energia',nr:'Um relógio de parede parado numa hora que não faz sentido. Você precisa de outra pista para datar a queda de luz.',pz:{t:'order',q:'Ordene os acontecimentos da noite, do mais cedo ao mais tarde.',items:['Brinde do anfitrião (21h00)','Disjuntor é desligado (21h50)','Passos sobem a escada no escuro','Grito de Lívia: Ícaro está morto (21h55)']},r:'O assassino agiu nos cinco minutos de escuridão — e conhecia de cor cada degrau da escada.',c:'ordem'},
+ {e:'👠',x:78,y:78,t:'Sapato na escada',r:'Um sapato de salto preso entre os degraus. A fivela tem tinta dourada descascada.',c:'sapato'},
+ {e:'🕯️',x:50,y:52,t:'Vela caída',pz:{t:'choice',q:'A vela derreteu e guardou uma marca de bota na cera. Quem atravessou a escuridão?',opts:['Um convidado perdido, tateando','Alguém que conhecia a casa de cor','O garçom, levando a bandeja'],a:1,fail:'Quem tateia no escuro deixa marcas quebradas. Esta marca é reta e firme demais.'},r:'A marca é reta e sem hesitação: quem passou ali subiu aquela escada mil vezes, mesmo sem luz.',c:'passo'}],pe:['livia','bento']},
 {id:'b',nm:'Biblioteca',ic:'📚',fx:'flick',bg:'linear-gradient(#3b2a18,#150e07)',S:[
- {e:'📓',x:30,y:40,t:'Diário de Ícaro',pz:{t:'code',q:'Ícaro escrevia em código de César (cada letra empurrada 3 casas para frente): "EHQWR WURFRX R FRODU". Quem trocou o colar? Digite o nome.',a:'BENTO'},r:'Decifrado: "Bento trocou o colar". Ícaro tinha descoberto.',c:'diario'},
- {e:'📕',x:62,y:25,t:'Catálogo da coleção',r:'Estrela do Mar, adquirido em 1923.',c:'ano'},
- {e:'🗄️',x:78,y:60,t:'Cofre da parede',n:'ano',nr:'Um cofre de 4 dígitos. O catálogo da coleção deve ter algo.',pz:{t:'code',q:'Digite o ano de aquisição do colar.',a:'1923'},r:'O estojo contém uma réplica de vidro. O colar verdadeiro foi trocado antes do baile.',c:'replica'},
- {e:'✉️',x:15,y:70,t:'Carta de Zélia',r:'Zélia tentou comprar o colar por uma fortuna. Ícaro recusou.',c:'carta'}],pe:['zelia']},
+ {e:'📓',x:28,y:42,t:'Diário de Ícaro',pz:{t:'code',q:'Ícaro escrevia em código de César (cada letra 3 casas adiante): "EHQWR WURFRX R FRODU". Quem trocou o colar? Digite o nome.',a:'BENTO'},r:'Decifrado: "Bento trocou o colar". Ícaro havia descoberto a fraude.',c:'diario'},
+ {e:'📕',x:60,y:26,t:'Catálogo da coleção',r:'"Estrela do Mar — adquirido em 1923". A foto do catálogo mostra o colar com a pedra central intacta.',c:'ano'},
+ {e:'🗄️',x:78,y:60,t:'Cofre da parede',n:'ano',nr:'Um cofre de 4 dígitos. O catálogo da coleção deve guardar o número.',pz:{t:'code',q:'Digite o ano de aquisição do colar.',a:'1923'},r:'Dentro do estojo: uma réplica de vidro. O colar verdadeiro foi trocado antes do baile.',c:'replica'},
+ {e:'✉️',x:16,y:70,t:'Carta de Zélia',r:'Zélia ofereceu uma fortuna pelo colar. Ícaro recusou, por escrito, com desprezo.',c:'carta'}],pe:['zelia']},
 {id:'t',nm:'Terraço',ic:'🌙',fx:'calm',bg:'linear-gradient(#1c2a4a,#05070f)',S:[
- {e:'🧵',x:40,y:35,t:'Fio no parapeito',r:'Um fio de seda azul preso na grade, igual ao da gravata de Bento.',c:'fio'},
- {e:'🪜',x:70,y:62,t:'Corrimão da escada',r:'Tinta dourada marcada no corrimão: a máscara de Bento descasca.',c:'tinta'},
- {e:'🕯️',x:55,y:80,t:'Lanterna de mão',r:'Uma lanterna de mão sobre o parapeito. Quem subiu no escuro, subiu com ela.',c:'lanterna2'},
- {e:'🪶',x:12,y:30,t:'Pena negra',r:'Uma pena negra no peitoril. Uma letra: "M".',f:'M'}],pe:['tavinho']},
+ {e:'🧵',x:38,y:34,t:'Fio no parapeito',r:'Um fio de seda azul preso na grade. É igual ao da gravata de Bento.',c:'fio'},
+ {e:'🪜',x:70,y:62,t:'Corrimão da escada',r:'Tinta dourada marcada no corrimão. A máscara de Bento descasca no mesmo tom.',c:'tinta'},
+ {e:'🔦',x:56,y:80,t:'Lanterna de mão',r:'Uma lanterna esquecida no parapeito. Quem subiu no escuro levou luz — e a deixou cair.',c:'lanterna2'},
+ {e:'🎨',x:14,y:28,t:'Máscaras quebradas',pz:{t:'match',q:'No cesto, fragmentos de máscaras. Ligue cada cor ao estrago que ninguém quis assumir.',pairs:[['Dourada','Dourado descascado no corrimão'],['Prateada','Fivela dourada no sapato'],['Preta','Nenhuma marca: ficou no salão']]},r:'Quem descascou foi a máscara dourada, e só Bento veio de dourado.',c:'mascara_quem'},
+ {e:'🪶',x:12,y:66,t:'Pena negra',r:'Uma pena negra no peitoril. Na haste, a nanquim: "M".',f:'M'}],pe:['tavinho']},
 {id:'p',nm:'Porão',ic:'🔌',fx:'flick',bg:'linear-gradient(#2a2a2a,#0a0a0a)',S:[
- {e:'🔌',x:35,y:45,t:'Disjuntor',r:'Foi desligado à mão, sem pressa. Quem fez isso conhecia a casa às escuras.',c:'disjuntor'},
- {e:'🧤',x:70,y:60,t:'Luvas de trabalho',r:'Um par de luvas brancas de luvas de mordomo, com poeira do porão.'},
- {e:'📖',x:18,y:78,t:'Livro de contas',r:'Pagamentos regulares a um "conserto de joia". Horroroso: prova que a troca já durava meses.',c:'conserto'}],pe:[]}],
+ {e:'🔌',x:34,y:44,t:'Disjuntor',r:'Desligado à mão, com calma. Quem desceu aqui no escuro sabia exatamente onde pôr a mão.',c:'disjuntor'},
+ {e:'🧤',x:70,y:60,t:'Luvas de serviço',r:'Um par de luvas brancas de mordomo, cobertas de poeira do porão.'},
+ {e:'📖',x:18,y:78,t:'Livro de contas',r:'Pagamentos mensais a um "conserto de joia". A troca do colar durava meses — e custava caro.',c:'conserto'}],pe:[]}],
 P:{
-livia:{nm:'Lívia',e:'🥀',x:25,y:75,Q:[
- {q:'Onde estava às 21h50?',a:'Dançando com Zélia. Quando a luz caiu, fiquei parada onde estava.'},
- {q:'Ícaro tinha inimigos?',a:'Todos queriam o colar. Até o Bento insistia em avaliá-lo.'},
- {q:'Você é noiva dele?',a:'Era. Agora sou só a mulher que achou o corpo.'},
- {q:'Quem conhecia a casa?',a:'O Bento. Vinte anos cuidando de tudo aqui.'},
- {q:'Por que sua máscara é prata?',req:'lista',a:'Eu vim de prata, como registrado. E fiquei no salão.'},
- {q:'Alguém tocou no colar?',a:'O Bento pedia para avaliar toda semana. Ícaro nunca deixava.'},
- {q:'E o sapato na escada?',req:'sapato',a:'Meu? Não. A tinta dourada... isso é da máscara do Bento.'}],
- X:{carta:{a:'Zélia nunca me contou isso. Que mulher.',n:10},
-    lista:{a:'Eu vim de prata, e fiquei no salão.',n:10},
-    energia:{a:'Alguém conhecia a casa para achar o disjuntor no escuro.',n:12},
-    sapato:{a:'Não é meu. E a tinta dourada... isso não sai fácil.',n:14}}},
-bento:{nm:'Dr. Bento',e:'⚖️',x:68,y:58,Q:[
- {q:'Qual a sua relação com Ícaro?',a:'Advogado dele há 20 anos. Cuidava de tudo.'},
- {q:'Viu algo no escuro?',a:'Estava no bar. Não vi nada.'},
- {q:'Por que sua máscara é dourada?',a:'Foi um pedido dele. Todos escolheram as cores.'},
- {q:'Alguém mexeu no quadro de energia?',a:'Qualquer um poderia ter descido ao porão.'},
- {q:'Você avaliava o colar?',req:'carta',a:'Avaliar é meu trabalho. Duas vezes, no máximo.'},
- {q:'E esse fio azul na sua gravata?',req:'fio',a:'Muita gravata azul por aí. Isso não quer dizer nada.'},
- {q:'O diário de Ícaro te menciona.',req:'diario',a:'Ícaro inventava coisas no fim da vida. Ele bebia.'},
- {q:'Você subiu a escada no escuro?',req:'ordem',a:'Subir? No escuro? Você está inventando histórias.'}],
- X:{lista:{a:'Sim, vim de dourado. E daí?',n:8},
-    energia:{a:'Qualquer um poderia ter feito isso.',n:10},
-    disjuntor:{a:'Ele olha para as mãos. Elas estão limpas demais para quem estava no bar.',n:14},
-    fio:{a:'"Muita gravata azul por aí."',n:12},
-    tinta:{a:'Ele olha para as mãos e as esconde atrás das costas.',n:16},
+livia:{nm:'Lívia',e:'🥀',x:24,y:76,alibi:'Dancei com a Zélia a noite toda. Quando a luz caiu, fiquei exatamente onde estava.',
+ Q:[
+ {q:'Onde estava quando a luz caiu?',a:'Nos braços da Zélia. A casa inteira pode confirmar: dançávamos quando o salão escureceu.'},
+ {q:'Ícaro tinha inimigos?',a:'Todos queriam o colar. O Bento pedia pra "avaliar" toda semana. Ícaro nunca deixava.'},
+ {q:'Você era noiva dele?',a:'Era. Agora sou a mulher que achou o corpo. Você escolhe como me chamar.'},
+ {q:'Quem conhecia a casa?',a:'O Bento. Vinte anos cuidando de tudo aqui, do porão ao terraço.'},
+ {q:'Por que sua máscara é prata?',req:'lista',a:'Vim de prata, como está na lista. E fiquei no salão — pergunte à Zélia.'},
+ {q:'E o sapato na escada?',req:'sapato',tone:'firme',a:'Não é meu. E aquela tinta dourada... isso descasca da máscara do Bento. Qualquer um vê.'}],
+ X:{carta:{a:'"Zélia nunca me contou isso. Que mulher fria."',n:10},
+    lista:{a:'"Vim de prata e fiquei no salão."',n:10},
+    energia:{a:'"Alguém desligou aquilo no escuro. Alguém que conhecia a casa."',n:12},
+    sapato:{a:'"Não é meu. E a tinta dourada não sai fácil, detetive."',n:14},
+    mascara_quem:{a:'Ela aponta, sem hesitar, para a máscara dourada. "Foi ele. Sempre foi ele."',n:12}}},
+bento:{nm:'Dr. Bento',e:'⚖️',x:68,y:58,alibi:'Passei a noite no bar, de costas para a escada. Não subi nenhum degrau no escuro.',
+ ab:'passo',abTxt:'...Subi. Subi, sim. Aquela escada é minha há vinte anos — eu poderia subi-la dormindo. Quando cheguei, Ícaro já estava no chão. Eu juro.',
+ abC:'diario',
+ Q:[
+ {q:'Qual a sua relação com Ícaro?',a:'Advogado dele há vinte anos. Cuidava de tudo: papéis, coleção, a casa. Tudo.'},
+ {q:'Viu algo no escuro?',a:'Estava no bar. De costas. Não vi absolutamente nada.'},
+ {q:'Por que sua máscara é dourada?',a:'Pedido dele. Todos escolheram as cores. Dourado é a cor da casa.'},
+ {q:'Alguém mexeu no quadro de energia?',a:'Qualquer um poderia ter descido ao porão. A porta não tranca.'},
+ {q:'Você avaliava o colar?',req:'carta',a:'Avaliar é meu trabalho. Duas vezes, no máximo. Uma coleção dessas precisa de revisão.'},
+ {q:'E esse fio azul na sua gravata?',req:'fio',a:'Muita gravata azul neste salão. Isso não quer dizer nada — nada.'},
+ {q:'O diário de Ícaro te menciona.',req:'diario',ab:1,a:'Ícaro inventava coisas no fim da vida. Ele bebia. Escrevia bobagens a nanquim e ria sozinho.'},
+ {q:'Você subiu a escada no escuro?',ab:1,tone:'empatico',truth:'...Sim. Subi e ela estava lá em cima, esperando por mim. Ícaro ia me denunciar, você entende? Vinte anos de confiança desfeitos por um colar de vidro. Eu só precisava que ele ficasse quieto.',rc:42,a:'Subir? No escuro? Você está inventando histórias, detetive.'}],
+ X:{lista:{a:'"Sim, vim de dourado. E daí? Cor de família."',n:8},
+    energia:{a:'"Qualquer um poderia ter feito aquilo."',n:10},
+    disjuntor:{a:'Ele olha para as próprias mãos. Estão limpas demais para quem passou a noite no bar.',n:14},
+    fio:{a:'"Muita gravata azul por aí." A voz sai um tom acima do normal.',n:12},
+    tinta:{a:'Ele esconde as mãos atrás das costas, num reflexo.',n:16},
     sapato:{a:'Ele reconhece a tinta e desvia o olhar.',n:14},
     diario:{a:'"Ícaro inventava coisas no fim da vida."',n:16},
-    ordem:{a:'Ele toca a gola: o escuro foi curto para quem conhecia a casa.',n:18},
+    ordem:{a:'Ele toca a gola. O escuro foi curto demais para quem não conhecia a casa.',n:18},
     conserto:{a:'Ele trava. "Conserto de joia é coisa de colecionador."',n:18},
-    lanterna2:{a:'"Lanterna? Eu não precisei de lanterna."',n:12},
-    replica:{need:70,a:'Ele hesita e desaba. "Ícaro ia me denunciar. Eu só queria que ele ficasse quieto... foi um empurrão, ele caiu na escada." Bento entrega o colar.',n:30,g:'conf'}}},
+    lanterna2:{a:'"Lanterna? Eu não precisei de lanterna nenhuma."',n:12},
+    passo:{a:'Ele olha a marca de bota na cera e fica sem resposta. O pé é dele.',n:16},
+    mascara_quem:{a:'Ele encara os fragmentos dourados e não encontra palavra.',n:16},
+    replica:{need:70,a:'Ele hesita e desaba. "Ícaro ia me denunciar. Eu só queria que ele ficasse quieto... foi um empurrão, e ele caiu na escada. Eu não quis isso." Bento estende o colar verdadeiro, sem olhar.',n:30,g:'conf'}}},
 zelia:{nm:'Madame Zélia',e:'🕶️',x:52,y:62,Q:[
- {q:'Queria o colar?',a:'Sim, pelos olhos de colecionadora. Ofereci, ele recusou. Não o matei por isso.'},
- {q:'Onde estava?',a:'Dançando com a Lívia. Pergunte a ela.'},
- {q:'Você escreveu essa carta?',req:'carta',a:'Sim, tentei comprar. Isso não é crime.'},
- {q:'O que sabe do Bento?',a:'Um advogado de mãos limpas demais.'},
- {q:'O colar é verdadeiro?',req:'replica',a:'Um colar de vidro! Quem faria uma coisa dessas?'},
- {q:'Viu quem subiu a escada?',a:'Vi uma máscara dourada, mas estava escuro demais.'}],
- X:{carta:{a:'Sim, tentei comprar. Isso não é crime.',n:8},
-    lista:{a:'Eu vim de preta, como uma viúva alegre.',n:8},
-    replica:{a:'Um colar de vidro! Quem seria capaz?',n:12},
-    conserto:{a:'Conserto? Isso é linguagem de quem troca pedra por vidro.',n:14}}},
+ {q:'Você queria o colar?',a:'Pelos olhos de colecionadora, sim. Ofereci. Ele recusou com desprezo. Não o matei por isso.'},
+ {q:'Onde estava?',a:'Dançando com a Lívia. Pergunte a ela — ela não mente.'},
+ {q:'Essa carta é sua?',req:'carta',a:'É. Tentei comprar. Oferecer dinheiro não é crime, detetive.'},
+ {q:'O que sabe do Bento?',a:'Um advogado de mãos limpas demais. Nunca vi calo naquelas mãos.'},
+ {q:'O colar é verdadeiro?',req:'replica',a:'Um colar de vidro! Na coleção dos Santana! Quem faria uma coisa dessas?'},
+ {q:'Viu quem subiu a escada?',tone:'gentil',a:'Vi uma máscara dourada atravessar o salão. Estava escuro demais para jurar — mas dourada, isso eu vi.'}],
+ X:{carta:{a:'"Sim, tentei comprar. Isso não é crime."',n:8},
+    lista:{a:'"Vim de preta, como uma viúva alegre."',n:8},
+    replica:{a:'"Um colar de vidro! Quem seria capaz?"',n:12},
+    conserto:{a:'"Conserto? Isso é linguagem de quem troca pedra por vidro, e vive disso."',n:14}}},
 tavinho:{nm:'Tavinho',e:'🍷',x:40,y:70,Q:[
- {q:'Viu algo?',a:'Vi alguém de máscara dourada subindo a escadaria no escuro.'},
- {q:'E o disjuntor?',a:'Estava servindo. Não mexi em nada.'},
- {q:'Quem usa dourado?',a:'Só o doutor Bento veio de dourado.'},
- {q:'Você conhece o porão?',a:'Nunca desço pro porão. É ordem do patrão.'},
- {q:'A lanterna do terraço é sua?',req:'lanterna2',a:'Não. Eu uso vela, o patrão gostava de velas.'},
- {q:'Viu o colar?',a:'Vi no pescoço dele no brinde. Depois, só o corpo.'}],
- X:{energia:{a:'Não fui eu. Eu nunca desço ao porão.',n:8},
-    lista:{a:'Dourada... só o doutor Bento veio de dourado.',n:12},
-    ordem:{a:'Foi exatamente assim que eu vi.',n:10},
-    lanterna2:{a:'Essa lanterna não é do serviço. Deve ser de convidado.',n:12}}}},
+ {q:'Você viu algo?',a:'Vi alguém de máscara dourada subindo a escadaria no escuro. Sem hesitar, degrau por degrau.'},
+ {q:'E o disjuntor?',a:'Eu servia o bar. Não desci ao porão. Só o doutor Bento desce lá.'},
+ {q:'Quem usa dourado?',a:'Nesta noite? Só o doutor Bento veio de dourado.'},
+ {q:'Você conhece o porão?',a:'Nunca desço. Ordem do patrão. O porão é do doutor Bento.'},
+ {q:'Essa lanterna é sua?',req:'lanterna2',a:'Não. Eu uso vela — o patrão gostava de velas. Aquela lanterna é de convidado.'},
+ {q:'Você viu o colar?',a:'Vi no pescoço dele no brinde. Depois, só vi o corpo no chão.'}],
+ X:{energia:{a:'"Não fui eu. Eu nunca desço ao porão."',n:8},
+    lista:{a:'"Dourada... só o doutor Bento veio de dourado."',n:12},
+    ordem:{a:'"Foi exatamente assim que eu vi. O senhor pode anotar."',n:10},
+    lanterna2:{a:'"Essa lanterna não é do serviço. Deve ser de convidado."',n:12}}}},
 combos:[
  {a:'lista',b:'tinta',r:'A máscara dourada é de Bento — e a tinta dela ficou marcada no corrimão.',c:'mascara'},
- {a:'diario',b:'replica',r:'Bento trocou o colar por uma réplica, e Ícaro descobriu.',c:'troca'},
- {a:'disjuntor',b:'ordem',r:'O crime aconteceu nos cinco minutos de escuridão que Bento criou.',c:'escuridao'}],
-C:{lista:'Lista de máscaras: Bento veio de dourado',energia:'Disjuntor desligado às 21h50',ordem:'Linha do tempo: o crime ocorreu no escuro',diario:'Diário de Ícaro: "Bento trocou o colar"',ano:'Colar adquirido em 1923',replica:'Réplica de vidro no estojo',carta:'Carta de Zélia tentando comprar o colar',fio:'Fio azul igual à gravata de Bento',tinta:'Tinta dourada no corrimão',sapato:'Sapato com fivela de tinta dourada',lanterna2:'Lanterna de mão usada no escuro',disjuntor:'Disjuntor desligado à mão, com calma',conserto:'Livro de contas: pagamentos de "conserto de joia"',mascara:'Dedução: a máscara dourada no corrimão',troca:'Dedução: a troca do colar por uma réplica',escuridao:'Dedução: os cinco minutos de escuridão',conf:'Confissão de Bento'},
-key:['replica','diario','fio','tinta','ordem'],cul:'bento',
-mot:['Esconder a troca do colar por uma réplica','Herdar a coleção de Ícaro','Ciúme de Lívia','Rivalidade com Zélia'],
-W:{livia:'Lívia é detida. A noiva do colecionador perde a casa e a reputação antes de a verdade aparecer.',zelia:'Madame Zélia é presa. A antiquária fecha a loja e jura que nunca perdoará a sua precipitação.',tavinho:'Tavinho é demitido e preso por uma noite. Fica marcado como o garçom assassino no Pelourinho inteiro.'},
-ok:'Bento é preso. O colar verdadeiro é achado em uma casa de penhores. O Baile da Estrela do Mar entra para a história como a noite em que a máscara dourada caiu.',
-esc:'Bento some entre a multidão do Pelourinho. O colar nunca é achado.'},
+ {a:'diario',b:'replica',r:'Bento trocou o colar por uma réplica, e Ícaro descobriu em código.',c:'troca'},
+ {a:'disjuntor',b:'ordem',r:'O crime aconteceu nos cinco minutos de escuridão que alguém criou de propósito.',c:'escuridao'}],
+C:{lista:'Lista de máscaras: Bento veio de dourado',energia:'Disjuntor desligado às 21h50',ordem:'Linha do tempo: o crime ocorreu no escuro',passo:'Marca de bota firme na cera: passos de quem conhece a casa',diario:'Diário de Ícaro: "Bento trocou o colar"',ano:'Colar adquirido em 1923',replica:'Réplica de vidro no estojo',carta:'Carta de Zélia tentando comprar o colar',fio:'Fio azul igual ao da gravata de Bento',tinta:'Tinta dourada no corrimão',sapato:'Sapato com fivela de tinta dourada',lanterna2:'Lanterna de mão usada no escuro',disjuntor:'Disjuntor desligado à mão, com calma',conserto:'Livro de contas: pagamentos de "conserto de joia"',mascara_quem:'Dedução: a máscara dourada deixou marcas',mascara:'Dedução: a máscara dourada no corrimão',troca:'Dedução: a troca do colar por uma réplica',escuridao:'Dedução: os cinco minutos de escuridão',conf:'Confissão do Dr. Bento'},
+cul:'bento',
+D:{
+ como:{opts:['Um empurrão na beira da escada, no escuro','Uma pancada na cabeça com a estatueta','Asfixia com a gravata','Queda da própria escada, sem ninguém'],a:0,need:'passo'},
+ porq:{opts:['Silenciar Ícaro, que descobriu a troca do colar','Herdar a coleção dos Santana','Ciúme da noiva Lívia','Rivalidade antiga com Zélia'],a:0}},
+W:{livia:'Lívia é detida: a noiva do colecionador perde a casa e a reputação antes de a verdade vir à tona.',zelia:'Madame Zélia é presa. A antiquária fecha a loja e jura nunca perdoar a sua pressa.',tavinho:'Tavinho é demitido e passa uma noite preso. Fica marcado como o garçom assassino do Pelourinho.'},
+ok:'Bento é preso. O colar verdadeiro é achado numa casa de penhores, e o Baile da Estrela do Mar entra para a história como a noite em que a máscara dourada caiu.',
+okAlt:'Bento é preso. Mas o salão também guarda o que você fez: uma noiva chorou, uma antiquária fechou a porta, e ninguém no Pelourinho dança olhando para o seu lado.',
+esc:'Bento desaparece entre a multidão do Pelourinho. O colar nunca é encontrado.'},
 
 /* ================= CASO 5 ================= */
 {n:'Receita Fatal',ic:'🍤',tg:'Moqueca, dendê e um segredo na despensa.',
-intro:'No restaurante Dendê & Mar, o chef Zé Maria Carvalho passou mal após provar o dendê da moqueca da noite, e não resistiu. A neta Cléo, a sous-chef Neusa, o fornecedor Raul e o investidor Fábio estavam lá. Alguém mexeu na receita.',
-intro2:'A imprensa já te chama de detetive de erros. A cozinha inteira te encara com desconfiança.',
+intro:'No Dendê & Mar, o chef Zé Maria Carvalho provou o dendê da moqueca da noite, passou mal e não resistiu. A neta Cléo, a sous-chef Neusa, o fornecedor Raul e o investidor Fábio estavam no restaurante. Alguém mexeu na receita.',
+intro2:'A cidade já te apelidou de "a detetive dos erros". A cozinha inteira para quando você entra — e ninguém baixa os olhos.',
 L:[
 {id:'k',nm:'Cozinha',ic:'🔥',fx:'steam',bg:'linear-gradient(#5a3a1a,#1d1108)',S:[
- {e:'🍲',x:28,y:55,t:'Panela de moqueca',r:'A moqueca servida ao chef estava intocada. Ele provou apenas o dendê.',c:'prato'},
- {e:'🫙',x:70,y:30,t:'Frasco de dendê',r:'A tampa é de outro frasco e há resíduo estranho na rosca. O dendê foi adulterado.',c:'dende'},
- {e:'📹',x:15,y:22,t:'Câmera da cozinha',n:'dende',nr:'A câmera registra a cozinha, mas você ainda não sabe o que procurar.',pz:{t:'order',q:'Ordene os eventos da câmera, do mais cedo ao mais tarde.',items:['Fábio entra na cozinha (20h40)','Fábio sai da cozinha (20h50)','Zé Maria prova o dendê (21h00)','Zé Maria passa mal (21h15)']},r:'Fábio esteve sozinho junto ao dendê, dez minutos antes de o chef prová-lo.',c:'cam'},
- {e:'🧴',x:48,y:78,t:'Frasco de álcool',r:'Uma garrafa de álcool etílico, fora do armário de produtos de limpeza.',c:'alcool'}],pe:['neusa','raul']},
+ {e:'🍲',x:26,y:56,t:'Panela de moqueca',r:'A moqueca servida ao chef está quase intacta. Ele provou apenas o dendê — um gole, no máximo.',c:'prato'},
+ {e:'🫙',x:70,y:30,t:'Frasco de dendê',r:'A tampa é de outro frasco, e há um resíduo esbranquiçado na rosca. O dendê foi adulterado.',c:'dende'},
+ {e:'📹',x:14,y:22,t:'Câmera da cozinha',n:'dende',nr:'A câmera gravou a cozinha a noite toda. Você ainda não sabe o que procurar nas imagens.',pz:{t:'order',q:'O vídeo da câmera está fora de ordem. Reconstrua os eventos, do mais cedo ao mais tarde.',items:['Fábio entra na cozinha (20h40)','Fábio fica sozinho junto ao dendê (20h50)','Zé Maria prova o dendê (21h00)','Zé Maria passa mal (21h15)']},r:'Fábio esteve sozinho ao lado do dendê dez minutos antes de o chef prová-lo.',c:'cam'},
+ {e:'🧴',x:48,y:78,t:'Frasco de álcool',r:'Uma garrafa de álcool etílico, longe do armário de produtos de limpeza. Alguém a trouxe para a bancada.',c:'alcool'},
+ {e:'🧪',x:50,y:50,t:'Frascos na bancada',pz:{t:'choice',q:'Dois frascos de dendê na bancada. Um tem a rosca limpa e o selo intacto; o outro tem resíduo esbranquiçado e a tampa de um frasco de álcool. Qual foi adulterado?',opts:['O de rosca limpa e selo intacto','O de resíduo branco e tampa trocada','Nenhum: dendê estraga sozinho no calor'],a:1,fail:'O resíduo branco na rosca é a assinatura de quem abriu e fechou o frasco com pressa.'},r:'Resíduo esbranquiçado e tampa trocada: alguém despejou álcool no dendê e disfarçou com outra tampa.',c:'frasco2'}],pe:['neusa','raul']},
 {id:'d',nm:'Despensa',ic:'🧂',fx:'flick',bg:'linear-gradient(#3a3a2a,#0f0f08)',S:[
- {e:'🧾',x:28,y:42,t:'Fatura de Raul',r:'Fatura atrasada de Raul para o restaurante. Nada além disso.',c:'fatura'},
- {e:'🗄️',x:72,y:58,t:'Cofre da despensa',n:'inaug',nr:'Um cofre com senha de 4 dígitos. Talvez a data de abertura do restaurante, que deve estar em algum quadro.',pz:{t:'code',q:'Digite a data de inauguração do restaurante (DDMM).',a:'0509'},r:'Um livro-caixa paralelo: depósitos em dinheiro vivo de Fábio, lavados pelo restaurante.',c:'livro'}],pe:['cleo']},
+ {e:'🧾',x:26,y:42,t:'Fatura de Raul',r:'Uma fatura atrasada do restaurante para Raul. Nada além disso — nem ameaça, nem briga.',c:'fatura'},
+ {e:'🗄️',x:72,y:58,t:'Cofre da despensa',n:'inaug',nr:'Um cofre de 4 dígitos. O número deve estar registrado em algum lugar do restaurante.',pz:{t:'code',q:'O chef guardava o número do cofre. Digite o mês e o dia da inauguração do restaurante (MMDD).',a:'0509'},r:'Dentro, um livro-caixa paralelo: depósitos em dinheiro vivo feitos por Fábio, escondidos do fisco.',c:'livro'},
+ {e:'🫙',x:50,y:22,t:'Prateleira de frascos',pz:{t:'match',q:'Os frascos da despensa foram trocados de lugar. Ligue cada um ao que costumava conter.',pairs:[['Tampa azul','Dendê legítimo do chef'],['Tampa branca','Álcool do armário de limpeza'],['Tampa sem rótulo','Tempero seco da neta']]},r:'A tampa do dendê legítimo está num frasco de álcool — e o contrário também. Alguém trocou as tampas de propósito.',c:'tampas'}],pe:['cleo']},
 {id:'o',nm:'Escritório do Chef',ic:'📒',fx:'calm',bg:'linear-gradient(#2a2a3a,#0a0a12)',S:[
- {e:'🏛️',x:12,y:30,t:'Quadro de inauguração',r:'Dendê & Mar, inaugurado em 05/09.',c:'inaug'},
- {e:'✉️',x:40,y:48,t:'Rascunho de carta',r:'"Fábio, não vou mais aceitar seu dinheiro. Conversamos amanhã."',c:'carta'},
- {e:'📅',x:70,y:62,t:'Agenda',r:'Reunião com Fábio às 20h30: "ultimato".',c:'agenda'},
- {e:'🧾',x:20,y:76,t:'Recibo de jantar',r:'Fábio jantava aqui toda semana, sempre pagando em dinheiro vivo. Muito dinheiro vivo.',c:'recibo'},
- {e:'🪶',x:82,y:22,t:'Pena negra',r:'Uma pena negra sobre a mesa. Uma letra: "O".',f:'O'}],pe:['fabio']},
+ {e:'🏛️',x:12,y:30,t:'Quadro de inauguração',r:'Dendê & Mar, inaugurado em 05/09. O chef tinha orgulho de escrever a data em todo papel.',c:'inaug'},
+ {e:'✉️',x:40,y:48,t:'Rascunho de carta',r:'"Fábio, não aceito mais o seu dinheiro. Conversamos amanhã, antes do serviço." A letra é do chef, firme.',c:'carta'},
+ {e:'📅',x:70,y:62,t:'Agenda',r:'Reunião com Fábio às 20h30, anotada em vermelho: "ultimato".',c:'agenda'},
+ {e:'🧾',x:20,y:76,t:'Recibo de jantar',r:'Fábio jantava aqui toda semana, sempre na mesa 4, sempre pagando em dinheiro vivo. Muito dinheiro vivo.',c:'recibo'},
+ {e:'🪶',x:82,y:22,t:'Pena negra',r:'Uma pena negra sobre a mesa. Na haste, a nanquim: "O".',f:'O'}],pe:['fabio']},
 {id:'s',nm:'Salão',ic:'🍽️',fx:'warm',bg:'linear-gradient(#4a3626,#160f08)',S:[
- {e:'📸',x:30,y:45,t:'Foto na parede',r:'O chef e Cléo crianças na cozinha. "O fogo é da família", diz a legenda.',c:'foto3'},
- {e:'📓',x:68,y:60,t:'Livro de receitas',r:'A receita da moqueca, escrita à mão pelo chef, com uma observação: "só o dendê comprado por mim".',c:'receita'},
- {e:'🕯️',x:50,y:80,t:'Mesa 4',r:'A mesa onde Fábio sempre sentava. Fica de frente para a passagem da cozinha.'}],pe:[]}],
+ {e:'📸',x:30,y:45,t:'Foto na parede',r:'O chef e Cléo, crianças, na cozinha. A legenda: "O fogo é da família."',c:'foto3'},
+ {e:'📓',x:68,y:60,t:'Livro de receitas',r:'A receita da moqueca, escrita à mão pelo chef: "só com o dendê que eu mesmo compro".',c:'receita'},
+ {e:'🕯️',x:50,y:80,t:'Mesa 4',r:'O lugar de Fábio, de frente para a passagem da cozinha. Ele via tudo o que entrava e saía.'}],pe:[]}],
 P:{
 neusa:{nm:'Neusa',e:'👩‍🍳',x:14,y:68,Q:[
- {q:'Brigou com o chef?',a:'Discutimos feio sobre o cardápio. Mas eu o admirava demais.'},
- {q:'Onde estava às 21h?',a:'Na boca do forno, com a equipe toda me vendo.'},
- {q:'Quem entrava na cozinha?',a:'Só a equipe. E o Fábio, uma vez, para falar com o chef.'},
- {q:'Você mexe em frascos?',a:'Nunca trocaria tampa de frasco. Cozinha séria tem ordem.',ev:''},
- {q:'O dendê veio de onde?',req:'receita',a:'Do fornecedor de sempre. O chef só confiava no dendê que ele mesmo comprava.'},
- {q:'Conhece o Fábio?',a:'O investidor. Nunca gostei do jeito dele. Sorria demais.'}],
- X:{dende:{a:'Eu nunca trocaria tampa de frasco. Cozinha séria tem ordem.',n:12},
-    cam:{a:'Fábio? Ele jura que nunca entrou aqui. Mentirosa, aquela câmera.',n:16},
-    prato:{a:'Ele só provou o dendê, eu vi da minha bancada.',n:10},
-    alcool:{a:'Álcool fora do armário? Isso não é daqui. Ninguém na equipe faria isso.',n:14},
-    livro:{a:'Lavagem de dinheiro? Na cozinha do meu chefe? Isso me dá arrepio.',n:10}}},
-raul:{nm:'Raul',e:'🚚',x:75,y:62,Q:[
- {q:'Entregou algo hoje?',a:'Caixas às 16h. Zé Maria assinou. Ele me devia, mas ia pagar.'},
- {q:'O que você entrega?',a:'Peixe, dendê, tempero. Tudo lacrado.'},
- {q:'E a fatura atrasada?',req:'fatura',a:'Sim, ele atrasou. Mas eu precisava dele vivo!'},
- {q:'O dendê estava lacrado?',a:'Estava. O lacre estava intacto quando eu saí.',ev:''},
- {q:'Quem tinha acesso às caixas?',a:'Qualquer um que estivesse na cozinha. Eu deixo na porta.'},
- {q:'Você e o chef brigavam?',a:'Discutia preço. Isso não mata ninguém.'}],
- X:{fatura:{a:'Sim, ele atrasou, mas eu precisava dele vivo!',n:12},
-    dende:{a:'Eu entrego dendê lacrado. O lacre estava intacto quando saí.',n:12},
-    livro:{a:'Dinheiro vivo do Fábio? Eu só entrego comida, não lavo dinheiro.',n:10}}},
-cleo:{nm:'Cléo',e:'👧',x:45,y:68,Q:[
- {q:'Como era seu avô?',a:'Um gênio teimoso. Dizia que a cozinha tinha alma.'},
- {q:'Herda o restaurante?',a:'Sim. Mas eu daria tudo para tê-lo de volta.'},
- {q:'O Fábio frequentava?',a:'Toda semana. Sempre na mesa 4, olhando para a cozinha.'},
- {q:'Seu avô falava do Fábio?',req:'carta',a:'Ele nunca me falou dessa carta. Meu Deus.'},
- {q:'O que você sabe do livro-caixa?',req:'livro',a:'Meu Deus... aquele dinheiro vinha de onde, então?'},
- {q:'E a receita da moqueca?',req:'receita',a:'A receita é da família. O avô escreveu à mão.',ev:''}],
- X:{carta:{a:'Ele nunca me falou desse Fábio... nem dessa carta.',n:10},
-    livro:{a:'Meu Deus... aquele dinheiro?',n:12},
-    foto3:{a:'Eu era criança. Ele me ensinou a acender o forno.',n:8},
-    recibo:{a:'Dinheiro vivo toda semana? Isso é estranho até pra mim.',n:10}}},
-fabio:{nm:'Fábio',e:'🧐',x:30,y:66,Q:[
- {q:'Sua relação com o chef?',a:'Investidor, amigo. Jantava aqui toda semana.'},
- {q:'Entrou na cozinha?',a:'Jamais. Chef não gosta de visitas.'},
- {q:'O que era a reunião de 20h30?',a:'Só negócios. Coisa de investidor.'},
- {q:'Você paga em dinheiro vivo?',a:'Sempre foi mais prático, ué.'},
- {q:'O chef ia te expor?',req:'carta',a:'Ele estava cansado. Gente cansada fala bobagem.'},
- {q:'E o livro-caixa?',req:'livro',a:'"Isso não prova nada. Muita gente deposita em dinheiro."'},
- {q:'A câmera mostra você na cozinha.',req:'cam',a:'...Entrei só para falar com o chef. Nada mais.'}],
- X:{agenda:{a:'Era só uma reunião de negócios.',n:10},
-    carta:{a:'Ele estava cansado, só isso.',n:12},
-    dende:{a:'Qualquer um poderia ter mexido naquele frasco.',n:12},
-    cam:{a:'Ele muda de cor. "Entrei só para falar com o chef..." A mentira já caiu.',n:22},
-    alcool:{a:'Ele olha a garrafa e engole seco.',n:16},
-    livro:{need:65,a:'"Ele ia me expor! Eu só queria que ele passasse mal e adiasse a reunião... não era pra ele morrer." Fábio se cala, derrotado.',n:30,g:'conf'},
-    recibo:{a:'"Dinheiro meu, ganho com trabalho. Isso é crime agora?"',n:10}}}},
+ {q:'Brigou com o chef?',a:'Discutimos feio sobre o cardápio. Todo dia a gente discutia. Mas eu o admirava demais para isso.'},
+ {q:'Onde estava às 21h?',a:'Na boca do forno, com a equipe inteira me vendo. Cozinha cheia não deixa ninguém sozinho.'},
+ {q:'Quem entrava na cozinha?',a:'Só a equipe. E o Fábio — uma vez, para falar com o chef. Ele nunca entra, e naquele dia entrou.'},
+ {q:'Você mexe em frascos?',a:'Nunca trocaria tampa de frasco. Cozinha séria tem ordem, e a ordem é sagrada aqui.'},
+ {q:'De onde vinha o dendê?',req:'receita',a:'Do fornecedor de sempre. O chef só confiava no dendê que ele mesmo comprava e conferia.'},
+ {q:'Conhece o Fábio?',a:'O investidor. Nunca gostei do jeito dele. Sorria demais para quem só aparece para cobrar.'}],
+ X:{dende:{a:'"Nunca trocaria tampa de frasco. Cozinha séria tem ordem."',n:12},
+    cam:{a:'"Fábio? Ele jura que nunca entrou aqui. Mentirosa é essa câmera, então."',n:16},
+    prato:{a:'"Ele só provou o dendê. Eu vi da minha bancada."',n:10},
+    alcool:{a:'"Álcool fora do armário? Isso não é daqui. Ninguém da equipe faria isso."',n:14},
+    frasco2:{a:'"Resíduo branco na rosca? Isso não é dendê puro, meu Deus."',n:14},
+    tampas:{a:'Ela empalidece. "Alguém trocou as tampas. Isso aqui é... isso é maldade."',n:12},
+    livro:{a:'"Lavagem de dinheiro? Na cozinha do meu chefe? Isso me dá arrepio."',n:10}}},
+raul:{nm:'Raul',e:'🚚',x:74,y:62,Q:[
+ {q:'Entregou algo hoje?',a:'Caixas às 16h. Zé Maria assinou na porta. Ele me devia, sim — mas ia pagar, e eu sabia.'},
+ {q:'O que você entrega?',a:'Peixe, dendê, tempero. Tudo lacrado, tudo com nota. Sou fornecedor, não cozinheiro.'},
+ {q:'E a fatura atrasada?',req:'fatura',a:'Sim, atrasou. Mas eu precisava dele vivo! Quem paga a minha fatura é ele.'},
+ {q:'O dendê veio lacrado?',a:'Lacrado. O lacre estava intacto quando eu deixei. Depois disso, não é mais minha responsabilidade.'},
+ {q:'Quem tinha acesso às caixas?',a:'Qualquer um que estivesse na cozinha. Eu deixo na porta e vou embora.'},
+ {q:'Você e o chef brigavam?',a:'Discutia preço. Isso não mata ninguém, moço.'}],
+ X:{fatura:{a:'"Sim, ele atrasou. Mas eu precisava dele vivo!"',n:12},
+    dende:{a:'"Eu entrego dendê lacrado. O lacre estava intacto quando saí."',n:12},
+    livro:{a:'"Dinheiro vivo do Fábio? Eu entrego comida, não lavo dinheiro."',n:10}}},
+cleo:{nm:'Cléo',e:'👧',x:44,y:68,Q:[
+ {q:'Como era seu avô?',a:'Um gênio teimoso. Dizia que a cozinha tinha alma, e que receita sem alma é só comida.'},
+ {q:'Você herda o restaurante?',a:'Herdo. Mas eu daria tudo isso para tê-lo de volta, e você sabe.'},
+ {q:'O Fábio frequentava?',a:'Toda semana. Sempre na mesa 4, sempre olhando para a cozinha. Como quem vigia um cofre.'},
+ {q:'Seu avô falava do Fábio?',req:'carta',tone:'empatico',a:'Ele nunca me falou dessa carta. Meu Deus... ele ia romper com o Fábio, e me escondeu isso.'},
+ {q:'O que sabe do livro-caixa?',req:'livro',a:'Meu Deus... aquele dinheiro vem de onde, então? Ele lavava dinheiro pelo restaurante do meu avô?'},
+ {q:'E a receita da moqueca?',req:'receita',a:'A receita é da família. Ele escreveu à mão — e a mão dele tremia quando escreveu sobre o dendê.'}],
+ X:{carta:{a:'"Ele nunca me falou disso... nem dessa carta."',n:10},
+    livro:{a:'"Meu Deus... de onde vinha aquele dinheiro?"',n:12},
+    foto3:{a:'"Eu era criança. Ele me ensinou a acender o forno."',n:8},
+    recibo:{a:'"Dinheiro vivo toda semana? Isso é estranho até para mim."',n:10}}},
+fabio:{nm:'Fábio',e:'🧐',x:30,y:66,alibi:'Passei a noite na mesa 4, jantando. Jamais entrei naquela cozinha — chef não gosta de visita.',
+ ab:'cam',abTxt:'Tá bom! Entrei, eu entrei. Fui pedir calma, só isso. Mas eu nunca cheguei perto daquele frasco — juro pela minha mãe. Por que você não olha o entregador, hein? Ele saiu de lá depois de mim.',
+ abC:'alcool',
+ Q:[
+ {q:'Sua relação com o chef?',a:'Investidor, amigo. Jantava aqui toda semana. Gostava do tempero dele.'},
+ {q:'Você entrou na cozinha?',a:'Jamais. Chef não gosta de visita na cozinha. É a regra da casa.'},
+ {q:'O que era a reunião de 20h30?',a:'Só negócios. Coisa de investidor, detetive. Nada que interesse a polícia.'},
+ {q:'Você paga em dinheiro vivo?',a:'Sempre foi mais prático, ué. Todo mundo prefere dinheiro vivo.'},
+ {q:'O chef ia te expor?',req:'carta',a:'Ele estava cansado. Gente cansada fala bobagem, e acaba escrevendo bobagem também.'},
+ {q:'E o livro-caixa?',req:'livro',a:'"Isso não prova nada. Muita gente deposita dinheiro. Eu trabalho, moço."'},
+ {q:'A câmera te viu sozinho no dendê.',req:'cam',ab:1,tone:'firme',truth:'Tá bom! Foi só um gole de álcool no dendê. Eu queria que ele passasse mal e adiasse a reunião — uma noite, só uma noite! Ninguém morre de um gole de álcool, detetive. Ninguém!',rc:48,a:'...Entrei só para falar com o chef. Nada mais, eu juro.'}],
+ X:{agenda:{a:'"Era só uma reunião de negócios."',n:10},
+    carta:{a:'"Ele estava cansado, só isso."',n:12},
+    dende:{a:'"Qualquer um poderia ter mexido naquele frasco."',n:12},
+    cam:{a:'Ele muda de cor. "Entrei só para falar com o chef..." A mentira já caiu no chão.',n:22},
+    frasco2:{a:'Ele recua um passo. "Frasco? Eu não cheguei perto de frasco nenhum."',n:14},
+    tampas:{a:'Ele olha as tampas trocadas e engole seco.',n:14},
+    alcool:{a:'Ele olha a garrafa de álcool e não tem resposta.',n:16},
+    prato:{a:'"Ele provou o dendê. Que culpa tenho eu disso?"',n:10},
+    recibo:{a:'"Dinheiro meu, ganho com trabalho. Isso é crime agora?"',n:10},
+    livro:{need:65,a:'"Ele ia me expor! Vinte anos de negócio, e ele ia abrir a boca por causa do livro-caixa. Eu só queria que ele passasse mal e adiasse a reunião... não era pra ele morrer." Fábio se cala, derrotado.',n:30,g:'conf'}}}},
 combos:[
- {a:'dende',b:'alcool',r:'O dendê foi adulterado com álcool etílico tirado do armário de limpeza.',c:'veneno'},
- {a:'cam',b:'fatura',r:'Fábio não podia ser visto: era ele que estava sozinho com o dendê, não Raul.',c:'sozinho'},
- {a:'livro',b:'carta',r:'Fábio lavava dinheiro pelo restaurante, e o chef ia denunciar.',c:'motivo_fabio'}],
-C:{prato:'Chef provou apenas o dendê',dende:'Dendê adulterado: tampa trocada',cam:'Câmera: Fábio sozinho junto ao dendê',alcool:'Álcool etílico fora do armário',fatura:'Fatura atrasada de Raul',inaug:'Restaurante inaugurado em 05/09',livro:'Livro-caixa com lavagem de dinheiro de Fábio',carta:'Carta de rompimento com Fábio',agenda:'Agenda: ultimato a Fábio às 20h30',recibo:'Fábio pagava tudo em dinheiro vivo',receita:'A receita escrita pelo chef, só com o dendê dele',foto3:'Foto do chef com Cléo na cozinha',veneno:'Dedução: o dendê adulterado com álcool',sozinho:'Dedução: Fábio sozinho com o frasco',motivo_fabio:'Dedução: o motivo de Fábio',conf:'Confissão de Fábio'},
-key:['dende','cam','livro','agenda','carta'],cul:'fabio',
-mot:['Impedir que o chef expusesse a lavagem de dinheiro','Herdar o restaurante','Disputa por uma receita','Cobrar uma fatura atrasada'],
-W:{neusa:'Neusa é presa e a cozinha perde o coração. O restaurante nunca mais abre as portas como antes.',raul:'Raul é detido e a rede de entregas rompe com o restaurante. A reputação dele cai por terra.',cleo:'Cléo é presa no dia do enterro do avô. Ela nunca mais perdoa quem a acusou.'},
-ok:'Fábio é preso e a lavagem de dinheiro é desmontada. Neusa assume a cozinha e Cléo mantém viva a receita do avô.',
-esc:'Fábio apaga os rastros e sai de cena. Dendê & Mar fecha e o crime fica sem culpado.'},
+ {a:'dende',b:'alcool',r:'O dendê foi adulterado com o álcool etílico tirado do armário de limpeza.',c:'veneno'},
+ {a:'cam',b:'fatura',r:'Fábio estava sozinho junto ao dendê — e a fatura de Raul apenas desvia o olhar.',c:'sozinho'},
+ {a:'livro',b:'carta',r:'Fábio lavava dinheiro pelo restaurante, e o chef ia denunciar tudo.',c:'motivo_fabio'}],
+C:{prato:'Chef provou apenas o dendê',dende:'Dendê adulterado: tampa trocada',frasco2:'Frasco com resíduo branco: adulteração confirmada',tampas:'Tampas trocadas entre dendê e álcool',cam:'Câmera: Fábio sozinho junto ao dendê',alcool:'Álcool etílico fora do armário',fatura:'Fatura atrasada de Raul',inaug:'Restaurante inaugurado em 05/09',livro:'Livro-caixa com lavagem de dinheiro de Fábio',carta:'Carta de rompimento com Fábio',agenda:'Agenda: ultimato a Fábio às 20h30',recibo:'Fábio pagava tudo em dinheiro vivo',receita:'A receita escrita pelo chef, só com o dendê dele',foto3:'Foto do chef com Cléo na cozinha',veneno:'Dedução: o dendê adulterado com álcool',sozinho:'Dedução: Fábio sozinho com o frasco',motivo_fabio:'Dedução: o motivo de Fábio',conf:'Confissão de Fábio'},
+cul:'fabio',
+D:{
+ como:{opts:['O dendê foi adulterado com álcool etílico','A moqueca estava estragada pelo calor','Ele foi golpeado com a panela na cabeça','O peixe cru estava envenenado'],a:0,need:'dende'},
+ porq:{opts:['Impedir o chef de expor a lavagem de dinheiro','Herdar o restaurante','Disputar a receita da moqueca','Cobrar a fatura atrasada'],a:0}},
+W:{neusa:'Neusa é presa e a cozinha perde o coração. O restaurante nunca mais volta a ser o que era.',raul:'Raul é detido e a rede de entregas rompe com o restaurante. A reputação dele cai por terra.',cleo:'Cléo é presa no dia do enterro do avô. Ela nunca mais perdoa quem a acusou.'},
+ok:'Fábio é preso e a lavagem de dinheiro vem à tona. Neusa assume a cozinha e Cléo mantém viva a receita do avô.',
+okAlt:'Fábio é preso, mas o Dendê & Mar nunca mais cheira igual. Cléo te serve o prato do avô com as mãos firmes e os olhos secos: ela não esqueceu o que você fez antes.',
+esc:'Fábio apaga os rastros e sai de cena. O Dendê & Mar fecha as portas e o crime fica sem culpado.'},
 
 /* ================= CASO 6 (FINAL) ================= */
 {n:'O Coração Roubado',ic:'💘',fin:1,tg:'O caso mais importante de todos.',
-intro:'{N}, uma carta anônima chegou na sua porta: "Um coração foi roubado. O ladrão deixou pistas pela casa. Assinado: O Corvo." Você, que juntou as penas negras do Corvo, é a única detetive à altura deste caso.',
+intro:'{N}, uma carta anônima chegou à sua porta: "Um coração foi roubado. O ladrão deixou pistas pela casa. Assinado: O Corvo." Você, que juntou as penas negras do Corvo, é a única detetive à altura deste caso.',
 intro2:'',
 L:[
 {id:'s',nm:'Sala',ic:'🛋️',fx:'warm',bg:'linear-gradient(#4a2a2a,#140a0a)',S:[
  {e:'🖼️',x:28,y:30,t:'Porta-retratos',r:'Todas as fotos da casa mostram vocês dois sorrindo. O ladrão tem muito carinho por você.',c:'fotos'},
- {e:'🎁',x:70,y:62,t:'Caixinha de veludo',pz:{t:'code',q:'A caixinha pede 5 letras. O Corvo deixou penas, uma letra em cada caso. Junte-as na ordem dos casos.',a:'TEAMO',fail:()=>'Letras recolhidas: '+[0,1,2,3,4].map(i=>P.f[i]||'?').join(' ')+'. Reveja os casos para achar as penas que faltam.'},r:'Dentro, um bilhete dobrado e assinado pelo Corvo. A letra é familiar.',c:'caixa'},
- {e:'🛋️',x:48,y:82,t:'Sofá',r:'Uma almofada em formato de coração, ainda quentinha.'}],pe:['pipoca']},
+ {e:'🎁',x:70,y:62,t:'Caixinha de veludo',pz:{t:'code',q:'A caixinha pede 5 letras. O Corvo deixou uma pena em cada caso. Digite a palavra, na ordem dos casos.',a:'TEAMO',fail:()=>'Letras recolhidas: '+[0,1,2,3,4].map(i=>P.f[i]||'?').join(' ')+'. Reveja os casos para achar as penas que faltam.'},r:'Dentro, um bilhete dobrado, assinado pelo Corvo. A letra é familiar.',c:'caixa'},
+ {e:'🛋️',x:48,y:82,t:'Sofá',r:'Uma almofada em formato de coração, ainda quentinha de quem se sentou ali.'}],pe:['pipoca']},
 {id:'c',nm:'Cozinha',ic:'🍰',fx:'steam',bg:'linear-gradient(#5a3a2a,#1d1108)',S:[
- {e:'🍲',x:28,y:55,t:'Panelas',r:'Panelas lavadas e ingredientes do seu prato favorito. Alguém planejou isso o dia todo.',c:'prato'},
- {e:'📝',x:72,y:28,t:'Lista de compras',n:'caixa',nr:'Uma lista com letra conhecida, mas falta um bilhete do Corvo para comparar.',r:'Seu doce favorito, flores e uma vela. A letra é a mesma do bilhete do Corvo.',c:'letra'},
+ {e:'🍲',x:28,y:55,t:'Panelas',r:'Panelas lavadas e os ingredientes do seu prato favorito, separados com cuidado. Alguém planejou isso o dia todo.',c:'prato'},
+ {e:'📝',x:72,y:28,t:'Lista de compras',n:'caixa',nr:'Uma lista com letra conhecida. Falta um bilhete do Corvo para comparar a caligrafia.',r:'Seu doce favorito, flores e uma vela. A letra é a mesma do bilhete do Corvo.',c:'letra'},
  {e:'🧲',x:85,y:70,t:'Geladeira',r:'Um ímã: "Te amo, mesmo quando você me interroga."'}],pe:['ele']},
 {id:'v',nm:'Varanda',ic:'🌃',fx:'calm',bg:'linear-gradient(#1c2a4a,#05070f)',S:[
- {e:'🪴',x:25,y:62,t:'Vasos',r:'Plantas regadas hoje. Quem faz isso tem carinho por sua casa.'},
- {e:'✨',x:60,y:25,t:'Luzinhas',r:'Pisca-piscas novos, pendurados para uma noite especial.',c:'luzes'},
- {e:'📻',x:80,y:62,t:'Rádio',r:'Sintonizado na sua música favorita. Alguém decorou a estação.',c:'musica'}],pe:['neide']},
+ {e:'🪴',x:24,y:62,t:'Vasos',r:'Plantas regadas hoje. Quem faz isso tem carinho por cada canto da sua casa.'},
+ {e:'✨',x:60,y:25,t:'Luzinhas',r:'Pisca-piscas novos, pendurados à mão para uma noite especial.',c:'luzes'},
+ {e:'📻',x:80,y:62,t:'Rádio',r:'Sintonizado na sua música favorita. Alguém decorou a estação certa.',c:'musica'}],pe:['neide']},
 {id:'q',nm:'Quarto',ic:'🛏️',fx:'warm',bg:'linear-gradient(#3a2438,#100810)',S:[
- {e:'💌',x:30,y:45,t:'Carta na cama',n:'letra',nr:'Uma carta sem remetente na sua cama. Você ainda não tem com o que comparar a letra.',r:'A mesma letra da lista: "...e o coração roubado sempre foi o meu." ',c:'carta2'},
+ {e:'💌',x:30,y:45,t:'Carta na cama',n:'letra',nr:'Uma carta sem remetente na sua cama. Ainda falta algo para comparar a letra.',r:'A mesma letra da lista: "...e o coração roubado sempre foi o meu."',c:'carta2'},
+ {e:'🪶',x:50,y:24,t:'Cinco penas',pz:{t:'match',q:'Cinco penas, cinco letras. Ligue cada caso à letra que o Corvo deixou nele.',pairs:[['Caso 1 — Valverde','T'],['Caso 2 — O Cais','E'],['Caso 3 — A Sessão','A'],['Caso 4 — O Baile','M'],['Caso 5 — Receita','O']]},r:'Na ordem dos casos, as penas soletram uma palavra. A mais óbvia de todas — e por isso a última que você percebeu.',c:'letras'},
  {e:'🧸',x:70,y:62,t:'Ursinho',r:'O ursinho que você ganhou há anos, colocado na posição de quem espera.'}],pe:[]}],
 P:{
 neide:{nm:'Dona Neide',e:'👵',x:12,y:74,Q:[
- {q:'Viu alguém estranho?',a:'Vi o rapaz entrando às escondidas, cheio de sacolas, ensaiando um discurso na porta.'},
- {q:'Quem é o ladrão?',a:'Não sei, mas ele só falava de você.'},
- {q:'Ele estava nervoso?',a:'Tremia mais que varal em ventania. Fofo.'},
- {q:'O que ele comprou?',req:'luzes',a:'Luzinha, flor, doce. Coisa de apaixonado, minha filha.'},
- {q:'Ele voltou depois?',a:'Voltou com uma caixinha e escondeu na sala. Eu finjo que não vi.'}],
- X:{luzes:{a:'Foi ele quem pendurou. Fofo!',n:10},
-    prato:{a:'Cheiro de comida boa desde cedo.',n:8},
-    fotos:{a:'Que casal lindo! Eu falo isso todo dia.',n:8},
-    musica:{a:'Ele ficou testando a estação até achar a sua música.',n:12}}},
+ {q:'Viu alguém estranho?',a:'Vi o rapaz entrando às escondidas, cheio de sacolas, ensaiando um discurso na porta. Tremia que era uma pena.'},
+ {q:'Quem é o ladrão?',a:'Não sei de nada, minha filha. Só sei que ele só falava de você. Do começo ao fim, só de você.'},
+ {q:'Ele estava nervoso?',a:'Tremia mais que varal em ventania. Fofo, o coitado.'},
+ {q:'O que ele comprou?',req:'luzes',a:'Luzinha, flor, doce. Coisa de apaixonado, minha filha. Isso não se compra pra qualquer um.'},
+ {q:'Ele voltou depois?',a:'Voltou com uma caixinha e escondeu na sala. Eu finjo que não vi, mas vi.'}],
+ X:{luzes:{a:'"Foi ele quem pendurou. Fofo!"',n:10},
+    prato:{a:'"Cheiro de comida boa desde cedo. A casa toda cheirava."',n:8},
+    fotos:{a:'"Que casal lindo! Eu falo isso todo dia."',n:8},
+    musica:{a:'"Ele ficou testando a estação até achar a sua música."',n:12}}},
 pipoca:{nm:'Pipoca (o gato)',e:'🐈',x:30,y:70,Q:[
- {q:'Você é o ladrão?',a:'Miau. (Ele evita seu olhar. Cúmplice, ele é.)'},
+ {q:'Você é o ladrão?',a:'Miau. (Ele evita o seu olhar. Cúmplice, esse gato.)'},
  {q:'Quem entrou aqui?',a:'Miau miau. (Aponta com a pata para a cozinha.)'},
  {q:'Você comeu a sobremesa?',a:'Miau! (Ofendido. Ele tem dignidade.)'}],
- X:{caixa:{a:'Miau! (Ele sabia de tudo.)',n:10},
+ X:{caixa:{a:'Miau! (Ele sabia de tudo desde o começo.)',n:10},
     prato:{a:'Miau miau. (Quer um pouco.)',n:8},
     carta2:{a:'Miau... (Ele dormiu em cima da carta a noite toda.)',n:10}}},
-ele:{nm:'ELE',e:'🥰',x:50,y:62,Q:[
- {q:'O que fez hoje?',a:'Eu? Nada... só uma pequena surpresa. Quer dizer, nenhuma.'},
- {q:'Você é o Corvo?',a:'Corvo? Eu? Sou só um cara que vive pelo seu sorriso.'},
- {q:'Por que está tão nervoso?',a:'Nervoso? Eu? Estou ótimo. Ótimo!'},
- {q:'A casa está cheirosa.',a:'É a sua comida favorita, ué. Coincidência.'},
- {q:'E essas luzinhas?',req:'luzes',a:'Eu queria tudo bonito pra você. Só isso.'},
- {q:'Você escreveu essa lista?',req:'letra',a:'A letra... tá bom. Eu escrevi. Mas não prova nada!'},
- {q:'Foi você que deixou as penas?',req:'caixa',a:'Cinco penas, cinco letras... Eu queria que você descobrisse no seu tempo.'}],
- X:{caixa:{need:60,a:'Ele fica vermelho. "Você abriu a caixa... está bem, eu confesso. Sou o Corvo. Sempre fui."',n:30,g:'conf'},
-    letra:{a:'A letra... tá bom, sou eu!',n:16},
-    prato:{a:'É a sua comida favorita, ué.',n:10},
-    luzes:{a:'Eu queria tudo bonito pra você.',n:10},
-    musica:{a:'A música... eu decorei. Faz tempo.',n:12},
-    fotos:{a:'Eu amo todas. Principalmente a do parque.',n:8},
+ele:{nm:'ELE',e:'🥰',x:50,y:62,alibi:'Eu? Nada demais. Só passei aqui para te ver. Não preparei nada, nada mesmo.',
+ ab:'letra',abTxt:'Tá bom, tá bom... é minha. A lista, a carta, tudo. Fui eu que escrevi — eu queria que você descobrisse no seu tempo.',
+ abC:'carta2',
+ Q:[
+ {q:'O que fez hoje?',a:'Eu? Nada... só uma pequena surpresa. Quer dizer, nenhuma. Esquece.'},
+ {q:'Você é o Corvo?',a:'Corvo? Eu? Sou só um cara que vive pelo seu sorriso. Um cara comum, apaixonado.'},
+ {q:'Por que está tão nervoso?',a:'Nervoso? Eu? Estou ótimo. Ótimo! (Ele derruba uma colher.)'},
+ {q:'E essas luzinhas?',req:'luzes',a:'Eu queria tudo bonito pra você. Só isso, juro.'},
+ {q:'A casa está cheirosa.',a:'É a sua comida favorita, ué. Coincidência. (Não é coincidência.)'},
+ {q:'Você escreveu essa lista?',req:'letra',ab:1,a:'A letra... tá bom. Eu escrevi. Mas isso não prova nada, detetive! (Ele está sorrindo.)'},
+ {q:'Foi você que deixou as penas?',req:'caixa',ab:1,tone:'empatico',a:'Cinco penas, cinco letras... Eu queria que você juntasse, uma a uma, e descobrisse sozinha. Era o meu jeito de dizer.'}],
+ X:{caixa:{need:60,a:'Ele fica vermelho até a raiz do cabelo. "Você abriu a caixa... está bem, eu confesso. Sou o Corvo. Sempre fui. Desde a primeira vez que você me olhou."',n:30,g:'conf'},
+    letra:{a:'"A letra... tá bom, sou eu!"',n:16},
+    prato:{a:'"É a sua comida favorita, ué."',n:10},
+    luzes:{a:'"Eu queria tudo bonito pra você."',n:10},
+    musica:{a:'"A música... eu decorei. Faz tempo."',n:12},
+    fotos:{a:'"Eu amo todas. Principalmente a do parque."',n:8},
     carta2:{a:'"Eu escrevi no dia em que percebi que não sabia mais viver sem você."',n:16}}}},
 combos:[
  {a:'caixa',b:'letra',r:'A letra do bilhete do Corvo é a mesma da lista de compras: o ladrão mora aqui.',c:'mesma_letra'},
+ {a:'letras',b:'caixa',r:'As cinco penas formam TEAMO — o Corvo não queria um culpado, queria ser descoberto por você.',c:'teamo'},
  {a:'prato',b:'musica',r:'O ladrão decorou sua comida, sua música e sua casa. Ele te conhece por inteiro.',c:'conhece'}],
-C:{fotos:'Fotos de vocês dois por toda a casa',caixa:'Caixinha com o bilhete do Corvo',prato:'Seu prato favorito preparado',letra:'Letra da lista igual à do bilhete',luzes:'Luzinhas novas na varanda',musica:'Seu rádio na sua música favorita',carta2:'Carta sem remetente na sua cama',mesma_letra:'Dedução: a letra é do Corvo',conhece:'Dedução: quem te conhece por inteiro',conf:'Confissão do Corvo'},
-key:['caixa','letra','prato'],cul:'ele',
-mot:['Estar completamente apaixonado','Queria uma desculpa para cozinhar','Inveja da sua inteligência','Dívida com a vizinha'],
+C:{fotos:'Fotos de vocês dois por toda a casa',caixa:'Caixinha com o bilhete do Corvo',prato:'Seu prato favorito preparado',letra:'Letra da lista igual à do bilhete',letras:'As cinco penas: a palavra é TEAMO',luzes:'Luzinhas novas na varanda',musica:'Seu rádio na sua música favorita',carta2:'Carta sem remetente na sua cama',mesma_letra:'Dedução: a letra é do Corvo',teamo:'Dedução: as penas soletram TEAMO',conhece:'Dedução: quem te conhece por inteiro',conf:'Confissão do Corvo'},
+cul:'ele',
+D:{
+ como:{opts:['Preparou tudo sozinho, do jantar às luzinhas','Comprou tudo pronto e fingiu que cozinhou','Contratou alguém para montar a surpresa','Foi a casa que se arrumou sozinha, por acaso'],a:0,need:'prato'},
+ porq:{opts:['Porque está completamente apaixonado por você','Porque queria uma desculpa para cozinhar','Por inveja da sua inteligência','Por uma dívida com a vizinha'],a:0}},
 W:{neide:'Dona Neide, ofendida, leva embora o bolo que ia trazer. Você perdeu uma chance.',pipoca:'Pipoca te olha com desprezo e derruba um copo no chão. Só se resolve com petisco.'},
 ok:'O Corvo confessa e entrega o último bilhete. O caso mais importante da sua carreira está encerrado.',
 esc:'O Corvo some pela janela, mas deixa uma promessa: voltar amanhã.'}
 ];
 
 /* ===================== ESTADO ===================== */
-const mkcs=i=>({loc:CS[i].L[0].id,o:[],f:[],ch:P.hard?1:3,sel:[],gone:[],over:false,nt:[],nerve:{},told:{},tone:'gentil',combos:[],t0:Date.now(),sec:0});
-const loadcs=i=>{const s=P.cs[i];if(!s||s.over)return null;return{...s,o:[...s.o],f:[...s.f],sel:[...s.sel],gone:[...s.gone],nt:[...s.nt],combos:[...s.combos],nerve:{...s.nerve},told:{...s.told}}};
+const mkcs=i=>({loc:CS[i].L[0].id,o:[],f:[],ch:P.hard?1:2,sel:[],gone:[],over:false,nt:[],nerve:{},told:{},tone:'gentil',combos:[],ab:{},mv:0,t0:Date.now(),sec:0});
+const loadcs=i=>{const s=P.cs[i];if(!s||s.over)return null;return{...s,o:[...s.o],f:[...s.f],sel:[...s.sel],gone:[...s.gone],nt:[...s.nt],combos:[...s.combos],nerve:{...s.nerve},told:{...s.told},ab:{...(s.ab||{})},mv:s.mv||0}};
 function save(){if(!cs||cs.over)return;cs.sec=Math.floor((Date.now()-cs.t0)/1000);P.cs[cur]={...cs};sv()}
 const has=k=>cs.f.includes(k);
 const addC=k=>{if(!cs||has(k))return;cs.f.push(k);sPick();toast('🔎 Nova prova: '+CS[cur].C[k]);ev()};
 const nt=t=>{if(!cs.nt.includes(t)){cs.nt.push(t);save()}};
 const feathers=()=>Object.keys(P.f).length;
 const fmt=s=>String(Math.floor(s/60)).padStart(2,'0')+':'+String(s%60).padStart(2,'0');
+/* maré/tempo: avança conforme a detetive se move entre locais */
+const tideLv=()=>{const c=CS[cur];if(!cs||!c||!c.tide)return -1;const n=c.tide.steps.length;return Math.floor((cs.mv||0)/(c.tide.every||2))%n};
 
 /* ===================== MENU ===================== */
 function menu(){
@@ -777,6 +854,7 @@ function ui(){
    <b>Caso ${cur+1}: ${c.n}</b>
  </div>
  <div class="tabs" id="tabs"></div>
+ <div id="tide"></div>
  <div class="stage" id="st"></div>
  <div id="log">Examine o ambiente. Clique nos objetos e nas pessoas.</div>
  <div><b>Provas:</b> <span class="ev" id="ev"></span></div>
@@ -791,15 +869,17 @@ function scene(){
  const c=CS[cur],l=c.L.find(x=>x.id===cs.loc),st=$('st');
  if(!st)return;
  const tot=Object.keys(c.C).length-1;
- $('ch').innerHTML='Provas '+cs.f.filter(k=>k!=='conf').length+'/'+tot+' · Chances: '+'❤️'.repeat(cs.ch)+'🖤'.repeat(Math.max(0,(P.hard?1:3)-cs.ch));
+ $('ch').innerHTML='Provas '+cs.f.filter(k=>k!=='conf').length+'/'+tot+' · Chances: '+'❤️'.repeat(cs.ch)+'🖤'.repeat(Math.max(0,(P.hard?1:2)-cs.ch));
  $('tabs').innerHTML=c.L.map(x=>`<button class="btn sm ${x.id===cs.loc?'on':''}" data-l="${x.id}">${x.ic} ${x.nm}</button>`).join('');
- $$('#tabs button').forEach(b=>b.onclick=()=>{cs.loc=b.dataset.l;sPop();scene();say('Você entra: '+c.L.find(x=>x.id===cs.loc).nm+'.')});
+ $$('#tabs button').forEach(b=>b.onclick=()=>{cs.loc=b.dataset.l;cs.mv=(cs.mv||0)+1;sPop();scene();say('Você entra: '+c.L.find(x=>x.id===cs.loc).nm+'.')});
  st.className='stage '+l.fx+(cs.fl?' fl':'');cs.fl=0;
  if(cs.fx!==l.fx){cs.fx=l.fx;ambient(l.fx)}
  st.style.background=l.bg;
+ const lv=tideLv();
+ if($('tide'))$('tide').innerHTML=c.tide?`<div class="nlab">${c.tide.name} — ${c.tide.steps[lv<0?0:lv]}</div><div class="nerve"><i style="width:${(((lv<0?0:lv)+1)/c.tide.steps.length*100).toFixed(0)}%"></i></div>`:'';
  const spots=l.S.map((s,i)=>{
-   const k=l.id+i,met=!s.n||has(s.n),lock=s.pz&&!cs.o.includes(k);
-   return `<button class="sp2 ${cs.o.includes(k)?'done':''}" data-i="${i}" style="left:${s.x}%;top:${s.y}%">${s.e}<small>${s.t}${!met?' ❔':lock?' 🔒':''}</small></button>`}).join('');
+   const k=l.id+i,met=!s.n||has(s.n),lock=s.pz&&!cs.o.includes(k),gate=s.tide!=null&&lv!==s.tide;
+   return `<button class="sp2 ${cs.o.includes(k)?'done':''}" data-i="${i}" style="left:${s.x}%;top:${s.y}%">${s.e}<small>${s.t}${gate?' 🌊':!met?' ❔':lock?' 🔒':''}</small></button>`}).join('');
  const ppl=l.pe.filter(p=>!cs.gone.includes(p)).map(p=>{
    const h=c.P[p];return `<button class="sp2 per" data-p="${p}" style="left:${h.x}%;top:${h.y}%">${h.e}<small>${h.nm}</small></button>`}).join('');
  st.innerHTML=`<div class="wm">${l.ic}</div><div class="ov"></div>${spots}${ppl}<div class="vg"></div>`;
@@ -817,6 +897,7 @@ function ev(){
 /* ===================== INVESTIGAR OBJETO ===================== */
 function spot(l,i){
  const s=l.S[i],key=l.id+i;
+ if(s.tide!=null&&tideLv()!==s.tide){say(s.tideMsg||'🌊 Não é o momento: a maré mudou. Volte quando as condições forem outras.');sPop();shake();return}
  if(s.n&&!has(s.n)){say(s.nr||'Falta algo para entender isso. Continue investigando.');tone(200,.1);shake();return}
  if(s.pz&&!cs.o.includes(key)){puzzle(s,key);return}
  reveal(s,key);
@@ -853,6 +934,37 @@ function puzzle(s,key){
    else{sBad();$('pm').textContent=z.fail?z.fail():'Combinação errada.';shake()}};
   $('ok').onclick=go;$('cd').onkeydown=e=>{if(e.key==='Enter')go()};$('cd').focus();return;
  }
+ if(z.t==='choice'){
+  modal(`<h2>${s.e} ${s.t}</h2><p class="sub">${z.q}</p>
+   <div class="items">${z.opts.map((o,i)=>`<button class="btn mk" data-o="${i}">${o}</button>`).join('')}</div>
+   <div id="pm" style="text-align:center;color:#ff8f8f;min-height:1.6em;font-weight:800"></div>
+   <div style="text-align:center"><button class="btn" onclick="closeM()">Voltar</button></div>`);
+  $$('[data-o]',$('md')).forEach(b=>b.onclick=()=>{
+   if(+b.dataset.o===z.a){$('md').style.display='none';sOk();reveal(s,key)}
+   else{sBad();$('pm').textContent=z.fail||'Não é isso. Releia as pistas com calma.';shake()}});
+  return;
+ }
+ if(z.t==='match'){
+  const pairs=z.pairs,solved={};
+  const draw=()=>{
+   modal(`<h2>${s.e} ${s.t}</h2><p class="sub">${z.q}</p>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+     <div class="items">${pairs.map((p,i)=>`<button class="btn mk ${solved[i]?'done':''}" ${solved[i]?'disabled':''} data-l="${i}" style="font-size:.82rem">${p[0]}</button>`).join('')}</div>
+     <div class="items">${pairs.map((p,i)=>`<button class="btn mk ${solved[i]?'done':''}" ${solved[i]?'disabled':''} data-rr="${i}" style="font-size:.82rem">${p[1]}</button>`).join('')}</div>
+    </div>
+    <div id="pm" style="text-align:center;color:#ffd166;min-height:1.6em;font-weight:800"></div>
+    <div style="text-align:center"><button class="btn" onclick="closeM()">Voltar</button></div>`);
+   let L=null;
+   $$('[data-l]',$('md')).forEach(b=>b.onclick=()=>{L=+b.dataset.l;$$('[data-l]',$('md')).forEach(x=>x.classList.toggle('sel',x===b));sPop()});
+   $$('[data-rr]',$('md')).forEach(b=>b.onclick=()=>{
+    if(L===null){$('pm').textContent='Escolha primeiro algo da coluna esquerda.';return}
+    if(+b.dataset.rr===L){solved[L]=1;sPick();L=null;if(Object.keys(solved).length===pairs.length){$('md').style.display='none';sOk();reveal(s,key);return}}
+    else{sBad();$('pm').textContent='Esse par não combina.';L=null}
+    draw();
+   });
+  };
+  draw();return;
+ }
  // ordem
  const items=z.items.map((t,i)=>({t,i}));
  let sh=items.slice(),n=0;
@@ -883,14 +995,17 @@ function talk(id){
 }
 function drawTalk(id,text,extra){
  const c=CS[cur],p=c.P[id],nerve=cs.nerve[id]||0;
+ const broken=!!cs.ab[id];
  const topics=p.Q.map((t,i)=>{
-  const locked=t.req&&!has(t.req);
+  const locked=(t.req&&!has(t.req))||(t.ab&&!broken)||(t.tell&&!t.tell.every(k=>has(k)));
   const done=cs.told[id+'_'+i];
   return `<button class="btn mk ${done?'done':''}" ${locked?'disabled':''} data-q="${i}" style="margin:2px 0;border-color:#444">${locked?'🔒 ':''}${done?'✓ ':''}💬 ${t.q}</button>`}).join('');
  const evs=cs.f.filter(k=>k!=='conf').map(k=>`<button class="btn sm" data-k="${k}" style="border-style:dashed;border-color:#777">${c.C[k]}</button>`).join('')||'<div class="sub">Sem provas no inventário.</div>';
  modal(`
   <div class="port">${p.e}</div>
   <h2 style="margin-bottom:4px">${p.nm}</h2>
+  ${p.alibi?`<div class="say" style="border-color:${broken?'#7CFC00':'#c9a227'};font-size:.86rem">
+    <b>${broken?'ÁLIBI QUEBRADO':'VERSÃO OFICIAL'}:</b> ${broken?(p.abTxt||'A versão dele(a) desmoronou.'):p.alibi}</div>`:''}
   <div class="nlab">NÍVEL DE NERVOSISMO — ${nerve}%</div>
   <div class="nerve"><i style="width:${Math.min(100,nerve)}%"></i></div>
   <div class="say" id="tw">${text}</div>
@@ -913,6 +1028,8 @@ function drawTalk(id,text,extra){
    sBad();drawTalk(id,`${p.nm} se fecha. "Assim não vou falar. Tente outro tom comigo."`,'Essa pergunta pede o tom <b>'+TONES[t.tone][0]+'</b>.');return}
   cs.told[id+'_'+i]=1;save();
   let r=t.a;
+  if(t.truth&&(cs.nerve[id]||0)>=(t.rc||45)){r=t.truth;sDeep();
+   nt('🤥 '+p.nm+' mudou a versão: a história não bate mais.')}
   if(t.tone)r=r+' <span style="color:#ffd166;font-size:0.85em;opacity:0.8"> (tom correto)</span>';
   if(t.ev&&!has(t.ev)){addC(t.ev)}
   sPick();drawTalk(id,r,t.note||'');
@@ -923,7 +1040,18 @@ function pres(id,k){
  const c=CS[cur],p=c.P[id],x=p.X&&p.X[k];
  const nerve=cs.nerve[id]||0;
  const mult=cs.tone==='firme'?1.6:cs.tone==='empatico'?1.15:1;
- if(!x){sBad();drawTalk(id,rnd(['Ela dá de ombros: "Isso não prova nada sobre mim."','Nada muda no rosto. Essa prova não pesa aqui.','"Interessante... mas não me diz nada."']));return}
+ // ---- quebrar o álibi ----
+ if(p.ab&&k===p.ab&&!cs.ab[id]){
+  cs.ab[id]=1;cs.nerve[id]=Math.min(100,nerve+20);sDeep();
+  if(p.abC&&!has(p.abC))addC(p.abC);
+  nt('💥 Álibi de '+p.nm+' desmontado: '+(c.C[k]||k));
+  drawTalk(id,p.abTxt||`${p.nm} fica sem resposta. A versão oficial não se sustenta mais.`,
+   '<b>Álibi quebrado.</b> Agora ele(a) está vulnerável — as perguntas trancadas se abriram.');return;
+ }
+ if(!x){
+  if(p.ab&&!cs.ab[id]){sPop();drawTalk(id,rnd([`${p.nm} encolhe os ombros: "Isso não muda a minha versão."`,`"Muito bonito. Mas eu não estava lá, e o senhor não provou o contrário."`,`"Continue procurando. Enquanto isso, meu álibi segue de pé."`]),
+   '🔒 O álibi ainda sustenta. Procure a prova que <i>contradiz</i> diretamente o que ele(a) afirma.');return}
+  sBad();drawTalk(id,rnd(['Dá de ombros: "Isso não prova nada sobre mim."','Nada muda no rosto. Essa prova não pesa aqui.','"Interessante... mas não me diz nada."']));return}
  if(x.need&&nerve<x.need){
   sPop();
   drawTalk(id,x.wait||`${p.nm} respira fundo: "Você está no caminho, mas ainda não tem o bastante pra me apertar."`,
@@ -1000,11 +1128,64 @@ function hint(){
   const t=(c.P[p].Q||[]).some((q,i)=>!cs.told[p+'_'+i]&&(!q.req||has(q.req)));
   if(t){say('💡 '+c.P[p].nm+' ainda tem algo a dizer. Pergunte ou apresente uma prova.');return}
  }
- say('💡 Você já viu tudo. Use o Mural para cruzar provas e depois acuse.');
+ for(const l of c.L)for(const p of l.pe)if(!cs.gone.includes(p)&&c.P[p].ab&&!cs.ab[p]){
+  say('💡 O álibi de '+c.P[p].nm+' ainda está de pé. Apresente no interrogatório a prova que <b>contradiz</b> a versão dele(a).');return}
+ say('💡 Você já viu tudo. Quebre os álibis restantes, cruze provas no Mural e monte a acusação.');
 }
 
 /* ===================== ACUSAÇÃO ===================== */
 function acuse(){
+ const c=CS[cur];if(!c||cs.over)return;
+ if(!c.D)return acuseOld();
+ const sus=Object.keys(c.P).filter(s=>!cs.gone.includes(s));
+ if(cs.ab[c.cul]!==1){
+  modal(`<h2>⚖️ Ainda não</h2>
+   <div class="say">O promotor nem pega os papéis: <b>"Você não desmontou o álibi de ninguém. Isso aqui é acusação ou palpite?"</b></div>
+   <p class="sub">Antes de acusar, apresente a prova que <b>contradiz a versão oficial</b> do suspeito no interrogatório. O álibi dele(a) tem que cair.</p>
+   <div style="text-align:center"><button class="btn" onclick="closeM()">Voltar à investigação</button></div>`);
+  return;
+ }
+ const shuf=a=>{const o=a.map((t,i)=>({t,i}));o.sort(()=>Math.random()-.5);return o};
+ const como=c.D.como,porq=c.D.porq;
+ const sComo=shuf(como.opts),sPorq=shuf(porq.opts);
+ const haveNeed=!como.need||has(como.need);
+ modal(`<h2>⚖️ Acusação — Monte o caso</h2>
+  <p class="sub">Uma acusação só se sustenta com <b>três</b> coisas certas: quem, como e por quê. A promotoria não aceita meia dedução.</p>
+  <b>QUEM?</b><div id="dq">${sus.map(s=>`<button class="btn sm" data-s="${s}">${c.P[s].e} ${c.P[s].nm}</button>`).join('')}</div>
+  <b>COMO? <span class="sub" style="font-weight:400">${como.need?`(requer a prova: ${c.C[como.need]})`:''}</span></b>
+  <div id="dm">${sComo.map(x=>`<button class="btn mk" data-o="${x.i}">${x.t}</button>`).join('')}</div>
+  <b>POR QUÊ?</b><div id="dp">${sPorq.map(x=>`<button class="btn mk" data-o="${x.i}">${x.t}</button>`).join('')}</div>
+  <div id="am" style="text-align:center;color:#ff8f8f;min-height:1.4em;font-weight:800;margin-top:6px"></div>
+  <div style="text-align:center;margin-top:10px"><button class="btn" id="fire" style="background:#c1121f;border-color:#fff">Acusar!</button><button class="btn" onclick="closeM()">Voltar</button></div>`);
+ let who=null,mot=null,prq=null;
+ const pickOne=(sel,cb)=>$$(sel+' button').forEach(b=>b.onclick=()=>{cb(b);$$(sel+' button').forEach(x=>x.classList.toggle('on',x===b));sPop()});
+ pickOne('#dq',b=>who=b.dataset.s);
+ pickOne('#dm',b=>mot=+b.dataset.o);
+ pickOne('#dp',b=>prq=+b.dataset.o);
+ $('fire').onclick=()=>{
+  if(!who||mot===null||prq===null){$('am').textContent='Faltei com "quem", "como" ou "por quê".';return}
+  if(!haveNeed){$('am').textContent='Sua tese de "como" não tem prova no processo. Traga a evidência ou mude a tese.';sBad();shake();return}
+  const okAll=who===c.cul&&mot===como.a&&prq===porq.a;
+  if(okAll){closeM();end('good');return}
+  cs.ch--;sBad();
+  let t;
+  if(who!==c.cul){
+   t=c.W[who]||`${c.P[who].nm} é detido(a) injustamente.`;
+   if(!P.w.includes(c.P[who].nm))P.w.push(c.P[who].nm);
+   cs.gone.push(who);
+  }else if(mot!==como.a){
+   t='O promotor descarta o "como": a cena não bate com a sua tese. O culpado respira aliviado.';
+  }else{
+   t='O motivo não convence o promotor. Sem intenção, não há condenação.';
+  }
+  save();
+  if(cs.ch<=0){closeM();end('fail',t);return}
+  modal(`<h2>Acusação rejeitada</h2><div class="say">${t}</div>
+   <p class="sub">${who!==c.cul?c.P[who].nm+' sai da investigação. ':''}Restam ${cs.ch} chance(s).</p>
+   <div style="text-align:center"><button class="btn" onclick="closeM()">Voltar à investigação</button></div>`);
+ };
+}
+function acuseOld(){
  const c=CS[cur];if(!c||cs.over)return;
  const sus=Object.keys(c.P).filter(s=>!cs.gone.includes(s));
  const mots=c.mot.map((t,i)=>({t,i})).sort(()=>Math.random()-.5);
@@ -1048,7 +1229,7 @@ function acuse(){
 /* ===================== FIM ===================== */
 function end(r,t=''){
  const c=CS[cur];cs.over=true;delete P.cs[cur];
- const stars=Math.max(1,3-(3-cs.ch)-((cs.h||0)>3?1:0));
+ const stars=Math.max(1,3-((P.hard?1:2)-cs.ch)-((cs.h||0)>2?1:0));
  if(P.r[cur]!=='good')P.r[cur]=r;
  if(r==='good'){P.s[cur]=Math.max(P.s[cur]||0,stars);sOk()}
  sv();
@@ -1057,8 +1238,8 @@ function end(r,t=''){
  modal(`<h2>${r==='good'?'Caso encerrado! 🔎':'O culpado escapou'}</h2>
   ${r==='good'?`<div style="text-align:center;font-size:2.1rem">${'⭐'.repeat(stars)}</div>`:''}
   ${t?`<div class="say">${t}</div>`:''}
-  <div class="say" style="border-color:${r==='good'?'#7CFC00':'#c1121f'}">${r==='good'?c.ok:c.esc}</div>
-  <div class="help">Tempo ${fmt(cs.sec)} · Acusações erradas ${(P.hard?1:3)-cs.ch} · Dicas ${cs.h||0}</div>
+  <div class="say" style="border-color:${r==='good'?'#7CFC00':'#c1121f'}">${r==='good'?((((P.hard?1:2)-cs.ch)>0&&c.okAlt)?c.okAlt:c.ok):c.esc}</div>
+  <div class="help">Tempo ${fmt(cs.sec)} · Acusações erradas ${(P.hard?1:2)-cs.ch} · Dicas ${cs.h||0}</div>
   <div style="text-align:center">
    ${last?`<button class="btn" onclick="closeM();finale()">Ver o desfecho final</button>`
         :`<button class="btn" onclick="closeM();play(${cur+1})">Próximo caso →</button>`}
