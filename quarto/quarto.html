@@ -46,6 +46,11 @@ body.n .top h1{color:#ffd9ec}
 .tabs::-webkit-scrollbar{display:none}
 .tab{flex:0 0 auto;border:2px solid var(--bd);background:#fff;color:var(--pl);border-radius:14px;padding:9px 14px;min-height:44px;font:800 .84rem Nunito,sans-serif;box-shadow:0 3px 0 var(--sh);cursor:pointer;white-space:nowrap}
 .tab.on{background:var(--pl2);color:#fff;border-color:var(--pl2);box-shadow:0 3px 0 #401a38}
+.tabswrap{position:relative;display:flex;align-items:center}
+.tabswrap .tabs{flex:1;min-width:0;scroll-behavior:smooth}
+.tabarrow{flex:0 0 auto;width:40px;height:44px;margin:6px 4px 0;border:2px solid var(--bd);border-radius:14px;background:#fff;color:var(--pl2);font:900 1.6rem/1 Nunito,sans-serif;cursor:pointer;box-shadow:0 3px 0 var(--sh);display:flex;align-items:center;justify-content:center;padding:0}
+.tabarrow:active{transform:translateY(2px);box-shadow:0 1px 0 var(--sh)}
+.tabarrow[hidden]{display:none}
 .sh{height:min(27vh,230px);overflow-y:auto;padding:8px 10px 12px;touch-action:pan-y}
 .g{display:grid;grid-template-columns:repeat(auto-fill,minmax(92px,1fr));gap:8px}
 .ic{position:relative;display:flex;flex-direction:column;align-items:center;gap:2px;padding:6px 4px;min-height:92px;border:2px solid var(--bd);background:#fff;border-radius:16px;font-family:inherit;color:var(--pl);box-shadow:0 3px 0 var(--sh);cursor:pointer}
@@ -127,7 +132,11 @@ body.n .top h1{color:#ffd9ec}
   <button class="b" data-a="x">🗑️ Guardar</button>
   <button class="b" data-a="ok">✅ Pronto</button>
 </div>
-<div class="tabs" id="tabs"></div>
+<div class="tabswrap">
+  <button class="tabarrow" id="tl" aria-label="Categorias anteriores">‹</button>
+  <div class="tabs" id="tabs"></div>
+  <button class="tabarrow" id="tr" aria-label="Mais categorias">›</button>
+</div>
 <div class="sh" id="sh"></div>
 <div id="cor"></div>
 <div id="toasts"></div>
@@ -1210,7 +1219,27 @@ $('rc').addEventListener('input',e=>{BANK.rot=+e.target.value;save();render()});
 const hoje=()=>{const d=new Date();return d.getFullYear()+'-'+(d.getMonth()+1)+'-'+d.getDate()};
 function mimo(){let g;try{g=localStorage.getItem(KG)}catch(e){}$('bg').style.display=g===hoje()?'none':''}
 $('bg').addEventListener('click',()=>{setCoins(coins+25);try{localStorage.setItem(KG,hoje())}catch(e){}sBuy();toast('💝 Mimo do dia! +25 corações');mimo();shelf()});
-
+/* setas das categorias */
+(function(){
+  const sc=$('tabs'),L=$('tl'),R=$('tr');
+  function upd(){
+    L.hidden=sc.scrollLeft<=4;
+    R.hidden=sc.scrollLeft+sc.clientWidth>=sc.scrollWidth-4;
+  }
+  L.addEventListener('click',()=>sc.scrollBy({left:-Math.max(200,sc.clientWidth*.7),behavior:'smooth'}));
+  R.addEventListener('click',()=>sc.scrollBy({left:Math.max(200,sc.clientWidth*.7),behavior:'smooth'}));
+  sc.addEventListener('scroll',upd);
+  window.addEventListener('resize',upd);
+  /* rolar com a rodinha do mouse na horizontal */
+  sc.addEventListener('wheel',e=>{if(e.deltaY){e.preventDefault();sc.scrollLeft+=e.deltaY}},{passive:false});
+  /* as abas são recriadas a cada clique: reatualiza as setas */
+  new MutationObserver(()=>{
+    const on=sc.querySelector('.tab.on');
+    if(on)on.scrollIntoView({block:'nearest',inline:'nearest'});
+    upd();
+  }).observe(sc,{childList:true});
+  setTimeout(upd,0);
+})();
 updK();setCoins(coins);sinc();render();shelf();mimo();an=pronta();
 setTimeout(()=>toast('Toque num item: 🎨 muda a cor e 🧲/🕊️ deixa ele solto ou encaixado.'),700);
 </script>
