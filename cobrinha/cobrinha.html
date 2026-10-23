@@ -1,0 +1,877 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Cobrinha dos Docinhos 🍩</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;800;900&family=Dancing+Script:wght@700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --plum:#3f1d38;
+  --plum2:#6b2d5c;
+  --cream:#fffaf3;
+}
+*{ box-sizing:border-box; }
+html,body{ height:100%; }
+body{
+  /* tamanho final dos botões: escolha da jogadora, limitado pelo espaço da tela */
+  --btn: min(var(--ubtn, 110px), 19vh, 29vw);
+  margin:0; height:100dvh; overflow:hidden; overscroll-behavior:none;
+  font-family:"Nunito",sans-serif; color:var(--plum);
+  background:linear-gradient(160deg,#ffe6f2 0%,#f4e6ff 55%,#e6f7ff 100%);
+  display:flex; flex-direction:column; align-items:center;
+  touch-action:manipulation; -webkit-tap-highlight-color:transparent;
+  user-select:none; -webkit-user-select:none;
+}
+body[data-estilo="giros"]{ --btn: min(var(--ubtn, 110px), 24vh, 22vw); }
+
+/* ===== Topo ===== */
+.top{
+  width:100%; display:flex; align-items:center; gap:10px; flex-wrap:wrap;
+  justify-content:space-between; padding:8px 14px 4px;
+}
+.top h1{
+  font-family:"Dancing Script",cursive; font-size:clamp(1.25rem,2.6vw,1.9rem);
+  margin:0; color:var(--plum2); text-shadow:0 2px 0 #fff; order:2; flex:1; text-align:center;
+}
+.back{
+  order:1; text-decoration:none; color:var(--plum2); font-weight:900; font-size:.85rem;
+  background:#fff; border:2px solid #ffd9ec; border-radius:999px; padding:9px 16px;
+  box-shadow:0 3px 0 #f3cfe3;
+}
+.back:active{ transform:translateY(2px); box-shadow:0 1px 0 #f3cfe3; }
+.chips{ order:3; display:flex; gap:7px; flex-wrap:wrap; justify-content:flex-end; align-items:center; }
+.chip{
+  background:#fff; border:2px solid #ffd9ec; border-radius:999px; padding:5px 12px;
+  font-weight:800; font-size:.83rem; box-shadow:0 3px 0 #f3cfe3; white-space:nowrap;
+}
+.chip b{ color:var(--plum2); }
+.ico{
+  background:#fff; border:2px solid #ffd9ec; border-radius:999px; width:44px; height:44px;
+  font-size:1.1rem; cursor:pointer; box-shadow:0 3px 0 #f3cfe3; padding:0;
+}
+.ico:active{ transform:translateY(2px); box-shadow:0 1px 0 #f3cfe3; }
+
+/* ===== Área principal (palco + controles) ===== */
+.main{ flex:1; min-height:0; width:100%; display:flex; flex-direction:column; align-items:center; }
+.stage{
+  flex:1; min-height:0; min-width:0; width:100%; display:flex; align-items:center; justify-content:center;
+  position:relative; padding:0 10px; touch-action:none;
+}
+.wrap{ position:relative; }
+canvas{
+  display:block; border-radius:22px; background:var(--cream); touch-action:none;
+  box-shadow:0 12px 30px rgba(120,60,110,.22), 0 0 0 4px #fff;
+}
+
+/* ===== Sobreposições ===== */
+.ov{
+  position:absolute; inset:0; border-radius:22px; z-index:6; display:flex;
+  padding:12px; background:rgba(255,250,243,.95); backdrop-filter:blur(6px);
+  overflow-y:auto; touch-action:pan-y;
+}
+.ov.hide{ display:none; }
+.ov.leve{ background:rgba(255,250,243,.35); backdrop-filter:none; pointer-events:none; }
+.ovin{
+  margin:auto; width:100%; max-width:540px; display:flex; flex-direction:column;
+  align-items:center; gap:10px; text-align:center;
+}
+.ov h2{ font-family:"Dancing Script",cursive; font-size:clamp(1.5rem,4.4vw,2.3rem); margin:0; color:var(--plum2); }
+.ov p{ margin:0; font-size:.92rem; line-height:1.45; max-width:38ch; }
+.ov .big{
+  border:0; border-radius:20px; padding:16px 38px; font-family:inherit; font-weight:900;
+  font-size:1.2rem; color:#fff; cursor:pointer; touch-action:manipulation;
+  background:linear-gradient(180deg,#8a3d76,#5b2450); box-shadow:0 6px 0 #3f1a38; min-width:200px;
+}
+.ov .big:active{ transform:translateY(4px); box-shadow:0 2px 0 #3f1a38; }
+.ov .big.alt{ background:linear-gradient(180deg,#ffd166,#f0a13c); color:#4a2b00; box-shadow:0 6px 0 #c07f1c; }
+.ov .big.alt:active{ box-shadow:0 2px 0 #c07f1c; }
+.ov .big.soft{ background:#fff; color:var(--plum2); border:2px solid #e9cbe0; box-shadow:0 5px 0 #ead0e2; }
+.ov .big.soft:active{ box-shadow:0 1px 0 #ead0e2; }
+.count{ font-family:"Dancing Script",cursive; font-size:clamp(3.5rem,18vw,7rem); color:var(--plum2); text-shadow:0 3px 0 #fff; line-height:1; }
+.speeds{ display:flex; gap:8px; flex-wrap:wrap; justify-content:center; }
+.sp{
+  border:2px solid #e9cbe0; background:#fff; color:var(--plum); border-radius:14px;
+  padding:11px 16px; font-weight:800; font-family:inherit; font-size:.9rem; cursor:pointer;
+  touch-action:manipulation;
+}
+.sp.on{ background:var(--plum2); color:#fff; border-color:var(--plum2); }
+.stat{ display:flex; gap:14px; flex-wrap:wrap; justify-content:center; font-weight:800; }
+.stat span{ background:#fff; border:2px solid #ffd9ec; border-radius:14px; padding:7px 13px; box-shadow:0 3px 0 #f3cfe3; }
+.hint{ font-size:.8rem; opacity:.75; }
+.grp{ width:100%; display:flex; flex-direction:column; gap:6px; align-items:center; padding:8px 6px; border-top:2px dashed #ecd2e4; }
+.grp label{ font-weight:900; font-size:.9rem; }
+.grp input[type=range]{ width:min(100%,380px); height:34px; accent-color:var(--plum2); cursor:pointer; touch-action:pan-x; }
+.grp small{ font-size:.76rem; opacity:.75; max-width:44ch; line-height:1.35; }
+
+/* ===== Controles ===== */
+.controls{ flex:0 0 auto; width:100%; display:flex; justify-content:center; padding:6px 14px 12px; }
+body[data-lado="esq"] .controls{ justify-content:flex-start; }
+body[data-lado="dir"] .controls{ justify-content:flex-end; }
+body[data-lado="cen"] .controls{ justify-content:center; }
+body[data-estilo="nenhum"] .controls{ display:none; }
+
+.pad, .giros{ gap:calc(var(--btn) * .12); }
+.pad{ display:grid; grid-template-columns:repeat(3,var(--btn)); grid-template-rows:repeat(3,var(--btn)); }
+.giros{
+  display:none;
+  grid-template-columns: calc(var(--btn) * 1.6) calc(var(--btn) * .9) calc(var(--btn) * 1.6);
+  grid-template-rows: calc(var(--btn) * 1.5);
+}
+body[data-estilo="giros"] .pad{ display:none; }
+body[data-estilo="giros"] .giros{ display:grid; }
+
+.pad button, .giros button{
+  border:0; border-radius:calc(var(--btn) * .26); font-family:inherit; font-weight:900; color:#fff;
+  font-size:calc(var(--btn) * .42); cursor:pointer; touch-action:none;
+  display:flex; align-items:center; justify-content:center;
+  background:linear-gradient(180deg,#7a3568,#5b2450);
+  box-shadow:0 5px 0 #401a38, 0 9px 16px rgba(80,30,70,.22);
+}
+.giros button.g{ font-size:calc(var(--btn) * .7); }
+.pad button:active, .giros button:active{ transform:translateY(4px); box-shadow:0 1px 0 #401a38; }
+.pad .mid, .giros .mid{
+  background:linear-gradient(180deg,#ffd166,#f0a13c); color:#4a2b00; font-size:calc(var(--btn) * .34);
+  box-shadow:0 5px 0 #c07f1c, 0 9px 16px rgba(80,30,70,.22);
+}
+.pad .mid:active, .giros .mid:active{ box-shadow:0 1px 0 #c07f1c; }
+.pad .vazio{ visibility:hidden; }
+
+/* Telas largas: controles ao lado do tabuleiro (esquerda ou direita) */
+@media (orientation:landscape) and (min-aspect-ratio:3/2){
+  body[data-lado="esq"], body[data-lado="dir"]{ --btn: min(var(--ubtn, 110px), 27vh, 15vw); }
+  body[data-lado="esq"][data-estilo="giros"], body[data-lado="dir"][data-estilo="giros"]{ --btn: min(var(--ubtn, 110px), 30vh, 9.5vw); }
+  body[data-lado="esq"] .main{ flex-direction:row-reverse; }
+  body[data-lado="dir"] .main{ flex-direction:row; }
+  body[data-lado="esq"] .controls, body[data-lado="dir"] .controls{ width:auto; align-items:center; padding:8px 16px; }
+}
+
+/* ===== Toast ===== */
+#toasts{ position:fixed; left:50%; top:78px; transform:translateX(-50%); z-index:30; display:flex; flex-direction:column; gap:8px; align-items:center; pointer-events:none; }
+.toast{
+  background:var(--plum2); color:#fff; font-weight:800; font-size:.9rem;
+  padding:10px 20px; border-radius:999px; box-shadow:0 8px 20px rgba(80,30,70,.35);
+  animation:tin .25s ease, tout .3s ease 2.1s forwards;
+}
+@keyframes tin{ from{ opacity:0; transform:translateY(10px) scale(.95);} }
+@keyframes tout{ to{ opacity:0; transform:translateY(-8px);} }
+
+@media (max-width:520px){
+  .top h1{ order:1; flex:1 1 100%; }
+  .chips{ order:3; justify-content:center; width:100%; }
+}
+</style>
+</head>
+<body data-lado="cen" data-estilo="setas">
+
+<header class="top">
+  <a class="back" href="../jogos_hub.html">← Hub</a>
+  <h1>Cobrinha dos Docinhos</h1>
+  <div class="chips">
+    <span class="chip">🍩 <b id="sc">0</b></span>
+    <span class="chip">🏆 <b id="hi">0</b></span>
+    <span class="chip">💗 <b id="saldo">0</b></span>
+    <span class="chip">Nv <b id="lvl">1</b></span>
+    <button class="ico" id="cfgBtn" aria-label="Ajustes dos controles">⚙️</button>
+    <button class="ico" id="mute" aria-label="Ligar ou desligar o som">🔊</button>
+  </div>
+</header>
+
+<div class="main">
+  <div class="stage" id="stage">
+    <div class="wrap">
+      <canvas id="cv"></canvas>
+      <div class="ov" id="ov"></div>
+    </div>
+  </div>
+
+  <div class="controls">
+    <!-- Estilo 1: quatro setas -->
+    <div class="pad">
+      <button class="vazio" tabindex="-1" aria-hidden="true"></button>
+      <button id="bUp" aria-label="Mover para cima">▲</button>
+      <button class="vazio" tabindex="-1" aria-hidden="true"></button>
+      <button id="bLeft" aria-label="Mover para a esquerda">◀</button>
+      <button id="bMid" class="mid" aria-label="Pausar ou continuar">⏸</button>
+      <button id="bRight" aria-label="Mover para a direita">▶</button>
+      <button class="vazio" tabindex="-1" aria-hidden="true"></button>
+      <button id="bDown" aria-label="Mover para baixo">▼</button>
+      <button class="vazio" tabindex="-1" aria-hidden="true"></button>
+    </div>
+    <!-- Estilo 2: só dois giros (esquerda / direita da própria cobrinha) -->
+    <div class="giros">
+      <button id="gEsq" class="g" aria-label="Virar para a esquerda da cobrinha">↶</button>
+      <button id="gMid" class="mid" aria-label="Pausar ou continuar">⏸</button>
+      <button id="gDir" class="g" aria-label="Virar para a direita da cobrinha">↷</button>
+    </div>
+  </div>
+</div>
+
+<div id="toasts"></div>
+
+<script>
+/* =======================
+   ARMAZENAMENTO
+   ======================= */
+const K_REC   = 'amor_high_cobrinha';   // recorde da cobrinha
+const K_COINS = 'amor_coins_lulu';      // saldo de corações (mesmo da Loja de Vales)
+const K_CFG   = 'cobrinha_cfg';         // ajustes de controle
+const getInt = k => { const v = parseInt(localStorage.getItem(k) || '0', 10); return isNaN(v) ? 0 : v; };
+const setInt = (k, v) => localStorage.setItem(k, String(v));
+
+const $ = id => document.getElementById(id);
+
+/* =======================
+   AJUSTES (salvos no aparelho)
+   ======================= */
+const CFG0 = {
+  tam: 110,            // tamanho dos botões (px)
+  lado: 'cen',         // esq | cen | dir
+  estilo: 'setas',     // setas | giros | nenhum
+  sens: 'media',       // sensibilidade do arrastar: baixa | media | alta
+  hover: 'nao',        // mouse guia só de mover, sem segurar o clique
+  paredes: 'solidas',  // solidas | atravessar
+  obst: 'sim',         // chocolates no caminho
+  cont: 'sim'          // contagem 3-2-1 ao começar / continuar
+};
+let cfg = Object.assign({}, CFG0);
+try { Object.assign(cfg, JSON.parse(localStorage.getItem(K_CFG) || '{}')); } catch (e) {}
+cfg.tam = Math.min(170, Math.max(50, parseInt(cfg.tam, 10) || CFG0.tam));
+function salvaCfg() { try { localStorage.setItem(K_CFG, JSON.stringify(cfg)); } catch (e) {} }
+function aplicaCfg() {
+  document.body.dataset.lado = cfg.lado;
+  document.body.dataset.estilo = cfg.estilo;
+  document.documentElement.style.setProperty('--ubtn', cfg.tam + 'px');
+  ajusta(); desenha();
+}
+
+/* =======================
+   SONS CURTOS (sintetizados)
+   ======================= */
+let AC = null, mudo = false;
+function beep(freq, dur, tipo, vol) {
+  if (mudo) return;
+  try {
+    if (!AC) AC = new (window.AudioContext || window.webkitAudioContext)();
+    if (AC.state === 'suspended') AC.resume();
+    const o = AC.createOscillator(), g = AC.createGain();
+    o.type = tipo || 'square';
+    o.frequency.value = freq;
+    const t = AC.currentTime;
+    g.gain.setValueAtTime(vol || .05, t);
+    g.gain.exponentialRampToValueAtTime(.0001, t + dur);
+    o.connect(g); g.connect(AC.destination);
+    o.start(t); o.stop(t + dur + .02);
+  } catch (e) { /* áudio indisponível: segue o jogo */ }
+}
+const sEat   = () => beep(900, .06, 'square', .045);
+const sOuro  = () => { beep(1000, .07, 'triangle', .06); setTimeout(() => beep(1400, .1, 'triangle', .06), 70); setTimeout(() => beep(1800, .14, 'triangle', .06), 150); };
+const sNivel = () => { beep(760, .08); setTimeout(() => beep(1180, .12), 80); };
+const sMorre = () => { beep(300, .12, 'triangle', .07); setTimeout(() => beep(200, .18, 'triangle', .07), 110); };
+
+function toast(msg) {
+  const d = document.createElement('div');
+  d.className = 'toast'; d.textContent = msg;
+  $('toasts').appendChild(d);
+  setTimeout(() => d.remove(), 2500);
+}
+
+/* =======================
+   CONFIGURAÇÃO DO JOGO
+   ======================= */
+const COLS = 17, ROWS = 13;                 // tabuleiro
+const DOCES = ['🍩', '🧁', '🍬', '🍭', '🍪', '🍫', '🍰'];
+const VELOCIDADES = { calmo: 210, normal: 165, rapido: 125 };
+const POR_NIVEL = 5;                        // docinhos para subir de nível
+const MAX_OBS = 26;
+const A_CADA_OURO = 7;                      // doce dourado a cada N docinhos
+let modo = 'calmo';                         // começa mais devagar
+
+const cv = $('cv'), ctx = cv.getContext('2d');
+let CELL = 30;
+
+let G = null;
+let ultimoT = 0;
+let tCont = null, contando = null;          // contagem: null | 'inicio' | 'retoma'
+
+/* =======================
+   ESTADO
+   ======================= */
+function novoTick() {
+  const base = VELOCIDADES[modo];
+  return Math.max(Math.round(base * 0.62), base - (G.level - 1) * 7);
+}
+function novoJogo() {
+  G = {
+    snake: [{ x: 8, y: 6 }, { x: 7, y: 6 }, { x: 6, y: 6 }],
+    dir: { x: 1, y: 0 }, q: [],
+    food: null, ouro: null, obs: [], parts: [],
+    score: 0, eaten: 0, level: 1,
+    tick: VELOCIDADES[modo], acc: 0,
+    rodando: false, pausado: false, vivo: true
+  };
+  poeComida();
+  return G;
+}
+
+/* =======================
+   TABULEIRO
+   ======================= */
+function ocupado(x, y) {
+  return G.snake.some(s => s.x === x && s.y === y) ||
+         G.obs.some(o => o.x === x && o.y === y) ||
+         (G.food && G.food.x === x && G.food.y === y) ||
+         (G.ouro && G.ouro.x === x && G.ouro.y === y);
+}
+function livres() {
+  const out = [];
+  for (let y = 0; y < ROWS; y++) for (let x = 0; x < COLS; x++) if (!ocupado(x, y)) out.push({ x, y });
+  return out;
+}
+function poeComida() {
+  const l = livres();
+  if (!l.length) { G.food = null; return; }
+  const c = l[Math.floor(Math.random() * l.length)];
+  G.food = { x: c.x, y: c.y, e: DOCES[Math.floor(Math.random() * DOCES.length)] };
+}
+function poeOuro() {
+  const l = livres();
+  if (!l.length) return;
+  const c = l[Math.floor(Math.random() * l.length)];
+  G.ouro = { x: c.x, y: c.y };            // fica até ser comido: sem correria
+}
+function poeObstaculos(n) {
+  // evita nascer colado na cabeça / na comida para não prender a jogadora
+  const h = G.snake[0];
+  const l = livres().filter(c =>
+    Math.abs(c.x - h.x) + Math.abs(c.y - h.y) > 3 &&
+    (!G.food || Math.abs(c.x - G.food.x) + Math.abs(c.y - G.food.y) > 2)
+  );
+  for (let i = 0; i < n && l.length; i++) {
+    const k = Math.floor(Math.random() * l.length);
+    G.obs.push(l.splice(k, 1)[0]);
+    if (G.obs.length >= MAX_OBS) break;
+  }
+}
+function faisca(cx, cy, txt) {
+  for (let i = 0; i < 5; i++) {
+    G.parts.push({ gx: cx + .5, gy: cy + .5, vx: (Math.random() - .5) * 3, vy: -1 - Math.random() * 2, life: .7, t: txt });
+  }
+}
+
+/* =======================
+   REGRAS DO JOGO
+   ======================= */
+function anda() {
+  const d = G.q.length ? G.q.shift() : null;
+  if (d) G.dir = d;
+
+  let hx = G.snake[0].x + G.dir.x, hy = G.snake[0].y + G.dir.y;
+
+  if (cfg.paredes === 'atravessar') {                    // sai de um lado e volta do outro
+    hx = (hx + COLS) % COLS; hy = (hy + ROWS) % ROWS;
+  } else if (hx < 0 || hy < 0 || hx >= COLS || hy >= ROWS) {
+    return morre('Bateu na beirada da forma!');
+  }
+  const h = { x: hx, y: hy };
+
+  if (G.obs.some(o => o.x === h.x && o.y === h.y)) return morre('Bateu no chocolate!');
+
+  const vaiComer = G.food && h.x === G.food.x && h.y === G.food.y;
+  const vaiOuro  = G.ouro && h.x === G.ouro.x && h.y === G.ouro.y;
+  const cresce = vaiComer || vaiOuro;
+  const corpo = cresce ? G.snake : G.snake.slice(0, -1);   // a ponta do rabo sai, então não conta
+  if (corpo.some(s => s.x === h.x && s.y === h.y)) return morre('Mordeu o próprio rabo!');
+
+  G.snake.unshift(h);
+  if (vaiComer) come('doce');
+  else if (vaiOuro) come('ouro');
+  else G.snake.pop();
+}
+
+function come(tipo) {
+  if (tipo === 'ouro') {
+    faisca(G.ouro.x, G.ouro.y, '🌟');
+    G.ouro = null;
+    G.score += 30;
+    sOuro();
+    toast('🌟 Doce dourado! +30');
+    $('sc').textContent = G.score;
+    return;
+  }
+  faisca(G.food.x, G.food.y, '✨');
+  G.score += 10;
+  G.eaten++;
+  sEat();
+  $('sc').textContent = G.score;
+
+  const novo = Math.floor(G.eaten / POR_NIVEL) + 1;
+  if (novo > G.level) {
+    G.level = novo;
+    G.tick = novoTick();
+    $('lvl').textContent = G.level;
+    sNivel();
+    toast('🎉 Nível ' + G.level + '!');
+    if (G.level >= 3 && cfg.obst === 'sim') poeObstaculos(2);
+  }
+  poeComida();
+  if (G.eaten % A_CADA_OURO === 0 && !G.ouro) poeOuro();
+}
+
+function morre(motivo) {
+  G.vivo = false; G.rodando = false;
+  sMorre();
+  fimDeJogo(motivo);
+}
+
+/* =======================
+   COMANDOS
+   ======================= */
+function empurra(nx, ny) {
+  if (!G || !G.rodando || G.pausado || !G.vivo) return;
+  const ult = G.q.length ? G.q[G.q.length - 1] : G.dir;
+  if (nx === ult.x && ny === ult.y) return;          // já vai nessa direção
+  if (nx === -ult.x && ny === -ult.y) return;        // não pode inverter de uma vez
+  if (G.q.length < 3) G.q.push({ x: nx, y: ny });    // fila: não perde toque rápido
+}
+function gira(lado) {                                // 'e' = esquerda da cobrinha, 'd' = direita
+  if (!G || !G.rodando || G.pausado || !G.vivo) return;
+  const u = G.q.length ? G.q[G.q.length - 1] : G.dir;
+  if (lado === 'e') empurra(u.y, -u.x); else empurra(-u.y, u.x);
+}
+
+/* =======================
+   DESENHO
+   ======================= */
+function ajusta() {
+  const stage = $('stage');
+  const w = stage.clientWidth - 24;
+  const h = stage.clientHeight - 16;
+  CELL = Math.max(10, Math.floor(Math.min(w / COLS, h / ROWS)));
+  const DPR = Math.min(2, window.devicePixelRatio || 1);
+  const W = CELL * COLS, H = CELL * ROWS;
+  cv.width = Math.round(W * DPR); cv.height = Math.round(H * DPR);
+  cv.style.width = W + 'px'; cv.style.height = H + 'px';
+  ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
+}
+function arred(x, y, w, h, r) {
+  ctx.beginPath();
+  ctx.moveTo(x + r, y);
+  ctx.arcTo(x + w, y, x + w, y + h, r);
+  ctx.arcTo(x + w, y + h, x, y + h, r);
+  ctx.arcTo(x, y + h, x, y, r);
+  ctx.arcTo(x, y, x + w, y, r);
+  ctx.closePath();
+}
+function desenha() {
+  const W = CELL * COLS, H = CELL * ROWS;
+  ctx.clearRect(0, 0, W, H);
+
+  // xadrez pastel de fundo
+  ctx.fillStyle = '#fffaf3'; ctx.fillRect(0, 0, W, H);
+  ctx.fillStyle = '#fdf1f7';
+  for (let y = 0; y < ROWS; y++) for (let x = 0; x < COLS; x++) {
+    if ((x + y) % 2 === 0) ctx.fillRect(x * CELL, y * CELL, CELL, CELL);
+  }
+
+  if (!G) return;
+
+  // obstáculos (chocolatinhos)
+  G.obs.forEach(o => {
+    const px = o.x * CELL + 1.5, py = o.y * CELL + 1.5, s = CELL - 3;
+    ctx.fillStyle = '#7b4a2d'; arred(px, py, s, s, CELL * .28); ctx.fill();
+    ctx.fillStyle = '#a9683f'; arred(px + s * .15, py + s * .12, s * .7, s * .26, CELL * .12); ctx.fill();
+  });
+
+  ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+
+  // comida
+  if (G.food) {
+    ctx.font = Math.round(CELL * .78) + 'px serif';
+    ctx.fillText(G.food.e, G.food.x * CELL + CELL / 2, G.food.y * CELL + CELL / 2 + CELL * .04);
+  }
+
+  // doce dourado (vale 30)
+  if (G.ouro) {
+    const pul = 1 + Math.sin(performance.now() / 180) * .08;
+    const cx = G.ouro.x * CELL + CELL / 2, cy = G.ouro.y * CELL + CELL / 2;
+    ctx.fillStyle = 'rgba(255,209,102,.5)';
+    ctx.beginPath(); ctx.arc(cx, cy, CELL * .5 * pul, 0, 7); ctx.fill();
+    ctx.font = Math.round(CELL * .78) + 'px serif';
+    ctx.fillText('🌟', cx, cy + CELL * .04);
+  }
+
+  // cobrinha
+  const n = G.snake.length;
+  for (let i = n - 1; i >= 0; i--) {
+    const s = G.snake[i];
+    const t = n > 1 ? i / (n - 1) : 0;
+    const r = Math.round(255 - 60 * t), g = Math.round(158 - 40 * t), b = Math.round(203 + 40 * t);
+    ctx.fillStyle = 'rgb(' + r + ',' + g + ',' + b + ')';
+    const pad = i === 0 ? 1 : 2;
+    arred(s.x * CELL + pad, s.y * CELL + pad, CELL - pad * 2, CELL - pad * 2, CELL * .34);
+    ctx.fill();
+    if (i === 0) {
+      // olhinhos virados para onde ela anda
+      const cx = s.x * CELL + CELL / 2, cy = s.y * CELL + CELL / 2;
+      const ox = G.dir.x * CELL * .16, oy = G.dir.y * CELL * .16;
+      const dx = G.dir.y !== 0 ? CELL * .17 : 0, dy = G.dir.x !== 0 ? CELL * .17 : 0;
+      ctx.fillStyle = '#fff';
+      ctx.beginPath(); ctx.arc(cx + ox + dx, cy + oy + dy, CELL * .13, 0, 7); ctx.fill();
+      ctx.beginPath(); ctx.arc(cx + ox - dx, cy + oy - dy, CELL * .13, 0, 7); ctx.fill();
+      ctx.fillStyle = '#3f1d38';
+      ctx.beginPath(); ctx.arc(cx + ox * 1.6 + dx, cy + oy * 1.6 + dy, CELL * .07, 0, 7); ctx.fill();
+      ctx.beginPath(); ctx.arc(cx + ox * 1.6 - dx, cy + oy * 1.6 - dy, CELL * .07, 0, 7); ctx.fill();
+    }
+  }
+
+  // faíscas ao comer
+  G.parts.forEach(p => {
+    ctx.globalAlpha = Math.max(0, p.life / .7);
+    ctx.font = Math.round(CELL * .45) + 'px serif';
+    ctx.fillText(p.t, p.gx * CELL, p.gy * CELL);
+  });
+  ctx.globalAlpha = 1;
+}
+
+/* =======================
+   LAÇO PRINCIPAL (com acumulador)
+   ======================= */
+function laco(t) {
+  if (!ultimoT) ultimoT = t;
+  const dt = Math.min(100, t - ultimoT);
+  ultimoT = t;
+
+  if (G && G.parts.length) {
+    const s = dt / 1000;
+    G.parts.forEach(p => { p.life -= s; p.gx += p.vx * s; p.gy += p.vy * s; });
+    G.parts = G.parts.filter(p => p.life > 0);
+  }
+  if (G && G.rodando && !G.pausado && G.vivo) {
+    G.acc = (G.acc || 0) + dt;
+    let passos = 0;
+    while (G.acc >= G.tick && passos < 4) {
+      G.acc -= G.tick;
+      anda();
+      passos++;
+      if (!G.vivo) break;
+    }
+  }
+  desenha();
+  requestAnimationFrame(laco);
+}
+
+/* =======================
+   SOBREPOSIÇÕES
+   ======================= */
+function escondeOv() { $('ov').classList.add('hide'); }
+function mostraOv(html, leve) {
+  const o = $('ov');
+  o.innerHTML = '<div class="ovin">' + html + '</div>';
+  o.classList.toggle('leve', !!leve);
+  o.classList.remove('hide');
+  o.scrollTop = 0;
+}
+function sync() {                                   // ícone do botão de pausa
+  const ic = (G && G.pausado) ? '▶' : '⏸';
+  $('bMid').textContent = ic; $('gMid').textContent = ic;
+}
+
+function telaInicio() {
+  mostraOv(`
+    <h2>🍩 Cobrinha dos Docinhos</h2>
+    <p>Coma os docinhos, cresça e <b>não encoste</b> no chocolate nem em você mesma. Docinho 🌟 dourado vale 30!</p>
+    <p class="hint">Guie arrastando o mouse (ou o dedo) pela tela, com os botões ou com o teclado.</p>
+    <div class="speeds">
+      <button class="sp ${modo === 'calmo' ? 'on' : ''}"  data-v="calmo">🐢 Calmo</button>
+      <button class="sp ${modo === 'normal' ? 'on' : ''}" data-v="normal">🙂 Normal</button>
+      <button class="sp ${modo === 'rapido' ? 'on' : ''}" data-v="rapido">🐇 Rápido</button>
+    </div>
+    <button class="big" id="jogar">JOGAR</button>
+    <button class="big soft" id="ajustes">⚙️ Ajustar controles</button>
+    <p class="hint">Seu saldo 💗 também vale na Loja de Vales.</p>`);
+
+  $('ov').querySelectorAll('.sp').forEach(b => b.addEventListener('click', () => {
+    modo = b.dataset.v;
+    $('ov').querySelectorAll('.sp').forEach(o => o.classList.remove('on'));
+    b.classList.add('on');
+    if (G) G.tick = novoTick();
+  }));
+  $('jogar').addEventListener('click', comeca);
+  $('ajustes').addEventListener('click', () => telaAjustes('inicio'));
+}
+
+function telaPausa() {
+  mostraOv(`
+    <h2>⏸ Pausado</h2>
+    <p>Tudo parado com calma. Quando quiser, é só continuar.</p>
+    <button class="big" id="segue">CONTINUAR</button>
+    <button class="big soft" id="ajustes">⚙️ Ajustar controles</button>
+    <button class="big alt" id="reinicia">RECOMEÇAR</button>`);
+  $('segue').addEventListener('click', alternaPausa);
+  $('ajustes').addEventListener('click', () => telaAjustes('pausa'));
+  $('reinicia').addEventListener('click', comeca);
+}
+
+function telaAjustes(origem) {
+  mostraOv(`
+    <h2>⚙️ Ajustes</h2>
+    <p class="hint">Os botões lá embaixo mudam na hora, é só testar. Tudo fica salvo neste aparelho.</p>
+
+    <div class="grp">
+      <label>Tamanho dos botões: <b id="vTam"></b></label>
+      <input type="range" id="rTam" min="50" max="170" step="5" aria-label="Tamanho dos botões">
+      <small>Em telas pequenas o jogo reduz um pouco para o tabuleiro continuar aparecendo.</small>
+    </div>
+
+    <div class="grp">
+      <label>Lado dos botões</label>
+      <div class="speeds" data-k="lado">
+        <button class="sp" data-v="esq">⬅ Esquerda</button>
+        <button class="sp" data-v="cen">⬇ Centro</button>
+        <button class="sp" data-v="dir">Direita ➡</button>
+      </div>
+    </div>
+
+    <div class="grp">
+      <label>Tipo de botões</label>
+      <div class="speeds" data-k="estilo">
+        <button class="sp" data-v="setas">✚ 4 setas</button>
+        <button class="sp" data-v="giros">↶ ↷ 2 giros</button>
+        <button class="sp" data-v="nenhum">Sem botões</button>
+      </div>
+      <small>“2 giros” vira a cobrinha para a esquerda ou para a direita <b>dela</b>: só dois botões grandes, sem precisar escolher a direção.</small>
+    </div>
+
+    <div class="grp">
+      <label>Arrastar na tela (mouse ou dedo)</label>
+      <div class="speeds" data-k="sens">
+        <button class="sp" data-v="baixa">Menos sensível</button>
+        <button class="sp" data-v="media">Normal</button>
+        <button class="sp" data-v="alta">Mais sensível</button>
+      </div>
+      <small>Mais sensível = um arrasto bem curtinho já vira a cobrinha.</small>
+    </div>
+
+    <div class="grp">
+      <label>Mouse sem segurar o clique</label>
+      <div class="speeds" data-k="hover">
+        <button class="sp" data-v="nao">Não</button>
+        <button class="sp" data-v="sim">Sim, só mover</button>
+      </div>
+      <small>Ligado: basta mover o mouse sobre o jogo na direção desejada, sem apertar nada.</small>
+    </div>
+
+    <div class="grp">
+      <label>Paredes</label>
+      <div class="speeds" data-k="paredes">
+        <button class="sp" data-v="solidas">Batem</button>
+        <button class="sp" data-v="atravessar">Atravessam</button>
+      </div>
+    </div>
+
+    <div class="grp">
+      <label>Chocolates no caminho</label>
+      <div class="speeds" data-k="obst">
+        <button class="sp" data-v="sim">Com chocolates</button>
+        <button class="sp" data-v="nao">Sem chocolates</button>
+      </div>
+    </div>
+
+    <div class="grp">
+      <label>Contagem 3-2-1 ao começar e continuar</label>
+      <div class="speeds" data-k="cont">
+        <button class="sp" data-v="sim">Com contagem</button>
+        <button class="sp" data-v="nao">Sem contagem</button>
+      </div>
+    </div>
+
+    <button class="big" id="pronto">✔ PRONTO</button>`);
+
+  const ov = $('ov');
+  ov.querySelectorAll('.speeds[data-k]').forEach(g => g.addEventListener('click', e => {
+    const b = e.target.closest('.sp'); if (!b) return;
+    cfg[g.dataset.k] = b.dataset.v;
+    salvaCfg(); aplicaCfg(); marca();
+  }));
+  $('rTam').addEventListener('input', e => {
+    cfg.tam = parseInt(e.target.value, 10);
+    $('vTam').textContent = cfg.tam + ' px';
+    salvaCfg(); aplicaCfg();
+  });
+  $('pronto').addEventListener('click', () => { if (origem === 'pausa') telaPausa(); else telaInicio(); });
+  marca();
+}
+function marca() {
+  $('ov').querySelectorAll('.speeds[data-k]').forEach(g =>
+    g.querySelectorAll('.sp').forEach(b => b.classList.toggle('on', cfg[g.dataset.k] === b.dataset.v)));
+  const r = $('rTam');
+  if (r) { r.value = cfg.tam; $('vTam').textContent = cfg.tam + ' px'; }
+}
+function abreAjustes() {
+  clearTimeout(tCont);
+  let origem = 'inicio';
+  if (contando === 'inicio') { contando = null; }
+  else if (contando === 'retoma') { contando = null; origem = 'pausa'; }
+  else if (G && G.rodando && G.vivo) {
+    if (!G.pausado) { G.pausado = true; sync(); }
+    origem = 'pausa';
+  }
+  telaAjustes(origem);
+}
+
+function fimDeJogo(motivo) {
+  const rec = getInt(K_REC);
+  const novoRec = G.score > rec;
+  if (novoRec) setInt(K_REC, G.score);
+
+  let ganho = G.score > 0 ? Math.max(1, Math.round(G.score / 20)) : 0;
+  if (novoRec && ganho > 0) ganho = Math.round(ganho * 1.2);
+  ganho = Math.min(80, ganho);
+  if (ganho > 0) setInt(K_COINS, getInt(K_COINS) + ganho);
+
+  $('hi').textContent = getInt(K_REC);
+  $('saldo').textContent = getInt(K_COINS);
+
+  mostraOv(`
+    <h2>${novoRec ? '🏆 Novo recorde!' : '🍪 Fim de rodada'}</h2>
+    <p>${motivo}</p>
+    <div class="stat">
+      <span>🍩 ${G.score} pts</span>
+      <span>🏆 ${getInt(K_REC)}</span>
+      <span>💗 +${ganho}</span>
+    </div>
+    <p class="hint">${ganho > 0 ? 'Os corações já entraram no seu saldo.' : 'Coma pelo menos um docinho para ganhar corações.'}${novoRec ? ' Bônus de recorde aplicado!' : ''}</p>
+    <button class="big" id="denovo">JOGAR DE NOVO</button>
+    <button class="big soft" id="ajustes">⚙️ Ajustar controles</button>`);
+  $('denovo').addEventListener('click', comeca);
+  $('ajustes').addEventListener('click', () => telaAjustes('inicio'));
+  if (ganho > 0) toast('💗 +' + ganho + ' corações no saldo!');
+  if (novoRec) toast('🎉 Novo recorde: ' + G.score + ' pontos!');
+}
+
+/* =======================
+   CONTROLE DE PARTIDA
+   ======================= */
+function contagem(n, fim) {
+  clearTimeout(tCont);
+  mostraOv('<div class="count">' + n + '</div><p class="hint">Prepare-se…</p>', true);
+  beep(660, .1, 'sine', .06);
+  tCont = setTimeout(() => (n > 1 ? contagem(n - 1, fim) : fim()), 800);
+}
+function inicia() {
+  contando = null;
+  G.rodando = true; G.pausado = false; sync();
+  escondeOv();
+  beep(1000, .15, 'sine', .06);
+  toast('Vai! 🍩');
+}
+function comeca() {
+  clearTimeout(tCont); contando = null;
+  novoJogo(); sync(); resetAncora();
+  $('sc').textContent = '0';
+  $('lvl').textContent = '1';
+  if (cfg.cont === 'sim') { contando = 'inicio'; contagem(3, inicia); }
+  else inicia();
+}
+function retoma() {
+  resetAncora();
+  if (cfg.cont === 'sim') {
+    contando = 'retoma';
+    contagem(3, () => { contando = null; G.pausado = false; sync(); escondeOv(); beep(1000, .15, 'sine', .06); });
+  } else {
+    G.pausado = false; sync(); escondeOv();
+  }
+}
+function alternaPausa() {
+  if (!G || !G.vivo) return;
+  if (contando === 'retoma') { clearTimeout(tCont); contando = null; telaPausa(); return; }
+  if (contando === 'inicio' || !G.rodando) return;
+  if (!G.pausado) { G.pausado = true; sync(); telaPausa(); }
+  else retoma();
+}
+
+/* =======================
+   ENTRADAS
+   ======================= */
+// botões: reagem ao toque/clique inicial (sem precisar soltar)
+[['bUp', 0, -1], ['bDown', 0, 1], ['bLeft', -1, 0], ['bRight', 1, 0]].forEach(([id, x, y]) => {
+  $(id).addEventListener('pointerdown', e => { e.preventDefault(); empurra(x, y); });
+});
+$('gEsq').addEventListener('pointerdown', e => { e.preventDefault(); gira('e'); });
+$('gDir').addEventListener('pointerdown', e => { e.preventDefault(); gira('d'); });
+$('bMid').addEventListener('pointerdown', e => { e.preventDefault(); alternaPausa(); });
+$('gMid').addEventListener('pointerdown', e => { e.preventDefault(); alternaPausa(); });
+$('cfgBtn').addEventListener('click', abreAjustes);
+
+// arrastar na tela inteira do palco: guia a cobrinha de forma contínua
+const ST = { set: false, on: false, x: 0, y: 0 };
+const TH = () => ({ baixa: 34, media: 20, alta: 10 }[cfg.sens] || 20);
+function resetAncora() { ST.set = false; }
+const stageEl = $('stage');
+
+stageEl.addEventListener('pointerdown', e => {
+  if (e.target.closest('button') || e.target.closest('.ov:not(.hide):not(.leve)')) return;
+  ST.on = true; ST.set = true; ST.x = e.clientX; ST.y = e.clientY;
+  try { stageEl.setPointerCapture(e.pointerId); } catch (_) {}
+});
+stageEl.addEventListener('pointermove', e => {
+  const hover = e.pointerType === 'mouse' && cfg.hover === 'sim';
+  if (!ST.on && !hover) return;
+  if (!ST.set || !G || !G.rodando || G.pausado) { ST.set = true; ST.x = e.clientX; ST.y = e.clientY; return; }
+  const dx = e.clientX - ST.x, dy = e.clientY - ST.y;
+  if (Math.hypot(dx, dy) >= TH()) {
+    if (Math.abs(dx) > Math.abs(dy)) empurra(dx > 0 ? 1 : -1, 0);
+    else empurra(0, dy > 0 ? 1 : -1);
+    ST.x = e.clientX; ST.y = e.clientY;                 // novo ponto de partida
+  } else if (!ST.on) {
+    ST.x += dx * .12; ST.y += dy * .12;                 // sem clique: a âncora acompanha movimentos lentos
+  }
+});
+const soltou = () => { ST.on = false; };
+stageEl.addEventListener('pointerup', soltou);
+stageEl.addEventListener('pointercancel', soltou);
+stageEl.addEventListener('pointerleave', () => { ST.on = false; ST.set = false; });
+
+// teclado (extra, para quem estiver no computador)
+addEventListener('keydown', e => {
+  const k = e.key.toLowerCase();
+  if (['arrowup', 'arrowdown', 'arrowleft', 'arrowright', ' '].includes(k)) e.preventDefault();
+  if (k === 'arrowup' || k === 'w') empurra(0, -1);
+  else if (k === 'arrowdown' || k === 's') empurra(0, 1);
+  else if (k === 'arrowleft' || k === 'a') empurra(-1, 0);
+  else if (k === 'arrowright' || k === 'd') empurra(1, 0);
+  else if (k === 'q') gira('e');
+  else if (k === 'e') gira('d');
+  else if (k === ' ') alternaPausa();
+});
+
+$('mute').addEventListener('click', () => {
+  mudo = !mudo;
+  $('mute').textContent = mudo ? '🔇' : '🔊';
+});
+
+addEventListener('resize', () => { ajusta(); desenha(); });
+addEventListener('load', () => { ajusta(); desenha(); });
+if (typeof ResizeObserver !== 'undefined') {
+  new ResizeObserver(() => { ajusta(); desenha(); }).observe(stageEl);
+}
+if (document.fonts && document.fonts.ready) {
+  document.fonts.ready.then(() => { ajusta(); desenha(); });
+}
+document.addEventListener('visibilitychange', () => {
+  if (document.hidden && G && G.rodando && !G.pausado && G.vivo) alternaPausa();
+});
+
+/* =======================
+   INÍCIO
+   ======================= */
+$('hi').textContent = getInt(K_REC);
+$('saldo').textContent = getInt(K_COINS);
+novoJogo();
+aplicaCfg();
+telaInicio();
+requestAnimationFrame(laco);
+</script>
+</body>
+</html>
