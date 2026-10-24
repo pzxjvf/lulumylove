@@ -51,6 +51,11 @@ body.n .top h1{color:#ffd9ec}
 .tabarrow{flex:0 0 auto;width:40px;height:44px;margin:6px 4px 0;border:2px solid var(--bd);border-radius:14px;background:#fff;color:var(--pl2);font:900 1.6rem/1 Nunito,sans-serif;cursor:pointer;box-shadow:0 3px 0 var(--sh);display:flex;align-items:center;justify-content:center;padding:0}
 .tabarrow:active{transform:translateY(2px);box-shadow:0 1px 0 var(--sh)}
 .tabarrow[hidden]{display:none}
+.subtabs{display:flex;gap:6px;overflow-x:auto;padding:0 10px 2px;scrollbar-width:none}
+.subtabs::-webkit-scrollbar{display:none}
+.subtabs:empty{display:none}
+.stab{flex:0 0 auto;border:2px solid var(--bd);background:#fff;color:var(--pl);border-radius:12px;padding:0 12px;min-height:38px;font:800 .78rem Nunito,sans-serif;box-shadow:0 3px 0 var(--sh);cursor:pointer;white-space:nowrap}
+.stab.on{background:var(--pl);color:#fff;border-color:var(--pl);box-shadow:0 3px 0 #2a1226}
 .sh{height:min(27vh,230px);overflow-y:auto;padding:8px 10px 12px;touch-action:pan-y}
 .g{display:grid;grid-template-columns:repeat(auto-fill,minmax(92px,1fr));gap:8px}
 .ic{position:relative;display:flex;flex-direction:column;align-items:center;gap:2px;padding:6px 4px;min-height:92px;border:2px solid var(--bd);background:#fff;border-radius:16px;font-family:inherit;color:var(--pl);box-shadow:0 3px 0 var(--sh);cursor:pointer}
@@ -137,6 +142,7 @@ body.n .top h1{color:#ffd9ec}
   <div class="tabs" id="tabs"></div>
   <button class="tabarrow" id="tr" aria-label="Mais categorias">›</button>
 </div>
+<div class="subtabs" id="subtabs"></div>
 <div class="sh" id="sh"></div>
 <div id="cor"></div>
 <div id="toasts"></div>
@@ -815,7 +821,116 @@ F('poco_desejos','Poço dos desejos',110,'e',2,2,[[0,0,0,2,2,14,'#8a9298'],[.1,.
 F('caixa_musica','Caixa de música',64,'e',1,1,[[.14,.16,0,.72,.68,20,'#c8935c'],[.18,.2,20,.64,.6,4,'#b5651d'],[.3,.44,24,.4,.2,10,'#8a6d76'],[.44,.5,34,.12,.12,12,'#ffd166']],{sound:1040});
 F('carrossel_musica','Carrossel de música',150,'e',1,1,[[.16,.16,0,.68,.68,10,WD],[.44,.44,10,.12,.12,40,'#c8935c'],[.06,.06,50,.88,.88,5,'#ff6fa5'],[.3,.3,40,.4,.4,10,'#ffd166'],[.1,.3,40,.16,.16,12,'#7ec8ff'],[.74,.3,40,.16,.16,12,'#8ecf8b']],{sound:920});
 
+/* ===== novos móveis (sub-categorias) ===== */
+/* camas */
+F('cama_box','Cama box',88,'m',2,1,[[0,0,0,2,1,16,WD2],[.05,.05,16,1.9,.9,10,0],[.2,.15,26,.42,.7,5,'#fff'],[.95,.15,26,.42,.7,5,'#fff'],[.6,.05,26,1.3,.9,3,1]],{col:1,def:4});
+F('cama_ferro','Cama de ferro',96,'m',2,1,[[.06,.06,0,.09,.09,34,'#c9ced3'],[1.85,.06,0,.09,.09,34,'#c9ced3'],[.06,.85,0,.09,.09,22,'#c9ced3'],[1.85,.85,0,.09,.09,22,'#c9ced3'],[.06,.06,34,.09,.88,26,'#c9ced3'],[1.85,.06,34,.09,.88,26,'#c9ced3'],[.03,.06,34,1.94,.08,4,'#c9ced3'],[.06,.1,22,1.88,.82,8,0],[.25,.2,30,.5,.6,5,'#fff']],{col:1,def:1});
+F('cama_dossel','Cama com dossel',132,'m',2,2,[[.04,.04,0,.1,.1,84,WD],[1.86,.04,0,.1,.1,84,WD],[.04,1.86,0,.1,.1,60,WD],[1.86,1.86,0,.1,.1,60,WD],[0,.02,84,2,.06,5,0],[.08,.1,14,1.84,1.8,9,0],[.2,.3,23,.7,.55,4,'#fff'],[1.1,.3,23,.7,.55,4,'#fff'],[.1,1.5,23,1.8,.4,4,1]],{col:1,def:2});
+F('futon','Futon',66,'m',2,1,[[0,0,0,2,1,9,WD],[.05,.05,9,1.9,.9,10,0],[.1,.12,19,.5,.6,4,'#fff'],[.6,.55,19,.5,.4,4,0],[1.1,.12,19,.5,.6,4,'#ffd9ec']],{col:1,def:4});
+F('cama_redonda','Cama redonda',124,'m',2,2,[[.18,.18,0,1.64,1.64,14,WD2],[.28,.28,14,1.44,1.44,6,'#c8935c'],[.36,.36,20,1.28,1.28,10,0],[.42,.42,30,.42,.42,5,'#fff'],[1.16,.42,30,.42,.42,5,'#fff'],[.79,1.16,30,.42,.42,5,'#fff']],{col:1,def:4});
+F('rede_portatil','Rede portátil',62,'m',2,1,[[.05,.05,42,.12,.12,26,WD],[1.83,.05,42,.12,.12,26,WD],[.12,.05,68,1.76,.08,6,WD],[.12,.88,56,1.76,.08,16,'#7ec8ff']],{col:1,def:3});
+F('cama_litera','Cama litera',134,'m',2,2,[[.06,.06,0,.1,.1,78,WD],[1.84,.06,0,.1,.1,78,WD],[.06,1.84,0,.1,.1,78,WD],[1.84,1.84,0,.1,.1,78,WD],[.06,.06,34,1.88,.1,5,WD2],[.06,.06,70,1.88,.1,5,WD2],[.12,.14,39,.72,1.72,7,'#fff'],[1.12,.14,75,1.12,1.72,7,0]],{col:1,def:3});
+/* sofás */
+F('sofa_chaise','Sofá chaise',128,'m',2,2,[[0,0,0,2,.32,30,0],[0,.32,0,.26,.86,24,0],[1.74,.32,0,.26,1.42,24,0],[0,.32,0,1.74,.86,14,0],[0,1.18,0,2,.82,14,0],[.3,.36,14,1.4,.62,7,1],[.3,1.22,14,1.4,.7,6,1]],{col:1,def:2});
+F('sofa_3lugares','Sofá de três lugares',142,'m',3,1,[[0,0,0,3,.32,32,0],[0,.32,0,3,.68,14,0],[0,.32,14,.26,.68,14,0],[2.74,.32,14,.26,.68,14,0],[.3,.36,14,.7,.6,7,1],[1.16,.36,14,.7,.6,7,1],[2.02,.36,14,.7,.6,7,1]],{col:1,def:1});
+F('chaise_longe','Chaise longue',96,'m',2,1,[[.1,.1,0,1.8,.8,12,WD],[.14,.14,12,1.72,.72,8,0],[1.5,.14,20,.34,.72,20,0],[.2,.2,20,.6,.5,4,'#fff'],[.9,.2,20,.6,.5,4,'#fff']],{col:1,def:4});
+F('puff_gigante','Puff gigante',74,'m',2,2,[[.1,.1,0,1.8,1.8,28,0],[.2,.2,28,1.6,1.6,6,1],[.5,.5,34,.6,.6,4,'#fff']],{col:1,def:0});
+F('sofa_moderno','Sofá moderno',116,'m',2,1,[[.04,.04,6,.26,.26,20,'#8a9298'],[1.7,.04,6,.26,.26,20,'#8a9298'],[0,0,26,2,.3,26,0],[0,.3,0,2,.7,12,0],[.2,.34,12,.72,.62,8,1],[1,.34,12,.72,.62,8,1]],{col:1,def:5});
+F('sofa_mini','Sofazinho de canto',72,'m',1,1,[[0,0,0,1,.28,26,0],[0,.28,0,1,.72,12,0],[0,.28,12,.2,.72,10,0],[.78,.28,12,.22,.72,10,0],[.22,.32,12,.56,.66,6,1]],{col:1,def:6});
+F('sofa_bebe','Poltroninha infantil',54,'m',1,1,[[.1,.1,0,.8,.8,18,0],[.14,.14,18,.72,.66,12,0],[.1,.1,18,.16,.8,14,0],[.74,.1,18,.16,.8,14,0],[.25,.2,30,.5,.5,6,1]],{col:1,def:0});
+/* cadeiras e bancos */
+F('cadeira_empilhavel','Cadeira empilhável',34,'m',1,1,[[.18,.18,0,.64,.64,10,0],[.18,.18,10,.64,.16,26,0],[.24,.3,10,.1,.1,10,'#9aa1ad'],[.66,.3,10,.1,.1,10,'#9aa1ad'],[.24,.66,10,.1,.1,10,'#9aa1ad']],{col:1,def:5});
+F('cadeira_escritorio','Cadeira de escritório',94,'m',1,1,[[.34,.34,0,.32,.32,6,'#333'],[.46,.46,6,.08,.08,18,'#555'],[.16,.16,24,.68,.68,10,0],[.1,.1,34,.8,.8,8,1],[.2,.72,24,.6,.16,26,0]],{col:1,def:6});
+F('cadeira_balanco','Cadeira de balanço',86,'m',1,1,[[.16,.14,0,.68,.72,12,0],[.16,.2,12,.68,.16,28,0],[.2,.1,12,.6,.1,6,WD],[.2,.72,12,.6,.1,6,WD],[.3,.3,18,.4,.4,4,1],[.08,.08,0,.18,.16,4,WD],[.74,.08,0,.18,.16,4,WD]],{col:1,def:3});
+F('tamborete','Tamborete',26,'m',1,1,[[.14,.14,0,.72,.72,6,WD2],[.16,.16,0,.6,.6,20,WD],[.2,.2,20,.6,.6,3,1]],{col:1,def:5});
+F('banco_alongado','Banco alongado',52,'m',3,1,[[0,.1,0,3,.2,30,0],[0,.3,0,3,.7,12,0],[.24,.4,12,.6,.6,6,1],[1.2,.4,12,.6,.6,6,1],[2.16,.4,12,.6,.6,6,1]],{col:1,def:2});
+F('cadeira_bar','Cadeira de bar',58,'m',1,1,[[.3,.3,0,.4,.4,30,'#8a9298'],[.14,.14,30,.72,.72,10,0],[.14,.14,40,.72,.16,26,0],[.2,.2,48,.6,.6,4,1]],{col:1,def:5});
+F('poltrona_massagem','Poltrona de massagem',156,'m',1,1,[[.04,.04,0,.92,.92,32,0],[.1,.2,32,.8,.72,10,1],[.04,.04,42,.2,.92,22,0],[.76,.04,42,.2,.92,22,0],[.3,.5,42,.4,.4,6,'#333']],{col:1,def:6});
+F('cadeira_almofada','Cadeira almofadada',72,'m',1,1,[[.12,.12,0,.76,.76,12,0],[.12,.12,12,.76,.18,30,0],[.24,.24,12,.52,.52,8,1],[.2,.2,20,.6,.6,4,0]],{col:1,def:0});
+F('banquinho_redondo','Banquinho redondo',36,'m',1,1,[[.24,.24,0,.52,.52,18,WD],[.12,.12,18,.76,.76,8,WD2],[.18,.18,26,.64,.64,4,0]],{col:1,def:2});
+/* mesas */
+F('mesa_consola','Mesa consola',60,'m',2,1,[...pernas(2,1,26),[0,0,26,2,1,4,WD2],[.2,.05,30,.3,.3,8,'#c77dff'],[1.4,.1,30,.4,.4,6,'#8ecf8b']],{col:0});
+F('mesa_canto','Mesa de canto',54,'m',1,1,[...pernas(1,1,24),[0,0,24,1,1,4,WD2],[.2,.2,28,.5,.4,8,0]],{col:0});
+F('ilha_central','Mesa ilha central',148,'m',3,2,[[0,0,0,3,2,30,0],[0,0,30,3,2,5,WD2],[.2,.2,26,.5,.5,4,'#8a9298'],[2.3,.2,26,.5,.5,4,'#8a9298'],[.6,.3,35,.9,.9,3,WD2]],{col:1,def:6});
+F('mesa_bar','Mesa de bar',92,'m',2,1,[[.06,.06,0,.16,.16,34,WD],[1.78,.06,0,.16,.16,34,WD],[.02,.02,34,1.96,.96,5,WD2],[.3,.3,39,.5,.5,3,0],[1.2,.3,39,.5,.5,3,0]],{col:0});
+F('mesa_picnic','Mesa de piquenique',104,'m',3,2,[[0,.9,32,3,.9,4,WD2],[0,.1,32,3,.7,4,0],[0,1.4,32,3,.5,4,0],[.1,.1,0,.16,.16,32,WD],[2.74,.1,0,.16,.16,32,WD],[.1,1.74,0,.16,.16,32,WD],[2.74,1.74,0,.16,.16,32,WD]],{col:1,def:4});
+F('penteadeira','Penteadeira',96,'m',1,1,[[0,0,0,1,.6,26,0],[0,0,26,1,.6,3,1],[.25,.6,29,.5,.06,40,'#cfe9f5'],[.3,.62,29,.4,.04,34,'#b79cff'],[.2,.66,30,.24,.06,6,'#ffd166']],{col:1,def:0});
+F('mesa_criativa','Mesa de artes',78,'m',2,1,[...pernas(2,1,26),[0,0,26,2,1,4,WD2],[.2,.2,30,.5,.4,8,'#ff6fa5'],[.9,.3,30,.4,.4,6,'#7ec8ff'],[1.4,.2,30,.4,.5,4,'#ffd166']],{col:0});
+F('mesa_dobra','Mesa dobrável',62,'m',2,1,[...pernas(2,1,26),[0,0,26,2,1,4,WD2],[.05,.05,26,.6,.1,26,'#8a9298'],[1.35,.05,26,.6,.1,26,'#8a9298']],{col:0});
+F('mesinha_cafe','Mesinha de café',44,'m',1,1,[...pernas(1,1,14),[0,0,14,1,1,4,WD2],[.25,.25,18,.3,.3,6,0]],{col:1,def:2});
+F('mesa_apoio','Mesinha de apoio',40,'m',1,1,[[.3,.3,0,.1,.1,20,'#8a9298'],[.3,.3,20,.4,.4,4,WD2],[.1,.1,24,.8,.8,4,0],[.2,.2,28,.6,.6,3,1]],{col:1,def:1});
+/* armários e estantes */
+F('guarda_roupa_aberto','Guarda-roupa aberto',104,'m',2,1,[[0,0,0,2,.6,86,WD],[.05,.62,6,.42,.04,74,0],[1.08,.62,6,.42,.04,74,0],[.5,.58,6,.05,.04,74,WD],[.9,.58,6,.05,.04,74,WD],[.1,.62,20,.32,.04,20,'#e85d75'],[1.15,.62,20,.32,.04,20,'#5db7de']],{col:1,def:6});
+F('arara_roupas','Arara de roupas',68,'m',1,1,[[.1,.1,0,.1,.1,58,'#8a9298'],[.8,.1,0,.1,.1,58,'#8a9298'],[.05,.05,58,.9,.1,4,'#8a9298'],[.2,.2,30,.14,.4,28,'#e85d75'],[.42,.2,30,.14,.4,24,'#5db7de'],[.64,.2,30,.14,.4,30,'#ffd166']],{col:0});
+F('closet_aberto','Closet aberto',126,'m',1,2,[[0,0,0,1,2,.4,WD],[0,0,.4,.1,2,76,WD],[0,0,0,.1,2,40,WD],[.9,0,.4,.1,2,76,WD],[.9,0,0,.1,2,40,WD],[.05,.15,60,.9,.03,.06,'#8a9298'],[.2,.2,20,.16,.5,30,'#e85d75'],[.45,.2,20,.16,.5,26,'#7ec8ff'],[.7,.2,20,.16,.5,28,'#ffd166']],{col:0});
+F('estante_vidro','Estante de vidro',118,'m',1,1,[[.05,.05,0,.9,.9,4,'#8a9298'],[.05,.05,0,.08,.08,74,'#8a9298'],[.87,.05,0,.08,.08,74,'#8a9298'],[.05,.87,0,.08,.08,74,'#8a9298'],[.87,.87,0,.08,.08,74,'#8a9298'],[0,.05,74,1,.9,4,'#8a9298'],[.02,.08,24,.96,.84,3,'S'],[.02,.08,46,.96,.84,3,'S'],[.2,.2,50,.3,.3,8,'#ffd166']],{col:0});
+F('estante_escada','Estante escada',94,'m',2,1,[[0,.1,0,2,.6,20,WD],[.15,.1,20,.8,.6,18,WD],[.5,.1,38,.9,.6,16,WD],[.9,.1,54,1,.6,14,WD],[.2,.4,24,.3,.3,6,'#e85d75'],[1.2,.3,42,.3,.3,6,'#8ecf8b']],{col:0});
+F('livraria','Livraria',112,'m',2,1,[[0,0,0,2,.5,88,WD],[.06,.06,4,1.88,.4,24,WD2],[.06,.06,32,1.88,.4,24,WD2],[.06,.06,60,1.88,.4,24,WD2],[.15,.2,28,.16,.34,16,'#e85d75'],[.4,.2,28,.14,.34,14,'#5db7de'],[1.1,.2,28,.16,.34,16,'#ffd166'],[.6,.2,56,.16,.34,16,'#8ecf8b'],[1.4,.2,56,.14,.34,14,'#c77dff']],{col:0});
+F('cristaleira','Cristaleira',108,'m',1,1,[[0,0,0,1,.6,72,WD],[.06,.06,4,.88,.5,64,WD2],[.08,.56,20,.84,.03,44,'S'],[.2,.2,8,.24,.3,14,'#7ec8ff'],[.5,.2,8,.24,.3,16,'#ff9ec4'],[.2,.2,40,.24,.3,12,'#ffd166'],[.5,.2,40,.24,.3,14,'#8ecf8b']],{col:0});
+F('armario_canto','Armário de canto',92,'m',1,1,[[0,0,0,1,1,80,0],[.06,.06,10,.88,.88,3,1],[.5,.94,20,.04,.04,50,'#fff'],[.5,.06,20,.04,.04,50,'#fff']],{col:1,def:6});
+F('estante_flutuante','Estante flutuante',64,'m',2,1,[[0,0,40,1.4,.4,4,WD],[.2,.1,44,.3,.3,8,'#e85d75'],[.6,.1,44,.2,.3,10,'#5db7de'],[1,.1,44,.24,.3,6,'#ffd166'],[1.4,0,20,1.4,.4,4,WD],[.2,.1,24,.3,.3,8,'#8ecf8b'],[.7,.1,24,.2,.3,10,'#c77dff']],{col:0});
+F('sapateira_aberta','Sapateira aberta',58,'m',1,1,[[.05,.05,0,.9,.9,44,WD],[.1,.1,6,.8,.8,3,WD2],[.1,.1,20,.8,.8,3,WD2],[.1,.1,34,.8,.8,3,WD2],[.16,.6,6,.26,.2,4,'#ff6fa5'],[.5,.6,20,.3,.2,4,'#7ec8ff']],{col:0});
+/* apoio e gavetas */
+F('gaveteiro','Gaveteiro',56,'m',1,1,[[.05,.05,0,.9,.9,44,0],[.1,.1,6,.8,.8,6,1],[.1,.1,20,.8,.8,6,1],[.1,.1,34,.8,.8,6,1],[.45,.9,12,.1,.05,3,'#8a6d76'],[.45,.9,26,.1,.05,3,'#8a6d76']],{col:1,def:5});
+F('criado_duplo','Mesa de cabeceira dupla',124,'m',2,1,[[0,.05,0,2,.9,30,0],[.06,.1,30,1.88,.8,4,1],[.5,.9,14,.05,.03,6,'#fff'],[1.45,.9,14,.05,.03,6,'#fff'],[.3,.3,34,.4,.4,8,'#ffd166'],[1.3,.3,34,.4,.4,8,'#c77dff']],{col:1,def:6});
+F('buffet','Buffet',124,'m',2,1,[[0,0,0,2,.5,40,WD],[0,0,40,2,.5,4,WD2],[.1,.5,6,.8,.04,26,'S'],[1.1,.5,6,.8,.04,26,'S'],[.45,.5,6,.06,.04,18,'#c8935c'],[1.45,.5,6,.06,.04,18,'#c8935c']],{col:0});
+F('aparador_longo','Aparador longo',96,'m',3,1,[[0,.1,0,3,.6,28,0],[.06,.16,28,2.88,.48,4,1],[.5,.6,6,.9,.04,14,'S'],[1.6,.6,6,.9,.04,14,'S']],{col:1,def:4});
+F('rack_baixo','Rack baixo',68,'m',2,1,[[0,.05,0,2,.6,22,0],[.06,.1,22,1.88,.5,4,1],[.3,.6,4,.4,.04,10,'#333'],[1.3,.6,4,.4,.04,10,'#333']],{col:0,def:4});
+F('criado_alto','Criado alto',56,'m',1,1,[[.06,.06,0,.88,.88,40,0],[.1,.1,28,.8,.8,4,1],[.42,.94,14,.16,.03,4,'#fff'],[.2,.2,48,.14,.14,10,'#ffd166']],{col:1,def:5});
+F('carrinho_apoio','Carrinho de apoio',60,'m',1,1,[[.08,.08,0,.24,.24,4,'#8a9298'],[.68,.08,0,.24,.24,4,'#8a9298'],[.08,.68,0,.24,.24,4,'#8a9298'],[.68,.68,0,.24,.24,4,'#8a9298'],[.04,.04,4,.92,.92,3,WD2],[.1,.1,26,.8,.8,3,0],[.2,.2,29,.6,.6,3,1],[.35,.5,32,.3,.3,10,'#3fa86a']],{col:1,def:2});
+F('nicho_coluna','Coluna de nichos',92,'m',1,1,[[0,0,0,1,.5,96,WD],[.08,.5,6,.84,.05,20,WD2],[.08,.5,32,.84,.05,20,WD2],[.08,.5,58,.84,.05,20,WD2],[.08,.5,84,.84,.05,10,WD2],[.2,.2,26,.4,.2,6,'#e85d75'],[.3,.2,52,.3,.2,6,'#5db7de'],[.4,.2,78,.3,.2,6,'#8ecf8b']],{col:0});
+F('banco_entrada','Banco de entrada',72,'m',2,1,[[0,.05,0,2,.55,18,WD],[.1,.1,18,1.8,.45,6,1],[.2,.6,10,.4,.04,12,'#8a6d76'],[1.4,.6,10,.4,.04,12,'#8a6d76'],[.3,.2,24,.3,.3,6,'#ffd166'],[1.3,.2,24,.3,.3,6,'#7ec8ff']],{col:1,def:2});
+F('mesa_jogos','Mesa de jogos',84,'m',2,1,[...pernas(2,1,24),[0,0,24,2,1,4,WD2],[.3,.2,28,.5,.5,3,'#f0e2ff'],[1.2,.3,28,.5,.5,3,'#ffd9ec'],[.7,.4,28,.5,.4,3,'#dcefff']],{col:0});
+/* decoração e outros móveis */
+F('espelho_pe','Espelho de pé',84,'m',1,1,[[.42,.42,0,.16,.16,8,'#8a9298'],[.48,.48,8,.05,.05,58,'#8a9298'],[.06,.06,66,.88,.1,60,WD2],[.12,.12,72,.76,.02,46,'#cfe9f5']],{col:0});
+F('biombo','Biombo',88,'m',2,1,[[0,.05,0,.3,.9,76,0],[.62,.1,0,.3,.9,76,1],[1.24,.15,0,.3,.9,76,0],[.05,.05,0,.06,.06,80,WD],[.67,.1,0,.06,.06,80,WD],[1.29,.15,0,.06,.06,80,WD]],{col:1,def:0});
+F('tv_painel','TV com painel',142,'m',3,1,[[0,.3,0,3,.5,18,0],[.3,.4,18,2.4,.1,34,'#1c1c28'],[.35,.5,21,2.3,.02,28,'S'],[.2,.2,52,.4,.4,10,'#ff9ec4'],[2.4,.2,52,.4,.4,10,'#7ec8ff']],{tv:1,col:1,def:5});
+F('lareira_mod','Lareira moderna',168,'m',2,1,[[0,0,0,2,.6,50,'#3a3a44'],[.3,.61,10,1.4,.04,30,'#1a1a20'],[.5,.62,14,1,.03,20,'#ff9f43'],[.65,.62,14,.7,.03,26,'#ffd166'],[-.05,.05,50,2.1,.5,5,'#8a9298']],{luz:1,gh:20,gr:90,col:0});
+F('cesto_brinquedos','Cesto de brinquedos',40,'m',1,1,[[.12,.12,0,.76,.76,26,0],[.06,.06,0,.88,.88,4,1],[.3,.3,26,.3,.3,6,'#ffd166'],[.5,.4,26,.2,.2,6,'#7ec8ff']],{col:1,def:4});
+F('caixa_brinquedos','Caixa de brinquedos',54,'m',1,1,[[0,0,0,1,1,22,0],[0,0,22,1,1,5,1],[.44,.94,14,.12,.06,6,'#ffd166'],[.2,.2,27,.24,.24,6,'#ff6fa5']],{col:1,def:5});
+F('globo_pe','Globo de pé',72,'m',1,1,[[.3,.3,0,.4,.4,4,'#6b4a3a'],[.44,.44,4,.12,.12,58,'#a9744f'],[.1,.1,62,.8,.8,34,'#3a6ff7'],[.2,.2,66,.6,.6,26,'#8ecf8b']],{col:0});
+F('totem_plants','Coluna de plantas',78,'m',1,1,[[.06,.06,0,.88,.88,40,WD],[.1,.1,40,.8,.8,5,WD2],[.18,.18,45,.64,.64,20,'#3fa86a'],[.24,.24,65,.5,.5,16,'#4caf50']],{col:0});
+F('mesa_centro_dupla','Mesa de centro dupla',78,'m',3,1,[[0,0,0,1.3,.9,16,WD2],[1.7,0,0,1.3,.9,16,WD2],[.05,.05,0,.14,.14,16,'#8a9298'],[1.15,.05,0,.14,.14,16,'#8a9298'],[1.75,.05,0,.14,.14,16,'#8a9298'],[2.85,.05,0,.14,.14,16,'#8a9298'],[.3,.3,16,.7,.5,4,0],[1.9,.3,16,.7,.5,4,0]],{col:1,def:2});
+F('estante_tv','Estante de TV',96,'m',2,1,[[0,0,0,2,.4,50,WD],[.06,.4,10,.3,.05,20,'#e85d75'],[.5,.4,10,.3,.05,20,'#5db7de'],[1,.4,10,.3,.05,20,'#ffd166'],[1.5,.4,10,.34,.05,20,'#8ecf8b'],[.06,.4,36,.56,.05,20,'#c77dff']],{col:0});
+
 const CATS=[['m','🛏️ Móveis'],['p','🪴 Plantas'],['l','💡 Luzes'],['f','🐰 Bichinhos'],['c','🍰 Comidinhas'],['k','🍳 Cozinha'],['b','🛁 Banho'],['j','🌳 Jardim'],['br','🧸 Brinquedos'],['fe','🎉 Festa'],['ro','👗 Roupas'],['te','💻 Tecnologia'],['w','🖼️ Parede'],['t','🟣 Tapetes'],['e','🌈 Especiais'],['est','🎨 Estilo']];
+/* ---------- sub-categorias (estilo The Sims) ---------- */
+const SUBS={
+ m:[['all','✨ Tudo'],['cama','🛏️ Camas'],['sofa','🛋️ Sofás'],['assento','🪑 Cadeiras'],['mesa','🍽️ Mesas'],['guarda','🗄️ Armários'],['apoio','📦 Apoio'],['decor','🎨 Decoração']],
+ p:[['all','✨ Tudo'],['flor','🌸 Flores'],['cacto','🌵 Cactos'],['folha','🌿 Folhagens'],['horta','🌱 Horta']],
+ l:[['all','✨ Tudo'],['abajur','💡 Abajures'],['lustre','✨ Lustres'],['vela','🕯️ Velas'],['ambiente','🌟 Ambiente']],
+ f:[['all','✨ Tudo'],['gato','🐱 Gatos'],['cachorro','🐶 Cachorros'],['coelho','🐰 Coelhos'],['ave','🐦 Aves'],['aqua','🐠 Aquáticos'],['inseto','🐞 Insetos'],['pelucia','🧸 Pelúcias'],['outro','🐾 Outros']],
+ c:[['all','✨ Tudo'],['doce','🍰 Doces'],['salgado','🍕 Salgados'],['bebida','🥤 Bebidas']],
+ k:[['all','✨ Tudo'],['eletro','🔌 Eletros'],['armario','🗄️ Armários'],['utensilio','🥄 Utensílios'],['outro','🍽️ Outros']],
+ b:[['all','✨ Tudo'],['banheira','🛁 Banheiras'],['louca','🚽 Louças'],['espelho','🪞 Espelhos'],['toalha','🧺 Toalhas'],['acessorio','🧴 Acessórios']],
+ j:[['all','✨ Tudo'],['planta','🌳 Plantas'],['flor','🌸 Flores'],['pedra','🪨 Pedras'],['agua','💧 Água'],['bicho','🦋 Bichinhos'],['decor','🎨 Decoração']],
+ br:[['all','✨ Tudo'],['bola','⚽ Bolas'],['bloco','🧱 Blocos'],['veiculo','🛴 Veículos'],['pelucia','🧸 Pelúcias'],['brinquedo','🎲 Brinquedos']],
+ fe:[['all','✨ Tudo'],['balao','🎈 Balões'],['bolo','🍰 Bolos'],['presente','🎁 Presentes'],['decor','🎉 Decoração']],
+ ro:[['all','✨ Tudo'],['roupa','👗 Roupas'],['calcado','👟 Calçados'],['acessorio','🕶️ Acessórios'],['bolsa','🎒 Bolsas']],
+ t:[['all','✨ Tudo'],['grande','📐 Grandes'],['redondo','⭕ Redondos'],['tematico','💖 Temáticos'],['outro','🔹 Outros']],
+ te:[['all','✨ Tudo'],['gamer','🎮 Games'],['som','🔊 Som'],['eletronico','💻 Eletrônicos']],
+ e:[['all','✨ Tudo'],['musica','🎵 Música'],['brinquedo','🎠 Brinquedos'],['decor','✨ Decoração']],
+ w:[['all','✨ Tudo'],['quadro','🖼️ Quadros'],['prateleira','🪵 Prateleiras'],['luz','💡 Luzes'],['espelho','🪞 Espelhos'],['outro','✨ Outros']]
+};
+const SUBC={
+ m:{cama:/cama|caminha|ber[cç]|beliche|rede|futon|litera/,sofa:/sof|poltrona|pufe|puff|chaise/,assento:/cadeira|banquinho|banco|tamborete|gamer/,mesa:/mesa|escrivan|bancada|bistr|costura|ping|ilha|penteadeira/,guarda:/guarda|arm[áa]rio|c[ôo]moda|estante|ba[uú]|closet|livraria|cristaleira|arara|sapateira/,apoio:/criado|rack|aparador|nicho|carrinho|gavete|buffet/,decor:/./},
+ p:{flor:/flor|orqu|girassol|l[íi]rio|tulipa|azaleia|violeta|lavanda|roseira|margarida|brom/,cacto:/cacto|suculenta|aloe/,horta:/hortel[ãa]|tempero|ervinha|mudinha/,folha:/./},
+ l:{abajur:/abajur/,lustre:/lustre|pendente|candelabro|arandela/,vela:/vela|aroma/,ambiente:/./},
+ f:{gato:/gat/,cachorro:/cachorro/,coelho:/coelh/,ave:/passar|papagaio|coruja|tucano|pinguim|patinho|flamingo/,aqua:/peix|aqu[áa]rio|foca|tartaruga/,inseto:/joaninha|formiga|abelha|caracol|borboleta|beija/,pelucia:/urs|pel[úu]cia/,outro:/./},
+ c:{doce:/bolo|cupcake|rosquinha|morang|sorvet|macaron|chocolate|bala|torta|picol[é]|algod[ãa]o|milk|brownie|gelatin|waffle|cookie|brigadeir|a[çc]a[íi]|churros|mousse|pudim/,salgado:/pizza|p[ãa]o|queijo|croissant|panque|sushi|ramen|hamb|batata|taco|estrogonofe|lasanha|coxinha|pipoca/,bebida:/ch[áa]|caf|limonada|jarra|suco|x[íi]cara/,outro:/./},
+ k:{eletro:/geladeira|fog[ãa]o|micro|freezer|fryer|liquidificador|batedeira|mixer|sanduicheira|cafeteira|espresso|torradeira|panela|chaleira|lava-lou|assadeira|churrasqueira/,armario:/arm[áa]rio|mesinha|adega|coifa/,utensilio:/prato|ta[çc]a|t[áa]bua|jarra|tempero|potes|fruteira|porta-|cesta/,outro:/./},
+ b:{banheira:/banheira/,louca:/pia|vaso sanit|ducha|box/,espelho:/espelho/,toalha:/toalha|toalheiro/,acessorio:/./},
+ j:{planta:/arvor|arbust|ip[êe]|palmeira|bananeira|ervinha|mudinha|trepadeira|treli[çc]a|hera|girassol/,flor:/flor|margarida|l[íi]rio|cogumelo|brom/,pedra:/pedra|trilha/,agua:/lago|font|po[çc]o|regador/,bicho:/abelha|beija|borboleta/,decor:/./},
+ br:{bola:/bola|boliche|gude|peteca|bambol/,bloco:/bloco|torre|quebra|domin|xadrez|cubo|encaixe/,veiculo:/carrinho|skate|patinete|triciclo|avi[ãa]o|trenzinho|cavalinho/,pelucia:/pel[úu]cia|boneca|dinossauro/,brinquedo:/./},
+ fe:{balao:/bal[ãa]o|guirlanda|serpentina|cortina|confete/,bolo:/bolo|cupcake|docinho|topper|vela/,presente:/presente|cart[ãa]o|caixinha/,decor:/./},
+ ro:{roupa:/vestido|jaqueta|moletom|pijama|casaco|shorts|cal[çc]a|camisa|blusa|saia|arara/,calcado:/sapato|t[êe]nis|chinelo|bota|meia/,acessorio:/chap[ée]u|bon[ée]|gorro|coroa|[óo]culos|cinto|rel[óo]gio|anel|presilha|len[çc]o|luva|cachecol/,bolsa:/mochila|bolsinha|bolsa/,outro:/./},
+ t:{grande:/[3-9]×/,redondo:/redondo|oval|cora[çc]/,tematico:/arco|quadricul|patchwork|tatame|sisal|entrada|peludo|fofinho/,outro:/./},
+ te:{gamer:/console|fliperama|videogame|gamer|port[áa]til/,som:/som|headset|fone|microfone|tel[ãa]o|ring light/,eletronico:/./},
+ e:{musica:/piano|dj|toca-discos|m[úu]sica/,brinquedo:/castelo|castelinho|almofada|balan[çc]o|piscina|tendinha|trampolim|carrossel|robo|bal[õo]es/,decor:/./},
+ w:{quadro:/quadro|quadrinh|foto|mural|mapa|calend|lousa|letreiro|plaquinha|rel[óo]gio/,prateleira:/prateleira|varal|pendente/,luz:/neon|luz|guirlanda|nuvem|arco-[íi]ris|bandeirinha/,espelho:/espelho/,outro:/./}
+};
+let subTab='all';
+const subOf=it=>{if(it.sub)return it.sub;const s=(it.id+' '+it.n).toLowerCase(),g=SUBC[it.c];if(!g)return'decor';for(const k in g)if(g[k].test(s))return k;return'decor'};
 const WALLS=['#ffd9ec','#e8dcff','#dcf7ec','#dcefff','#fff2d8','#ffe1d6','#efe0ff','#4a3a63','#d9f2ff','#e6ffe9','#fff0f5','#f0e6d2','#ffd9c0','#dcd6f7','#f7e6ff','#e0f7fa'];
 const FLR={madeira:['Madeira','#e0b98a','#d3a875'],escura:['Madeira escura','#b98a5e','#a67a50'],xadrez:['Xadrez','#ffffff','#f0d3e6'],ladrilho:['Ladrilho','#f1ebe4','#f1ebe4'],carpete:['Carpete','#f0cfe0','#f0cfe0'],grama:['Graminha','#bfe3a1','#b2d893'],marmore:['Mármore','#f7f7fb','#ecebf4'],tijolo:['Tijolinho','#e8b48f','#dc9f78'],cimento:['Cimento','#dcdcdf','#d2d2d6'],areia:['Areia','#f5e3c0','#eed9b0'],rosa:['Rosa','#ffd9ec','#ffc9e2'],neon:['Neon','#2a1b4a','#3a2a66']};
 const QMIN=6,QMAX=24,QINI=10;
@@ -969,8 +1084,13 @@ function render(){
   const key=i=>{let k=i,n=0;while(n<8){const p=S.placed[k];if(!p||!(p.z>0))break;const s=supAt(k,p.x,p.y,IT[p.i],p.ang).j;if(s<0||s===k)break;k=s;n++}
     const p=S.placed[k],it=IT[p.i],c=rw(p.x+it.w/2,p.y+it.d/2);return[c[0]+c[1],c[0],n]};
   oth.sort((a,b)=>{const A=key(a),B=key(b);return A[0]-B[0]||A[1]-B[1]||A[2]-B[2]});
+  const shad=i=>{const p=S.placed[i],it=IT[p.i];if(it.rug||(p.z||0)>0)return'';
+    const a=rad(p.ang),ca=Math.cos(a),sa=Math.sin(a),cx=it.w/2,cy=it.d/2;
+    const R=(X,Y)=>{const dx=X-cx,dy=Y-cy;return[p.x+cx+dx*ca-dy*sa,p.y+cy+dx*sa+dy*ca]};
+    const cs=[[0,0],[it.w,0],[it.w,it.d],[0,it.d]].map(q=>R(q[0],q[1]));
+    return'<polygon pointer-events="none" points="'+cs.map(q=>P(q[0]+.14,q[1]+.14,0).join(',')).join(' ')+'" fill="rgba(90,40,90,.14)"/>'};
   const sp=i=>{const p=S.placed[i],it=IT[p.i],on=p.on!==0;
-    return'<g data-ix="'+i+'"'+(it.pet?' class="idle"':'')+'>'+spr(it,p.x,p.y,p.ang,icol(p),on,p.z||0)+'</g>'};
+    return'<g data-ix="'+i+'"'+(it.pet?' class="idle"':'')+'>'+shad(i)+spr(it,p.x,p.y,p.ang,icol(p),on,p.z||0)+'</g>'};
   const foot=i=>{const p=S.placed[i],it=IT[p.i],z=p.z||0,a=rad(p.ang),ca=Math.cos(a),sa=Math.sin(a),cx=it.w/2,cy=it.d/2;
     const R=(X,Y)=>{const dx=X-cx,dy=Y-cy;return[p.x+cx+dx*ca-dy*sa,p.y+cy+dx*sa+dy*ca]};
     const cs=[[0,0],[it.w,0],[it.w,it.d],[0,it.d]].map(q=>R(q[0],q[1]));
@@ -1003,8 +1123,11 @@ function thumb(it){
   THUMB=false;return out}
 function shelf(){
   $('tabs').innerHTML=CATS.map(c=>'<button class="tab'+(c[0]===tab?' on':'')+'" data-c="'+c[0]+'">'+c[1]+'</button>').join('');
+  const subs=SUBS[tab];
+  if(subs&&!subs.some(s=>s[0]===subTab))subTab='all';
+  $('subtabs').innerHTML=subs?subs.map(s=>'<button class="stab'+(s[0]===subTab?' on':'')+'" data-sb="'+s[0]+'">'+s[1]+'</button>').join(''):'';
   if(tab==='est')return estilo();
-  $('sh').innerHTML='<div class="g">'+LST.filter(i=>i.c===tab).sort((a,b)=>a.p-b.p).map(i=>{const q=S.owned[i.id]||0,no=i.p>0&&!q&&coins<i.p;
+  $('sh').innerHTML='<div class="g">'+LST.filter(i=>i.c===tab&&(!subs||subTab==='all'||subOf(i)===subTab)).sort((a,b)=>a.p-b.p).map(i=>{const q=S.owned[i.id]||0,no=i.p>0&&!q&&coins<i.p;
     return'<button class="ic'+(no?' no':'')+'" data-id="'+i.id+'">'+(q?'<i>x'+q+'</i>':'')+thumb(i)+'<span class="nn">'+i.n+'</span><span class="pp">'+(i.p?'💗 '+i.p:'grátis')+'</span></button>'}).join('')+'</div>'}
 function estilo(){
   const bWm='<button class="cb" data-wm="1" aria-label="Diminuir largura"'+(S.w<=QMIN?' disabled':'')+'>➖</button>';
@@ -1132,7 +1255,8 @@ svg.addEventListener('wheel',e=>{e.preventDefault();const k=e.deltaY<0?1.2:1/1.2
   zoom=Math.min(2.6,Math.max(.7,Math.round(zoom*k*100)/100));BANK.zoom=zoom;save();render()},{passive:false});
 
 /* abas, prateleira e estilo */
-$('tabs').addEventListener('click',e=>{const b=e.target.closest('.tab');if(b){tab=b.dataset.c;shelf()}});
+$('tabs').addEventListener('click',e=>{const b=e.target.closest('.tab');if(b){tab=b.dataset.c;subTab='all';shelf()}});
+$('subtabs').addEventListener('click',e=>{const b=e.target.closest('.stab');if(b){subTab=b.dataset.sb;shelf()}});
 $('sh').addEventListener('click',e=>{const t=e.target,q=s=>t.closest(s);
   if(q('[data-id]'))return poe(q('[data-id]').dataset.id);
   if(q('[data-q]')){qRen=-1;return quartos()}
