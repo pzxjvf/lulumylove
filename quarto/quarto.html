@@ -1140,8 +1140,8 @@ function shelf(){
   if(subs&&!subs.some(s=>s[0]===subTab))subTab='all';
   $('subtabs').innerHTML=subs?subs.map(s=>'<button class="stab'+(s[0]===subTab?' on':'')+'" data-sb="'+s[0]+'">'+s[1]+'</button>').join(''):'';
   if(tab==='est')return estilo();
-  $('sh').innerHTML='<div class="g">'+LST.filter(i=>i.c===tab&&(!subs||subTab==='all'||subOf(i)===subTab)).sort((a,b)=>a.p-b.p).map(i=>{const q=S.owned[i.id]||0,no=i.p>0&&!q&&coins<i.p;
-    return'<button class="ic'+(no?' no':'')+'" data-id="'+i.id+'">'+(q?'<i>x'+q+'</i>':'')+thumb(i)+'<span class="nn">'+i.n+'</span><span class="pp">'+(i.p?'💗 '+i.p:'grátis')+'</span></button>'}).join('')+'</div>'}
+  $('sh').innerHTML='<div class="g">'+LST.filter(i=>i.c===tab&&(!subs||subTab==='all'||subOf(i)===subTab)).sort((a,b)=>a.p-b.p).map(i=>
+    '<button class="ic" data-id="'+i.id+'">'+thumb(i)+'<span class="nn">'+i.n+'</span><span class="pp">grátis</span></button>').join('')+'</div>'}
 function estilo(){
   const bWm='<button class="cb" data-wm="1" aria-label="Diminuir largura"'+(S.w<=QMIN?' disabled':'')+'>➖</button>';
   const bWp='<button class="cb" data-wp="1" aria-label="Aumentar largura"'+(S.w>=QMAX?' disabled':'')+'>➕</button>';
@@ -1184,12 +1184,11 @@ function quartos(){
 let an=0;function after(){save();render();const n=pronta();if(n>an)toast('🎯 Missão cumprida! Toque no 🎯 para pegar o prêmio.');an=n}
 function poe(id){
   const it=IT[id];
-  if(it.p>0){if((S.owned[id]||0)>0)S.owned[id]--;else if(coins>=it.p){setCoins(coins-it.p);sBuy();toast('💗 '+it.n+' é seu!')}else{sNo();toast('Faltam corações 💗. Jogue um pouco e volte!');return}}
   let p;
   if(it.wall){p={i:id,wall:'R',u:.5,v:70};fixW(p);let t=0;while(S.placed.some(q=>IT[q.i].wall&&q.wall===p.wall&&Math.abs(q.u-p.u)<it.w&&Math.abs(q.v-p.v)<it.h)&&t++<40){p.u+=.5;if(p.u>wallMax(p)-it.w){p.u=.5;p.wall=p.wall==='R'?'L':'R';p.v=p.v>=100?60:p.v+20}fixW(p)}}
-  else{const v=vaga(it);if(!v){if(it.p>0)S.owned[id]=(S.owned[id]||0)+1;sNo();toast('Não cabe mais nada. Que tal ampliar o quarto?');shelf();return}p={i:id,x:v[0],y:v[1],ci:it.def||0,z:0,ang:0,ord:0,el:0}}
+  else{const v=vaga(it);if(!v){sNo();toast('Não cabe mais nada. Que tal ampliar o quarto?');return}p={i:id,x:v[0],y:v[1],ci:it.def||0,z:0,ang:0,ord:0,el:0}}
   S.placed.push(p);sel=S.placed.length-1;sOk();after();shelf()}
-function guarda(){const p=S.placed[sel];if(!p)return;if(IT[p.i].p>0)S.owned[p.i]=(S.owned[p.i]||0)+1;S.placed.splice(sel,1);sel=-1;sOk();fechaCor();reflow();after();shelf()}
+function guarda(){const p=S.placed[sel];if(!p)return;S.placed.splice(sel,1);sel=-1;sOk();fechaCor();reflow();after();shelf()}
 function mexe(){const p=S.placed[sel];if(!p)return;const it=IT[p.i];
   if(it.luz||it.tv){p.on=p.on===0?1:0;beep(p.on===0?600:1200,.1,'sine')}else beep(it.sound||800,.12,'sine',.06);
   save();render();const g=svg.querySelector('[data-ix="'+sel+'"]');if(g&&(it.pet||it.sound)){g.classList.add('hop');setTimeout(()=>g.classList.remove('hop'),520)}
@@ -1293,7 +1292,7 @@ $('sh').addEventListener('click',e=>{const t=e.target,q=s=>t.closest(s);
   if(q('[data-f]')){S.floor=q('[data-f]').dataset.f;save();render();return estilo()}
   const rs=(dw,dd)=>{const w=Math.min(QMAX,Math.max(QMIN,S.w+dw)),d=Math.min(QMAX,Math.max(QMIN,S.d+dd));if(w===S.w&&d===S.d)return sNo();S.w=w;S.d=d;caber();sOk();save();render();return estilo()};
   if(q('[data-wm]'))return rs(-1,0);if(q('[data-wp]'))return rs(1,0);if(q('[data-dm]'))return rs(0,-1);if(q('[data-dp]'))return rs(0,1);
-  if(q('[data-x]')){if(!S.placed.length)return toast('O quarto já está vazio.');S.placed.forEach(p=>{if(IT[p.i].p>0)S.owned[p.i]=(S.owned[p.i]||0)+1});S.placed=[];sel=-1;save();render();toast('Quarto arrumadinho ✨ Tudo foi pro seu baú.')}});
+  if(q('[data-x]')){if(!S.placed.length)return toast('O quarto já está vazio.');S.placed=[];sel=-1;save();render();toast('Quarto arrumadinho ✨')}});
 
 /* missões */
 function modal(h){$('modal').innerHTML='<div class="cx">'+h+'</div>';$('modal').classList.add('a')}
@@ -1310,7 +1309,7 @@ $('modal').addEventListener('click',e=>{
   if(q('[data-ab]'))return abrirQuarto(+q('[data-ab]').dataset.ab);
   if(q('[data-rn]')){qRen=+q('[data-rn]').dataset.rn;return quartos()}
   if(q('[data-rk]')){const i=+q('[data-rk]').dataset.rk,el=$('qR'),v=el&&el.value.trim();if(v)BANK.rooms[i].nome=v;qRen=-1;save();render();return quartos()}
-  if(q('[data-dl]')){const i=+q('[data-dl]').dataset.dl;if(BANK.rooms.length<2)return;if(!confirm('Apagar o quarto "'+BANK.rooms[i].nome+'"? Os itens comprados voltam pro baú.'))return;const velho=BANK.rooms[i];velho.placed.forEach(p=>{if(IT[p.i].p>0)BANK.rooms[0].owned[p.i]=(BANK.rooms[0].owned[p.i]||0)+1});BANK.rooms.splice(i,1);if(BANK.cur>=BANK.rooms.length)BANK.cur=BANK.rooms.length-1;S=BANK.rooms[BANK.cur];sel=-1;save();render();shelf();an=pronta();qRen=-1;return quartos()}
+  if(q('[data-dl]')){const i=+q('[data-dl]').dataset.dl;if(BANK.rooms.length<2)return;if(!confirm('Apagar o quarto "'+BANK.rooms[i].nome+'"? Tudo que tem dentro dele vai sumir.'))return;BANK.rooms.splice(i,1);if(BANK.cur>=BANK.rooms.length)BANK.cur=BANK.rooms.length-1;S=BANK.rooms[BANK.cur];sel=-1;save();render();shelf();an=pronta();qRen=-1;return quartos()}
   const g=q('[data-m]');if(!g)return;const i=+g.dataset.m,m=POOL[i];
   if(!m||S.m[i]||!m[2]())return;S.m[i]=1;setCoins(coins+m[1]);save();sBuy();toast('💗 +'+m[1]+' corações!');an=pronta();render();shelf();missoes()});
 $('bm').addEventListener('click',missoes);
