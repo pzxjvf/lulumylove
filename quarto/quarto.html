@@ -42,6 +42,9 @@ body.n .top h1{color:#ffd9ec}
 #bar.on{display:flex}
 #girar{display:flex;align-items:center;gap:6px;background:#fff;border:2px solid var(--bd);border-radius:999px;padding:2px 8px;box-shadow:0 3px 0 var(--sh)}
 #gr{width:118px;height:30px;accent-color:#6b2d5c;cursor:pointer;margin:0}
+#tamanho{display:flex;align-items:center;gap:6px;background:#fff;border:2px solid var(--bd);border-radius:999px;padding:2px 8px;box-shadow:0 3px 0 var(--sh)}
+#sz{width:118px;height:30px;accent-color:#6b2d5c;cursor:pointer;margin:0}
+#szv{min-width:46px;text-align:center;font:800 .8rem Nunito,sans-serif;color:var(--pl2)}
 .tabs{display:flex;gap:8px;overflow-x:auto;padding:6px 10px 2px;scrollbar-width:none}
 .tabs::-webkit-scrollbar{display:none}
 .tab{flex:0 0 auto;border:2px solid var(--bd);background:#fff;color:var(--pl);border-radius:14px;padding:9px 14px;min-height:44px;font:800 .84rem Nunito,sans-serif;box-shadow:0 3px 0 var(--sh);cursor:pointer;white-space:nowrap}
@@ -132,6 +135,12 @@ body.n .top h1{color:#ffd9ec}
     <input id="gr" type="range" min="0" max="359" step="5" value="0" aria-label="Girar o item livremente">
     <button class="b" id="brr" aria-label="Girar o item para a direita">⟳</button>
   </span>
+  <span id="tamanho">
+    <button class="b" id="bml" aria-label="Diminuir este item">➖</button>
+    <input id="sz" type="range" min="50" max="200" step="5" value="100" aria-label="Definir o tamanho do item">
+    <span id="szv">100%</span>
+    <button class="b" id="bmr" aria-label="Aumentar este item">➕</button>
+  </span>
   <button class="b" data-a="at" title="Deixar este item atrás do que está na frente dele">🔙 Atrás</button>
   <button class="b" data-a="fr" title="Trazer este item pra frente, na sua frente">🔜 Frente</button>
   <button class="b" data-a="dn" title="Abaixar este item no ar">⬇️ Baixar</button>
@@ -187,11 +196,23 @@ function boxR(gx,gy,x,y,z,w,d,h,c,R,ca,sa){const T=z+h,lo=[[x,y],[x+w,y],[x+w,y+
     fs.push([dep,pl([P(gx+A[0],gy+A[1],z),P(gx+B[0],gy+B[1],z),P(gx+B[0],gy+B[1],T),P(gx+A[0],gy+A[1],T)],sh(c,f))])}
   fs.sort((p,q)=>p[0]-q[0]);
   return fs.map(f=>f[1]).join('')+pl([P(gx+lo[0][0],gy+lo[0][1],T),P(gx+lo[1][0],gy+lo[1][1],T),P(gx+lo[2][0],gy+lo[2][1],T),P(gx+lo[3][0],gy+lo[3][1],T)],c)}
-function spr(it,gx,gy,ang,col,st,z0){const m=col||PAL[0];z0=z0||0;let o='';
+function spr(it,gx,gy,ang,col,st,z0,pc,scale){const m=col||PAL[0];z0=z0||0;let o='';
+  const S=scale||1;
+  /* cor de uma peça: a cor escolhida pra ela (pc) manda; senão segue o padrão do item */
+  const cc=c=>(pc&&pc[c]!=null)?pc[c]:(c===0?m:c===1?sh(m,1.25):c==='S'?(st?'#7ad7f0':'#242436'):c);
+  const cx0=it.w/2,cy0=it.d/2;
+  const scal=b=>S===1?b:[cx0+(b[0]-cx0)*S,cy0+(b[1]-cy0)*S,b[2]*S,b[3]*S,b[4]*S,b[5]*S,b[6]];
+  /* tapete/peça redonda (discos concêntricos) */
+  if(it.round){const N=38,rad0=Math.min(it.w,it.d)/2*S,cx=gx+cx0,cy=gy+cy0,th=(it.th==null?2:it.th)*S;
+    const disc=(z,r,fill)=>{let a='';for(let i=0;i<N;i++){const t=i/N*6.283185307;const q=P(cx+Math.cos(t)*r,cy+Math.sin(t)*r,z+z0);a+=(i?' ':'')+q[0].toFixed(1)+','+q[1].toFixed(1)}
+      return'<polygon points="'+a+'" fill="'+fill+'" stroke="rgba(60,20,60,.16)" stroke-width=".6"/>'};
+    let h=disc(0,rad0,sh(cc(0),.8))+disc(th,rad0,cc(0));
+    (it.rings||[]).forEach(g=>{h+=disc(th+(g[2]||0),rad0*g[0],cc(g[1]))});
+    return h}
 /* ordena as peças de um item girado, de trás para frente */
-function ordena(it,gx,gy,R){
-  const E=1e-4,n=it.b.length;
-  const inf=it.b.map(b=>{const x=b[0],y=b[1],w=b[3],d=b[4];
+function ordena(bs,gx,gy,R){
+  const E=1e-4,n=bs.length;
+  const inf=bs.map(b=>{const x=b[0],y=b[1],w=b[3],d=b[4];
     const cs=[[x,y],[x+w,y],[x+w,y+d],[x,y+d]].map(q=>{const r=R(q[0],q[1]),wx=gx+r[0],wy=gy+r[1];return THUMB?[wx,wy]:rw(wx,wy)});
     const ax=[];for(let k=0;k<2;k++){const dx=cs[k+1][0]-cs[k][0],dy=cs[k+1][1]-cs[k][1],l=Math.hypot(dx,dy)||1;ax.push([dx/l,dy/l])}
     return{b,cs,ax,z0:b[2],z1:b[2]+b[5],s:(cs[0][0]+cs[2][0]+cs[0][1]+cs[2][1])/2}});
@@ -217,16 +238,17 @@ function ordena(it,gx,gy,R){
     if(p<0)for(let i=0;i<n;i++)if(!done[i]&&(p<0||lt(i,p)<0))p=i; /* ciclo: usa o centro */
     done[p]=1;out.push(inf[p].b);adj[p].forEach(j=>ind[j]--)}
   return out}
+  const bb=S===1?it.b:it.b.map(scal);
   const a=((ang||0)%360+360)%360;
   const vr=!THUMB&&(((ROT%360)+360)%360)!==0;
-  if(!a&&!vr){for(const b of it.b){let[x,y,z,w,d,h,c]=b;
-    o+=box(gx,gy,x,y,z+z0,w,d,h,c===0?m:c===1?sh(m,1.25):c==='S'?(st?'#7ad7f0':'#242436'):c)}
+  if(!a&&!vr){for(const b of bb){let[x,y,z,w,d,h,c]=b;
+    o+=box(gx,gy,x,y,z+z0,w,d,h,cc(c))}
     return o}
   const ca=Math.cos(a*Math.PI/180),sa=Math.sin(a*Math.PI/180),cx=it.w/2,cy=it.d/2;
   const R=(x,y)=>{const dx=x-cx,dy=y-cy;return[cx+dx*ca-dy*sa,cy+dx*sa+dy*ca]};
-  const bs=ordena(it,gx,gy,R);
+  const bs=ordena(bb,gx,gy,R);
   for(const b of bs){let[x,y,z,w,d,h,c]=b;
-    o+=boxR(gx,gy,x,y,z+z0,w,d,h,c===0?m:c===1?sh(m,1.25):c==='S'?(st?'#7ad7f0':'#242436'):c,R,ca,sa)}
+    o+=boxR(gx,gy,x,y,z+z0,w,d,h,cc(c),R,ca,sa)}
   return o}
 
 /* ---------- catálogo ---------- */
@@ -388,7 +410,7 @@ Wl('foto_casal','Fotinha do casal',70,.9,34,()=>'<rect width=".9" height="34" rx
 F('tp11','Tapetinho',14,'t',1,1,[[0,0,0,1,1,2,0],[.15,.15,2,.7,.7,.5,1]],{col:1,rug:1});
 F('tp42','Tapete 4×2',62,'t',4,2,[[0,0,0,4,2,2,0],[.25,.25,2,3.5,1.5,.6,1],[.5,.5,2.6,3,.9,.6,0]],{col:1,rug:1,def:3});
 F('tp44','Tapete 4×4',98,'t',4,4,[[0,0,0,4,4,2,0],[.3,.3,2,3.4,3.4,.6,1],[.7,.7,2.6,2.6,2.6,.6,0]],{col:1,rug:1,def:5});
-F('tp_red','Tapete redondo',56,'t',3,3,[[0,0,0,3,3,2,0],[.2,.2,2,2.6,2.6,.6,1],[.6,.6,2.6,1.8,1.8,.6,0]],{col:1,rug:1,def:4});
+F('tp_red','Tapete 3×3 fofinho',56,'t',3,3,[[0,0,0,3,3,2,0],[.2,.2,2,2.6,2.6,.6,1],[.6,.6,2.6,1.8,1.8,.6,0]],{col:1,rug:1,def:4});
 F('tapete_fofo','Tapete fofinho',42,'t',2,3,[[0,0,0,2,3,2,0],[.25,.3,2,1.5,2.4,.6,1]],{col:1,rug:1,def:6});
 /* especiais */
 F('balanco','Balanço',120,'e',1,1,[[.1,.1,54,.8,.8,10,WD],[.1,0,64,.1,.1,34,WD],[.8,0,64,.1,.1,34,WD],[.44,.03,50,.12,.12,34,'#8b5a3c'],[.1,.1,54,.8,.5,6,1]],{col:1});
@@ -896,6 +918,25 @@ F('globo_pe','Globo de pé',72,'m',1,1,[[.3,.3,0,.4,.4,4,'#6b4a3a'],[.44,.44,4,.
 F('totem_plants','Coluna de plantas',78,'m',1,1,[[.06,.06,0,.88,.88,40,WD],[.1,.1,40,.8,.8,5,WD2],[.18,.18,45,.64,.64,20,'#3fa86a'],[.24,.24,65,.5,.5,16,'#4caf50']],{col:0});
 F('mesa_centro_dupla','Mesa de centro dupla',78,'m',3,1,[[0,0,0,1.3,.9,16,WD2],[1.7,0,0,1.3,.9,16,WD2],[.05,.05,0,.14,.14,16,'#8a9298'],[1.15,.05,0,.14,.14,16,'#8a9298'],[1.75,.05,0,.14,.14,16,'#8a9298'],[2.85,.05,0,.14,.14,16,'#8a9298'],[.3,.3,16,.7,.5,4,0],[1.9,.3,16,.7,.5,4,0]],{col:1,def:2});
 F('estante_tv','Estante de TV',96,'m',2,1,[[0,0,0,2,.4,50,WD],[.06,.4,10,.3,.05,20,'#e85d75'],[.5,.4,10,.3,.05,20,'#5db7de'],[1,.4,10,.3,.05,20,'#ffd166'],[1.5,.4,10,.34,.05,20,'#8ecf8b'],[.06,.4,36,.56,.05,20,'#c77dff']],{col:0});
+/* ===== tapetes redondos de verdade (círculo, pintáveis por parte) ===== */
+F('tapete_rd','Tapete redondo',58,'t',3,3,[[0,0,0,3,3,2,0]],{col:1,rug:1,def:1,round:1,th:2,rings:[[.82,1,.02],[.62,0,.04],[.42,1,.06],[.22,0,.08]]});
+F('tapete_rd_g','Tapete redondo grande',88,'t',4,4,[[0,0,0,4,4,2,0]],{col:1,rug:1,def:4,round:1,th:2,rings:[[.82,1,.02],[.64,0,.04],[.46,1,.06],[.28,0,.08],[.12,1,.11]]});
+F('tapete_rd_p','Tapete redondo pequeno',32,'t',2,2,[[0,0,0,2,2,1.6,0]],{col:1,rug:1,def:6,round:1,th:1.6,rings:[[.74,1,.02],[.44,0,.05]]});
+F('tapete_rd_peludo','Tapete redondo peludo',66,'t',3,3,[[0,0,0,3,3,3,1]],{col:1,rug:1,def:0,round:1,th:3,rings:[[.86,0,.07],[.6,1,.14],[.34,0,.21]]});
+/* ===== itens novos (decoração fofa) ===== */
+F('penteadeira_led','Penteadeira com LED',118,'m',2,1,[[0,0,0,2,.6,32,0],[0,0,32,2,.6,3,1],[.2,.62,35,.7,.05,44,'S'],[.22,.64,35,.66,.03,38,'#dcefff'],[.1,.1,79,.5,.4,5,'#ffd166'],[1.4,.1,79,.5,.4,5,'#ffd166'],[.14,.3,35,.3,.26,7,'#ff9ec4'],[1.56,.3,35,.3,.26,7,'#c77dff']],{col:1,def:0});
+F('banquinho_penteadeira','Banquinho de penteadeira',34,'m',1,1,[[.2,.2,0,.6,.6,16,0],[.14,.14,16,.72,.72,8,1],[.22,.22,24,.56,.56,4,0]],{col:1,def:1});
+F('mesinha_redonda','Mesinha redonda',48,'m',1,1,[[.32,.32,0,.36,.36,20,WD],[.08,.08,20,.84,.84,5,WD2],[.26,.26,25,.48,.48,4,0]],{col:1,def:2});
+F('chaise_longa','Chaise longue',120,'m',2,1,[[0,0,0,2,.4,26,0],[0,.4,0,2,.6,44,0],[.1,.44,26,1.8,.56,10,1],[1.72,.6,26,.22,.38,18,0]],{col:1,def:3});
+F('cesto_roupa','Cesto de roupa',38,'m',1,1,[[.1,.1,0,.8,.8,30,0],[.04,.04,0,.92,.92,4,1],[.25,.25,30,.5,.5,5,1]],{col:1,def:1});
+F('buque_rosas','Buquê de rosas',38,'p',1,1,[[.24,.24,0,.52,.52,16,'#e9e2d8'],[.32,.32,16,.36,.36,12,'#4caf50'],[.24,.24,28,.24,.24,8,'#e0245e'],[.52,.3,28,.24,.24,8,'#ff6fa5'],[.34,.56,28,.24,.24,8,'#ff9ec4']],{col:1,def:0});
+F('tulipas','Vaso de tulipas',36,'p',1,1,[[.3,.3,0,.4,.4,16,'#e9e2d8'],[.36,.36,16,.28,.28,26,'#4caf50'],[.3,.3,42,.2,.2,10,'#ff6f61'],[.5,.34,42,.2,.2,10,'#ffd166'],[.4,.5,42,.2,.2,10,'#e0245e']],{col:1,def:1});
+F('luminaria_pe','Luminária de pé',74,'l',1,1,[[.36,.36,0,.28,.28,4,'#d4af37'],[.44,.44,4,.12,.12,64,'#d4af37'],[.2,.2,68,.6,.6,20,'#ffe9a8'],[.28,.28,88,.44,.44,6,'#f0d68a']],{luz:1,gh:78,gr:96});
+F('secador','Secador de cabelo',58,'te',1,1,[[.2,.3,0,.5,.4,18,'#c77dff'],[.62,.3,6,.24,.24,24,'#b79cff'],[.62,.3,30,.18,.18,8,'#555'],[.24,.34,18,.2,.3,6,'#8a6d76']],{col:0,def:2});
+F('chapinha','Chapinha',46,'te',1,1,[[.2,.4,0,.6,.2,8,'#e0245e'],[.84,.4,2,.14,.2,4,'#333'],[.2,.4,8,.6,.2,3,'#333']],{col:0,def:1});
+F('maquina_costura','Máquina de costura',96,'te',1,1,[[0,0,0,1,.9,26,0],[.1,.1,26,.5,.5,4,1],[.6,.2,26,.3,.3,30,'#8a9298'],[.6,.2,56,.06,.3,6,'#8a9298'],[.2,.3,30,.3,.3,4,'#c8935c']],{col:1,def:5});
+F('porta_joias','Porta-joias',42,'br',1,1,[[.16,.24,0,.68,.5,16,'#ffd9ec'],[.16,.24,16,.68,.5,6,'#ff9ec4'],[.44,.49,10,.1,.04,4,'#d4af37'],[.26,.28,22,.16,.16,5,'#ff6fa5']],{col:1,def:1});
+F('ursinho_rosa','Ursinho rosa',52,'br',1,1,[[.18,.22,0,.64,.54,22,'#ffb7d5'],[.26,.26,22,.48,.44,16,'#ffd1e3'],[.28,.3,38,.12,.12,6,'#ff9ec4'],[.6,.3,38,.12,.12,6,'#ff9ec4'],[.34,.7,30,.08,.02,4,'#222'],[.58,.7,30,.08,.02,4,'#222']],{pet:1,sound:520});
 
 const CATS=[['m','🛏️ Móveis'],['p','🪴 Plantas'],['l','💡 Luzes'],['f','🐰 Bichinhos'],['c','🍰 Comidinhas'],['k','🍳 Cozinha'],['b','🛁 Banho'],['j','🌳 Jardim'],['br','🧸 Brinquedos'],['fe','🎉 Festa'],['ro','👗 Roupas'],['te','💻 Tecnologia'],['w','🖼️ Parede'],['t','🟣 Tapetes'],['e','🌈 Especiais'],['est','🎨 Estilo']];
 /* ---------- sub-categorias (estilo The Sims) ---------- */
@@ -959,47 +1000,50 @@ const clampPan=()=>{const lim=1600;panX=Math.max(-lim,Math.min(lim,panX));panY=M
 const rad=a=>((a||0)%360)*Math.PI/180;
 function obb(x,y,w,d,ang){const a=rad(ang),ca=Math.cos(a),sa=Math.sin(a),hw=w/2,hd=d/2;
   return{cx:x+hw,cy:y+hd,hw,hd,ax:ca,ay:sa,ex:hw*Math.abs(ca)+hd*Math.abs(sa),ey:hw*Math.abs(sa)+hd*Math.abs(ca)}}
-const obbOf=(x,y,it,ang)=>obb(x,y,it.w,it.d,ang);
+const scOf=p=>(p&&p.sc)||1;
+/* a escala cresce a partir do centro do item (mesmo ponto do desenho) */
+const obbOf=(x,y,it,ang,s)=>{const k=s||1;return obb(x+it.w/2-it.w*k/2,y+it.d/2-it.d*k/2,it.w*k,it.d*k,ang)};
 function obbHit(A,B){const dx=B.cx-A.cx,dy=B.cy-A.cy,U=[[A.ax,A.ay],[-A.ay,A.ax],[B.ax,B.ay],[-B.ay,B.ax]];
   for(const[u,v]of U){const dd=Math.abs(dx*u+dy*v);
     const ra=A.hw*Math.abs(A.ax*u+A.ay*v)+A.hd*Math.abs(-A.ay*u+A.ax*v);
     const rb=B.hw*Math.abs(B.ax*u+B.ay*v)+B.hd*Math.abs(-B.ay*u+B.ax*v);
     if(dd>ra+rb-1e-4)return false}
   return true}
-function clampIn(p){const it=IT[p.i];if(!it||it.wall)return;const A=obbOf(p.x,p.y,it,p.ang);
-  const M=0.6;const cx=Math.max(A.ex-M,Math.min(S.w-A.ex+M,A.cx)),cy=Math.max(A.ey-M,Math.min(S.d-A.ey+M,A.cy));
-  p.x=cx-A.hw;p.y=cy-A.hd}
+function clampIn(p){const it=IT[p.i];if(!it||it.wall)return;const A=obbOf(p.x,p.y,it,p.ang,scOf(p));
+  const M=0.6;const ncx=Math.max(A.ex-M,Math.min(S.w-A.ex+M,A.cx)),ncy=Math.max(A.ey-M,Math.min(S.d-A.ey+M,A.cy));
+  p.x+=ncx-A.cx;p.y+=ncy-A.cy}
 const wallMax=p=>(p.wall==='L'||p.wall==='E2')?S.d:S.w;
 const icol=p=>p&&p.cc?p.cc:PAL[(p&&p.ci)||0];
-const temCor=it=>!!(it.b&&it.b.some(b=>b[6]===0||b[6]===1));
+const temCor=it=>!!(it.b&&it.b.some(b=>b[6]===0||b[6]===1))||!!(it.rings&&it.rings.some(r=>r[1]===0||r[1]===1));
 /* altura final = apoio (z, do empilhamento) + elevação livre (el, escolhida no ⬆️/⬇️) */
 const zOf=p=>(p.z||0)+(p.el||0);
 
 /* ---------- empilhar: itens sobre superfícies (mesas, bancadas...) ---------- */
 const SURFC={m:1,k:1,b:1,te:1,e:1},SURFB={baloes:1,toca:1,panela:1,cesto:1,mantimentos:1,aquario_g:1,gaiola:1,terrario:1,carrossel_musica:1};
 function hOf(it){if(it._h===undefined)it._h=it.b?Math.max(...it.b.map(b=>b[2]+b[5])):0;return it._h}
+const bhOf=(it,s)=>hOf(it)*(s||1);
 function surfOf(it){if(it._s!==undefined)return it._s;let r=0;
   if(it.b&&!it.wall&&!it.rug&&SURFC[it.c]&&!SURFB[it.id]){const fp=Math.max(1,it.w*it.d);let best=null;
     for(const bx of it.b){const[x,y,z,w,d,h]=bx;if(h>8)continue;const ar=w*d;if(ar/fp<.5)continue;if(w<.55*it.w||d<.55*it.d)continue;const top=z+h;if(top<12)continue;if(!best||ar>best.ar)best={ar,top}}
     if(best)r=best.top}
   it._s=r;return r}
-function supAt(ix,x,y,it,ang){let z=0,jj=-1;const A=obbOf(x,y,it,ang);
+function supAt(ix,x,y,it,ang,sc){let z=0,jj=-1;const A=obbOf(x,y,it,ang,sc);
   S.placed.forEach((q,j)=>{const t=IT[q.i];if(j===ix||t.wall)return;const s=surfOf(t);if(!s)return;
-    if(obbHit(A,obbOf(q.x,q.y,t,q.ang))){const hz=zOf(q)+s;if(hz>z){z=hz;jj=j}}});
+    if(obbHit(A,obbOf(q.x,q.y,t,q.ang,scOf(q)))){const hz=zOf(q)+s*scOf(q);if(hz>z){z=hz;jj=j}}});
   return{j:jj,z}}
-const baseAt=(ix,x,y,it,ang)=>supAt(ix,x,y,it,ang).z;
+const baseAt=(ix,x,y,it,ang,sc)=>supAt(ix,x,y,it,ang,sc).z;
 function reflow(){const ids=[];
   S.placed.forEach((p,i)=>{if(!IT[p.i].wall&&!IT[p.i].rug)ids.push(i)});
   ids.sort((a,b)=>((S.placed[a].z||0)-(S.placed[b].z||0)));
-  for(const i of ids){const p=S.placed[i];p.z=baseAt(i,p.x,p.y,IT[p.i],p.ang)}}
+  for(const i of ids){const p=S.placed[i];p.z=baseAt(i,p.x,p.y,IT[p.i],p.ang,scOf(p))}}
 
-function livre(ix,x,y,it,ang,rug,z,h){z=z||0;if(h==null)h=1e9;
-  const A=obbOf(x,y,it,ang),M=0.6;
+function livre(ix,x,y,it,ang,rug,z,h,sc){z=z||0;if(h==null)h=1e9;
+  const A=obbOf(x,y,it,ang,sc),M=0.6;
   if(A.cx-A.ex<-M||A.cy-A.ey<-M||A.cx+A.ex>S.w+M||A.cy+A.ey>S.d+M)return false;
   const z1=z+h;
   return!S.placed.some((q,j)=>{const t=IT[q.i];if(j===ix||t.wall||!!t.rug!==rug)return false;
-    if(!obbHit(A,obbOf(q.x,q.y,t,q.ang)))return false;
-    const q0=zOf(q);return z<q0+hOf(t)&&q0<z1})}
+    if(!obbHit(A,obbOf(q.x,q.y,t,q.ang,scOf(q))))return false;
+    const q0=zOf(q);return z<q0+bhOf(t,scOf(q))&&q0<z1})}
 function vaga(it){let best=null,bd=1e9;for(let y=0;y<=S.d-it.d;y++)for(let x=0;x<=S.w-it.w;x++)if(livre(-1,x,y,it,0,!!it.rug,0,hOf(it))){const k=Math.abs(x+it.w/2-S.w/2)+Math.abs(y+it.d/2-S.d/2);if(k<bd){bd=k;best=[x,y]}}return best}
 function fixW(p){const t=IT[p.i],mx=wallMax(p)-t.w;
   if(encaixa){p.u=Math.min(mx,Math.max(0,Math.round(p.u*2)/2));p.v=Math.min(WH-t.h-8,Math.max(8,Math.round(p.v/4)*4))}
@@ -1087,7 +1131,7 @@ function render(){
   let h='<defs><radialGradient id="gl"><stop offset="0" stop-color="#ffe6a0" stop-opacity=".9"/><stop offset="1" stop-color="#ffe6a0" stop-opacity="0"/></radialGradient></defs>'+bg();
   const fl=[],wl=[];S.placed.forEach((p,i)=>(IT[p.i].wall?wl:fl).push(i));
   const rugs=fl.filter(i=>IT[S.placed[i].i].rug),oth=fl.filter(i=>!IT[S.placed[i].i].rug);
-  const key=i=>{let k=i,n=0;while(n<8){const p=S.placed[k];if(!p||!(p.z>0))break;const s=supAt(k,p.x,p.y,IT[p.i],p.ang).j;if(s<0||s===k)break;k=s;n++}
+  const key=i=>{let k=i,n=0;while(n<8){const p=S.placed[k];if(!p||!(p.z>0))break;const s=supAt(k,p.x,p.y,IT[p.i],p.ang,scOf(p)).j;if(s<0||s===k)break;k=s;n++}
     const p=S.placed[k],it=IT[p.i],c=rw(p.x+it.w/2,p.y+it.d/2);return[c[0]+c[1],c[0],n]};
   /* quem decide a hora de desenhar:
      - itens que dividem o mesmo apoio (mesa + coisas em cima dela) empatam na profundidade,
@@ -1098,15 +1142,17 @@ function render(){
     if(A[0]===B[0]&&A[1]===B[1])return (A[2]-B[2])||(oa-ob);
     return (A[0]+oa*ORDB)-(B[0]+ob*ORDB)||A[1]-B[1]||A[2]-B[2]});
   const shad=i=>{const p=S.placed[i],it=IT[p.i];if(it.rug||zOf(p)>0)return'';
-    const a=rad(p.ang),ca=Math.cos(a),sa=Math.sin(a),cx=it.w/2,cy=it.d/2;
+    const s=scOf(p),w=it.w*s,d=it.d*s,a=rad(p.ang),ca=Math.cos(a),sa=Math.sin(a),cx=it.w/2,cy=it.d/2;
     const R=(X,Y)=>{const dx=X-cx,dy=Y-cy;return[p.x+cx+dx*ca-dy*sa,p.y+cy+dx*sa+dy*ca]};
-    const cs=[[0,0],[it.w,0],[it.w,it.d],[0,it.d]].map(q=>R(q[0],q[1]));
+    const cs=[[cx-w/2,cy-d/2],[cx+w/2,cy-d/2],[cx+w/2,cy+d/2],[cx-w/2,cy+d/2]].map(q=>R(q[0],q[1]));
     return'<polygon pointer-events="none" points="'+cs.map(q=>P(q[0]+.14,q[1]+.14,0).join(',')).join(' ')+'" fill="rgba(90,40,90,.14)"/>'};
   const sp=i=>{const p=S.placed[i],it=IT[p.i],on=p.on!==0;
-    return'<g data-ix="'+i+'"'+(it.pet?' class="idle"':'')+'>'+shad(i)+spr(it,p.x,p.y,p.ang,icol(p),on,zOf(p))+'</g>'};
-  const foot=i=>{const p=S.placed[i],it=IT[p.i],z=zOf(p),a=rad(p.ang),ca=Math.cos(a),sa=Math.sin(a),cx=it.w/2,cy=it.d/2;
+    return'<g data-ix="'+i+'"'+(it.pet?' class="idle"':'')+'>'+shad(i)+spr(it,p.x,p.y,p.ang,icol(p),on,zOf(p),p.pc,scOf(p))+'</g>'};
+  const foot=i=>{const p=S.placed[i],it=IT[p.i],z=zOf(p),s=scOf(p),w=it.w*s,d=it.d*s,a=rad(p.ang),ca=Math.cos(a),sa=Math.sin(a),cx=it.w/2,cy=it.d/2;
     const R=(X,Y)=>{const dx=X-cx,dy=Y-cy;return[p.x+cx+dx*ca-dy*sa,p.y+cy+dx*sa+dy*ca]};
-    const cs=[[0,0],[it.w,0],[it.w,it.d],[0,it.d]].map(q=>R(q[0],q[1]));
+    let cs;
+    if(it.round){const N=30,rr=Math.min(w,d)/2;cs=[];for(let k=0;k<N;k++){const t=k/N*6.283185307;cs.push(R(cx+Math.cos(t)*rr,cy+Math.sin(t)*rr))}}
+    else cs=[[cx-w/2,cy-d/2],[cx+w/2,cy-d/2],[cx+w/2,cy+d/2],[cx-w/2,cy+d/2]].map(q=>R(q[0],q[1]));
     return'<polygon points="'+cs.map(q=>P(q[0],q[1],z).join(',')).join(' ')+'" fill="rgba(255,255,255,.3)" stroke="#6b2d5c" stroke-width="1.6" stroke-dasharray="5 3" pointer-events="none"/>'};
   rugs.forEach(i=>h+=sp(i));
   if(sel>=0&&S.placed[sel]&&!IT[S.placed[sel].i].wall)h+=foot(sel);
@@ -1122,7 +1168,7 @@ function render(){
       h+='<circle pointer-events="none" cx="'+c[0]+'" cy="'+c[1]+'" r="'+(it.gr||60)+'" fill="url(#gl)"/>'})}
   svg.innerHTML=h;
   $('bar').classList.toggle('on',sel>=0);
-  const p=S.placed[sel];if(p){const it=IT[p.i];$('girar').style.display=it.wall?'none':'flex';['at','fr','up','dn'].forEach(k=>{const b=$('bar').querySelector('[data-a="'+k+'"]');if(b)b.style.display=it.wall?'none':''});$('bar').querySelector('[data-a=c]').style.display=temCor(it)?'':'none';$('bar').querySelector('[data-a=i]').style.display=(it.luz||it.tv||it.pet||it.sound)?'':'none';const gr=$('gr');if(gr&&document.activeElement!==gr)gr.value=String(Math.round(p.ang||0)%360)}
+  const p=S.placed[sel];if(p){const it=IT[p.i];$('girar').style.display=it.wall?'none':'flex';$('tamanho').style.display=it.wall?'none':'flex';['at','fr','up','dn'].forEach(k=>{const b=$('bar').querySelector('[data-a="'+k+'"]');if(b)b.style.display=it.wall?'none':''});$('bar').querySelector('[data-a=c]').style.display=temCor(it)?'':'none';$('bar').querySelector('[data-a=i]').style.display=(it.luz||it.tv||it.pet||it.sound)?'':'none';const gr=$('gr');if(gr&&document.activeElement!==gr)gr.value=String(Math.round(p.ang||0)%360);const sz=$('sz');if(sz&&document.activeElement!==sz)sz.value=String(Math.round(scOf(p)*100));const szv=$('szv');if(szv)szv.textContent=Math.round(scOf(p)*100)+'%'}
   $('est').textContent='⭐'+stars();$('bm').dataset.n=pronta();
   document.body.classList.toggle('n',!!S.night);$('bn').textContent=S.night?'☀️':'🌙';
   $('tt').textContent=S.emoji+' '+S.nome;$('qn').textContent=BANK.rooms.length;
@@ -1186,7 +1232,7 @@ function poe(id){
   const it=IT[id];
   let p;
   if(it.wall){p={i:id,wall:'R',u:.5,v:70};fixW(p);let t=0;while(S.placed.some(q=>IT[q.i].wall&&q.wall===p.wall&&Math.abs(q.u-p.u)<it.w&&Math.abs(q.v-p.v)<it.h)&&t++<40){p.u+=.5;if(p.u>wallMax(p)-it.w){p.u=.5;p.wall=p.wall==='R'?'L':'R';p.v=p.v>=100?60:p.v+20}fixW(p)}}
-  else{const v=vaga(it);if(!v){sNo();toast('Não cabe mais nada. Que tal ampliar o quarto?');return}p={i:id,x:v[0],y:v[1],ci:it.def||0,z:0,ang:0,ord:0,el:0}}
+  else{const v=vaga(it);if(!v){sNo();toast('Não cabe mais nada. Que tal ampliar o quarto?');return}p={i:id,x:v[0],y:v[1],ci:it.def||0,z:0,ang:0,ord:0,el:0,sc:1,pc:{}}}
   S.placed.push(p);sel=S.placed.length-1;sOk();after();shelf()}
 function guarda(){const p=S.placed[sel];if(!p)return;S.placed.splice(sel,1);sel=-1;sOk();fechaCor();reflow();after();shelf()}
 function mexe(){const p=S.placed[sel];if(!p)return;const it=IT[p.i];
@@ -1203,6 +1249,12 @@ function elevarItem(d){const p=S.placed[sel];if(!p||IT[p.i].wall)return;
   p.el=Math.max(0,Math.min(145,(p.el||0)+d));
   reflow();save();render();
   toast(p.el===0?('⬇️ '+IT[p.i].n+' voltou pro chão'):(d>0?('⬆️ '+IT[p.i].n+' subiu'):('⬇️ '+IT[p.i].n+' desceu')))}
+/* tamanho: diminui ou aumenta o item inteiro (estilo The Sims) */
+function escalaItem(d,abs){const p=S.placed[sel];if(!p||IT[p.i].wall)return;
+  const base=abs?d:scOf(p)+d;
+  const s=Math.round(Math.max(.5,Math.min(2,base))*20)/20;
+  if(s===scOf(p))return;
+  p.sc=s;clampIn(p);reflow();save();render()}
 $('bar').addEventListener('click',e=>{const a=e.target.closest('[data-a]');if(!a)return;const k=a.dataset.a;
   if(k==='x')return guarda();if(k==='ok'){sel=-1;return render()}if(!S.placed[sel])return;
   if(k==='i')return mexe();
@@ -1217,14 +1269,19 @@ function girarItem(delta){const p=S.placed[sel];if(!p||IT[p.i].wall)return;
 function propoeAng(a){const p=S.placed[sel];if(!p)return;const it=IT[p.i];
   a=((a%360)+360)%360;const old=p.ang||0;p.ang=a;
   clampIn(p);
-  if(encaixa){const zc=it.rug?0:baseAt(sel,p.x,p.y,it,a);
-    if(!livre(sel,p.x,p.y,it,a,!!it.rug,zc,hOf(it))){p.ang=old;sNo();return}}
+  if(encaixa){const zc=it.rug?0:baseAt(sel,p.x,p.y,it,a,scOf(p));
+    if(!livre(sel,p.x,p.y,it,a,!!it.rug,zc,bhOf(it,scOf(p)),scOf(p))){p.ang=old;sNo();return}}
   reflow();sOk();save();render();
   const gr=$('gr');if(gr&&document.activeElement!==gr)gr.value=String(Math.round(a))}
 $('brl').addEventListener('click',()=>girarItem(-15));
 $('brr').addEventListener('click',()=>girarItem(15));
 const grEl=$('gr');
 if(grEl)grEl.addEventListener('input',()=>{const p=S.placed[sel];if(!p)return;propoeAng(+grEl.value)});
+/* tamanho livremente: slider ➖ ➕ (igual ao girar) */
+$('bml').addEventListener('click',()=>escalaItem(-.05));
+$('bmr').addEventListener('click',()=>escalaItem(.05));
+const szEl=$('sz');
+if(szEl)szEl.addEventListener('input',()=>{const p=S.placed[sel];if(!p)return;escalaItem((+szEl.value)/100,true)});
 
 /* arrastar e soltar */
 function pt(e){const q=svg.createSVGPoint();q.x=e.clientX;q.y=e.clientY;const r=q.matrixTransform(svg.getScreenCTM().inverse());return[r.x,r.y]}
@@ -1248,7 +1305,7 @@ svg.addEventListener('pointerdown',e=>{
   else{const q=g2(c[0],c[1]);const a0=rad(p.ang),c0=Math.cos(a0),s0=Math.sin(a0),pcx=p.x+it.w/2,pcy=p.y+it.d/2;
     dr={ix,a:p.x-q[0],b:p.y-q[1],kids:[]};
     if(!it.rug)S.placed.forEach((qq,j)=>{if(j===ix||IT[qq.i].wall||!(qq.z>0))return;const t=IT[qq.i];
-      if(supAt(j,qq.x,qq.y,t,qq.ang).j!==ix)return;
+      if(supAt(j,qq.x,qq.y,t,qq.ang,scOf(qq)).j!==ix)return;
       const ccx=qq.x+t.w/2,ccy=qq.y+t.d/2,dx=ccx-pcx,dy=ccy-pcy;
       dr.kids.push({j,lx:dx*c0+dy*s0,ly:-dx*s0+dy*c0,ao:((qq.ang||0)-(p.ang||0))%360})})}
   dr.m=0;try{svg.setPointerCapture(e.pointerId)}catch(_){}render()});
@@ -1262,10 +1319,10 @@ svg.addEventListener('pointermove',e=>{
   else{const q=g2(c[0],c[1]);let nx=q[0]+dr.a,ny=q[1]+dr.b;
     if(encaixa){nx=Math.round(nx);ny=Math.round(ny);
       if(nx===p.x&&ny===p.y)return;
-      const zc=it.rug?0:baseAt(dr.ix,nx,ny,it,p.ang);
-      if(!livre(dr.ix,nx,ny,it,p.ang,!!it.rug,zc,hOf(it)))return;
+      const zc=it.rug?0:baseAt(dr.ix,nx,ny,it,p.ang,scOf(p));
+      if(!livre(dr.ix,nx,ny,it,p.ang,!!it.rug,zc,bhOf(it,scOf(p)),scOf(p)))return;
       p.x=nx;p.y=ny}
-    else{const M=0.6;nx=Math.max(-M,Math.min(nx,S.w+M-it.w));ny=Math.max(-M,Math.min(ny,S.d+M-it.d));if(nx===p.x&&ny===p.y)return;p.x=nx;p.y=ny;clampIn(p)}
+    else{if(nx===p.x&&ny===p.y)return;p.x=nx;p.y=ny;clampIn(p)}
     if(dr.kids&&dr.kids.length){const a=rad(p.ang),ca=Math.cos(a),sa=Math.sin(a),pcx=p.x+it.w/2,pcy=p.y+it.d/2;
       dr.kids.forEach(k=>{const qq=S.placed[k.j];if(!qq)return;const t=IT[qq.i];
         const ccx=pcx+k.lx*ca-k.ly*sa,ccy=pcy+k.lx*sa+k.ly*ca;
@@ -1332,20 +1389,33 @@ $('bs').addEventListener('click',()=>{mudo=!mudo;$('bs').textContent=mudo?'🔇'
 const PALX=['#ff9ec4','#ff6fa5','#e0245e','#ff5a5f','#ff8a7a','#ffb703','#ffd166','#ffe08a','#c8f08f','#7fd8be','#06d6a0','#2ec4b6','#7ec8ff','#4aa3ff','#3a6ff7','#7a5cff','#b79cff','#c77dff','#ff7ad9','#f2a5ff','#ffd9ec','#d9c3ad','#c8935c','#a9744f','#6b4a3a','#ffffff','#e8e8f0','#9aa1ad','#3f1d38','#242436'];
 const normHex=v=>{v=String(v||'').trim();if(!v)return null;if(v[0]!=='#')v='#'+v;if(/^#[0-9a-f]{3}$/i.test(v))v='#'+v[1]+v[1]+v[2]+v[2]+v[3]+v[3];return/^#[0-9a-f]{6}$/i.test(v)?v.toLowerCase():null};
 function fechaCor(){const c=$('cor');if(!c)return;c.classList.remove('a');c.innerHTML=''}
+let corPart=0;
+const NOMEP={0:'Principal',1:'Detalhe'};
+/* quais "peças" do item aceitam cor (blocos e anéis marcados com 0 ou 1) */
+const partesDe=it=>[...new Set((it.b||[]).map(b=>b[6]).concat((it.rings||[]).map(r=>r[1])).filter(c=>c===0||c===1))].sort();
+/* cor atual de uma peça */
+const corDe=(p,it,c)=>{const pc=p.pc||{};if(pc[c]!=null)return pc[c];const m=icol(p);return c===0?m:c===1?sh(m,1.25):'#ffffff'};
 function cor(){
   const p=S.placed[sel];if(!p)return fechaCor();
-  const it=IT[p.i],cur=icol(p);
+  const it=IT[p.i],parts=partesDe(it);if(!parts.length)return fechaCor();
+  if(!parts.includes(corPart))corPart=parts[0];
+  const cur=corDe(p,it,corPart);
+  const multi=parts.length>1;
   $('cor').innerHTML='<div class="r" style="justify-content:space-between;margin-bottom:8px"><b style="font-size:.92rem">🎨 '+escn(it.n)+'</b><button class="cb" data-cx="1" style="min-height:38px;padding:6px 12px">✖️</button></div>'
+   +(multi?'<p class="dc" style="margin:0 0 6px">Escolha qual parte pintar 👇</p><div class="r" style="gap:8px;margin-bottom:10px">'
+     +parts.map(c=>'<button class="cb'+(c===corPart?' on':'')+'" data-cp2="'+c+'" style="min-height:42px;padding:6px 12px"><span style="display:inline-block;width:15px;height:15px;border-radius:50%;background:'+corDe(p,it,c)+';border:1.5px solid rgba(0,0,0,.28);margin-right:6px;vertical-align:-3px"></span>'+(NOMEP[c]||('Parte '+(c+1)))+'</button>').join('')+'</div>':'')
    +'<div class="r">'+PALX.map(c=>'<button class="sw'+(c.toLowerCase()===cur.toLowerCase()?' on':'')+'" data-cc="'+c+'" style="background:'+c+'" aria-label="Cor '+c+'"></button>').join('')+'</div>'
    +'<div class="r" style="margin-top:10px"><input type="color" id="cin" value="'+cur+'" aria-label="Escolher cor"><input type="text" id="chex" placeholder="#ff88cc" aria-label="Colar cor"><button class="cb" data-ck="1">Usar</button><button class="cb" data-cp="1">↩️ Original</button></div>';
   $('cor').classList.add('a')}
 $('cor').addEventListener('click',e=>{const g=s=>e.target.closest(s);
   if(g('[data-cx]'))return fechaCor();
   const p=S.placed[sel];if(!p)return fechaCor();
-  if(g('[data-cc]')){p.cc=g('[data-cc]').dataset.cc;sOk();save();render();return cor()}
-  if(g('[data-cp]')){delete p.cc;sOk();save();render();return cor()}
-  if(g('[data-ck]')){const v=normHex($('chex')&&$('chex').value);if(!v)return toast('Cor inválida. Ex: #ff88cc');p.cc=v;sOk();save();render();cor();toast('🎨 Cor aplicada!')}});
-$('cor').addEventListener('input',e=>{if(e.target.id!=='cin')return;const p=S.placed[sel];if(!p)return;p.cc=e.target.value;save();render()});
+  const pinta=c=>{p.pc=p.pc||{};p.pc[corPart]=c;if(corPart===0)p.cc=c;sOk();save();render();return cor()};
+  if(g('[data-cp2]')){corPart=+g('[data-cp2]').dataset.cp2;return cor()}
+  if(g('[data-cc]')){return pinta(g('[data-cc]').dataset.cc)}
+  if(g('[data-cp]')){if(p.pc)delete p.pc[corPart];if(corPart===0)delete p.cc;sOk();save();render();return cor()}
+  if(g('[data-ck]')){const v=normHex($('chex')&&$('chex').value);if(!v)return toast('Cor inválida. Ex: #ff88cc');pinta(v);toast('🎨 Cor aplicada!')}});
+$('cor').addEventListener('input',e=>{if(e.target.id!=='cin')return;const p=S.placed[sel];if(!p)return;p.pc=p.pc||{};p.pc[corPart]=e.target.value;if(corPart===0)p.cc=e.target.value;save();render()});
 
 /* ---------- encaixe e zoom ---------- */
 function updK(){const b=$('bk');if(!b)return;b.textContent=encaixa?'🧲':'🕊️';b.style.background=encaixa?'':'#f0e2ff';b.style.borderColor=encaixa?'':'#c77dff'}
