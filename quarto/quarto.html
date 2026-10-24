@@ -132,6 +132,10 @@ body.n .top h1{color:#ffd9ec}
     <input id="gr" type="range" min="0" max="359" step="5" value="0" aria-label="Girar o item livremente">
     <button class="b" id="brr" aria-label="Girar o item para a direita">⟳</button>
   </span>
+  <button class="b" data-a="at" title="Deixar este item atrás do que está na frente dele">🔙 Atrás</button>
+  <button class="b" data-a="fr" title="Trazer este item pra frente, na sua frente">🔜 Frente</button>
+  <button class="b" data-a="dn" title="Abaixar este item no ar">⬇️ Baixar</button>
+  <button class="b" data-a="up" title="Levantar este item no ar">⬆️ Levantar</button>
   <button class="b" data-a="c">🎨 Cor</button>
   <button class="b" data-a="i">✨ Mexer</button>
   <button class="b" data-a="x">🗑️ Guardar</button>
@@ -968,6 +972,8 @@ function clampIn(p){const it=IT[p.i];if(!it||it.wall)return;const A=obbOf(p.x,p.
 const wallMax=p=>(p.wall==='L'||p.wall==='E2')?S.d:S.w;
 const icol=p=>p&&p.cc?p.cc:PAL[(p&&p.ci)||0];
 const temCor=it=>!!(it.b&&it.b.some(b=>b[6]===0||b[6]===1));
+/* altura final = apoio (z, do empilhamento) + elevação livre (el, escolhida no ⬆️/⬇️) */
+const zOf=p=>(p.z||0)+(p.el||0);
 
 /* ---------- empilhar: itens sobre superfícies (mesas, bancadas...) ---------- */
 const SURFC={m:1,k:1,b:1,te:1,e:1},SURFB={baloes:1,toca:1,panela:1,cesto:1,mantimentos:1,aquario_g:1,gaiola:1,terrario:1,carrossel_musica:1};
@@ -979,7 +985,7 @@ function surfOf(it){if(it._s!==undefined)return it._s;let r=0;
   it._s=r;return r}
 function supAt(ix,x,y,it,ang){let z=0,jj=-1;const A=obbOf(x,y,it,ang);
   S.placed.forEach((q,j)=>{const t=IT[q.i];if(j===ix||t.wall)return;const s=surfOf(t);if(!s)return;
-    if(obbHit(A,obbOf(q.x,q.y,t,q.ang))){const hz=(q.z||0)+s;if(hz>z){z=hz;jj=j}}});
+    if(obbHit(A,obbOf(q.x,q.y,t,q.ang))){const hz=zOf(q)+s;if(hz>z){z=hz;jj=j}}});
   return{j:jj,z}}
 const baseAt=(ix,x,y,it,ang)=>supAt(ix,x,y,it,ang).z;
 function reflow(){const ids=[];
@@ -993,7 +999,7 @@ function livre(ix,x,y,it,ang,rug,z,h){z=z||0;if(h==null)h=1e9;
   const z1=z+h;
   return!S.placed.some((q,j)=>{const t=IT[q.i];if(j===ix||t.wall||!!t.rug!==rug)return false;
     if(!obbHit(A,obbOf(q.x,q.y,t,q.ang)))return false;
-    const q0=q.z||0;return z<q0+hOf(t)&&q0<z1})}
+    const q0=zOf(q);return z<q0+hOf(t)&&q0<z1})}
 function vaga(it){let best=null,bd=1e9;for(let y=0;y<=S.d-it.d;y++)for(let x=0;x<=S.w-it.w;x++)if(livre(-1,x,y,it,0,!!it.rug,0,hOf(it))){const k=Math.abs(x+it.w/2-S.w/2)+Math.abs(y+it.d/2-S.d/2);if(k<bd){bd=k;best=[x,y]}}return best}
 function fixW(p){const t=IT[p.i],mx=wallMax(p)-t.w;
   if(encaixa){p.u=Math.min(mx,Math.max(0,Math.round(p.u*2)/2));p.v=Math.min(WH-t.h-8,Math.max(8,Math.round(p.v/4)*4))}
@@ -1083,15 +1089,22 @@ function render(){
   const rugs=fl.filter(i=>IT[S.placed[i].i].rug),oth=fl.filter(i=>!IT[S.placed[i].i].rug);
   const key=i=>{let k=i,n=0;while(n<8){const p=S.placed[k];if(!p||!(p.z>0))break;const s=supAt(k,p.x,p.y,IT[p.i],p.ang).j;if(s<0||s===k)break;k=s;n++}
     const p=S.placed[k],it=IT[p.i],c=rw(p.x+it.w/2,p.y+it.d/2);return[c[0]+c[1],c[0],n]};
-  oth.sort((a,b)=>{const A=key(a),B=key(b);return A[0]-B[0]||A[1]-B[1]||A[2]-B[2]});
-  const shad=i=>{const p=S.placed[i],it=IT[p.i];if(it.rug||(p.z||0)>0)return'';
+  /* quem decide a hora de desenhar:
+     - itens que dividem o mesmo apoio (mesa + coisas em cima dela) empatam na profundidade,
+       então desenham base → filho (nível) e, no mesmo nível, na ordem escolhida (ord);
+     - itens independentes usam a profundidade natural, com um empurrão de ord. */
+  const ORDB=0.45;
+  oth.sort((a,b)=>{const A=key(a),B=key(b),oa=S.placed[a].ord||0,ob=S.placed[b].ord||0;
+    if(A[0]===B[0]&&A[1]===B[1])return (A[2]-B[2])||(oa-ob);
+    return (A[0]+oa*ORDB)-(B[0]+ob*ORDB)||A[1]-B[1]||A[2]-B[2]});
+  const shad=i=>{const p=S.placed[i],it=IT[p.i];if(it.rug||zOf(p)>0)return'';
     const a=rad(p.ang),ca=Math.cos(a),sa=Math.sin(a),cx=it.w/2,cy=it.d/2;
     const R=(X,Y)=>{const dx=X-cx,dy=Y-cy;return[p.x+cx+dx*ca-dy*sa,p.y+cy+dx*sa+dy*ca]};
     const cs=[[0,0],[it.w,0],[it.w,it.d],[0,it.d]].map(q=>R(q[0],q[1]));
     return'<polygon pointer-events="none" points="'+cs.map(q=>P(q[0]+.14,q[1]+.14,0).join(',')).join(' ')+'" fill="rgba(90,40,90,.14)"/>'};
   const sp=i=>{const p=S.placed[i],it=IT[p.i],on=p.on!==0;
-    return'<g data-ix="'+i+'"'+(it.pet?' class="idle"':'')+'>'+shad(i)+spr(it,p.x,p.y,p.ang,icol(p),on,p.z||0)+'</g>'};
-  const foot=i=>{const p=S.placed[i],it=IT[p.i],z=p.z||0,a=rad(p.ang),ca=Math.cos(a),sa=Math.sin(a),cx=it.w/2,cy=it.d/2;
+    return'<g data-ix="'+i+'"'+(it.pet?' class="idle"':'')+'>'+shad(i)+spr(it,p.x,p.y,p.ang,icol(p),on,zOf(p))+'</g>'};
+  const foot=i=>{const p=S.placed[i],it=IT[p.i],z=zOf(p),a=rad(p.ang),ca=Math.cos(a),sa=Math.sin(a),cx=it.w/2,cy=it.d/2;
     const R=(X,Y)=>{const dx=X-cx,dy=Y-cy;return[p.x+cx+dx*ca-dy*sa,p.y+cy+dx*sa+dy*ca]};
     const cs=[[0,0],[it.w,0],[it.w,it.d],[0,it.d]].map(q=>R(q[0],q[1]));
     return'<polygon points="'+cs.map(q=>P(q[0],q[1],z).join(',')).join(' ')+'" fill="rgba(255,255,255,.3)" stroke="#6b2d5c" stroke-width="1.6" stroke-dasharray="5 3" pointer-events="none"/>'};
@@ -1105,11 +1118,11 @@ function render(){
       h+='<polygon pointer-events="none" points="'+[P(A[0],A[1],0),P(ex,ey,0),P(ex,ey,WH),P(A[0],A[1],WH)].map(q=>q.join(',')).join(' ')+'" fill="#1a1040" opacity=".5"/>'});
     S.placed.forEach(p=>{const it=IT[p.i];if(!it.luz||p.on===0)return;let c;
       if(it.wall){if(VISW.indexOf(p.wall)<0)return;const[A,dir]=edgeOf(p.wall),u2=p.u+it.w/2;c=P(A[0]+dir[0]*u2,A[1]+dir[1]*u2,p.v+it.h/2)}
-      else{c=P(p.x+it.w/2,p.y+it.d/2,(it.gh||30)+(p.z||0))}
+      else{c=P(p.x+it.w/2,p.y+it.d/2,(it.gh||30)+zOf(p))}
       h+='<circle pointer-events="none" cx="'+c[0]+'" cy="'+c[1]+'" r="'+(it.gr||60)+'" fill="url(#gl)"/>'})}
   svg.innerHTML=h;
   $('bar').classList.toggle('on',sel>=0);
-  const p=S.placed[sel];if(p){const it=IT[p.i];$('girar').style.display=it.wall?'none':'flex';$('bar').querySelector('[data-a=c]').style.display=temCor(it)?'':'none';$('bar').querySelector('[data-a=i]').style.display=(it.luz||it.tv||it.pet||it.sound)?'':'none';const gr=$('gr');if(gr&&document.activeElement!==gr)gr.value=String(Math.round(p.ang||0)%360)}
+  const p=S.placed[sel];if(p){const it=IT[p.i];$('girar').style.display=it.wall?'none':'flex';['at','fr','up','dn'].forEach(k=>{const b=$('bar').querySelector('[data-a="'+k+'"]');if(b)b.style.display=it.wall?'none':''});$('bar').querySelector('[data-a=c]').style.display=temCor(it)?'':'none';$('bar').querySelector('[data-a=i]').style.display=(it.luz||it.tv||it.pet||it.sound)?'':'none';const gr=$('gr');if(gr&&document.activeElement!==gr)gr.value=String(Math.round(p.ang||0)%360)}
   $('est').textContent='⭐'+stars();$('bm').dataset.n=pronta();
   document.body.classList.toggle('n',!!S.night);$('bn').textContent=S.night?'☀️':'🌙';
   $('tt').textContent=S.emoji+' '+S.nome;$('qn').textContent=BANK.rooms.length;
@@ -1144,7 +1157,7 @@ function estilo(){
   +'<div style="display:flex;flex-direction:column;align-items:center;gap:6px"><span class="dc">↕️ Comprimento</span><div style="display:flex;gap:8px">'+bDm+bDp+'</div></div>'
   +'</div><p class="dc" style="margin:8px 0 0">Deixe o quarto do jeitinho que você quiser 🥰 É de graça!</p></div>'
   +'<div class="grp"><h4>🧹 Arrumar</h4><div class="op"><button class="cb" data-x="1">Guardar todos os itens</button></div>'
-  +'<p class="dc" style="margin:8px 0 0">Dica: arraste um item para cima de uma mesa, cômoda ou bancada e ele fica apoiado lá em cima 🪴</p></div>'}
+  +'<p class="dc" style="margin:8px 0 0">Dica: arraste um item para cima de uma mesa, cômoda ou bancada e ele fica apoiado lá em cima 🪴 Se algo ficar na frente do que você queria, selecione e use 🔙 Atrás / 🔜 Frente. Pra pendurar ou deixar o item mais alto no ar, use ⬆️ Levantar / ⬇️ Baixar.</p></div>'}
 
 /* ---------- quartos ---------- */
 let qE='🛏️',qRen=-1;
@@ -1174,16 +1187,30 @@ function poe(id){
   if(it.p>0){if((S.owned[id]||0)>0)S.owned[id]--;else if(coins>=it.p){setCoins(coins-it.p);sBuy();toast('💗 '+it.n+' é seu!')}else{sNo();toast('Faltam corações 💗. Jogue um pouco e volte!');return}}
   let p;
   if(it.wall){p={i:id,wall:'R',u:.5,v:70};fixW(p);let t=0;while(S.placed.some(q=>IT[q.i].wall&&q.wall===p.wall&&Math.abs(q.u-p.u)<it.w&&Math.abs(q.v-p.v)<it.h)&&t++<40){p.u+=.5;if(p.u>wallMax(p)-it.w){p.u=.5;p.wall=p.wall==='R'?'L':'R';p.v=p.v>=100?60:p.v+20}fixW(p)}}
-  else{const v=vaga(it);if(!v){if(it.p>0)S.owned[id]=(S.owned[id]||0)+1;sNo();toast('Não cabe mais nada. Que tal ampliar o quarto?');shelf();return}p={i:id,x:v[0],y:v[1],ci:it.def||0,z:0,ang:0}}
+  else{const v=vaga(it);if(!v){if(it.p>0)S.owned[id]=(S.owned[id]||0)+1;sNo();toast('Não cabe mais nada. Que tal ampliar o quarto?');shelf();return}p={i:id,x:v[0],y:v[1],ci:it.def||0,z:0,ang:0,ord:0,el:0}}
   S.placed.push(p);sel=S.placed.length-1;sOk();after();shelf()}
 function guarda(){const p=S.placed[sel];if(!p)return;if(IT[p.i].p>0)S.owned[p.i]=(S.owned[p.i]||0)+1;S.placed.splice(sel,1);sel=-1;sOk();fechaCor();reflow();after();shelf()}
 function mexe(){const p=S.placed[sel];if(!p)return;const it=IT[p.i];
   if(it.luz||it.tv){p.on=p.on===0?1:0;beep(p.on===0?600:1200,.1,'sine')}else beep(it.sound||800,.12,'sine',.06);
   save();render();const g=svg.querySelector('[data-ix="'+sel+'"]');if(g&&(it.pet||it.sound)){g.classList.add('hop');setTimeout(()=>g.classList.remove('hop'),520)}
   const n=pronta();if(n>an)toast('🎯 Missão cumprida!');an=n}
+/* profundidade: manda o item pra frente ou pra trás do que divide o mesmo apoio */
+function ordemItem(d){const p=S.placed[sel];if(!p||IT[p.i].wall)return;
+  p.ord=Math.max(-6,Math.min(6,(p.ord||0)+d));
+  save();render();
+  toast(d>0?('🔜 '+IT[p.i].n+' ficou na frente'):('🔙 '+IT[p.i].n+' ficou atrás'))}
+/* altura livre: levanta ou abaixa o item no ar (por cima do apoio) */
+function elevarItem(d){const p=S.placed[sel];if(!p||IT[p.i].wall)return;
+  p.el=Math.max(0,Math.min(145,(p.el||0)+d));
+  reflow();save();render();
+  toast(p.el===0?('⬇️ '+IT[p.i].n+' voltou pro chão'):(d>0?('⬆️ '+IT[p.i].n+' subiu'):('⬇️ '+IT[p.i].n+' desceu')))}
 $('bar').addEventListener('click',e=>{const a=e.target.closest('[data-a]');if(!a)return;const k=a.dataset.a;
   if(k==='x')return guarda();if(k==='ok'){sel=-1;return render()}if(!S.placed[sel])return;
   if(k==='i')return mexe();
+  if(k==='at')return ordemItem(-1);
+  if(k==='fr')return ordemItem(1);
+  if(k==='up')return elevarItem(5);
+  if(k==='dn')return elevarItem(-5);
   if(k==='c')return cor()});
 /* girar livremente: slider + botões ⟲ ⟳ */
 function girarItem(delta){const p=S.placed[sel];if(!p||IT[p.i].wall)return;
