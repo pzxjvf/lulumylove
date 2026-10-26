@@ -489,10 +489,64 @@
    ========================================================= */
 const PATCHES = [
   {
+    id: "v2.14.0",
+    date: "26 de Outubro de 2026",
+    title: "Nosso Quartinho: vista de cima e bem pertinho 🔭",
+    latest: true,
+    items: [
+      { type: "feat",   text: "📐 Visão de cima: toque no botão do quadradinho (📐) pra ver o quarto todo de cima, como uma planta — perfeito pra enxergar o espaço inteiro e arrumar os móveis sem nada atrapalhando. Toque de novo pra voltar." },
+      { type: "feat",   text: "🔭 Focar no item: com um móvel selecionado, toque em 🔭 Focar e a câmera chega bem pertinho dele, deixando ele no meio da tela pra você ajustar os detalhes." },
+      { type: "feat",   text: "🛋️ Mais móveis e enfeites: cama com dossel, sofá capitonê, poltrona concha, escrivaninha retrô, penteadeira de gavetas, aparador curvo, estante em arco, criado-mudo, banquinho de tule, plantas novas (oliveira, ficus lira, taioba, begônia, jiboia), luzes de tripé, arco e lustre de bolhas, quadros de praia e de noite, neon de coração, varal de fotos e um tapete redondo arco-íris." }
+    ]
+  },
+  {
+    id: "v2.13.0",
+    date: "24 de Outubro de 2026",
+    title: "Nosso Quartinho: do seu tamanho e da sua cor 🎀",
+    latest: false,
+    items: [
+      { type: "feat",   text: "🔍 Aumenta e diminui: selecione um item e arraste a barrinha de tamanho (ou use ➖ / ➕) pra deixar do tamanho que você quiser — igual no The Sims." },
+      { type: "feat",   text: "🎨 Pinta por parte: dá pra mudar a cor do colchão sem mexer na estrutura da cama, trocar só um detalhe e por aí vai. Escolha a parte, toque na cor e pronto." },
+      { type: "feat",   text: "🟣 Tapete redondo de verdade: chegou o tapete em círculo, redondinho, em três tamanhos e ainda uma versão peluda — tudo na aba Tapetes." },
+      { type: "feat",   text: "🎀 Quartinho mais completo: penteadeira com LED, banquinho de penteadeira, chaise longue, mesinha redonda, luminária de pé, buquê de rosas, tulipas, porta-joias, ursinho rosa, secador, chapinha e máquina de costura." },
+      { type: "feat",   text: "🎨 Cores do seu jeito: agora você pinta tudo — a parede, a segunda parede, as listras e as duas cores do chão — no seletor de cor, na aba Estilo. Escolheu na mão? É só clicar em ↩️ Originais pra voltar." },
+      { type: "feat",   text: "🖼️ Quadros mais bonitos: as molduras ficaram simétricas, com a borda do mesmo tamanho de todos os lados — sem mais aquele quadro torto." },
+      { type: "feat",   text: "📌 Item de parede não some mais: quando você pendura algo, ele vai direitinho pra parede que está vendo — sem pular pra outra parede nem desaparecer." },
+      { type: "fix",    text: "👁️ Zoom firme: selecionar um item não afasta mais a visão. O quarto fica do mesmo tamanho, do começo ao fim da decoração." },
+      { type: "feat",   text: "🎁 Tudo de graça: decore sem se preocupar com corações — móveis, tapetes e enfeites são todos gratuitos." }
+    ]
+  },
+  {
+    id: "v2.12.0",
+    date: "24 de Outubro de 2026",
+    title: "Nosso Quartinho: cada coisa no seu lugar 🪴",
+    latest: false,
+    items: [
+      { type: "feat",   text: "🔙🔜 Frente ou atrás: escolha se um item fica na frente ou atrás do que está no mesmo lugar que ele. Sabe a planta que ficava escondida atrás do computador? Agora é só selecionar e mandar pra frente." },
+      { type: "feat",   text: "⬆️⬇️ Altura livre: levante ou abaixe qualquer item no ar do jeitinho que você quiser — pra deixar uma planta mais alta, uma coisinha pendurada ou flutuando no quarto." },
+      { type: "feat",   text: "🧠 Do jeito do The Sims: dá pra apostar um item em cima da mesa sem que ele fique grudado onde você não quer, e ajustar a profundidade e a altura com dois toques." }
+    ]
+  },
+  {
+    id: "v2.11.0",
+    date: "23 de Outubro de 2026",
+    title: "Novo Jogo: Cozinha da Lulu 🍳",
+    latest: false,
+    items: [
+      { type: "game",   text: "🍳 Cozinha da Lulu: um jogo de cozinhar de verdade — pegue os ingredientes, corte você mesma e faça a panela cozinhar no ponto." },
+      { type: "game",   text: "🔪 Corte na mão: escolha a faca e arraste de um lado pro outro sobre a tábua pra picar o alimento em fatias de verdade, uma passada por vez." },
+      { type: "game",   text: "🍲 Panela que cozinha: os alimentos mudam de cor conforme o ponto, douram e podem queimar se você não mexer. Cuidado com o fundo!" },
+      { type: "game",   text: "⏱️ Dois modos: Cozinha Livre, pra inventar pratos sem pressa e guardar na prateleira de casa; e Modo Pedidos, com clientes na janela, pratos certos e tempo correndo." },
+      { type: "feat",   text: "📖 Livro de receitas: descubra receitas novas cozinhando e ganhe corações por cada uma." },
+      { type: "feat",   text: "💗 Corações a cada pedido: quanto mais rápido você entrega, mais corações vão pra Loja de Vales." },
+      { type: "feat",   text: "♿ Controles grandes e no toque: botões de − / + pro fogão, botão de mexer do tamanho da mão, e todo o preparo dá pra fazer só tocando na tela." }
+    ]
+  },
+  {
     id: "v2.10.0",
     date: "22 de Outubro de 2026",
     title: "Novo Jogo: Nosso Quartinho 🏠",
-    latest: true,
+    latest: false,
     items: [
       { type: "game",   text: "🏠 Nosso Quartinho: um cantinho só nosso pra decorar do jeito que a gente quiser — móveis, plantas, luzes, bichinhos, comidinhas e mais de 130 itens pra escolher." },
       { type: "game",   text: "📐 O quarto cresce: começa pequeninho e dá pra expandir até virar o Studio dos Sonhos, com muito mais espaço pra decoração." },

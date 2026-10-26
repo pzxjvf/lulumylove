@@ -23,6 +23,7 @@ body.n .top h1{color:#ffd9ec}
 #zi{position:absolute;right:8px;top:8px;display:flex;flex-direction:column;gap:8px;z-index:5}
 .zb{width:46px;height:46px;border-radius:14px;border:2px solid var(--bd);background:#fff;color:var(--pl);font:900 1.15rem Nunito,sans-serif;cursor:pointer;box-shadow:0 3px 0 var(--sh);display:flex;align-items:center;justify-content:center}
 .zb:active{transform:translateY(2px);box-shadow:0 1px 0 var(--sh)}
+.zb.on{background:#ffd9ec;border-color:#e0245e;color:#6b2d5c}
 #pad{position:absolute;left:8px;bottom:8px;display:grid;grid-template-columns:repeat(3,42px);grid-template-rows:repeat(3,42px);gap:4px;z-index:5;opacity:.94}
 #pad .pb{border:2px solid var(--bd);background:#fff;color:var(--pl);border-radius:12px;font:900 1rem Nunito,sans-serif;cursor:pointer;box-shadow:0 3px 0 var(--sh);display:flex;align-items:center;justify-content:center;padding:0;line-height:1}
 #pad .pb:active{transform:translateY(2px);box-shadow:0 1px 0 var(--sh)}
@@ -38,8 +39,10 @@ body.n .top h1{color:#ffd9ec}
 .sw.on{box-shadow:0 0 0 3px var(--pl2)}
 #cor input[type=color]{width:58px;height:44px;border:2px solid var(--bd);border-radius:12px;background:#fff;padding:2px;cursor:pointer}
 #cor input[type=text]{min-height:44px;border:2px solid var(--bd);border-radius:12px;padding:8px 10px;font:800 .85rem Nunito,sans-serif;color:var(--pl);width:128px}
-#bar{display:none;gap:6px;justify-content:center;align-items:center;padding:4px 8px;flex-wrap:wrap}
-#bar.on{display:flex}
+#bar{display:flex;visibility:hidden;gap:6px;justify-content:center;align-items:center;padding:4px 8px;flex-wrap:nowrap;overflow-x:auto;overflow-y:hidden;min-height:54px;scrollbar-width:none}
+#bar::-webkit-scrollbar{display:none}
+#bar>*{flex:0 0 auto}
+#bar.on{visibility:visible}
 #girar{display:flex;align-items:center;gap:6px;background:#fff;border:2px solid var(--bd);border-radius:999px;padding:2px 8px;box-shadow:0 3px 0 var(--sh)}
 #gr{width:118px;height:30px;accent-color:#6b2d5c;cursor:pointer;margin:0}
 #tamanho{display:flex;align-items:center;gap:6px;background:#fff;border:2px solid var(--bd);border-radius:999px;padding:2px 8px;box-shadow:0 3px 0 var(--sh)}
@@ -112,6 +115,7 @@ body.n .top h1{color:#ffd9ec}
 </header>
 <div class="rw"><svg id="svg" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet"></svg>
   <div id="zi">
+    <button class="zb" id="bcam" aria-label="Ver o quarto de cima, como uma planta">📐</button>
     <button class="zb" data-z="+" aria-label="Aproximar">➕</button>
     <button class="zb" data-z="0" aria-label="Zoom normal">🔍</button>
     <button class="zb" data-z="-" aria-label="Afastar">➖</button>
@@ -145,6 +149,7 @@ body.n .top h1{color:#ffd9ec}
   <button class="b" data-a="fr" title="Trazer este item pra frente, na sua frente">🔜 Frente</button>
   <button class="b" data-a="dn" title="Abaixar este item no ar">⬇️ Baixar</button>
   <button class="b" data-a="up" title="Levantar este item no ar">⬆️ Levantar</button>
+  <button class="b" data-a="foc" title="Chegar bem pertinho deste item">🔭 Focar</button>
   <button class="b" data-a="c">🎨 Cor</button>
   <button class="b" data-a="i">✨ Mexer</button>
   <button class="b" data-a="x">🗑️ Guardar</button>
@@ -175,14 +180,20 @@ const sOk=()=>beep(880,.06),sNo=()=>beep(220,.14),sBuy=()=>{beep(900,.07,'square
 
 /* ---------- geometria isométrica ---------- */
 const WH=150,PAL=['#ff9ec4','#b79cff','#7fd8be','#7ec8ff','#ffd166','#ff8a7a','#d9c3ad'];
-let ROT=0,CO=1,SI=0,CX=0,CY=0,THUMB=false;
+let ROT=0,CO=1,SI=0,CX=0,CY=0,THUMB=false,CAM='iso';
+/* escala da planta (visão de cima): TPL = tamanho de 1 tile, TPZ = quanto a altura "aparece",
+   WTH = espessura da parede na planta (senão paredes alinhadas ao eixo Y ficariam invisíveis) */
+const TPL=32,TPZ=.16,WTH=.22;
 const setRot=deg=>{ROT=((deg%360)+360)%360;const r=ROT*Math.PI/180;CO=Math.cos(r);SI=Math.sin(r)};
 const rw=(x,y)=>{const dx=x-CX,dy=y-CY;return[dx*CO-dy*SI+CX,dx*SI+dy*CO+CY]};
-const P=(x,y,z)=>{if(THUMB)return[(x-y)*32,(x+y)*16-z];const[rx,ry]=rw(x,y);return[(rx-ry)*32,(rx+ry)*16-z]};
+const P=(x,y,z)=>{if(THUMB)return[(x-y)*32,(x+y)*16-z];const[rx,ry]=rw(x,y);
+  if(CAM==='top')return[rx*TPL,ry*TPL-(z||0)*TPZ];
+  return[(rx-ry)*32,(rx+ry)*16-z]};
 function sh(hex,f){const n=parseInt(hex.slice(1),16),c=[n>>16,n>>8&255,n&255].map(v=>Math.round(f<1?v*f:v+(255-v)*(f-1)));return'#'+c.map(v=>v.toString(16).padStart(2,'0')).join('')}
 const pl=(a,f)=>'<polygon points="'+a.map(q=>q[0].toFixed(1)+','+q[1].toFixed(1)).join(' ')+'" fill="'+f+'" stroke="rgba(60,20,60,.18)" stroke-width=".6" stroke-linejoin="round"/>';
-/* normal da face (mundo) girada pela visão: a face só aparece se aponta para a câmera */
-const vn=(nx,ny)=>THUMB?[nx,ny]:[nx*CO-ny*SI,nx*SI+ny*CO];
+/* normal da face (mundo) girada pela visão: a face só aparece se aponta para a câmera.
+   na visão de cima a câmera olha reto pra baixo: nenhuma face "de lado" aparece. */
+const vn=(nx,ny)=>THUMB?[nx,ny]:(CAM==='top'?[0,0]:[nx*CO-ny*SI,nx*SI+ny*CO]);
 const shF=(rx,ry)=>.71+.09*Math.max(-1,Math.min(1,ry-rx));
 function box(gx,gy,x,y,z,w,d,h,c){const X=gx+x,Y=gy+y,T=z+h;let o='';
   const fc=[[0,-1,X,Y,X+w,Y],[1,0,X+w,Y,X+w,Y+d],[0,1,X+w,Y+d,X,Y+d],[-1,0,X,Y+d,X,Y]];
@@ -297,7 +308,16 @@ F('piano','Pianinho',120,'e',2,1,[[0,0,0,2,.8,28,'#26222b'],[0,.8,24,2,.2,4,'#ff
 F('lareira','Lareirinha',150,'e',2,1,[[0,0,0,2,.6,56,'#b5651d'],[.4,.6,0,1.2,.04,26,'#2a1a14'],[.7,.61,2,.6,.02,14,'#ff9f43'],[.85,.61,2,.3,.02,20,'#ffd166'],[-.1,.1,56,2.2,.6,5,'#8d4e17']],{luz:1,gh:18,gr:90});
 F('castelo','Castelinho de almofadas',110,'e',2,2,[[0,0,0,2,2,16,0],[.2,.2,16,1.6,1.6,16,1],[.5,.5,32,1,1,14,0],[.8,.8,46,.4,.4,10,'#ffd166']],{col:1,def:0});
 /* parede (u em tiles, v em px) */
-Wl('quadro','Quadro',40,1,40,()=>'<rect width="1" height="40" fill="#a9744f"/><rect x=".08" y="5" width=".84" height="30" fill="#cfe9ff"/><path d="M.08 5h.84v12l-.28-6-.26 9-.3-5z" fill="#86d19a"/><ellipse cx=".7" cy="26" rx=".11" ry="4" fill="#ffd166"/>');
+/* moldura de quadro: borda uniforme (4px = 0.125 tile) pra ficar simétrica e bonita */
+function qdr(w,h,art,fr,mat){const bb=4,bt=bb/32;
+  return'<rect width="'+w+'" height="'+h+'" fill="'+(fr||'#c99a6b')+'"/>'
+   +'<rect x="'+bt+'" y="'+bb+'" width="'+(w-2*bt)+'" height="'+(h-2*bb)+'" fill="'+(mat||'#fff')+'"/>'
+   +art(bt*2,bb*2,w-4*bt,h-4*bb)}
+Wl('quadro','Quadro',40,1,40,()=>qdr(1,40,(x,y,w,h)=>
+  '<rect x="'+x+'" y="'+y+'" width="'+w+'" height="'+h+'" fill="#cfe9ff"/>'
+  +'<path d="M'+x+' '+(y+h)+' L'+(x+w*.62)+' '+(y+h*.28)+' L'+(x+w)+' '+(y+h*.62)+' L'+(x+w)+' '+(y+h)+' Z" fill="#86d19a"/>'
+  +'<path d="M'+x+' '+(y+h)+' L'+(x+w*.34)+' '+(y+h*.5)+' L'+(x+w*.7)+' '+(y+h)+' Z" fill="#bfe6c9"/>'
+  +'<circle cx="'+(x+w*.78)+'" cy="'+(y+h*.66)+'" r="'+(w*.11)+'" fill="#ffd166"/>'));
 Wl('janela','Janelinha',45,1.4,64,n=>'<rect width="1.4" height="64" fill="#fff"/><rect x=".07" y="6" width="1.26" height="52" fill="'+(n?'#1e2356':'#9fd8ff')+'"/>'+(n?'<ellipse cx=".35" cy="46" rx=".12" ry="5" fill="#fff6c9"/><ellipse cx="1" cy="40" rx=".03" ry="1.4" fill="#fff"/><ellipse cx="1.15" cy="50" rx=".03" ry="1.4" fill="#fff"/>':'<ellipse cx=".35" cy="46" rx=".13" ry="5" fill="#ffd166"/><ellipse cx="1" cy="40" rx=".22" ry="4" fill="#fff"/>')+'<rect x=".66" y="6" width=".08" height="52" fill="#fff"/><rect x=".07" y="30" width="1.26" height="4" fill="#fff"/>');
 Wl('relogio','Relógio',48,.8,30,()=>'<ellipse cx=".4" cy="15" rx=".42" ry="15" fill="#a9744f"/><ellipse cx=".4" cy="15" rx=".35" ry="12.5" fill="#fff"/><rect x=".38" y="15" width=".04" height="9" fill="#333"/><rect x=".4" y="14" width=".2" height="2" fill="#333"/>');
 Wl('prateleira','Prateleira',38,1.6,22,()=>'<rect width="1.6" height="4" fill="#a9744f"/><rect x=".2" y="4" width=".25" height="8" fill="#c96f4a"/><rect x=".15" y="12" width=".35" height="9" fill="#4caf50"/><rect x=".8" y="4" width=".12" height="14" fill="#e85d75"/><rect x=".93" y="4" width=".12" height="11" fill="#5db7de"/><rect x="1.06" y="4" width=".12" height="16" fill="#ffd166"/>');
@@ -403,9 +423,13 @@ Wl('flores_w','Flores na parede',34,.9,26,()=>'<rect x=".4" y="22" width=".1" he
 Wl('letreiro','Letreiro fofo',46,1.4,20,(n,on)=>'<rect width="1.4" height="20" rx="4" fill="'+(on?'#ff9ec4':'#e0b8cf')+'"/><rect x=".12" y="6" width=".8" height="3" fill="#fff"/><rect x=".12" y="12" width="1.1" height="3" fill="#fff"/>',{luz:1,gr:50});
 Wl('nuvem','Nuvem de luz',40,1.2,22,(n,on)=>'<g fill="'+(on?'#fff3c4':'#e6dcc9')+'"><circle cx=".4" cy="12" r="7"/><circle cx=".65" cy="9" r="8"/><circle cx=".9" cy="12" r="7"/><circle cx=".65" cy="15" r="7"/></g>',{luz:1,gr:54});
 Wl('arco_iris','Arco-íris',58,1.6,34,()=>['#ff6fa5','#ff8a7a','#ffd166','#8ecf8b','#7ec8ff','#c77dff'].map((c,i)=>'<path d="M'+(.1+i*.1)+' 34 A '+(.7-i*.1)+' '+(.7-i*.1)+' 0 0 1 '+(1.5-i*.1)+' 34" stroke="'+c+'" stroke-width="3" fill="none"/>').join(''));
-Wl('quadrinho','Quadrinhos',42,1.8,38,()=>'<rect width="1.8" height="38" fill="#a9744f"/>'+[0,1,2].map(i=>'<rect x="'+(.08+i*.58)+'" y="6" width=".5" height="26" fill="'+['#ffd9ec','#cfe9f5','#ffe9a8'][i]+'"/>').join(''));
+Wl('quadrinho','Quadrinhos',42,1.8,38,()=>qdr(1.8,38,(x,y,w,h)=>[0,1,2].map(i=>'<rect x="'+(x+i*(w/3)+.06)+'" y="'+(y+.3)+'" width="'+(w/3-.12)+'" height="'+(h-.6)+'" fill="'+['#ffd9ec','#cfe9f5','#ffe9a8'][i]+'"/>').join('')));
 Wl('bandeirinha','Bandeirinhas',36,2,16,()=>'<rect y="2" width="2" height="1" fill="#7a5a4a"/>'+[0,1,2,3].map(i=>'<polygon points="'+(.15+i*.5)+',3 '+(.4+i*.5)+',3 '+(.28+i*.5)+',14" fill="'+['#ff6fa5','#ffd166','#7ec8ff','#8ecf8b'][i]+'"/>').join(''));
-Wl('foto_casal','Fotinha do casal',70,.9,34,()=>'<rect width=".9" height="34" rx="3" fill="#ffd9ec"/><rect x=".08" y="5" width=".74" height="20" fill="#fff"/><circle cx=".3" cy="13" r="4.5" fill="#ffd1b0"/><circle cx=".6" cy="13" r="4.5" fill="#f0c4a0"/><path d="M.3 17.5c1.5 3 3 3 4.5 0" stroke="#e0245e" stroke-width="1.4" fill="none"/>');
+Wl('foto_casal','Fotinha do casal',70,.9,34,()=>qdr(.9,34,(x,y,w,h)=>
+ '<rect x="'+x+'" y="'+y+'" width="'+w+'" height="'+h+'" fill="#fff6fb"/>'
+ +'<circle cx="'+(x+w*.34)+'" cy="'+(y+h*.4)+'" r="'+(w*.2)+'" fill="#ffd1b0"/>'
+ +'<circle cx="'+(x+w*.66)+'" cy="'+(y+h*.4)+'" r="'+(w*.2)+'" fill="#f0c4a0"/>'
+ +'<path d="M'+(x+w*.5)+' '+(y+h*.9)+' C'+(x+w*.18)+' '+(y+h*.6)+' '+(x+w*.3)+' '+(y+h*.44)+' '+(x+w*.5)+' '+(y+h*.6)+' C'+(x+w*.7)+' '+(y+h*.44)+' '+(x+w*.82)+' '+(y+h*.6)+' '+(x+w*.5)+' '+(y+h*.9)+' z" fill="#e0245e"/>','#ffd9ec'));
 /* tapetes */
 F('tp11','Tapetinho',14,'t',1,1,[[0,0,0,1,1,2,0],[.15,.15,2,.7,.7,.5,1]],{col:1,rug:1});
 F('tp42','Tapete 4×2',62,'t',4,2,[[0,0,0,4,2,2,0],[.25,.25,2,3.5,1.5,.6,1],[.5,.5,2.6,3,.9,.6,0]],{col:1,rug:1,def:3});
@@ -505,7 +529,10 @@ Wl('calendario','Calendário',30,1,28,()=>'<rect width="1" height="28" rx="3" fi
 Wl('placa','Plaquinha fofa',24,1.1,18,()=>'<rect width="1.1" height="18" rx="4" fill="#ffd9ec" stroke="#e0b8cf" stroke-width=".08"/><rect x=".16" y="5" width=".78" height="2.4" fill="#e0245e"/><rect x=".16" y="10" width=".6" height="2.4" fill="#e0245e"/>');
 Wl('lousa','Lousinha',44,1.5,32,()=>'<rect width="1.5" height="32" rx="3" fill="#8b5a3c"/><rect x=".07" y="4" width="1.36" height="24" fill="#2f3a34"/><path d="M.2 22 L.6 12 L1 20 L1.3 14" stroke="#fff" stroke-width=".5" fill="none"/>');
 Wl('guirlanda','Guirlanda de luzes',38,2,14,(n,on)=>'<path d="M0 5 Q.5 11 1 5 T2 5" stroke="#4caf50" stroke-width=".5" fill="none"/>'+[0,1,2,3,4,5].map(i=>'<circle cx="'+(.1+i*.36)+'" cy="'+(i%2?8:5)+'" r=".07" fill="'+['#ff6fa5','#ffd166','#7ad7f0','#9be37f','#c77dff','#ff8a7a'][i]+'" opacity="'+(on?1:.6)+'"/>').join(''),{luz:1,gr:50});
-Wl('quadro_abstrato','Quadro abstrato',46,1.1,34,()=>'<rect width="1.1" height="34" fill="#a9744f"/><rect x=".07" y="4" width=".96" height="26" fill="#fff"/><circle cx=".35" cy="14" r="4" fill="#ff8a7a"/><rect x=".5" y="18" width=".4" height="8" fill="#7ec8ff"/><path d="M.12 26 L.45 12" stroke="#ffd166" stroke-width="1.2"/>');
+Wl('quadro_abstrato','Quadro abstrato',46,1.1,34,()=>qdr(1.1,34,(x,y,w,h)=>
+  '<circle cx="'+(x+w*.42)+'" cy="'+(y+h*.4)+'" r="'+(w*.24)+'" fill="#ff8a7a"/>'
+  +'<rect x="'+(x+w*.52)+'" y="'+(y+h*.58)+'" width="'+(w*.36)+'" height="'+(h*.3)+'" fill="#7ec8ff"/>'
+  +'<path d="M'+x+' '+(y+h*.88)+' L'+(x+w*.82)+' '+(y+h*.2)+'" stroke="#ffd166" stroke-width="2" fill="none"/>'));
 /* ---------- catálogo extra ---------- */
 /* brinquedos */
 F('ioio','Ioiô',14,'br',1,1,[[.4,.4,0,.2,.2,14,0],[.44,.44,14,.06,.06,8,1]],{col:1});
@@ -603,7 +630,8 @@ F('mesa_redonda','Mesa redonda',66,'m',2,2,[[.9,.9,0,.2,.2,20,WD],[.9,.1,0,.2,.2
 F('estante_baixa','Estante baixa',48,'m',2,1,[[0,0,0,2,.4,40,WD],[.1,.4,8,.36,.06,24,'#e85d75'],[.56,.4,8,.36,.06,24,'#5db7de'],[1.1,.4,8,.36,.06,24,'#ffd166'],[1.5,.4,24,.36,.06,12,'#8ecf8b']]);
 F('criado_red','Mesa de canto',42,'m',1,1,[[.08,.08,0,.84,.84,20,WD2],[0,0,20,.14,1,4,WD],[.86,0,20,.14,1,4,WD],[0,0,20,1,.14,4,WD],[0,.86,20,1,.14,4,WD]]);
 /* parede */
-Wl('quadro_amor','Quadro do amor',60,1.2,32,()=>'<rect width="1.2" height="32" rx="3" fill="#ffd9ec"/><rect x=".08" y="4" width="1.04" height="24" fill="#fff"/><path d="M.6 26 C.35 20 .3 17 .42 15.5 .5 14.5 .6 15 .6 16 .6 15 .7 14.5 .78 15.5 .9 17 .85 20 .6 26z" fill="#e0245e"/>');
+Wl('quadro_amor','Quadro do amor',60,1.2,32,()=>qdr(1.2,32,(x,y,w,h)=>
+  '<path d="M'+(x+w*.5)+' '+(y+h*.88)+' C'+(x+w*.16)+' '+(y+h*.5)+' '+(x+w*.28)+' '+(y+h*.26)+' '+(x+w*.5)+' '+(y+h*.44)+' C'+(x+w*.72)+' '+(y+h*.26)+' '+(x+w*.84)+' '+(y+h*.5)+' '+(x+w*.5)+' '+(y+h*.88)+' z" fill="#e0245e"/>','#ffd9ec'));
 Wl('prateleira_plantas','Prateleira de plantas',48,1.6,24,()=>'<rect width="1.6" height="4" fill="#a9744f"/><rect x=".14" y="4" width=".24" height="10" fill="#c96f4a"/><circle cx=".26" cy="6" r="6" fill="#4caf50"/><rect x=".72" y="4" width=".24" height="12" fill="#c96f4a"/><circle cx=".84" cy="6" r="7" fill="#5cb85c"/><rect x="1.28" y="4" width=".2" height="9" fill="#c96f4a"/><circle cx="1.38" cy="7" r="5" fill="#7bd37f"/>');
 
 /* ---------- catálogo extra 2 ---------- */
@@ -814,9 +842,20 @@ F('pen_drive','Pendrive',14,'te',1,1,[[.4,.4,0,.2,.2,14,'#c9ced3'],[.42,.42,14,.
 F('hd_externo','HD externo',52,'te',1,1,[[.16,.24,0,.68,.5,18,'#333'],[.2,.28,18,.6,.42,4,'#555'],[.3,.36,14,.4,.1,3,'#7ad7f0']]);
 F('carregador_solar','Carregador solar',38,'te',1,1,[[.12,.16,0,.76,.68,4,'#3a6ff7'],[.2,.24,4,.6,.52,3,'#7ec8ff'],[.3,.3,7,.4,.4,2,'#fff']]);
 /* parede */
-Wl('quadro_flores','Quadro de flores',52,1.4,34,()=>'<rect width="1.4" height="34" rx="3" fill="#fff"/><rect x=".08" y="4" width="1.24" height="26" fill="#ffd9ec"/><circle cx=".4" cy="16" r="5" fill="#ff6fa5"/><circle cx=".7" cy="14" r="6" fill="#e0245e"/><circle cx="1" cy="17" r="5" fill="#ff9ec4"/><rect x=".66" y="18" width=".06" height="12" fill="#4caf50"/>');
-Wl('quadro_mar','Quadro do mar',56,1.6,30,()=>'<rect width="1.6" height="30" rx="3" fill="#fff"/><rect x=".08" y="4" width="1.44" height="22" fill="#7ec8ff"/><path d="M.08 16 Q .4 13 .8 16 T 1.52 16 V26 H.08z" fill="#4aa3ff"/><circle cx="1.3" cy="10" r="4" fill="#fff3c4"/>');
-Wl('quadro_abstrato_2','Quadro abstrato',64,1.8,36,()=>'<rect width="1.8" height="36" rx="3" fill="#fff"/><rect x=".08" y="4" width="1.64" height="28" fill="#f3e6d8"/><rect x=".2" y="10" width=".6" height=".6" fill="#e0245e"/><rect x="1" y="20" width=".6" height=".6" fill="#3a6ff7"/><rect x=".3" y="24" width="1.2" height=".5" fill="#ffd166"/>');
+Wl('quadro_flores','Quadro de flores',52,1.4,34,()=>qdr(1.4,34,(x,y,w,h)=>
+  '<rect x="'+(x+w*.47)+'" y="'+(y+h*.46)+'" width="'+(w*.06)+'" height="'+(h*.5)+'" fill="#4caf50"/>'
+  +'<circle cx="'+(x+w*.32)+'" cy="'+(y+h*.4)+'" r="'+(w*.11)+'" fill="#ff6fa5"/>'
+  +'<circle cx="'+(x+w*.5)+'" cy="'+(y+h*.32)+'" r="'+(w*.13)+'" fill="#e0245e"/>'
+  +'<circle cx="'+(x+w*.68)+'" cy="'+(y+h*.42)+'" r="'+(w*.11)+'" fill="#ff9ec4"/>','#fff0f6'));
+Wl('quadro_mar','Quadro do mar',56,1.6,30,()=>qdr(1.6,30,(x,y,w,h)=>
+  '<rect x="'+x+'" y="'+y+'" width="'+w+'" height="'+h+'" fill="#cdefff"/>'
+  +'<path d="M'+x+' '+(y+h*.55)+' Q '+(x+w*.25)+' '+(y+h*.44)+' '+(x+w*.5)+' '+(y+h*.55)+' T '+(x+w)+' '+(y+h*.55)+' V'+(y+h)+' H'+x+' Z" fill="#4aa3ff"/>'
+  +'<circle cx="'+(x+w*.78)+'" cy="'+(y+h*.26)+'" r="'+(w*.09)+'" fill="#fff3c4"/>'));
+Wl('quadro_abstrato_2','Quadro abstrato',64,1.8,36,()=>qdr(1.8,36,(x,y,w,h)=>
+  '<rect x="'+x+'" y="'+y+'" width="'+w+'" height="'+h+'" fill="#f7efe4"/>'
+  +'<circle cx="'+(x+w*.3)+'" cy="'+(y+h*.34)+'" r="'+(w*.13)+'" fill="#e0245e"/>'
+  +'<rect x="'+(x+w*.55)+'" y="'+(y+h*.52)+'" width="'+(w*.3)+'" height="'+(h*.3)+'" fill="#3a6ff7"/>'
+  +'<rect x="'+(x+w*.2)+'" y="'+(y+h*.76)+'" width="'+(w*.6)+'" height="'+(h*.1)+'" fill="#ffd166"/>'));
 Wl('relogio_parede','Relógio de parede',48,1,26,()=>'<circle cx=".5" cy="13" r="12" fill="#fff" stroke="#8a6d76" stroke-width="2"/><rect x=".46" y="13" width=".04" height="8" fill="#333"/><rect x=".5" y="9" width="6" height=".04" fill="#333"/><circle cx=".5" cy="13" r="1.2" fill="#e0245e"/>');
 Wl('espelho_oval','Espelho oval',60,1,34,()=>'<ellipse cx=".5" cy="17" rx=".4" ry="15" fill="#8a6d76"/><ellipse cx=".5" cy="17" rx=".34" ry="13" fill="#dfe6ea"/>');
 Wl('prateleira_livros','Prateleira de livros',44,1.6,42,()=>'<rect width="1.6" height="5" fill="#a9744f"/><rect x=".1" y="5" width=".14" height="16" fill="#e0245e"/><rect x=".28" y="5" width=".12" height="14" fill="#3a6ff7"/><rect x=".44" y="5" width=".16" height="18" fill="#ffd166"/><rect x=".84" y="5" width=".12" height="15" fill="#3fa86a"/><rect x="1" y="5" width=".16" height="17" fill="#c77dff"/><rect x="1.2" y="5" width=".1" height="13" fill="#ff6fa5"/>');
@@ -938,6 +977,51 @@ F('maquina_costura','Máquina de costura',96,'te',1,1,[[0,0,0,1,.9,26,0],[.1,.1,
 F('porta_joias','Porta-joias',42,'br',1,1,[[.16,.24,0,.68,.5,16,'#ffd9ec'],[.16,.24,16,.68,.5,6,'#ff9ec4'],[.44,.49,10,.1,.04,4,'#d4af37'],[.26,.28,22,.16,.16,5,'#ff6fa5']],{col:1,def:1});
 F('ursinho_rosa','Ursinho rosa',52,'br',1,1,[[.18,.22,0,.64,.54,22,'#ffb7d5'],[.26,.26,22,.48,.44,16,'#ffd1e3'],[.28,.3,38,.12,.12,6,'#ff9ec4'],[.6,.3,38,.12,.12,6,'#ff9ec4'],[.34,.7,30,.08,.02,4,'#222'],[.58,.7,30,.08,.02,4,'#222']],{pet:1,sound:520});
 
+/* ===== móveis e decoração novos ===== */
+/* móveis */
+F('cama_dossel_veludo','Cama com dossel',146,'m',2,2,[[.04,.04,0,.1,.1,96,WD],[1.86,.04,0,.1,.1,96,WD],[.04,1.86,0,.1,.1,56,WD],[1.86,1.86,0,.1,.1,56,WD],[0,.02,96,2,.06,6,0],[.06,.06,20,1.88,1.88,5,'#7a4a6a'],[.1,.1,25,1.8,1.8,10,0],[.24,.28,35,.66,.5,5,'#fff'],[1.1,.28,35,.66,.5,5,'#fff'],[.14,1.5,35,1.72,.44,4,1]],{col:1,def:2});
+F('sofa_capitone','Sofá capitonê',118,'m',2,1,[[0,0,0,2,.32,32,0],[0,.32,0,2,.68,16,0],[0,.32,16,.24,.68,12,0],[1.76,.32,16,.24,.68,12,0],[.24,.4,16,.62,.56,8,1],[.8,.4,16,.62,.56,8,1],[1.36,.4,16,.62,.56,8,1]],{col:1,def:5});
+F('poltrona_concha','Poltrona concha',82,'m',1,1,[[.08,.08,0,.84,.84,14,0],[.2,.16,14,.6,.66,12,1],[.06,.06,26,.44,.88,20,0],[.6,.06,26,.34,.88,18,0],[.22,.32,32,.3,.4,6,'#ffd166'],[.5,.32,32,.3,.4,6,'#ffd166']],{col:1,def:4});
+F('escrivaninha_retro','Escrivaninha retrô',86,'m',2,1,[[.06,.1,0,.14,.14,26,WD],[1.8,.1,0,.14,.14,26,WD],[.06,.76,0,.14,.14,26,WD],[1.8,.76,0,.14,.14,26,WD],[0,0,26,2,1,4,WD2],[.14,.14,4,.6,.72,26,1],[1.1,.14,4,.76,.7,18,1],[.3,.3,30,.4,.4,4,'#ff9ec4']],{col:0});
+F('mesinha_cabeceira','Mesinha de cabeceira',42,'m',1,1,[[.36,.36,0,.14,.14,20,WD],[.08,.08,20,.84,.84,5,WD2],[.24,.24,25,.52,.52,4,0],[.2,.2,29,.24,.24,6,'#ffd166'],[.34,.34,31,.2,.2,8,'#ff6fa5']],{col:1,def:2});
+F('criado_arco','Criado-mudo em arco',58,'m',1,1,[[0,0,0,.3,1,40,0],[.3,.04,0,.7,.92,34,0],[.36,.1,6,.58,.8,8,1],[.36,.1,20,.58,.8,8,1],[.6,.96,12,.12,.04,3,'#d4af37'],[.6,.96,24,.12,.04,3,'#d4af37']],{col:1,def:6});
+F('estante_arco','Estante em arco',96,'m',1,1,[[0,0,0,.3,1,88,WD],[0,0,6,.3,.98,6,0],[0,.24,28,.28,.5,5,WD2],[0,.2,54,.28,.5,5,WD2],[.2,.24,14,.3,.3,18,'#ff9ec4'],[.2,.62,14,.3,.3,18,'#8ecf8b'],[.2,.28,40,.3,.3,18,'#ffd166'],[.2,.64,40,.3,.3,18,'#7ec8ff']],{col:1,def:1});
+F('aparador_curvo','Aparador curvo',104,'m',2,1,[[.06,.2,0,.16,.16,26,WD],[1.78,.2,0,.16,.16,26,WD],[.06,.64,0,.16,.16,26,WD],[1.78,.64,0,.16,.16,26,WD],[0,.06,26,2,.88,5,WD2],[.1,.12,31,.8,.76,26,'#dcefff'],[1.1,.12,31,.8,.76,26,'#dcefff'],[.46,.5,26,.05,.3,20,'#d4af37'],[1.5,.5,26,.05,.3,20,'#d4af37']],{col:0});
+F('banquinho_tule','Banquinho de tule',36,'m',1,1,[[.14,.14,0,.72,.72,6,WD2],[.16,.16,6,.68,.68,22,1],[.2,.2,28,.6,.6,5,0],[.16,.16,0,.28,.28,26,WD],[.56,.56,0,.28,.28,26,WD]],{col:1,def:1});
+F('penteadeira_gav','Penteadeira de gavetas',110,'m',2,1,[[0,0,0,2,.55,30,0],[0,0,30,2,.55,3,1],[.06,.1,33,1.88,.45,40,0],[.1,.14,37,.8,.4,8,1],[1.02,.14,37,.8,.4,8,1],[.1,.14,51,.8,.4,8,1],[1.02,.14,51,.8,.4,8,1],[.4,.56,41,.14,.06,3,'#d4af37'],[1.3,.56,41,.14,.06,3,'#d4af37'],[.3,.6,75,.5,.08,38,'#dcefff'],[1.2,.6,75,.5,.08,38,'#dcefff']],{col:1,def:0});
+F('sofa_pes_bola','Sofá de pés de bola',112,'m',2,1,[[.1,.1,0,.16,.16,8,'#8a6d76'],[1.74,.1,0,.16,.16,8,'#8a6d76'],[.1,.74,0,.16,.16,8,'#8a6d76'],[1.74,.74,0,.16,.16,8,'#8a6d76'],[0,0,8,2,.9,26,0],[0,.08,26,2,.2,14,0],[0,.28,26,.22,.62,10,0],[1.78,.28,26,.22,.62,10,0],[.26,.34,26,.68,.58,6,1],[1.06,.34,26,.68,.58,6,1]],{col:1,def:3});
+F('mesa_cabeceira_alta','Mesa de cabeceira alta',64,'m',1,1,[[0,0,0,1,.6,52,0],[.06,.06,4,.88,.48,4,1],[.06,.06,22,.88,.48,4,1],[.06,.06,40,.88,.48,4,1],[.44,.6,10,.12,.06,4,'#d4af37'],[.44,.6,28,.12,.06,4,'#d4af37'],[.3,.3,56,.4,.4,4,'#ffd166']],{col:1,def:5});
+/* plantas */
+F('oliveira','Oliveira',72,'p',1,1,[[.26,.26,0,.48,.48,14,PT],[.34,.38,14,.12,.12,30,'#8b6b3c'],[.18,.18,42,.72,.72,24,'#8fbf8a'],[.32,.28,58,.42,.42,18,'#a8cfa0']]);
+F('ficus_lira','Ficus lira',62,'p',1,1,[[.26,.26,0,.48,.48,16,PT],[.4,.4,16,.14,.14,40,'#8b6b3c'],[.14,.14,52,.74,.74,22,'#2e8b57'],[.3,.3,68,.42,.42,16,'#3fa86a']]);
+F('taioba','Taioba',44,'p',1,1,[[.24,.24,0,.52,.52,14,PT],[.38,.38,14,.12,.12,24,'#7a8b3c'],[.06,.06,36,.88,.88,10,'#3fa86a'],[.24,.24,44,.52,.52,8,'#4caf50']]);
+F('begonia','Begônia',28,'p',1,1,[pot,[.28,.28,12,.44,.44,10,'#5cb85c'],[.24,.24,22,.5,.5,8,'#e0245e'],[.42,.4,28,.16,.16,4,'#ff9ec4']]);
+F('jiboia_alta','Jiboia alta',52,'p',1,1,[[.24,.24,0,.52,.52,16,PT],[.36,.36,16,.28,.28,8,'#7a4a2a'],[.2,.2,24,.6,.6,38,'#2e8b57'],[.5,.34,50,.26,.4,16,'#4caf50'],[.28,.5,44,.3,.3,12,'#5cb85c']]);
+/* luzes */
+F('luminaria_tripe','Luminária tripé',66,'l',1,1,[[.32,.32,0,.36,.36,4,'#8a6d76'],[.44,.44,4,.12,.12,56,'#c8935c'],[.14,.14,0,.12,.12,54,'#c8935c'],[.74,.74,0,.12,.12,54,'#c8935c'],[.2,.2,58,.6,.6,18,'#ffe9a8']],{luz:1,gh:70,gr:88});
+F('lustre_bolha','Lustre de bolhas',108,'l',1,1,[[.46,.46,72,.08,.08,32,'#c9ced3'],[.24,.24,62,.52,.52,14,'#fff'],[.4,.4,50,.2,.2,10,'#eaf6ff'],[.34,.22,40,.28,.24,10,'#eaf6ff'],[.4,.58,54,.28,.28,10,'#eaf6ff'],[.18,.34,72,.2,.2,8,'#fff3c4'],[.62,.5,66,.18,.18,8,'#fff3c4']],{luz:1,gh:78,gr:104});
+F('arco_luz','Luz de arco',92,'l',1,1,[[.06,.3,0,.16,.16,66,'#8a9298'],[.46,.46,66,.1,.1,10,'#8a9298'],[.06,.38,70,.72,.08,6,'#c9ced3'],[.62,.36,70,.2,.2,10,'#ffe9a8']],{luz:1,gh:80,gr:90});
+F('vela_trio','Trio de velas',26,'l',1,1,[[.18,.3,0,.2,.2,16,'#fff'],[.5,.3,0,.2,.2,24,'#ffd9ec'],[.34,.5,0,.2,.2,20,'#fff'],[.22,.34,16,.12,.12,4,'#ffb347'],[.54,.34,24,.12,.12,4,'#ffb347'],[.38,.54,20,.12,.12,4,'#ffb347']],{luz:1,gh:30,gr:54});
+/* parede */
+Wl('quadro_praia','Quadro da praia',58,1.6,30,()=>qdr(1.6,30,(x,y,w,h)=>
+  '<rect x="'+x+'" y="'+(y+h*.62)+'" width="'+w+'" height="'+(h*.38)+'" fill="#ffefc0"/>'
+  +'<rect x="'+x+'" y="'+(y+h*.26)+'" width="'+w+'" height="'+(h*.36)+'" fill="#7ec8ff"/>'
+  +'<circle cx="'+(x+w*.74)+'" cy="'+(y+h*.82)+'" r="'+(w*.09)+'" fill="#fff3c4"/>'
+  +'<path d="M'+(x+w*.6)+' '+(y+h*.62)+' q '+(w*.09)+' '+(h*.2)+' '+(w*.2)+' 0 z" fill="#8ecf8b"/>','#fff0f6'));
+Wl('quadro_noite','Quadro da noite',56,1.4,32,()=>qdr(1.4,32,(x,y,w,h)=>
+  '<rect x="'+x+'" y="'+y+'" width="'+w+'" height="'+h+'" fill="#2f2a55"/>'
+  +'<circle cx="'+(x+w*.62)+'" cy="'+(y+h*.72)+'" r="'+(w*.16)+'" fill="#ffe9a8"/>'
+  +'<circle cx="'+(x+w*.3)+'" cy="'+(y+h*.3)+'" r="'+(w*.045)+'" fill="#fff"/>'
+  +'<circle cx="'+(x+w*.78)+'" cy="'+(y+h*.42)+'" r="'+(w*.032)+'" fill="#fff"/>'
+  +'<circle cx="'+(x+w*.2)+'" cy="'+(y+h*.58)+'" r="'+(w*.028)+'" fill="#fff"/>'
+  +'<rect x="'+x+'" y="'+y+'" width="'+w+'" height="'+(h*.2)+'" fill="#3d3768"/>','#e8e2ff'));
+Wl('prateleira_flor_w','Prateleira com flor',44,1.4,24,()=>'<rect width="1.4" height="4" fill="#a9744f"/><rect x=".2" y="4" width=".24" height="8" fill="#c96f4a"/><circle cx=".32" cy="13" r="7" fill="#3fa86a"/><rect x=".82" y="4" width=".24" height="10" fill="#c96f4a"/><circle cx=".94" cy="15" r="6" fill="#ff6fa5"/><circle cx=".94" cy="17" r="3" fill="#ffd166"/>');
+Wl('neon_amor_luz','Neon coração',54,.9,30,()=>'<path transform="scale(.03,1)" d="M15 0C-5 14 0 28 8 28 12 28 15 25 15 22 15 25 18 28 22 28 30 28 35 14 15 0z" fill="#ff6fa5"/>',{luz:1,gr:60});
+Wl('varal_fotos','Varal de fotos',50,1.8,20,()=>'<path d="M0 16 Q .9 12 1.8 16" stroke="#8a6d76" stroke-width="1" fill="none"/><rect x=".2" y="6" width=".36" height=".34" fill="#fff" stroke="#8a6d76" stroke-width=".8"/><rect x=".72" y="4" width=".32" height=".4" fill="#fff" stroke="#8a6d76" stroke-width=".8"/><rect x="1.24" y="7" width=".36" height=".34" fill="#fff" stroke="#8a6d76" stroke-width=".8"/>');
+/* tapetes */
+F('tapete_fofinho','Tapete fofinho',46,'t',2,2,[[0,0,0,2,2,4,0],[.15,.15,4,1.7,1.7,.8,1]],{rug:1,col:1,def:4});
+F('tapete_red_arco','Tapete redondo arco-íris',68,'t',3,3,[[0,0,0,3,3,2,0]],{col:1,rug:1,def:1,round:1,th:2,rings:[[.86,'#e0245e',.03],[.7,'#ff9f43',.06],[.54,'#ffd166',.09],[.38,'#8ecf8b',.12],[.22,'#7ec8ff',.15]]});
+
 const CATS=[['m','🛏️ Móveis'],['p','🪴 Plantas'],['l','💡 Luzes'],['f','🐰 Bichinhos'],['c','🍰 Comidinhas'],['k','🍳 Cozinha'],['b','🛁 Banho'],['j','🌳 Jardim'],['br','🧸 Brinquedos'],['fe','🎉 Festa'],['ro','👗 Roupas'],['te','💻 Tecnologia'],['w','🖼️ Parede'],['t','🟣 Tapetes'],['e','🌈 Especiais'],['est','🎨 Estilo']];
 /* ---------- sub-categorias (estilo The Sims) ---------- */
 const SUBS={
@@ -982,20 +1066,25 @@ const QMIN=6,QMAX=24,QINI=10;
 const mini=(w,d,px)=>{const M=Math.max(w,d),a=(w/M*88).toFixed(1),b=(d/M*88).toFixed(1);return'<svg viewBox="0 0 100 100" width="'+px+'" height="'+px+'" aria-hidden="true"><rect x="'+((100-a)/2).toFixed(1)+'" y="'+((100-b)/2).toFixed(1)+'" width="'+a+'" height="'+b+'" rx="8" fill="#ffd9ec" stroke="#6b2d5c" stroke-width="4"/></svg>'};
 
 /* ---------- estado ---------- */
-const criaQ=(nome,emoji,tema)=>({nome:nome||'Meu quartinho',emoji:emoji||'🏠',tema:tema||0,w:QINI,d:QINI,wall:WALLS[0],strp:1,floor:'madeira',night:false,placed:[],owned:{},m:{},ms:PR?geraMS():[]});
+const criaQ=(nome,emoji,tema)=>({nome:nome||'Meu quartinho',emoji:emoji||'🏠',tema:tema||0,w:QINI,d:QINI,wall:WALLS[0],strp:1,floor:'madeira',night:false,placed:[],owned:{},m:{},ms:PR?geraMS():[],w2:null,sC:null,fA:null,fB:null});
+const hexOk=v=>typeof v==='string'&&/^#[0-9a-f]{6}$/i.test(v)?v:null;
 const LIMPA=q=>{q=q||{};q.placed=(q.placed||[]).filter(p=>p&&IT[p.i]);q.owned=q.owned||{};q.m=q.m||{};
   if(!q.ms||!q.ms.length)q.ms=PR?geraMS():[];
   q.placed.forEach(p=>{if(p.r)p.ang=((p.ang||0)+90)%360;p.ang=((+p.ang||0)%360+360)%360;delete p.r});
   if(q.w==null||q.d==null){const s=8+2*Math.max(0,Math.min(6,q.lv|0));if(q.w==null)q.w=s;if(q.d==null)q.d=s}
   delete q.lv;
   q.w=Math.min(QMAX,Math.max(QMIN,Math.round(q.w)||QINI));q.d=Math.min(QMAX,Math.max(QMIN,Math.round(q.d)||QINI));
-  q.floor=FLR[q.floor]?q.floor:'madeira';q.wall=WALLS.indexOf(q.wall)<0?WALLS[0]:q.wall;q.emoji=q.emoji||'🏠';q.tema=q.tema|0;q.nome=q.nome||'Meu quartinho';q.strp=q.strp?1:0;q.night=!!q.night;return q};
-let BANK={cur:0,rooms:[],photo:false,m:{},zoom:1,snap:true,rot:0,panX:0,panY:0};
-try{const r=JSON.parse(localStorage.getItem(KS)||'{}');if(r&&Array.isArray(r.rooms)&&r.rooms.length){BANK.rooms=r.rooms.map(LIMPA);BANK.cur=Math.min(r.rooms.length-1,Math.max(0,r.cur|0));BANK.photo=!!r.photo;BANK.m=r.m||{};BANK.zoom=Number(r.zoom)||1;BANK.snap=r.snap!==false;BANK.rot=Number(r.rot)||0;BANK.panX=Number(r.panX)||0;BANK.panY=Number(r.panY)||0}else BANK.rooms=[criaQ('Meu quartinho','🏠')]}catch(e){BANK.rooms=[criaQ('Meu quartinho','🏠')]}
+  q.floor=FLR[q.floor]?q.floor:'madeira';q.wall=hexOk(q.wall)||WALLS[0];q.emoji=q.emoji||'🏠';q.tema=q.tema|0;q.nome=q.nome||'Meu quartinho';q.strp=q.strp?1:0;q.night=!!q.night;
+  q.w2=hexOk(q.w2);q.sC=hexOk(q.sC);q.fA=hexOk(q.fA);q.fB=hexOk(q.fB);return q};
+let BANK={cur:0,rooms:[],photo:false,m:{},zoom:1,snap:true,rot:0,panX:0,panY:0,cam:'iso'};
+try{const r=JSON.parse(localStorage.getItem(KS)||'{}');if(r&&Array.isArray(r.rooms)&&r.rooms.length){BANK.rooms=r.rooms.map(LIMPA);BANK.cur=Math.min(r.rooms.length-1,Math.max(0,r.cur|0));BANK.photo=!!r.photo;BANK.m=r.m||{};BANK.zoom=Number(r.zoom)||1;BANK.snap=r.snap!==false;BANK.rot=Number(r.rot)||0;BANK.panX=Number(r.panX)||0;BANK.panY=Number(r.panY)||0;BANK.cam=r.cam==='top'?'top':'iso'}else BANK.rooms=[criaQ('Meu quartinho','🏠')]}catch(e){BANK.rooms=[criaQ('Meu quartinho','🏠')]}
 let S=BANK.rooms[BANK.cur];
 const save=()=>{try{localStorage.setItem(KS,JSON.stringify(BANK))}catch(e){}};
 let sel=-1,tab='m',dr=null,panD=null;
 let zoom=BANK.zoom||1,encaixa=BANK.snap!==false,panX=BANK.panX||0,panY=BANK.panY||0;
+CAM=BANK.cam||'iso';
+/* limites da cena do último desenho (usados pela câmera de foco) */
+let LB=null;
 const clampPan=()=>{const lim=1600;panX=Math.max(-lim,Math.min(lim,panX));panY=Math.max(-lim,Math.min(lim,panY))};
 const rad=a=>((a||0)%360)*Math.PI/180;
 function obb(x,y,w,d,ang){const a=rad(ang),ca=Math.cos(a),sa=Math.sin(a),hw=w/2,hd=d/2;
@@ -1053,10 +1142,15 @@ function caber(){S.placed.forEach(p=>{const it=IT[p.i];if(it.wall){p.u=Math.max(
 /* ---------- paredes visíveis (recorte tipo The Sims) ---------- */
 let VISW=['R','L'],WALLT={};
 function edgeOf(key){if(key==='R')return[[0,0],[1,0],S.w];if(key==='L')return[[0,0],[0,1],S.d];if(key==='E2')return[[S.w,0],[0,1],S.d];return[[0,S.d],[1,0],S.w]}
-function backKeys(){const cs=[[0,0,'R','L'],[S.w,0,'R','E2'],[S.w,S.d,'E2','E3'],[0,S.d,'L','E3']];let bi=0,bd=1e18;
+function backKeys(){if(CAM==='top')return['R','L','E2','E3'];const cs=[[0,0,'R','L'],[S.w,0,'R','E2'],[S.w,S.d,'E2','E3'],[0,S.d,'L','E3']];let bi=0,bd=1e18;
   for(let i=0;i<4;i++){const r=rw(cs[i][0],cs[i][1]),dd=r[0]+r[1];if(dd<bd){bd=dd;bi=i}}return[cs[bi][2],cs[bi][3]]}
+/* direção "pra fora do quarto" de uma parede, com a espessura da planta (WTH) */
+function wOut(k){const[A,dir,len]=edgeOf(k),nx=-dir[1],ny=dir[0],mx=A[0]+dir[0]*len/2,my=A[1]+dir[1]*len/2;
+  const sg=((mx-S.w/2)*nx+(my-S.d/2)*ny)>=0?1:-1;return[nx*sg*WTH,ny*sg*WTH]}
 function wallM(key){const[A,dir,len]=edgeOf(key),r=rw(A[0],A[1]);
   const rdx=dir[0]*CO-dir[1]*SI,rdy=dir[0]*SI+dir[1]*CO;
+  if(CAM==='top'){const px=r[0]*TPL,py=r[1]*TPL,sx=rdx*TPL,sy=rdy*TPL;
+    return{px,py,sx,sy,t:'translate('+px.toFixed(1)+','+py.toFixed(1)+') matrix('+sx.toFixed(3)+','+sy.toFixed(3)+',0,-'+TPZ+',0,0)'}}
   const sx=(rdx-rdy)*32,sy=(rdx+rdy)*16,px=(r[0]-r[1])*32,py=(r[0]+r[1])*16;
   return{px,py,sx,sy,t:'translate('+px.toFixed(1)+','+py.toFixed(1)+') matrix('+sx.toFixed(3)+','+sy.toFixed(3)+',0,-1,0,0)'}}
 
@@ -1108,15 +1202,25 @@ function geraMS(){const r=[];while(r.length<10){const i=Math.floor(Math.random()
 const pronta=()=>S.ms.filter(i=>!S.m[i]&&POOL[i][2]()).length;
 
 /* ---------- desenho ---------- */
-function wallG(it,p,extra){const wm=WALLT[p.wall];return'<g data-ix="'+extra+'"><g transform="'+wm.t+'"><g transform="translate('+p.u+','+p.v+')">'+it.f(S.night,p.on!==0)+'</g></g></g>'}
+function wallG(it,p,extra){
+  /* na planta o item de parede vira um bloquinho que sai da parede pra dentro do quarto */
+  if(CAM==='top'){const[A,dir]=edgeOf(p.wall),[ox,oy]=wOut(p.wall),u0=p.u,u1=p.u+it.w;
+    const ax=A[0]+dir[0]*u0,ay=A[1]+dir[1]*u0,bx=A[0]+dir[0]*u1,by=A[1]+dir[1]*u1;
+    return'<g data-ix="'+extra+'">'+pl([P(ax,ay,0),P(bx,by,0),P(bx+ox*1.9,by+oy*1.9,0),P(ax+ox*1.9,ay+oy*1.9,0)],sh(it.luz?'#ffe9a8':'#dcb894',.96))+'</g>'}
+  const wm=WALLT[p.wall];return'<g data-ix="'+extra+'"><g transform="'+wm.t+'"><g transform="translate('+p.u+','+p.v+')">'+it.f(S.night,p.on!==0)+'</g></g></g>'}
 function bg(){
   const f=FLR[S.floor]||FLR.madeira;let h='';
+  /* cores personalizadas: se você escolher na mão, elas mandam nos presets */
+  const c1=S.wall||f[1],c2=S.w2||sh(S.wall||'#ffd9ec',.86),sC=S.sC||'rgba(255,255,255,.32)',f1=S.fA||f[1],f2=S.fB||f[2];
   VISW.forEach((k,i)=>{const[A,dir,len]=edgeOf(k),ex=A[0]+dir[0]*len,ey=A[1]+dir[1]*len;const wm=wallM(k);
-    h+=pl([P(A[0],A[1],0),P(ex,ey,0),P(ex,ey,WH),P(A[0],A[1],WH)],i?sh(S.wall,.86):S.wall);
-    if(S.strp){let st='';for(let j=0;j<len;j++)st+='<rect x="'+(j+.5)+'" width=".5" height="'+WH+'" fill="rgba(255,255,255,.32)"/>';
+    if(CAM==='top'){/* planta: parede = faixa com espessura, voltada pra fora do quarto */
+      const[ox,oy]=wOut(k);
+      h+=pl([P(A[0],A[1],0),P(ex,ey,0),P(ex+ox,ey+oy,0),P(A[0]+ox,A[1]+oy,0)],i?c2:c1);return}
+    h+=pl([P(A[0],A[1],0),P(ex,ey,0),P(ex,ey,WH),P(A[0],A[1],WH)],i?c2:c1);
+    if(S.strp){let st='';for(let j=0;j<len;j++)st+='<rect x="'+(j+.5)+'" width=".5" height="'+WH+'" fill="'+sC+'"/>';
       h+='<g transform="'+wm.t+'">'+st+'</g>'}
     h+='<g transform="'+wm.t+'"><rect width="'+len+'" height="7" fill="rgba(0,0,0,'+(i?.2:.14)+')"/></g>'});
-  for(let x=0;x<S.w;x++)for(let y=0;y<S.d;y++){const k=S.floor==='xadrez'||S.floor==='grama'?x+y:x;h+=pl([P(x,y,0),P(x+1,y,0),P(x+1,y+1,0),P(x,y+1,0)],k%2?f[1]:f[2])}
+  for(let x=0;x<S.w;x++)for(let y=0;y<S.d;y++){const k=S.floor==='xadrez'||S.floor==='grama'?x+y:x;h+=pl([P(x,y,0),P(x+1,y,0),P(x+1,y+1,0),P(x,y+1,0)],k%2?f2:f1)}
   return h}
 function render(){
   setRot(BANK.rot||0);CX=S.w/2;CY=S.d/2;
@@ -1128,11 +1232,14 @@ function render(){
   const vw=mxx-mnx+56,vh=mxy-mny+56,z=Math.max(.5,zoom);
   const ccx=mnx+vw/2-panX,ccy=mny+vh/2-panY;
   svg.setAttribute('viewBox',[(ccx-vw/z/2),(ccy-vh/z/2),vw/z,vh/z].join(' '));
+  LB={mnx,mny,vw,vh};
   let h='<defs><radialGradient id="gl"><stop offset="0" stop-color="#ffe6a0" stop-opacity=".9"/><stop offset="1" stop-color="#ffe6a0" stop-opacity="0"/></radialGradient></defs>'+bg();
   const fl=[],wl=[];S.placed.forEach((p,i)=>(IT[p.i].wall?wl:fl).push(i));
   const rugs=fl.filter(i=>IT[S.placed[i].i].rug),oth=fl.filter(i=>!IT[S.placed[i].i].rug);
   const key=i=>{let k=i,n=0;while(n<8){const p=S.placed[k];if(!p||!(p.z>0))break;const s=supAt(k,p.x,p.y,IT[p.i],p.ang,scOf(p)).j;if(s<0||s===k)break;k=s;n++}
-    const p=S.placed[k],it=IT[p.i],c=rw(p.x+it.w/2,p.y+it.d/2);return[c[0]+c[1],c[0],n]};
+    const p=S.placed[k],it=IT[p.i],c=rw(p.x+it.w/2,p.y+it.d/2);
+    /* na visão de cima a profundidade é a própria linha da tela (ry); no isométrico é rx+ry */
+    return CAM==='top'?[c[1],c[0],n]:[c[0]+c[1],c[0],n]};
   /* quem decide a hora de desenhar:
      - itens que dividem o mesmo apoio (mesa + coisas em cima dela) empatam na profundidade,
        então desenham base → filho (nível) e, no mesmo nível, na ordem escolhida (ord);
@@ -1157,11 +1264,17 @@ function render(){
   rugs.forEach(i=>h+=sp(i));
   if(sel>=0&&S.placed[sel]&&!IT[S.placed[sel].i].wall)h+=foot(sel);
   wl.forEach(i=>{const p=S.placed[i],it=IT[p.i];if(VISW.indexOf(p.wall)<0)return;h+=wallG(it,p,i);
-    if(i===sel){const wm=WALLT[p.wall];h+='<g transform="'+wm.t+'"><rect x="'+p.u+'" y="'+p.v+'" width="'+it.w+'" height="'+it.h+'" fill="none" stroke="#6b2d5c" stroke-width="1.6" stroke-dasharray="5 3" pointer-events="none"/></g>'}});
+    if(i===sel){const[A,dir]=edgeOf(p.wall);
+      if(CAM==='top'){const[ox,oy]=wOut(p.wall),u0=p.u,u1=p.u+it.w;
+        const ax=A[0]+dir[0]*u0,ay=A[1]+dir[1]*u0,bx=A[0]+dir[0]*u1,by=A[1]+dir[1]*u1;
+        h+='<polygon points="'+[P(ax,ay,0),P(bx,by,0),P(bx+ox*1.9,by+oy*1.9,0),P(ax+ox*1.9,ay+oy*1.9,0)].map(q=>q.join(',')).join(' ')+'" fill="none" stroke="#6b2d5c" stroke-width="1.6" stroke-dasharray="5 3" pointer-events="none"/>'}
+      else{const wm=WALLT[p.wall];h+='<g transform="'+wm.t+'"><rect x="'+p.u+'" y="'+p.v+'" width="'+it.w+'" height="'+it.h+'" fill="none" stroke="#6b2d5c" stroke-width="1.6" stroke-dasharray="5 3" pointer-events="none"/></g>'}}});
   oth.forEach(i=>h+=sp(i));
   if(S.night){
-    VISW.forEach(k=>{const[A,dir,len]=edgeOf(k),ex=A[0]+dir[0]*len,ey=A[1]+dir[1]*len;
-      h+='<polygon pointer-events="none" points="'+[P(A[0],A[1],0),P(ex,ey,0),P(ex,ey,WH),P(A[0],A[1],WH)].map(q=>q.join(',')).join(' ')+'" fill="#1a1040" opacity=".5"/>'});
+    VISW.forEach(k=>{const[A,dir,len]=edgeOf(k),ex=A[0]+dir[0]*len,ey=A[1]+dir[1]*len;let cs;
+      if(CAM==='top'){const[ox,oy]=wOut(k);cs=[P(A[0],A[1],0),P(ex,ey,0),P(ex+ox,ey+oy,0),P(A[0]+ox,A[1]+oy,0)]}
+      else cs=[P(A[0],A[1],0),P(ex,ey,0),P(ex,ey,WH),P(A[0],A[1],WH)];
+      h+='<polygon pointer-events="none" points="'+cs.map(q=>q.join(',')).join(' ')+'" fill="#1a1040" opacity=".5"/>'});
     S.placed.forEach(p=>{const it=IT[p.i];if(!it.luz||p.on===0)return;let c;
       if(it.wall){if(VISW.indexOf(p.wall)<0)return;const[A,dir]=edgeOf(p.wall),u2=p.u+it.w/2;c=P(A[0]+dir[0]*u2,A[1]+dir[1]*u2,p.v+it.h/2)}
       else{c=P(p.x+it.w/2,p.y+it.d/2,(it.gh||30)+zOf(p))}
@@ -1193,9 +1306,21 @@ function estilo(){
   const bWp='<button class="cb" data-wp="1" aria-label="Aumentar largura"'+(S.w>=QMAX?' disabled':'')+'>➕</button>';
   const bDm='<button class="cb" data-dm="1" aria-label="Diminuir comprimento"'+(S.d<=QMIN?' disabled':'')+'>➖</button>';
   const bDp='<button class="cb" data-dp="1" aria-label="Aumentar comprimento"'+(S.d>=QMAX?' disabled':'')+'>➕</button>';
+  const optSt='width:46px;height:38px;border:none;background:none;padding:0;margin-left:6px;cursor:pointer;vertical-align:middle';
+  const w1=S.wall||'#ffd9ec',w2v=S.w2||sh(w1,.86),fl=(FLR[S.floor]||FLR.madeira);
   $('sh').innerHTML='<div class="grp"><h4>'+S.emoji+' '+escn(S.nome)+'</h4><div class="op"><button class="cb" data-q="1">🏠 Trocar / criar quarto</button><button class="cb" data-r="1">✏️ Renomear</button></div></div>'
-  +'<div class="grp"><h4>🎨 Parede</h4><div class="op">'+WALLS.map(c=>'<button class="cor'+(c===S.wall?' on':'')+'" data-w="'+c+'" style="background:'+c+'" aria-label="Cor da parede"></button>').join('')+'<button class="cb'+(S.strp?' on':'')+'" data-s="1">Listras</button></div></div>'
-  +'<div class="grp"><h4>🪵 Chão</h4><div class="op">'+Object.keys(FLR).map(k=>'<button class="cb'+(k===S.floor?' on':'')+'" data-f="'+k+'">'+FLR[k][0]+'</button>').join('')+'</div></div>'
+  +'<div class="grp"><h4>🎨 Parede</h4><div class="op">'+WALLS.map(c=>'<button class="cor'+(c===S.wall?' on':'')+'" data-w="'+c+'" style="background:'+c+'" aria-label="Cor da parede"></button>').join('')+'</div>'
+  +'<p class="dc" style="margin:8px 0 4px">Agora você escolhe tudo: toque nas cores prontas ou monte a sua 👇</p>'
+  +'<div class="op"><label class="cb">🎨 Parede 1<input type="color" data-wc value="'+w1+'" style="'+optSt+'"></label>'
+  +'<label class="cb">🎨 Parede 2<input type="color" data-wc2 value="'+w2v+'" style="'+optSt+'"></label>'
+  +'<button class="cb'+(S.strp?' on':'')+'" data-s="1">Listras</button>'
+  +'<label class="cb">🎨 Listra<input type="color" data-sc value="'+(S.sC||'#ffffff')+'" style="'+optSt+'"></label>'
+  +(S.w2||S.sC?'<button class="cb" data-wxc="1">↩️ Originais</button>':'')+'</div></div>'
+  +'<div class="grp"><h4>🪵 Chão</h4><div class="op">'+Object.keys(FLR).map(k=>'<button class="cb'+(k===S.floor?' on':'')+'" data-f="'+k+'">'+FLR[k][0]+'</button>').join('')+'</div>'
+  +'<p class="dc" style="margin:8px 0 4px">Pinte o chão do seu jeito: escolha as duas cores dele 👇</p>'
+  +'<div class="op"><label class="cb">🎨 Chão 1<input type="color" data-fc1 value="'+(S.fA||fl[1])+'" style="'+optSt+'"></label>'
+  +'<label class="cb">🎨 Chão 2<input type="color" data-fc2 value="'+(S.fB||fl[2])+'" style="'+optSt+'"></label>'
+  +(S.fA||S.fB?'<button class="cb" data-fxc="1">↩️ Originais</button>':'')+'</div></div>'
   +'<div class="grp"><h4>📐 Forma do quarto</h4>'
   +'<div style="display:flex;align-items:center;justify-content:center;gap:12px;flex-wrap:wrap">'
   +'<div style="display:flex;flex-direction:column;align-items:center;gap:6px"><span class="dc">↔️ Largura</span><div style="display:flex;gap:8px">'+bWm+bWp+'</div></div>'
@@ -1231,7 +1356,9 @@ let an=0;function after(){save();render();const n=pronta();if(n>an)toast('🎯 M
 function poe(id){
   const it=IT[id];
   let p;
-  if(it.wall){p={i:id,wall:'R',u:.5,v:70};fixW(p);let t=0;while(S.placed.some(q=>IT[q.i].wall&&q.wall===p.wall&&Math.abs(q.u-p.u)<it.w&&Math.abs(q.v-p.v)<it.h)&&t++<40){p.u+=.5;if(p.u>wallMax(p)-it.w){p.u=.5;p.wall=p.wall==='R'?'L':'R';p.v=p.v>=100?60:p.v+20}fixW(p)}}
+  if(it.wall){p={i:id,wall:VISW[0]||'R',u:.5,v:70};fixW(p);let t=0;
+    while(S.placed.some(q=>IT[q.i].wall&&q.wall===p.wall&&Math.abs(q.u-p.u)<it.w&&Math.abs(q.v-p.v)<it.h)&&t++<80){
+      p.u+=.5;if(p.u>wallMax(p)-it.w){p.u=.5;p.wall=VISW[(VISW.indexOf(p.wall)+1)%Math.max(1,VISW.length)]||p.wall;p.v=p.v>=100?60:p.v+20}fixW(p)}}
   else{const v=vaga(it);if(!v){sNo();toast('Não cabe mais nada. Que tal ampliar o quarto?');return}p={i:id,x:v[0],y:v[1],ci:it.def||0,z:0,ang:0,ord:0,el:0,sc:1,pc:{}}}
   S.placed.push(p);sel=S.placed.length-1;sOk();after();shelf()}
 function guarda(){const p=S.placed[sel];if(!p)return;S.placed.splice(sel,1);sel=-1;sOk();fechaCor();reflow();after();shelf()}
@@ -1258,6 +1385,7 @@ function escalaItem(d,abs){const p=S.placed[sel];if(!p||IT[p.i].wall)return;
 $('bar').addEventListener('click',e=>{const a=e.target.closest('[data-a]');if(!a)return;const k=a.dataset.a;
   if(k==='x')return guarda();if(k==='ok'){sel=-1;return render()}if(!S.placed[sel])return;
   if(k==='i')return mexe();
+  if(k==='foc')return focar();
   if(k==='at')return ordemItem(-1);
   if(k==='fr')return ordemItem(1);
   if(k==='up')return elevarItem(5);
@@ -1286,12 +1414,15 @@ if(szEl)szEl.addEventListener('input',()=>{const p=S.placed[sel];if(!p)return;es
 /* arrastar e soltar */
 function pt(e){const q=svg.createSVGPoint();q.x=e.clientX;q.y=e.clientY;const r=q.matrixTransform(svg.getScreenCTM().inverse());return[r.x,r.y]}
 const unr=(rx,ry)=>{const dx=rx-CX,dy=ry-CY;return[dx*CO+dy*SI+CX,-dx*SI+dy*CO+CY]};
-const g2=(x,y)=>{const[rx,ry]=[(y/16+x/32)/2,(y/16-x/32)/2];return unr(rx,ry)};
-/* descobre em qual parede (e onde) caiu o toque, considerando a rotação atual */
+const g2=(x,y)=>{if(CAM==='top')return unr(x/TPL,y/TPL);const[rx,ry]=[(y/16+x/32)/2,(y/16-x/32)/2];return unr(rx,ry)};
+/* descobre em qual parede (e onde) caiu o toque, considerando a rotação atual.
+   Só considera as paredes VISÍVEIS: assim o item nunca vai parar numa parede escondida (o que o fazia "sumir") */
 function uvWall(x,y){let best=null;
-  ['R','L','E2','E3'].forEach(k=>{const wm=WALLT[k];if(!wm||Math.abs(wm.sx)<.5)return;const[A,dir,len]=edgeOf(k);
-    const u=(x-wm.px)/wm.sx;if(u<-.5||u>len+.5)return;const v=wm.py+wm.sy*u-y;const dd=Math.abs(u-len/2);
-    if(!best||dd<best.dd)best={wall:k,u,v,dd}});
+  VISW.forEach(k=>{const wm=WALLT[k];if(!wm||Math.hypot(wm.sx,wm.sy)<.5)return;const[A,dir,len]=edgeOf(k);
+    const t=Math.max(0,Math.min(len,((x-wm.px)*wm.sx+(y-wm.py)*wm.sy)/(wm.sx*wm.sx+wm.sy*wm.sy)));
+    const dd=Math.hypot(x-(wm.px+wm.sx*t),y-(wm.py+wm.sy*t));
+    const vv=CAM==='top'?(wm.py+wm.sy*t-y)/TPZ:wm.py+wm.sy*t-y;
+    if(!best||dd<best.dd)best={wall:k,u:t,v:vv,dd}});
   return best}
 let panD0=null;
 svg.addEventListener('pointerdown',e=>{
@@ -1344,12 +1475,21 @@ $('sh').addEventListener('click',e=>{const t=e.target,q=s=>t.closest(s);
   if(q('[data-id]'))return poe(q('[data-id]').dataset.id);
   if(q('[data-q]')){qRen=-1;return quartos()}
   if(q('[data-r]')){qRen=BANK.cur;return quartos()}
-  if(q('[data-w]')){S.wall=q('[data-w]').dataset.w;save();render();return estilo()}
+  if(q('[data-w]')){S.wall=q('[data-w]').dataset.w;S.w2=null;save();render();return estilo()}
   if(q('[data-s]')){S.strp=S.strp?0:1;save();render();return estilo()}
-  if(q('[data-f]')){S.floor=q('[data-f]').dataset.f;save();render();return estilo()}
+  if(q('[data-f]')){S.floor=q('[data-f]').dataset.f;S.fA=null;S.fB=null;save();render();return estilo()}
+  if(q('[data-wxc]')){S.w2=null;S.sC=null;save();render();return estilo()}
+  if(q('[data-fxc]')){S.fA=null;S.fB=null;save();render();return estilo()}
   const rs=(dw,dd)=>{const w=Math.min(QMAX,Math.max(QMIN,S.w+dw)),d=Math.min(QMAX,Math.max(QMIN,S.d+dd));if(w===S.w&&d===S.d)return sNo();S.w=w;S.d=d;caber();sOk();save();render();return estilo()};
   if(q('[data-wm]'))return rs(-1,0);if(q('[data-wp]'))return rs(1,0);if(q('[data-dm]'))return rs(0,-1);if(q('[data-dp]'))return rs(0,1);
   if(q('[data-x]')){if(!S.placed.length)return toast('O quarto já está vazio.');S.placed=[];sel=-1;save();render();toast('Quarto arrumadinho ✨')}});
+/* cores personalizadas: muda ao vivo enquanto você mexe no seletor */
+$('sh').addEventListener('input',e=>{const d=e.target&&e.target.dataset;if(!d)return;
+  if(d.wc!==undefined){S.wall=e.target.value;S.w2=null;save();render()}
+  else if(d.wc2!==undefined){S.w2=e.target.value;save();render()}
+  else if(d.sc!==undefined){S.sC=e.target.value;save();render()}
+  else if(d.fc1!==undefined){S.fA=e.target.value;save();render()}
+  else if(d.fc2!==undefined){S.fB=e.target.value;save();render()}});
 
 /* missões */
 function modal(h){$('modal').innerHTML='<div class="cx">'+h+'</div>';$('modal').classList.add('a')}
@@ -1424,6 +1564,20 @@ $('zi').addEventListener('click',e=>{const b=e.target.closest('[data-z]');if(!b)
   zoom=k==='0'?1:Math.min(2.6,Math.max(.7,Math.round((zoom+(k==='+'?.2:-.2))*10)/10));
   BANK.zoom=zoom;save();render()});
 
+/* ---------- câmeras: visão de cima e foco no item ---------- */
+function camBtn(){const b=$('bcam');if(b)b.classList.toggle('on',CAM==='top')}
+function setCam(m){CAM=m==='top'?'top':'iso';BANK.cam=CAM;panX=0;panY=0;BANK.panX=0;BANK.panY=0;camBtn();save();render()}
+$('bcam').addEventListener('click',()=>{setCam(CAM==='top'?'iso':'top');
+  toast(CAM==='top'?'📐 Visão de cima (planta)':'🧊 Visão normal')});
+/* aproxima a câmera no item selecionado, deixando ele no meio da tela */
+function focar(){const p=S.placed[sel];if(!p||!LB)return;const it=IT[p.i];let c;
+  if(it.wall){if(VISW.indexOf(p.wall)<0){sNo();return toast('🔭 Gire a visão pra ver esse item')}
+    const[A,dir]=edgeOf(p.wall),u2=p.u+it.w/2;c=P(A[0]+dir[0]*u2,A[1]+dir[1]*u2,p.v+it.h/2)}
+  else c=P(p.x+it.w/2,p.y+it.d/2,zOf(p)+bhOf(it,scOf(p))/2);
+  zoom=Math.max(zoom,2);BANK.zoom=zoom;
+  panTo(LB.mnx+LB.vw/2-c[0],LB.mny+LB.vh/2-c[1]);
+  toast('🔭 Pertinho de '+it.n)}
+
 /* ---------- navegar: setas (mover a visão) e girar ---------- */
 function sinc(){const r=$('rc');if(r)r.value=String(Math.round(BANK.rot||0)%360)}
 function panTo(nx,ny){panX=nx;panY=ny;clampPan();BANK.panX=panX;BANK.panY=panY;save();render()}
@@ -1460,7 +1614,7 @@ $('bg').addEventListener('click',()=>{setCoins(coins+25);try{localStorage.setIte
   }).observe(sc,{childList:true});
   setTimeout(upd,0);
 })();
-updK();setCoins(coins);sinc();render();shelf();mimo();an=pronta();
+updK();camBtn();setCoins(coins);sinc();render();shelf();mimo();an=pronta();
 setTimeout(()=>toast('Toque num item: 🎨 muda a cor e 🧲/🕊️ deixa ele solto ou encaixado.'),700);
 </script>
 </body>

@@ -1,0 +1,1059 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Cozinha da Lulu 🍳</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;800;900&family=Dancing+Script:wght@700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --plum:#3f1d38; --plum2:#6b2d5c; --cream:#fffaf3;
+  --wood:#c98a52; --wood2:#a86b3c;
+  --ok:#2ecc71; --no:#e74c3c; --gold:#ffb703;
+}
+*{ box-sizing:border-box; }
+html,body{ height:100%; }
+body{
+  margin:0; height:100dvh; overflow:hidden; overscroll-behavior:none;
+  font-family:"Nunito",sans-serif; color:var(--plum);
+  background:linear-gradient(160deg,#fff1dc 0%,#ffe3ef 50%,#e9e2ff 100%);
+  display:flex; flex-direction:column; touch-action:manipulation;
+  -webkit-tap-highlight-color:transparent; user-select:none; -webkit-user-select:none;
+}
+.hide{ display:none !important; }
+
+/* ===== Topo ===== */
+.top{ display:flex; align-items:center; gap:8px; padding:7px 12px 3px; flex-wrap:wrap; }
+.top h1{
+  font-family:"Dancing Script",cursive; font-size:clamp(1.2rem,2.4vw,1.75rem); margin:0;
+  color:var(--plum2); text-shadow:0 2px 0 #fff; flex:1; text-align:center; order:2;
+}
+.back{
+  order:1; text-decoration:none; color:var(--plum2); font-weight:900; font-size:.8rem;
+  background:#fff; border:2px solid #ffd9ec; border-radius:999px; padding:8px 14px; box-shadow:0 3px 0 #f3cfe3;
+}
+.back:active{ transform:translateY(2px); box-shadow:0 1px 0 #f3cfe3; }
+.chips{ order:3; display:flex; gap:6px; align-items:center; flex-wrap:wrap; justify-content:flex-end; }
+.chip{
+  background:#fff; border:2px solid #ffd9ec; border-radius:999px; padding:4px 11px;
+  font-weight:800; font-size:.78rem; box-shadow:0 3px 0 #f3cfe3; white-space:nowrap;
+}
+.chip b{ color:var(--plum2); }
+.ico{
+  background:#fff; border:2px solid #ffd9ec; border-radius:999px; width:38px; height:38px;
+  font-size:1rem; cursor:pointer; box-shadow:0 3px 0 #f3cfe3; padding:0;
+}
+.ico:active{ transform:translateY(2px); box-shadow:0 1px 0 #f3cfe3; }
+
+/* ===== Principal ===== */
+.main{ flex:1; min-height:0; display:flex; gap:10px; padding:0 12px 6px; }
+.stage{ flex:1; min-width:0; position:relative; border-radius:20px; overflow:hidden;
+  box-shadow:0 12px 30px rgba(120,60,110,.20), 0 0 0 4px #fff; }
+canvas{ display:block; width:100%; height:100%; touch-action:none; }
+
+/* ===== Painel ===== */
+.panel{
+  width:286px; shrink:0; flex:0 0 286px; display:flex; flex-direction:column; gap:8px;
+  background:rgba(255,255,255,.72); border-radius:20px; padding:10px; box-shadow:0 6px 18px rgba(120,60,110,.12);
+  overflow:hidden;
+}
+.panel h3{ margin:0; font-size:.82rem; text-transform:uppercase; letter-spacing:.5px; color:var(--plum2); opacity:.85; }
+.pscroll{ flex:1; min-height:0; overflow-y:auto; display:flex; flex-direction:column; gap:8px; }
+.pscroll::-webkit-scrollbar{ width:7px; }
+.pscroll::-webkit-scrollbar-thumb{ background:#e7c6dc; border-radius:99px; }
+
+.recline{
+  display:flex; align-items:center; gap:7px; background:#fff; border:2px solid #ffe6f3;
+  border-radius:13px; padding:6px 8px; font-size:.76rem;
+}
+.recline .em{ font-size:1.25rem; }
+.recline .nm{ font-weight:800; flex:1; line-height:1.15; }
+.recline .ing{ display:block; font-weight:600; font-size:.66rem; opacity:.7; }
+.recline.lock{ opacity:.45; }
+.recline.on{ border-color:#ffd166; background:#fffbe9; }
+.badge{ font-weight:900; font-size:.68rem; background:#fff0d6; color:#b06a00; border-radius:99px; padding:2px 8px; }
+
+.tk{
+  background:#fff; border:2px solid #ffe6f3; border-radius:14px; padding:8px; display:flex; gap:8px; align-items:center;
+}
+.tk.urg{ border-color:#ffb3b3; background:#fff4f4; animation:pisca 1s infinite alternate; }
+@keyframes pisca{ from{ box-shadow:0 0 0 rgba(231,76,60,0);} to{ box-shadow:0 0 12px rgba(231,76,60,.5);} }
+.tk .em{ font-size:1.7rem; }
+.tk .info{ flex:1; min-width:0; }
+.tk .nm{ font-weight:900; font-size:.82rem; }
+.tk .need{ font-size:.68rem; opacity:.75; line-height:1.25; }
+.tk .tm{ font-weight:900; font-size:.86rem; color:var(--plum2); }
+.tk .tm.low{ color:var(--no); }
+
+.heat{ background:#fff; border:2px solid #ffe6f3; border-radius:15px; padding:8px; }
+.heat .hl{ display:flex; justify-content:space-between; align-items:center; font-weight:900; font-size:.8rem; }
+.hrow{ display:flex; align-items:center; gap:7px; margin-top:6px; }
+.hbtn{
+  width:44px; height:44px; border-radius:13px; border:0; font-size:1.3rem; font-weight:900; cursor:pointer;
+  background:linear-gradient(180deg,#ffe0ef,#ffc7e2); color:var(--plum2); box-shadow:0 3px 0 #eeb6d3;
+}
+.hbtn:active{ transform:translateY(2px); box-shadow:0 1px 0 #eeb6d3; }
+.gauge{ flex:1; height:20px; border-radius:99px; background:#f3e2ec; overflow:hidden; }
+.gauge i{ display:block; height:100%; width:0%;
+  background:linear-gradient(90deg,#7fd8ff,#ffd166 55%,#ff5f5f); transition:width .12s linear; }
+.mexer{
+  width:100%; margin-top:7px; border:0; border-radius:14px; padding:11px; font-family:inherit; font-weight:900;
+  font-size:.95rem; color:#fff; cursor:pointer; background:linear-gradient(180deg,#ffb84d,#f08a1c); box-shadow:0 4px 0 #c96f10;
+}
+.mexer:active{ transform:translateY(3px); box-shadow:0 1px 0 #c96f10; }
+.mexer.alerta{ animation:pisca .5s infinite alternate; }
+
+/* ===== Barra inferior ===== */
+.toolbar{ padding:0 12px 9px; display:flex; flex-direction:column; gap:7px; }
+.tools{ display:flex; gap:7px; flex-wrap:wrap; align-items:center; }
+.tool{
+  border:2px solid #ffd9ec; background:#fff; border-radius:999px; padding:9px 14px; font-family:inherit;
+  font-weight:900; font-size:.82rem; color:var(--plum2); cursor:pointer; box-shadow:0 3px 0 #f3cfe3;
+}
+.tool:active{ transform:translateY(2px); box-shadow:0 1px 0 #f3cfe3; }
+.tool.on{ background:linear-gradient(180deg,#8a3d76,#5b2450); color:#fff; border-color:#5b2450; box-shadow:0 3px 0 #3b1533; }
+.act{
+  border:0; border-radius:999px; padding:10px 18px; font-family:inherit; font-weight:900; font-size:.85rem;
+  color:#fff; cursor:pointer; background:linear-gradient(180deg,#4ecb71,#2a9d4e); box-shadow:0 3px 0 #1e7a3a; margin-left:auto;
+}
+.act:active{ transform:translateY(2px); box-shadow:0 1px 0 #1e7a3a; }
+.act.alt{ background:linear-gradient(180deg,#7b8cff,#4a5be0); box-shadow:0 3px 0 #3542a8; margin-left:0; }
+.act:disabled{ opacity:.45; }
+
+.pantry{ display:flex; gap:6px; overflow-x:auto; padding-bottom:3px; scrollbar-width:thin; }
+.pantry::-webkit-scrollbar{ height:7px; }
+.pantry::-webkit-scrollbar-thumb{ background:#e7c6dc; border-radius:99px; }
+.ing{
+  flex:0 0 auto; width:74px; border:2px solid #ffe6f3; background:#fff; border-radius:14px; padding:5px 3px 4px;
+  cursor:pointer; font-family:inherit; box-shadow:0 3px 0 #f3e2ec; display:flex; flex-direction:column; align-items:center; gap:1px;
+}
+.ing:active{ transform:translateY(2px); box-shadow:0 1px 0 #f3e2ec; }
+.ing .e{ font-size:1.5rem; line-height:1; }
+.ing .n{ font-size:.6rem; font-weight:800; color:var(--plum2); line-height:1.1; text-align:center; }
+.ing .tag{ font-size:.52rem; font-weight:800; color:#b06a00; }
+
+/* ===== Sobreposições ===== */
+.ov{
+  position:fixed; inset:0; z-index:40; background:rgba(63,29,56,.55); backdrop-filter:blur(5px);
+  display:flex; align-items:center; justify-content:center; padding:16px;
+}
+.card{
+  background:var(--cream); border-radius:24px; padding:22px; max-width:560px; width:100%;
+  max-height:88dvh; overflow-y:auto; text-align:center; box-shadow:0 20px 50px rgba(0,0,0,.3);
+}
+.card h2{ font-family:"Dancing Script",cursive; font-size:clamp(1.5rem,4.5vw,2.2rem); margin:0 0 6px; color:var(--plum2); }
+.card p{ margin:6px 0; font-size:.88rem; line-height:1.5; }
+.opts{ display:flex; gap:12px; justify-content:center; flex-wrap:wrap; margin-top:14px; }
+.opt{
+  flex:1 1 200px; max-width:240px; border:3px solid #ffd9ec; background:#fff; border-radius:20px; padding:16px 12px;
+  cursor:pointer; font-family:inherit; box-shadow:0 5px 0 #f3cfe3; text-align:center;
+}
+.opt:active{ transform:translateY(3px); box-shadow:0 2px 0 #f3cfe3; }
+.opt .e{ font-size:2.2rem; display:block; }
+.opt .t{ font-weight:900; font-size:1.05rem; color:var(--plum2); display:block; margin:4px 0 3px; }
+.opt .d{ font-size:.76rem; opacity:.78; line-height:1.35; }
+.big{
+  border:0; border-radius:16px; padding:13px 34px; font-family:inherit; font-weight:900; font-size:1.05rem;
+  color:#fff; cursor:pointer; background:linear-gradient(180deg,#8a3d76,#5b2450); box-shadow:0 4px 0 #3b1533; margin:12px 5px 0;
+}
+.big:active{ transform:translateY(3px); box-shadow:0 1px 0 #3b1533; }
+.big.gr{ background:linear-gradient(180deg,#4ecb71,#2a9d4e); box-shadow:0 4px 0 #1e7a3a; }
+table.aj{ width:100%; border-collapse:collapse; margin:10px 0; font-size:.85rem; }
+table.aj td{ padding:5px 6px; border-bottom:1px dashed #f0d8e6; text-align:left; }
+table.aj td:last-child{ text-align:right; font-weight:900; color:var(--plum2); }
+
+/* ===== Toast ===== */
+.toasts{ position:fixed; left:50%; bottom:14px; transform:translateX(-50%); z-index:60; display:flex; flex-direction:column; gap:6px; align-items:center; pointer-events:none; }
+.toast{
+  background:rgba(63,29,56,.94); color:#fff; font-weight:800; font-size:.83rem; padding:9px 16px; border-radius:99px;
+  box-shadow:0 6px 18px rgba(0,0,0,.28); animation:tin .25s ease; max-width:88vw;
+}
+@keyframes tin{ from{ opacity:0; transform:translateY(12px);} }
+
+@media (max-width:900px){
+  .main{ flex-direction:column; }
+  .panel{ flex:0 0 auto; width:auto; max-height:38vh; flex-direction:row; flex-wrap:wrap; }
+  .pscroll{ flex:1 1 100%; max-height:20vh; }
+  .heat{ width:100%; }
+  .stage{ min-height:44vh; }
+}
+</style>
+</head>
+<body>
+
+<header class="top">
+  <a href="../jogos_hub.html" class="back">← Jogos</a>
+  <h1>Cozinha da Lulu 🍳</h1>
+  <div class="chips">
+    <span class="chip">💗 <b id="coins">0</b></span>
+    <span class="chip" id="modeChip">🍽️ Livre</span>
+    <span class="chip" id="scoreChip">⭐ <b id="score">0</b></span>
+    <button class="ico" id="btnSom" title="Som">🔊</button>
+    <button class="ico" id="btnHelp" title="Como jogar">?</button>
+    <button class="ico" id="btnMenu" title="Menu">☰</button>
+  </div>
+</header>
+
+<main class="main">
+  <div class="stage" id="stage"><canvas id="cv"></canvas></div>
+
+  <aside class="panel">
+    <div class="pscroll">
+      <!-- MODO LIVRE -->
+      <div id="pnFree">
+        <h3>Livro de Receitas</h3>
+        <div id="recList" style="display:flex;flex-direction:column;gap:6px;margin:6px 0 4px"></div>
+        <h3>Prateleira de Casa</h3>
+        <div id="shelfList" style="display:flex;flex-direction:column;gap:6px;margin-top:6px"></div>
+      </div>
+      <!-- MODO PEDIDOS -->
+      <div id="pnOrders" class="hide">
+        <h3>Pedidos na Janela</h3>
+        <div id="tickets" style="display:flex;flex-direction:column;gap:7px;margin-top:6px"></div>
+        <div class="recline" style="margin-top:8px">
+          <span class="em">🎯</span><span class="nm">Rodada</span><span class="badge" id="rodada">0/6</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="heat">
+      <div class="hl"><span>🔥 Fogão</span><b id="heatVal">0%</b></div>
+      <div class="hrow">
+        <button class="hbtn" id="heatDown">−</button>
+        <div class="gauge"><i id="heatBar"></i></div>
+        <button class="hbtn" id="heatUp">+</button>
+      </div>
+      <button class="mexer" id="btnMexer">🥄 Mexer a panela</button>
+    </div>
+  </aside>
+</main>
+
+<footer class="toolbar">
+  <div class="tools">
+    <button class="tool on" data-tool="mao">✋ Mão</button>
+    <button class="tool" data-tool="faca">🔪 Faca</button>
+    <button class="tool" data-tool="esp">🥄 Espátula</button>
+    <button class="act alt" id="btnLimpar">🧽 Jogar fora</button>
+    <button class="act" id="btnServir">🍽️ Guardar</button>
+  </div>
+  <div class="pantry" id="pantry"></div>
+</footer>
+
+<!-- ===== Overlay inicial ===== -->
+<div class="ov" id="ovStart">
+  <div class="card">
+    <h2>Bem-vinda à nossa cozinha 💜</h2>
+    <p>Escolhe como você quer cozinhar hoje:</p>
+    <div class="opts">
+      <button class="opt" data-modo="livre">
+        <span class="e">🍳</span><span class="t">Cozinha Livre</span>
+        <span class="d">Sem pressa. Cozinhe, invente pratos e guarde na prateleira de casa.</span>
+      </button>
+      <button class="opt" data-modo="pedidos">
+        <span class="e">⏱️</span><span class="t">Modo Pedidos</span>
+        <span class="d">Clientes pedem pratos de verdade. Corra contra o tempo e ganhe corações.</span>
+      </button>
+    </div>
+    <button class="big" id="btnTutorial">Como jogar</button>
+  </div>
+</div>
+
+<!-- ===== Overlay ajuda ===== -->
+<div class="ov hide" id="ovHelp">
+  <div class="card">
+    <h2>Como cozinhar 🥄</h2>
+    <table class="aj">
+      <tr><td>✋ <b>Mão</b></td><td>pegue um ingrediente embaixo e toque no lugar (tábua, panela, prato)</td></tr>
+      <tr><td>🔪 <b>Faca</b></td><td>arraste de um lado pro outro sobre a tábua pra picar — cada passada corta</td></tr>
+      <tr><td>🥄 <b>Espátula</b></td><td>arraste na panela pra mexer e não deixar queimar</td></tr>
+      <tr><td>🔥 <b>Fogão</b></td><td>use − / + pra esquentar. No ponto, o alimento doura; passando, queima</td></tr>
+      <tr><td>🧽 <b>Jogar fora</b></td><td>descarta o que está na sua mão</td></tr>
+      <tr><td>🍽️ <b>Servir / Guardar</b></td><td>entrega o prato montado ao cliente (ou guarda na prateleira)</td></tr>
+    </table>
+    <p><b>Dica:</b> picar o alimento faz ele cozinhar mais rápido e por igual. E mexer de vez em quando evita que grude e queime no fundo.</p>
+    <button class="big" id="btnFecharHelp">Entendi!</button>
+  </div>
+</div>
+
+<!-- ===== Overlay fim de rodada ===== -->
+<div class="ov hide" id="ovFim">
+  <div class="card">
+    <h2 id="fimTitulo">Fim da rodada!</h2>
+    <div id="fimCorpo"></div>
+    <button class="big gr" id="btnDeNovo">Jogar de novo</button>
+    <button class="big" id="btnTrocarModo">Trocar de modo</button>
+  </div>
+</div>
+
+<div class="toasts" id="toasts"></div>
+
+<script>
+/* ============================================================
+   COZINHA DA LULU — jogo de cozinhar
+   Modo Livre (cozinhar e guardar) + Modo Pedidos (contra o tempo)
+   Corte manual com faca, panela que cozinha de verdade.
+   ============================================================ */
+const K_COINS='amor_coins_lulu';
+const K_SAVE='amor_cozinha_v1';
+const K_CFG='cozinha_cfg';
+
+const $=id=>document.getElementById(id);
+const getCoins=()=>{const v=parseInt(localStorage.getItem(K_COINS)||'0',10);return isNaN(v)?0:v};
+const setCoins=v=>localStorage.setItem(K_COINS,String(Math.max(0,Math.round(v))));
+function addCoins(n){ setCoins(getCoins()+n); $('coins').textContent=getCoins(); }
+
+/* ---------- ingredientes ---------- */
+const INGS=[
+ {id:'cenoura', n:'Cenoura',   e:'🥕', c:'#ff9a3c', cc:'#d97b1e', max:6, coz:9,  queima:11, cat:'verdura'},
+ {id:'tomate',  n:'Tomate',    e:'🍅', c:'#ff4d4d', cc:'#c93a2a', max:6, coz:6,  queima:8,  cat:'verdura'},
+ {id:'batata',  n:'Batata',    e:'🥔', c:'#e8c07a', cc:'#c8a04f', max:6, coz:14, queima:12, cat:'verdura'},
+ {id:'cebola',  n:'Cebola',    e:'🧅', c:'#f3e3c3', cc:'#d9b877', max:6, coz:7,  queima:10, cat:'verdura'},
+ {id:'alface',  n:'Alface',    e:'🥬', c:'#7ed957', cc:'#4f9e2f', max:4, coz:4,  queima:5,  cat:'verdura'},
+ {id:'milho',   n:'Milho',     e:'🌽', c:'#ffd93b', cc:'#e0ab13', max:0, coz:7,  queima:11, cat:'verdura'},
+ {id:'brocolis',n:'Brócolis',  e:'🥦', c:'#4caf50', cc:'#327c36', max:4, coz:9,  queima:10, cat:'verdura'},
+ {id:'pimentao',n:'Pimentão',  e:'🫑', c:'#e53935', cc:'#b32622', max:6, coz:7,  queima:9,  cat:'verdura'},
+ {id:'cogumelo',n:'Cogumelo',  e:'🍄', c:'#d7a86e', cc:'#a97b45', max:4, coz:8,  queima:9,  cat:'verdura'},
+ {id:'frango',  n:'Frango',    e:'🍗', c:'#f5c396', cc:'#cf8f4e', max:6, coz:16, queima:12, cat:'carne'},
+ {id:'carne',   n:'Carne',     e:'🥩', c:'#b3402f', cc:'#7d2a1e', max:6, coz:15, queima:12, cat:'carne'},
+ {id:'bacon',   n:'Bacon',     e:'🥓', c:'#d96b6b', cc:'#9e3f3f', max:6, coz:9,  queima:9,  cat:'carne'},
+ {id:'ovo',     n:'Ovo',       e:'🥚', c:'#fff6e0', cc:'#f3d78a', max:0, coz:7,  queima:8,  cat:'carne'},
+ {id:'peixe',   n:'Peixe',     e:'🐟', c:'#9fc7e0', cc:'#6f9cbb', max:4, coz:11, queima:10, cat:'carne'},
+ {id:'queijo',  n:'Queijo',    e:'🧀', c:'#ffd23f', cc:'#dda911', max:6, coz:6,  queima:8,  cat:'leite'},
+ {id:'manteiga',n:'Manteiga',  e:'🧈', c:'#ffe066', cc:'#dfae12', max:0, coz:5,  queima:7,  cat:'leite'},
+ {id:'pao',     n:'Pão',       e:'🍞', c:'#d9a45b', cc:'#b3773a', max:6, coz:7,  queima:8,  cat:'massa'},
+ {id:'massa',   n:'Massa',     e:'🍝', c:'#f2d79b', cc:'#d8b25e', max:0, coz:11, queima:11, cat:'massa'},
+ {id:'morango', n:'Morango',   e:'🍓', c:'#e8365d', cc:'#a81f3e', max:6, coz:5,  queima:6,  cat:'fruta'},
+ {id:'banana',  n:'Banana',    e:'🍌', c:'#ffe14d', cc:'#d8b71c', max:6, coz:6,  queima:7,  cat:'fruta'},
+ {id:'maca',    n:'Maçã',      e:'🍎', c:'#e74c3c', cc:'#b32d20', max:6, coz:7,  queima:8,  cat:'fruta'}
+];
+const IT={}; INGS.forEach(i=>IT[i.id]=i);
+
+/* ---------- receitas ---------- */
+const RECIPES=[
+ {id:'salada', n:'Salada Fresca',     e:'🥗', premio:18, tempo:70, itens:[{id:'alface',picado:1},{id:'tomate',picado:1},{id:'cenoura',picado:1}]},
+ {id:'omelete',n:'Omelete de Queijo', e:'🍳', premio:24, tempo:78, itens:[{id:'ovo',cozido:1},{id:'queijo',picado:1}]},
+ {id:'fritas', n:'Batata Frita',      e:'🍟', premio:20, tempo:72, itens:[{id:'batata',picado:1,cozido:1}]},
+ {id:'frango', n:'Frango com Legumes',e:'🍲', premio:34, tempo:100,itens:[{id:'frango',picado:1,cozido:1},{id:'cenoura',picado:1,cozido:1},{id:'cebola',picado:1,cozido:1}]},
+ {id:'strog',  n:'Strogonoff',        e:'🍛', premio:36, tempo:104,itens:[{id:'frango',picado:1,cozido:1},{id:'cogumelo',picado:1,cozido:1},{id:'cebola',picado:1,cozido:1}]},
+ {id:'frutas', n:'Salada de Frutas',  e:'🍓', premio:18, tempo:66, itens:[{id:'morango',picado:1},{id:'banana',picado:1},{id:'maca',picado:1}]},
+ {id:'sopa',   n:'Sopa de Legumes',   e:'🥣', premio:30, tempo:92, itens:[{id:'batata',picado:1,cozido:1},{id:'cenoura',picado:1,cozido:1},{id:'cebola',picado:1,cozido:1}]},
+ {id:'misto',  n:'Misto Quente',      e:'🥪', premio:22, tempo:68, itens:[{id:'pao',cozido:1},{id:'queijo',cozido:1}]}
+];
+
+/* ---------- estado ---------- */
+let modo='livre';
+let hand=null;                 // {id,cortes,coz,queimado}
+let board=null;                // item na tábua
+let pan={ itens:[], heat:0 };  // itens dentro da panela
+let panStuck=0;                // 0..1 — quanto grudou no fundo
+let plate=[];                  // prato montado
+let shelf=[];                  // pratos guardados
+let known={};                  // receitas descobertas
+let tool='mao';
+let som=true;
+let rodada={ alvo:6, feitos:0, acertos:0, moedas:0, ativo:false };
+let orders=[];                 // pedidos ativos
+let orderSeq=1;
+let spawnT=0;
+let score=0;
+
+/* ---------- persistência ---------- */
+function load(){
+  try{ const s=JSON.parse(localStorage.getItem(K_SAVE)||'{}');
+    if(Array.isArray(s.shelf)) shelf=s.shelf;
+    if(s.known) known=s.known;
+  }catch(e){}
+  try{ const c=JSON.parse(localStorage.getItem(K_CFG)||'{}');
+    if(typeof c.som==='boolean') som=c.som;
+  }catch(e){}
+}
+function save(){
+  try{ localStorage.setItem(K_SAVE, JSON.stringify({ shelf:shelf, known:known })); }catch(e){}
+}
+function saveCfg(){ try{ localStorage.setItem(K_CFG, JSON.stringify({som:som})); }catch(e){} }
+
+/* ---------- sons ---------- */
+let actx=null;
+function AC(){ if(!actx){ try{ actx=new (window.AudioContext||window.webkitAudioContext)(); }catch(e){ actx=null; } } return actx; }
+function tom(f,d,type,vol){
+  if(!som) return; const a=AC(); if(!a) return;
+  const o=a.createOscillator(), g=a.createGain();
+  o.type=type||'sine'; o.frequency.value=f; g.gain.value=vol||0.05;
+  o.connect(g); g.connect(a.destination);
+  const t=a.currentTime; g.gain.setValueAtTime(g.gain.value,t);
+  g.gain.exponentialRampToValueAtTime(0.0001,t+d); o.start(t); o.stop(t+d+0.03);
+}
+function ruido(d,vol,freq){
+  if(!som) return; const a=AC(); if(!a) return;
+  const n=Math.max(1,Math.floor(a.sampleRate*d));
+  const b=a.createBuffer(1,n,a.sampleRate), dd=b.getChannelData(0);
+  for(let i=0;i<n;i++) dd[i]=(Math.random()*2-1)*(1-i/n);
+  const s=a.createBufferSource(); s.buffer=b;
+  const g=a.createGain(); g.gain.value=vol||0.04;
+  const f=a.createBiquadFilter(); f.type='bandpass'; f.frequency.value=freq||2200;
+  s.connect(f); f.connect(g); g.connect(a.destination); s.start();
+}
+let sizzleT=0;
+function sfxCorte(){ ruido(0.09,0.05,3200); }
+function sfxPing(){ tom(880,0.09,'triangle',0.05); setTimeout(()=>tom(1320,0.12,'triangle',0.045),70); }
+function sfxErro(){ tom(180,0.22,'square',0.05); }
+function sfxGuardar(){ tom(660,0.1,'sine',0.05); setTimeout(()=>tom(990,0.16,'sine',0.05),80); }
+function sfxMexer(){ ruido(0.13,0.026,900); }
+
+/* ---------- util ---------- */
+function toast(msg){
+  const d=document.createElement('div'); d.className='toast'; d.textContent=msg;
+  $('toasts').appendChild(d);
+  setTimeout(()=>{ d.style.transition='opacity .3s'; d.style.opacity='0'; setTimeout(()=>d.remove(),320); }, 2000);
+}
+function hx(h){ h=h.replace('#',''); return [parseInt(h.substr(0,2),16),parseInt(h.substr(2,2),16),parseInt(h.substr(4,2),16)]; }
+function mix(a,b,t){
+  const A=hx(a),B=hx(b); t=Math.max(0,Math.min(1,t));
+  return 'rgb('+Math.round(A[0]+(B[0]-A[0])*t)+','+Math.round(A[1]+(B[1]-A[1])*t)+','+Math.round(A[2]+(B[2]-A[2])*t)+')';
+}
+const novo=id=>({id:id,cortes:0,coz:0,queimado:0});
+const maxCorte=o=>IT[o.id].max;
+const estaPicado=o=>{ const m=maxCorte(o); return m>0 && o.cortes>=Math.ceil(m*0.65); };
+const noPonto=o=>o.coz>=0.85 && o.queimado<=0.3;
+const estragado=o=>o.queimado>0.55;
+function estadoTxt(o){
+  const it=IT[o.id];
+  if(o.queimado>0.15) return it.n+' queimada';
+  let s=it.n;
+  if(estaPicado(o)) s+=' picada';
+  if(o.coz>=0.85) s+=' no ponto';
+  else if(o.coz>0.3) s+=' no fogo';
+  return s;
+}
+function corDe(o){
+  const it=IT[o.id];
+  if(o.queimado>0.15) return mix(it.cc,'#2e2019', Math.min(0.95,(o.queimado-0.15)/0.85));
+  if(o.coz>0.25) return mix(it.c, it.cc, Math.min(1,(o.coz-0.25)/0.6));
+  return it.c;
+}
+
+/* ============================================================
+   LAYOUT
+   ============================================================ */
+const cv=$('cv'), ctx=cv.getContext('2d');
+let W=0,H=0,DPR=1,Z={};
+function layout(){
+  Z.board={x:W*0.02, y:H*0.06, w:W*0.38, h:H*0.56, nome:'Tábua de Corte', e:'🔪'};
+  Z.plate={x:W*0.02, y:H*0.66, w:W*0.38, h:H*0.30, nome:'Prato', e:'🍽️'};
+  Z.stove={x:W*0.43, y:H*0.06, w:W*0.27, h:H*0.90, nome:'Fogão', e:'🍳'};
+  Z.shelf={x:W*0.73, y:H*0.06, w:W*0.25, h:H*0.90, nome:'Prateleira', e:'🧺'};
+}
+function resize(){
+  const st=$('stage').getBoundingClientRect();
+  DPR=Math.min(2, window.devicePixelRatio||1);
+  W=Math.max(300,Math.floor(st.width)); H=Math.max(240,Math.floor(st.height));
+  cv.width=W*DPR; cv.height=H*DPR;
+  ctx.setTransform(DPR,0,0,DPR,0,0);
+  layout();
+}
+function zonaEm(x,y){
+  for(const k in Z){ const z=Z[k]; if(x>=z.x&&x<=z.x+z.w&&y>=z.y&&y<=z.y+z.h) return k; }
+  return null;
+}
+
+/* ============================================================
+   LOOP
+   ============================================================ */
+let ptr={x:0,y:0,down:false,id:null,dx:0};
+let parts=[];
+let last=performance.now();
+let tempoTotal=0;
+
+const pausado=()=>!$('ovStart').classList.contains('hide') || !$('ovHelp').classList.contains('hide') || !$('ovFim').classList.contains('hide');
+
+function update(dt){
+  tempoTotal+=dt;
+  if(pausado()) return;
+  /* panela */
+  const h=pan.heat/100;
+  if(pan.itens.length && h>0){
+    for(const o of pan.itens){
+      const it=IT[o.id];
+      const m=estaPicado(o)?1.7:1.0;
+      if(o.coz<1){ o.coz=Math.min(1, o.coz + dt*h*m*2.1/it.coz); }
+      else if(o.queimado<1){ o.queimado=Math.min(1, o.queimado + dt*h*1.15/it.queima); }
+    }
+    panStuck=Math.min(1, panStuck + dt*h*0.16);
+    if(panStuck>0.62){
+      for(const o of pan.itens) o.queimado=Math.min(1, o.queimado + dt*h*0.22);
+    }
+    /* fumacinha */
+    if(som && tempoTotal>sizzleT){ sizzleT=tempoTotal+0.55; ruido(0.17,0.018,1400); }
+  } else {
+    panStuck=Math.max(0, panStuck - dt*0.35);
+  }
+  /* partículas */
+  for(let i=parts.length-1;i>=0;i--){
+    const p=parts[i]; p.life-=dt;
+    p.x+=p.vx*dt; p.y+=p.vy*dt; p.vy+= (p.g||0)*dt;
+    if(p.life<=0) parts.splice(i,1);
+  }
+  /* pedidos */
+  if(modo==='pedidos' && rodada.ativo){
+    spawnT-=dt;
+    if(spawnT<=0 && orders.length<4 && (rodada.feitos+orders.length)<rodada.alvo){
+      spawnOrder(); spawnT=10+Math.random()*5;
+    }
+    for(let i=orders.length-1;i>=0;i--){
+      orders[i].t-=dt;
+      if(orders[i].t<=0){ falhaPedido(i); }
+    }
+  }
+}
+
+function spawnOrder(){
+  const rec=RECIPES[Math.floor(Math.random()*RECIPES.length)];
+  const vagas=rec.tempo;
+  orders.push({ n:orderSeq++, rec:rec, t:vagas+22, total:vagas+22, cliente:['👩','🧑','👵','👨','🧒','👩‍🦰','🧔'][Math.floor(Math.random()*7)] });
+  sfxPing(); renderTickets();
+}
+function falhaPedido(i){
+  const o=orders.splice(i,1)[0];
+  rodada.feitos++;
+  toast('😞 '+o.rec.n+' passou do tempo');
+  sfxErro(); renderTickets(); checaFim();
+}
+function checaFim(){
+  if(!rodada.ativo) return;
+  if(rodada.feitos>=rodada.alvo){
+    rodada.ativo=false; orders=[];
+    fimRodada();
+  }
+}
+
+/* ============================================================
+   AÇÕES
+   ============================================================ */
+function pegarIng(id){
+  if(hand){ toast('Devolva o que está na mão primeiro'); }
+  hand=novo(id);
+  tom(520,0.07,'triangle',0.04);
+  toast(IT[id].e+' '+IT[id].n+' na mão');
+}
+function descartar(){ if(!hand){ toast('Sua mão está vazia'); return; } hand=null; toast('🗑️ jogado fora'); }
+
+function tapZona(z){
+  if(z==='board'){
+    if(hand){ if(board){ toast('A tábua está ocupada'); return; } board=hand; hand=null; tom(440,0.06,'sine',0.04); }
+    else if(board){ hand=board; board=null; toast('Pegou de volta'); }
+    else toast('Coloque um ingrediente na tábua');
+  }
+  else if(z==='stove'){
+    if(hand){
+      pan.itens.push(hand); hand=null;
+      tom(300,0.1,'sawtooth',0.035);
+      if(pan.heat>10) ruido(0.25,0.05,2600);
+    } else if(pan.itens.length){
+      hand=pan.itens.pop();
+      toast('Tirou: '+estadoTxt(hand));
+    } else toast('A panela está vazia');
+  }
+  else if(z==='plate'){
+    if(hand){ plate.push(hand); hand=null; tom(600,0.06,'sine',0.04); }
+    else if(plate.length){ hand=plate.pop(); toast('Tirou do prato'); }
+    else toast('Monte o prato aqui');
+  }
+  else if(z==='shelf'){
+    if(hand && modo==='livre'){ toast('Só pratos prontos vão pra prateleira'); }
+    else if(!hand) toast(shelf.length+' pratos guardados');
+  }
+}
+function mexer(){
+  if(!pan.itens.length){ toast('Não tem nada na panela'); return; }
+  if(pan.heat<=0){ toast('Acenda o fogão primeiro'); return; }
+  panStuck=0;
+  for(const o of pan.itens) if(o.queimado>0) o.queimado=Math.max(0,o.queimado-0.12);
+  sfxMexer();
+  for(let i=0;i<7;i++){
+    const a=Math.random()*Math.PI*2, r=Math.random()*16;
+    parts.push({x:panC.x+Math.cos(a)*r, y:panC.y+Math.sin(a)*r-8, vx:Math.cos(a)*14, vy:-34-Math.random()*24, g:120, life:0.5, col:'#ffd166', r:2.4, t:'spark'});
+  }
+  if(panStuck===0) tom(700,0.07,'sine',0.03);
+}
+
+/* ---- montar / servir ---- */
+function receitaDoPrato(){
+  for(const r of RECIPES){
+    if(r.itens.length!==plate.length) continue;
+    const need=r.itens.slice();
+    let ok=true;
+    for(const o of plate){
+      const i=need.findIndex(x=>x.id===o.id);
+      if(i<0){ ok=false; break; }
+      const x=need[i];
+      if(x.picado && !estaPicado(o)){ ok=false; break; }
+      if(x.cozido && !noPonto(o)){ ok=false; break; }
+      need.splice(i,1);
+    }
+    if(ok && need.length===0) return r;
+  }
+  return null;
+}
+function servir(){
+  if(!plate.length){ toast('O prato está vazio'); return; }
+  const rec=receitaDoPrato();
+  if(modo==='livre'){
+    if(rec){
+      if(!known[rec.id]){ known[rec.id]=true; addCoins(10); toast('🎉 Nova receita: '+rec.n+'! +10💗'); }
+      else toast(rec.e+' '+rec.n+' prontinho!');
+      if(shelf.length<24) shelf.push({rec:rec.id, q:1});
+      sfxGuardar(); save(); renderRec(); renderShelf(); plate=[];
+    } else {
+      const q=qualityOf(plate);
+      if(q<=0){ toast('🤢 Isso ficou ruim... joga fora'); sfxErro(); return; }
+      toast('Prato caseiro guardado!');
+      shelf.push({rec:null, nome:'Prato caseiro', e:'🍽️', itens:plate.map(o=>o.id)});
+      sfxGuardar(); save(); renderShelf(); plate=[];
+    }
+    return;
+  }
+  /* modo pedidos */
+  if(!rec){ toast('🤔 Isso não é nenhum pedido da janela'); sfxErro(); return; }
+  const idx=orders.findIndex(o=>o.rec.id===rec.id);
+  if(idx<0){ toast('Ninguém pediu '+rec.n+' agora'); sfxErro(); return; }
+  const o=orders.splice(idx,1)[0];
+  const rapido=Math.max(0,(o.t/o.total));
+  const g=Math.round(o.rec.premio*(0.7+0.6*rapido));
+  score+=g; addCoins(g);
+  rodada.feitos++; rodada.acertos++; rodada.moedas+=g;
+  toast('✅ '+o.rec.n+' entregue! +'+g+'💗');
+  sfxGuardar();
+  plate=[]; renderTickets(); atualizaTopo(); checaFim();
+}
+function qualityOf(list){
+  let s=0; for(const o of list) s+=Math.max(0, o.coz>=0.85?(1-o.queimado):o.coz*0.6);
+  return list.length? s/list.length : 0;
+}
+
+/* ============================================================
+   TELAS / PAINÉIS
+   ============================================================ */
+function renderRec(){
+  $('recList').innerHTML=RECIPES.map(r=>{
+    const k=!!known[r.id];
+    const ing=r.itens.map(x=>{ const it=IT[x.id]; let t=it.e+it.n; if(x.picado)t+=' (picado)'; if(x.cozido)t+=' (no ponto)'; return t; }).join(', ');
+    return '<div class="recline '+(k?'on':'lock')+'"><span class="em">'+(k?r.e:'❔')+'</span>'+
+      '<span class="nm">'+(k?r.n:'Receita misteriosa')+'<span class="ing">'+(k?ing:'cozinhe pra descobrir')+'</span></span>'+
+      (k?'<span class="badge">'+r.premio+'💗</span>':'')+'</div>';
+  }).join('');
+}
+function renderShelf(){
+  if(!shelf.length){ $('shelfList').innerHTML='<div class="recline lock"><span class="em">🧺</span><span class="nm">A prateleira tá vazia<span class="ing">guardar um prato aqui</span></span></div>'; return; }
+  $('shelfList').innerHTML=shelf.slice().reverse().slice(0,10).map(s=>{
+    const r=s.rec?RECIPES.find(x=>x.id===s.rec):null;
+    return '<div class="recline"><span class="em">'+(r?r.e:'🍽️')+'</span><span class="nm">'+(r?r.n:'Prato caseiro')+'<span class="ing">guardado com carinho</span></span></div>';
+  }).join('');
+}
+function renderTickets(){
+  $('rodada').textContent=rodada.feitos+'/'+rodada.alvo;
+  if(!orders.length){ $('tickets').innerHTML='<div class="recline lock"><span class="em">🚪</span><span class="nm">Ninguém na janela ainda<span class="ing">os clientes estão chegando...</span></span></div>'; return; }
+  $('tickets').innerHTML=orders.map(o=>{
+    const urg=o.t<o.total*0.35;
+    const ing=o.rec.itens.map(x=>{ const it=IT[x.id]; let t=it.e; if(x.picado)t+='picado'; if(x.cozido)t+='cozido'; return t; }).join(' + ');
+    return '<div class="tk '+(urg?'urg':'')+'" data-tk="'+o.n+'"><span class="em">'+o.cliente+'</span>'+
+      '<span class="info"><span class="nm">'+o.rec.e+' '+o.rec.n+'</span><span class="need">'+ing+'</span></span>'+
+      '<span class="tm '+(urg?'low':'')+'">'+Math.ceil(o.t)+'s</span></div>';
+  }).join('');
+}
+/* atualiza só os cronômetros — sem recriar o DOM (mantém a animação) */
+function tickTickets(){
+  for(const o of orders){
+    const el=$('tickets').querySelector('[data-tk="'+o.n+'"]'); if(!el) continue;
+    const t=el.querySelector('.tm'); if(!t) continue;
+    const urg=o.t<o.total*0.35;
+    t.textContent=Math.ceil(Math.max(0,o.t))+'s';
+    t.classList.toggle('low', urg);
+    el.classList.toggle('urg', urg);
+  }
+}
+function atualizaTopo(){
+  $('coins').textContent=getCoins();
+  $('score').textContent=score;
+  $('modeChip').textContent = modo==='livre' ? '🍽️ Livre' : '⏱️ Pedidos';
+  $('scoreChip').classList.toggle('hide', modo==='livre');
+  $('btnServir').textContent = modo==='livre' ? '🍽️ Guardar' : '🍽️ Servir';
+  $('pnFree').classList.toggle('hide', modo!=='livre');
+  $('pnOrders').classList.toggle('hide', modo!=='pedidos');
+  $('heatVal').textContent=Math.round(pan.heat)+'%';
+  $('heatBar').style.width=pan.heat+'%';
+}
+
+function comeca(novoModo){
+  modo=novoModo;
+  hand=null; board=null; plate=[]; orders=[]; parts=[];
+  pan={itens:[],heat:0}; panStuck=0;
+  score=0; orderSeq=1; spawnT=0.5;
+  rodada={alvo:6, feitos:0, acertos:0, moedas:0, ativo: modo==='pedidos'};
+  if(modo==='pedidos'){ spawnOrder(); spawnOrder(); }
+  renderRec(); renderShelf(); renderTickets(); atualizaTopo();
+  $('ovStart').classList.add('hide'); $('ovFim').classList.add('hide');
+}
+function fimRodada(){
+  const melhor=getCoins();
+  $('fimTitulo').textContent = rodada.acertos>=rodada.alvo ? 'Rodada perfeita! 🌟' : 'Fim da rodada!';
+  $('fimCorpo').innerHTML='<table class="aj">'+
+    '<tr><td>Pedidos entregues</td><td>'+rodada.acertos+' de '+rodada.alvo+'</td></tr>'+
+    '<tr><td>Pontos da rodada</td><td>'+score+'</td></tr>'+
+    '<tr><td>Corações ganhos</td><td>+'+rodada.moedas+' 💗</td></tr>'+
+    '<tr><td>Seu saldo agora</td><td>'+melhor+' 💗</td></tr>'+
+    '</table><p>Foi tudo pra Loja de Vales 💜</p>';
+  sfxGuardar();
+  $('ovFim').classList.remove('hide');
+  save();
+}
+
+/* ============================================================
+   DESENHO
+   ============================================================ */
+function rr(x,y,w,h,r){
+  ctx.beginPath();
+  ctx.moveTo(x+r,y); ctx.arcTo(x+w,y,x+w,y+h,r); ctx.arcTo(x+w,y+h,x,y+h,r);
+  ctx.arcTo(x,y+h,x,y,r); ctx.arcTo(x,y,x+w,y,r); ctx.closePath();
+}
+let panC={x:0,y:0,r:0};
+let hoverZ=null;
+
+function draw(){
+  ctx.clearRect(0,0,W,H);
+  /* fundo de bancada */
+  const bg=ctx.createLinearGradient(0,0,0,H);
+  bg.addColorStop(0,'#fff4e2'); bg.addColorStop(1,'#ffe9d6');
+  ctx.fillStyle=bg; ctx.fillRect(0,0,W,H);
+  ctx.strokeStyle='rgba(200,150,110,.14)'; ctx.lineWidth=1;
+  for(let y=28;y<H;y+=28){ ctx.beginPath(); ctx.moveTo(0,y); ctx.lineTo(W,y); ctx.stroke(); }
+
+  drawZone('board', '#f6dfc0', '#e0c095', '#b98b57');
+  drawZone('shelf', '#f3e6d3', '#e2d0b8', '#a98b66');
+  drawZone('stove', '#e9e3ee', '#d6cee0', '#a79bb8');
+  drawZone('plate', '#fdfbf6', '#ece7de', '#c3bcb0');
+
+  drawBoard();
+  drawStove();
+  drawPlate();
+  drawShelf();
+
+  drawParts();
+  drawHand();
+}
+function drawZone(k,fill,line,txt){
+  const z=Z[k];
+  ctx.save();
+  rr(z.x,z.y,z.w,z.h,18);
+  ctx.fillStyle=fill; ctx.fill();
+  ctx.lineWidth=(hoverZ===k)?4:2.5;
+  ctx.strokeStyle=(hoverZ===k)?'#8a3d76':line; ctx.stroke();
+  ctx.fillStyle=txt; ctx.font='900 13px Nunito, sans-serif'; ctx.textAlign='left';
+  ctx.fillText(z.e+'  '+z.nome.toUpperCase(), z.x+13, z.y+21);
+  ctx.restore();
+}
+function drawBoard(){
+  const z=Z.board, cx=z.x+z.w/2, cy=z.y+z.h/2+10;
+  if(!board){
+    ctx.fillStyle='rgba(140,100,70,.32)'; ctx.font='700 13px Nunito, sans-serif'; ctx.textAlign='center';
+    ctx.fillText('coloque o ingrediente aqui', cx, cy);
+  } else {
+    const o=board, it=IT[o.id], n=o.cortes+1;
+    const bw=Math.min(z.w*0.62, 200), bh=Math.min(z.h*0.42, 120);
+    const gap=board&&tool==='faca'?2:0;
+    const pw=(bw-gap*(n-1))/n;
+    for(let i=0;i<n;i++){
+      const x=cx-bw/2+i*(pw+gap);
+      ctx.save();
+      ctx.shadowColor='rgba(90,50,30,.25)'; ctx.shadowBlur=8; ctx.shadowOffsetY=4;
+      rr(x,cy-bh/2,pw,bh,8); ctx.fillStyle=corDe(o); ctx.fill();
+      ctx.restore();
+      ctx.strokeStyle='rgba(0,0,0,.12)'; ctx.lineWidth=1.5; rr(x,cy-bh/2,pw,bh,8); ctx.stroke();
+      if(pw>26){ ctx.fillStyle='rgba(255,255,255,.55)'; ctx.font=Math.min(30,pw*0.9)+'px sans-serif'; ctx.textAlign='center'; ctx.fillText(it.e, x+pw/2, cy+bh/4); }
+    }
+    /* barra de estado */
+    barra(cx-70, cy+bh/2+16, 140, 9, o.coz, o.queimado);
+    ctx.fillStyle='#6b2d5c'; ctx.font='900 12px Nunito, sans-serif'; ctx.textAlign='center';
+    ctx.fillText(estadoTxt(o), cx, cy+bh/2+40);
+    if(tool==='faca' && maxCorte(o)>0){
+      ctx.setLineDash([7,6]); ctx.strokeStyle='rgba(220,60,60,.75)'; ctx.lineWidth=2.5;
+      ctx.beginPath(); ctx.moveTo(ptr.x, z.y+26); ctx.lineTo(ptr.x, z.y+z.h-14); ctx.stroke(); ctx.setLineDash([]);
+      ctx.fillStyle='rgba(220,60,60,.9)'; ctx.font='800 11px Nunito, sans-serif'; ctx.textAlign='center';
+      ctx.fillText('arraste a faca pra picar • '+o.cortes+'/'+maxCorte(o), cx, z.y+z.h-16);
+    } else if(maxCorte(o)===0){
+      ctx.fillStyle='rgba(140,100,70,.7)'; ctx.font='800 11px Nunito, sans-serif'; ctx.textAlign='center';
+      ctx.fillText('este não precisa picar', cx, z.y+z.h-16);
+    }
+  }
+  if(tool==='faca' && !board){
+    const zz=Z.board;
+    ctx.setLineDash([7,6]); ctx.strokeStyle='rgba(220,60,60,.5)'; ctx.lineWidth=2.5;
+    ctx.beginPath(); ctx.moveTo(ptr.x, zz.y+26); ctx.lineTo(ptr.x, zz.y+zz.h-14); ctx.stroke(); ctx.setLineDash([]);
+  }
+}
+function barra(x,y,w,h,coz,quei){
+  rr(x,y,w,h,h/2); ctx.fillStyle='#e9dcd6'; ctx.fill();
+  const wc=Math.min(1,coz)*w;
+  rr(x,y,Math.max(2,wc),h,h/2); ctx.fillStyle= coz>=0.85?'#4ecb71':'#ffc04d'; ctx.fill();
+  if(quei>0.05){ const wq=Math.min(1,quei)*w; rr(x,y,Math.max(2,wq),h,h/2); ctx.fillStyle='rgba(60,40,30,.75)'; ctx.fill(); }
+  rr(x,y,w,h,h/2); ctx.strokeStyle='rgba(0,0,0,.13)'; ctx.lineWidth=1.2; ctx.stroke();
+}
+function drawStove(){
+  const z=Z.stove;
+  const cx=z.x+z.w/2, cy=z.y+z.h*0.46;
+  const R=Math.min(z.w*0.40, z.h*0.24);
+  panC={x:cx,y:cy,r:R*0.86};
+  /* boca do fogão */
+  ctx.save();
+  ctx.beginPath(); ctx.arc(cx,cy+6,R*1.18,0,Math.PI*2); ctx.fillStyle='rgba(120,90,140,.16)'; ctx.fill();
+  ctx.restore();
+  ctx.beginPath(); ctx.arc(cx,cy,R*1.12,0,Math.PI*2);
+  ctx.fillStyle='#5c5470'; ctx.fill();
+  ctx.lineWidth=3; ctx.strokeStyle='#413a52'; ctx.stroke();
+  /* chamas */
+  const h=pan.heat/100;
+  if(h>0.02){
+    for(let i=0;i<14;i++){
+      const a=(i/14)*Math.PI*2+tempoTotal*0.7;
+      const rr2=R*1.06;
+      const fl=(0.5+0.5*Math.sin(tempoTotal*9+i))*h;
+      ctx.beginPath();
+      ctx.arc(cx+Math.cos(a)*rr2, cy+6+Math.sin(a)*rr2*0.5, 4+fl*6, 0, Math.PI*2);
+      ctx.fillStyle='rgba(255,'+Math.round(120+fl*80)+',0,'+(0.25+fl*0.55)+')'; ctx.fill();
+    }
+  }
+  /* panela */
+  ctx.save();
+  ctx.beginPath(); ctx.arc(cx,cy,R,0,Math.PI*2);
+  const pg=ctx.createRadialGradient(cx-R*0.3,cy-R*0.3,R*0.1,cx,cy,R);
+  pg.addColorStop(0,'#4a4455'); pg.addColorStop(1,'#2c2836');
+  ctx.fillStyle=pg; ctx.fill();
+  ctx.restore();
+  ctx.lineWidth=6; ctx.strokeStyle='#1d1a24'; ctx.beginPath(); ctx.arc(cx,cy,R,0,Math.PI*2); ctx.stroke();
+  /* cabo */
+  ctx.save(); ctx.rotate(-0.4);
+  rr(cx+R*0.96, cy-6, R*0.42, 13, 6); ctx.fillStyle='#2c2836'; ctx.fill();
+  ctx.restore();
+  /* conteúdo */
+  for(let i=0;i<pan.itens.length;i++){
+    const o=pan.itens[i];
+    const a=(i/Math.max(1,pan.itens.length))*Math.PI*2 + tempoTotal*(0.25+panStuck*0.9);
+    const rr2=(i===0&&pan.itens.length===1)?0:R*0.44;
+    const px=cx+Math.cos(a)*rr2, py=cy+Math.sin(a)*rr2*0.75;
+    const s=R*0.30;
+    ctx.save();
+    ctx.shadowColor='rgba(0,0,0,.3)'; ctx.shadowBlur=6;
+    rr(px-s,py-s*0.7,s*2,s*1.4,7); ctx.fillStyle=corDe(o); ctx.fill();
+    ctx.restore();
+    ctx.fillStyle='rgba(255,255,255,.6)'; ctx.font=(s*1.5)+'px sans-serif'; ctx.textAlign='center';
+    ctx.fillText(IT[o.id].e, px, py+s*0.6);
+    if(o.queimado>0.15){
+      for(let k=0;k<2;k++) parts.push({x:px+(Math.random()*8-4), y:py-s, vx:(Math.random()*8-4), vy:-20, g:-14, life:0.6, col:'rgba(70,70,70,.5)', r:3+Math.random()*3, t:'smoke'});
+    }
+  }
+  /* vapor */
+  if(pan.heat>25 && pan.itens.length){
+    if(Math.random()<0.35) parts.push({x:cx+(Math.random()*R-  R/2), y:cy-R*0.6, vx:(Math.random()*10-5), vy:-26, g:-10, life:0.9, col:'rgba(255,255,255,.65)', r:5+Math.random()*5, t:'steam'});
+  }
+  /* aviso de mexer */
+  if(panStuck>0.55 && pan.itens.length){
+    ctx.fillStyle='rgba(230,60,60,'+(0.55+0.45*Math.sin(tempoTotal*8))+')';
+    ctx.font='900 13px Nunito, sans-serif'; ctx.textAlign='center';
+    ctx.fillText('🔥 MEXA!', cx, cy+R+34);
+  }
+  /* gauge do fogão */
+  const gy=cy+R+ (panStuck>0.55&&pan.itens.length?52:38);
+  ctx.fillStyle='#5c5470'; ctx.font='900 11px Nunito, sans-serif'; ctx.textAlign='center';
+  ctx.fillText('FOGÃO '+Math.round(pan.heat)+'%', cx, gy+12);
+  barra(cx-46, gy+18, 92, 8, pan.heat/100, 0);
+}
+function drawPlate(){
+  const z=Z.plate, cx=z.x+z.w/2, cy=z.y+z.h/2+8;
+  const R=Math.min(z.w*0.30, z.h*0.34);
+  ctx.beginPath(); ctx.arc(cx,cy,R,0,Math.PI*2); ctx.fillStyle='#ffffff'; ctx.fill();
+  ctx.lineWidth=4; ctx.strokeStyle='#e4ddd2'; ctx.stroke();
+  ctx.beginPath(); ctx.arc(cx,cy,R*0.78,0,Math.PI*2); ctx.strokeStyle='#f0ebe3'; ctx.lineWidth=2; ctx.stroke();
+  if(!plate.length){
+    ctx.fillStyle='rgba(150,140,130,.6)'; ctx.font='700 12px Nunito, sans-serif'; ctx.textAlign='center';
+    ctx.fillText('monte o prato', cx, cy-R-10);
+  }
+  for(let i=0;i<plate.length;i++){
+    const o=plate[i], it=IT[o.id];
+    const a=(i/Math.max(1,plate.length))*Math.PI*2;
+    const rr2=plate.length===1?0:R*0.42;
+    const px=cx+Math.cos(a)*rr2, py=cy+Math.sin(a)*rr2;
+    const s=R*0.30;
+    ctx.save(); ctx.shadowColor='rgba(0,0,0,.18)'; ctx.shadowBlur=5;
+    rr(px-s,py-s*0.72,s*2,s*1.44,6); ctx.fillStyle=corDe(o); ctx.fill(); ctx.restore();
+    ctx.fillStyle='rgba(255,255,255,.6)'; ctx.font=(s*1.5)+'px sans-serif'; ctx.textAlign='center';
+    ctx.fillText(it.e, px, py+s*0.6);
+  }
+  if(plate.length){
+    const rec=receitaDoPrato();
+    ctx.fillStyle=rec?'#2a9d4e':'#b06a00'; ctx.font='900 12px Nunito, sans-serif'; ctx.textAlign='center';
+    ctx.fillText(rec?('✔ '+rec.n):'prato livre', cx, cy+R+18);
+  }
+}
+function drawShelf(){
+  const z=Z.shelf;
+  const cols=3, rowsN=5;
+  const pad=12, cw=(z.w-pad*2)/cols, ch=(z.h-pad*2-26)/rowsN;
+  for(let r=0;r<rowsN;r++){
+    const y=z.y+22+r*ch;
+    ctx.strokeStyle='rgba(170,130,90,.5)'; ctx.lineWidth=3;
+    ctx.beginPath(); ctx.moveTo(z.x+8,y+ch-3); ctx.lineTo(z.x+z.w-8,y+ch-3); ctx.stroke();
+  }
+  for(let i=0;i<Math.min(shelf.length,cols*rowsN);i++){
+    const c=i%cols, r=Math.floor(i/cols);
+    const x=z.x+pad+c*cw, y=z.y+22+r*ch;
+    const s=shelf[i];
+    const rec=s.rec?RECIPES.find(x2=>x2.id===s.rec):null;
+    ctx.save(); ctx.shadowColor='rgba(0,0,0,.15)'; ctx.shadowBlur=5; ctx.shadowOffsetY=3;
+    rr(x+4,y+3,cw-8,ch-9,8); ctx.fillStyle='#fff'; ctx.fill(); ctx.restore();
+    ctx.fillStyle='#b98b57'; ctx.font=Math.min(24,ch*0.5)+'px sans-serif'; ctx.textAlign='center';
+    ctx.fillText(rec?rec.e:'🍽️', x+cw/2, y+ch*0.58);
+  }
+  if(!shelf.length){
+    ctx.fillStyle='rgba(140,120,100,.55)'; ctx.font='700 12px Nunito, sans-serif'; ctx.textAlign='center';
+    ctx.fillText('prateleira vazia', z.x+z.w/2, z.y+z.h/2);
+  }
+}
+function drawParts(){
+  for(const p of parts){
+    const al=Math.max(0,p.life/(p.t==='smoke'?0.6:0.9));
+    ctx.globalAlpha=al;
+    ctx.fillStyle=p.col;
+    ctx.beginPath(); ctx.arc(p.x,p.y,p.r,0,Math.PI*2); ctx.fill();
+    ctx.globalAlpha=1;
+  }
+}
+function drawHand(){
+  if(!hand) return;
+  const o=hand, it=IT[o.id];
+  const x=ptr.x, y=ptr.y;
+  ctx.save(); ctx.shadowColor='rgba(0,0,0,.3)'; ctx.shadowBlur=10;
+  rr(x+10,y-14,44,44,10); ctx.fillStyle=corDe(o); ctx.fill(); ctx.restore();
+  ctx.fillStyle='rgba(255,255,255,.7)'; ctx.font='24px sans-serif'; ctx.textAlign='center';
+  ctx.fillText(it.e, x+32, y+16);
+  ctx.fillStyle='#3f1d38'; ctx.font='900 11px Nunito, sans-serif'; ctx.textAlign='left';
+  let t=it.n; if(estaPicado(o)) t+=' ✂'; if(o.coz>=0.85) t+=' ✓';
+  ctx.fillText(t, x+10, y+46);
+}
+/* ============================================================
+   INPUT
+   ============================================================ */
+function pos(e){
+  const r=cv.getBoundingClientRect();
+  return { x:e.clientX-r.left, y:e.clientY-r.top };
+}
+cv.addEventListener('pointerdown', e=>{
+  cv.setPointerCapture(e.pointerId);
+  const p=pos(e); ptr.x=p.x; ptr.y=p.y; ptr.down=true; ptr.id=e.pointerId; ptr.dx=0; ptr.cut=0;
+  AC();
+  hoverZ=zonaEm(p.x,p.y);
+  if(tool==='faca' && board && maxCorte(board)>0 && hoverZ==='board'){ /* pronto pra cortar */ }
+});
+cv.addEventListener('pointermove', e=>{
+  const p=pos(e);
+  const dx=p.x-ptr.x, dy=p.y-ptr.y;
+  ptr.x=p.x; ptr.y=p.y;
+  const z=zonaEm(p.x,p.y); hoverZ=z;
+  if(!ptr.down) return;
+  const d=Math.hypot(dx,dy); ptr.dx+=d;
+  if(tool==='faca' && z==='board' && board && maxCorte(board)>0){
+    if(ptr.cut===undefined) ptr.cut=0;
+    ptr.cut+=d;
+    const passo=Math.max(38, Math.min(Z.board.w,Z.board.h)*0.20);
+    const m=maxCorte(board);
+    if(ptr.cut>=passo && board.cortes<m){
+      ptr.cut=0; board.cortes++;
+      sfxCorte();
+      for(let i=0;i<8;i++){
+        parts.push({x:ptr.x,y:ptr.y,vx:(Math.random()*90-45),vy:(Math.random()*90-45)-20,g:220,life:0.4,col:'#ffe6a0',r:2.2,t:'spark'});
+      }
+      if(board.cortes>=m){ toast('✂️ '+IT[board.id].n+' bem picada!'); tom(760,0.08,'triangle',0.04); }
+    }
+  }
+  if(tool==='esp' && z==='stove' && pan.itens.length){
+    if(tempoTotal-(ptr.lastStir||0)>0.32){ ptr.lastStir=tempoTotal; mexer(); }
+  }
+});
+function solta(e){
+  if(!ptr.down) return;
+  const p=pos(e); ptr.x=p.x; ptr.y=p.y; ptr.down=false;
+  const moveu=ptr.dx||0;
+  ptr.cut=0;
+  const z=zonaEm(p.x,p.y);
+  if(moveu<10 && tool==='mao' && z){ tapZona(z); }
+}
+cv.addEventListener('pointerup', solta);
+cv.addEventListener('pointercancel', e=>{ ptr.down=false; ptr.cut=0; });
+cv.addEventListener('pointerleave', ()=>{ hoverZ=null; });
+
+/* ============================================================
+   UI
+   ============================================================ */
+function montaPantry(){
+  $('pantry').innerHTML=INGS.map(i=>{
+    const tag = i.max>0 ? (i.cat==='fruta'?'cortar':'picar') : 'cozinhar';
+    return '<button class="ing" data-id="'+i.id+'"><span class="e">'+i.e+'</span><span class="n">'+i.n+'</span><span class="tag">'+tag+'</span></button>';
+  }).join('');
+  $('pantry').addEventListener('click', e=>{
+    const b=e.target.closest('.ing'); if(!b) return; pegarIng(b.dataset.id);
+  });
+}
+document.querySelectorAll('.tool').forEach(b=>{
+  b.addEventListener('click', ()=>{
+    tool=b.dataset.tool;
+    document.querySelectorAll('.tool').forEach(x=>x.classList.toggle('on', x===b));
+    if(tool==='faca') toast('🔪 Arraste sobre a tábua pra picar');
+    if(tool==='esp')  toast('🥄 Arraste na panela pra mexer');
+  });
+});
+$('btnMexer').addEventListener('click', mexer);
+$('heatUp').addEventListener('click', ()=>{ pan.heat=Math.min(100,pan.heat+10); atualizaTopo(); if(!som)return; });
+$('heatDown').addEventListener('click', ()=>{ pan.heat=Math.max(0,pan.heat-10); atualizaTopo(); });
+$('btnLimpar').addEventListener('click', descartar);
+$('btnServir').addEventListener('click', servir);
+$('btnSom').addEventListener('click', ()=>{ som=!som; $('btnSom').textContent=som?'🔊':'🔇'; saveCfg(); toast(som?'Som ligado':'Som desligado'); });
+$('btnHelp').addEventListener('click', ()=>$('ovHelp').classList.remove('hide'));
+$('btnFecharHelp').addEventListener('click', ()=>$('ovHelp').classList.add('hide'));
+$('btnTutorial').addEventListener('click', ()=>$('ovHelp').classList.remove('hide'));
+$('btnMenu').addEventListener('click', ()=>{ $('ovStart').classList.remove('hide'); });
+document.querySelectorAll('.opt').forEach(b=>{
+  b.addEventListener('click', ()=>comeca(b.dataset.modo));
+});
+$('btnDeNovo').addEventListener('click', ()=>comeca('pedidos'));
+$('btnTrocarModo').addEventListener('click', ()=>{ $('ovFim').classList.add('hide'); $('ovStart').classList.remove('hide'); });
+document.querySelectorAll('.ov').forEach(o=>{
+  o.addEventListener('click', e=>{ if(e.target===o && o.id!=='ovStart') o.classList.add('hide'); });
+});
+
+/* ============================================================
+   BOOT
+   ============================================================ */
+function loop(t){
+  const dt=Math.min(0.05,(t-last)/1000); last=t;
+  update(dt);
+  draw();
+  if(modo==='pedidos' && rodada.ativo) tickTickets();
+  requestAnimationFrame(loop);
+}
+
+load();
+montaPantry();
+$('btnSom').textContent = som?'🔊':'🔇';
+$('coins').textContent=getCoins();
+resize();
+new ResizeObserver(()=>resize()).observe($('stage'));
+renderRec(); renderShelf(); renderTickets(); atualizaTopo();
+requestAnimationFrame(loop);
+
+/* avisa a cada 4s pra mexer */
+setInterval(()=>{
+  const av=$('btnMexer');
+  const alerta = pan.itens.length>0 && pan.heat>15 && panStuck>0.5;
+  av.classList.toggle('alerta', alerta);
+}, 500);
+</script>
+</body>
+</html>
