@@ -1,0 +1,775 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>O Enigma do Cantinho II — Além da Mansão 🕯️</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;800&family=Dancing+Script:wght@700&display=swap" rel="stylesheet">
+<style>
+:root{--wall:#2f3a44;--purple:#7b2cbf;--paper:#e0c9a6}
+*{box-sizing:border-box}
+html,body{margin:0;width:100%;height:100%;background:#0a0a0a;font-family:'Nunito',sans-serif;overflow:hidden;user-select:none;-webkit-user-select:none}
+button,select{font-family:inherit}
+#game{position:fixed;inset:0;background:var(--wall);border:14px solid #000;overflow:hidden}
+.wallpaper{position:absolute;inset:0;opacity:.3;pointer-events:none;background-image:url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M30 0c15 0 30 15 30 30S45 60 30 60 0 45 0 30 15 0 30 0zm0 10c-10 0-20 10-20 20s10 20 20 20 20-10 20-20-10-20-20-20z' fill='%23000' fill-opacity='0.2' fill-rule='evenodd'/%3E%3C/svg%3E")}
+.vignette{position:absolute;inset:0;background:radial-gradient(circle,transparent 25%,rgba(0,0,0,.55) 70%,rgba(0,0,0,.9) 100%);pointer-events:none;z-index:100}
+.hand-drawn{filter:url(#rough-edge)}
+#scene{position:absolute;inset:0;padding:70px 120px 20px 20px;display:flex;flex-direction:column;align-items:center;justify-content:center;overflow:auto}
+#scene.shake{animation:shake .4s}
+@keyframes shake{25%{transform:translateX(-9px)}75%{transform:translateX(9px)}}
+@keyframes bob{50%{transform:translateY(-6px)}}
+.title{position:absolute;top:50px;left:0;right:110px;text-align:center;color:rgba(255,255,255,.45);font-family:'Dancing Script',cursive;font-size:clamp(1.5rem,3.6vw,2.6rem);letter-spacing:2px;pointer-events:none;z-index:60}
+.sub{margin-top:18px;color:#fff;font-family:'Dancing Script',cursive;font-size:clamp(1.1rem,2.2vw,1.6rem);text-align:center;max-width:85%}
+.paper{background:var(--paper);color:#000;border:3px solid #000;padding:12px 18px;font-weight:800;font-size:.95rem;line-height:1.5;box-shadow:6px 6px 0 rgba(0,0,0,.35);transform:rotate(-1deg);max-width:min(520px,80vw)}
+.paper b{font-family:'Dancing Script',cursive;font-size:1.3rem}
+.topbar{position:absolute;top:14px;left:14px;right:14px;display:flex;gap:10px;z-index:400;align-items:center;flex-wrap:wrap}
+.pill{color:#fff;text-decoration:none;font-weight:800;border:2px solid #fff;padding:8px 16px;border-radius:30px;background:rgba(0,0,0,.5);cursor:pointer;font-size:.9rem;transition:.25s}
+.pill:hover{background:#fff;color:#000}
+.spacer{flex:1}
+#timer,#prog{color:#fff;font-weight:800;font-family:monospace;background:rgba(0,0,0,.5);padding:6px 12px;border-radius:20px;border:2px solid #555}
+#prog{display:flex;align-items:center;gap:8px}
+#bar{width:90px;height:8px;background:#222;border-radius:4px;overflow:hidden}
+#bar i{display:block;height:100%;background:linear-gradient(90deg,#7b2cbf,#c77dff);transition:width .6s}
+.inventory{position:absolute;right:16px;top:50%;transform:translateY(-50%);width:88px;background:rgba(0,0,0,.85);border:4px solid #000;border-radius:10px;display:flex;flex-direction:column;padding:12px 10px;gap:10px;z-index:200;max-height:80vh;overflow:auto}
+.inv-slot{width:62px;height:62px;flex:none;background:#222;border:3px solid #444;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:1.9rem;cursor:pointer;transition:.2s}
+.inv-slot.active{border-color:#fff;background:#333;box-shadow:0 0 15px rgba(255,255,255,.35)}
+.room{position:relative;width:min(860px,calc(100vw - 180px));height:min(500px,62vh)}
+.gdn{position:absolute;cursor:pointer;line-height:1;transition:filter .2s,left .25s,top .25s}
+.gdn:hover{filter:brightness(1.25)}
+.gate{position:absolute;right:2%;bottom:0;width:170px;height:310px;border:6px solid #000;background:repeating-linear-gradient(90deg,#1a1a1a 0 10px,transparent 10px 26px),rgba(0,0,0,.25);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:3rem;transition:transform .9s;transform-origin:right}
+.gate.open{transform:perspective(500px) rotateY(-70deg)}
+.moons{display:flex;gap:16px;margin-top:20px;flex-wrap:wrap;justify-content:center}
+.btn{background:#222;color:#fff;border:3px solid #000;padding:10px 16px;font-weight:800;font-size:1rem;cursor:pointer;border-radius:6px}
+.btn:hover{background:#444}
+.btn:disabled{opacity:.45;cursor:default}
+.btn.sm{padding:8px 12px;min-width:44px}
+.bigopt{font-size:2.3rem;padding:6px 18px}
+.opt2{font-size:1rem;padding:10px 16px;max-width:260px}
+.clock-ctrl{display:flex;gap:8px;margin-top:14px;align-items:center;flex-wrap:wrap;justify-content:center}
+.cipher{font-family:monospace;font-size:1.3rem;color:#c77dff;background:#000;border:3px solid #333;padding:10px 16px;letter-spacing:3px;text-align:center;max-width:90%;word-break:break-word}
+.txt{background:#000;color:#fff;border:3px solid #333;padding:10px 14px;font-size:1.1rem;font-weight:800;text-transform:uppercase;text-align:center;outline:none;width:200px;user-select:text;-webkit-user-select:text}
+.sel{background:#000;color:#fff;border:3px solid #333;padding:8px 12px;font-weight:800;font-size:1rem}
+.pot{width:76px;height:76px;border-radius:50%;border:4px solid #000;cursor:pointer;transition:.2s}
+.pot.sel2{box-shadow:0 0 0 4px #fff,0 0 18px #fff;transform:scale(1.1)}
+.glass{width:120px;height:120px;border:8px solid #000;border-radius:60px 60px 6px 6px;background:#222;transition:background .6s}
+.swatch{width:54px;height:30px;border:4px solid #000;border-radius:6px;display:inline-block;vertical-align:middle}
+.sdg{display:grid;grid-template-columns:repeat(4,54px);gap:4px;background:#000;padding:6px;border:5px solid #000}
+.sd{width:54px;height:54px;background:#e8dcc0;border:3px solid #000;font-size:1.9rem;display:flex;align-items:center;justify-content:center;cursor:pointer}
+.sd.ok{background:#7CFC00}
+.keyb{display:flex;flex-wrap:wrap;gap:6px;justify-content:center;max-width:520px;margin-top:10px}
+.pcard{width:104px;padding:8px 4px;text-align:center;line-height:1.3}
+.fog{position:relative;width:min(700px,78vw);height:min(310px,42vh);border:6px solid #000;margin-top:14px;cursor:crosshair;touch-action:none;transition:background .15s;background:hsl(210 60% 28%)}
+.fogt{position:absolute;left:0;right:0;top:10px;text-align:center;color:#fff;font-weight:800;font-size:1.3rem;pointer-events:none}
+.pbar{position:relative;width:min(560px,76vw);height:44px;background:#000;border:5px solid #000;margin-top:18px;overflow:hidden}
+.pzone{position:absolute;top:0;bottom:0;background:#2a9d8f}
+.pmark{position:absolute;top:-2px;bottom:-2px;width:8px;margin-left:-4px;background:#ffd166;box-shadow:0 0 12px #ffd166}
+.clutter{display:grid;gap:2px;background:#000;padding:6px;border:5px solid #000;margin-top:12px}
+.cl{width:34px;height:34px;background:#e8dcc0;border:0;font-size:1.25rem;cursor:pointer;padding:0}
+.brow{display:flex;gap:10px;justify-content:center;margin:4px}
+.gl{width:90px;height:34px;border:3px solid #000;border-radius:6px;background:#9ad1d4;cursor:pointer;font-size:1rem;opacity:.9}
+.gl.safe{background:#7CFC00}.gl.done{background:#c9a227}
+.cell{width:62px;height:62px;background:#222;border:3px solid #000;color:#fff;font-size:1.7rem;font-weight:800;display:flex;align-items:center;justify-content:center;cursor:pointer}
+.cell.lit{background:#ffd166;color:#000}.cell.pickd{background:#7b2cbf}.cell.found{background:#2a9d8f}
+.cgrid{display:grid;gap:4px;background:#000;padding:8px;border:6px solid #000;box-shadow:10px 10px 0 rgba(0,0,0,.35)}
+.cgrid.g6{grid-template-columns:repeat(6,62px)}
+.swap{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;margin-top:16px}
+.swap.col{flex-direction:column;align-items:stretch;max-width:420px;margin-left:auto;margin-right:auto}
+.swap.g3{display:grid;grid-template-columns:repeat(3,92px)}
+.sitem{min-width:70px;padding:10px;background:#222;border:4px solid #000;border-radius:8px;cursor:pointer;color:#fff;font-weight:800;text-align:center;transition:transform .2s;display:flex;align-items:center;justify-content:center;gap:10px}
+.sitem.up{transform:translateY(-12px);box-shadow:0 0 14px #fff}
+.pairs{display:flex;gap:30px;margin-top:16px}
+.pcol{display:flex;flex-direction:column;gap:8px}
+.pb{min-width:150px;font-size:1.05rem}
+.okp{background:#2a6a2a;color:#fff;opacity:.7}
+.selp{outline:3px solid #fff}
+.arena{position:relative;width:min(640px,78vw);height:min(300px,40vh);background:radial-gradient(circle,#1d2a3a,#05080c);border:5px solid #000;margin-top:14px;overflow:hidden}
+.mcell{width:46px;height:46px;background:#222;border:3px solid #000;cursor:pointer}
+.mcell.on{background:#c77dff;box-shadow:0 0 12px #7b2cbf}
+.mcell.fx{cursor:default}
+.mcell.axis{border-color:#ffd166}
+.mgrid{display:grid;gap:3px;background:#000;padding:6px;border:6px solid #000}
+.message-box{position:absolute;bottom:34px;left:50%;transform:translateX(-50%);background:#000;color:#fff;padding:12px 24px;border:3px solid #fff;font-size:1.3rem;z-index:500;opacity:0;transition:.3s;pointer-events:none;font-family:'Dancing Script',cursive;max-width:80vw;text-align:center}
+.message-box.show{opacity:1}
+#modal{position:fixed;inset:0;background:rgba(0,0,0,.8);z-index:1100;display:none;align-items:center;justify-content:center;padding:20px}
+.modal-box{background:#1a1a1a;border:4px solid #fff;border-radius:10px;padding:22px;color:#fff;max-width:520px;width:100%;max-height:85vh;overflow:auto}
+.modal-box h2{margin:0 0 12px;font-family:'Dancing Script',cursive;font-size:2rem}
+.note-item{padding:8px 0;border-bottom:1px solid #333;font-size:.95rem;line-height:1.45}
+.note-item.frag{color:#ffd166;font-weight:800}
+#intro{position:fixed;inset:0;z-index:1800;background:#000;display:none;flex-direction:column;align-items:center;justify-content:center;color:#fff;text-align:center;padding:30px;pointer-events:none}
+#intro .n{color:#c77dff;letter-spacing:4px;font-weight:800}
+#intro h1{font-family:'Dancing Script',cursive;font-size:clamp(2.6rem,8vw,5rem);margin:6px 0}
+#intro p{color:#bbb;font-style:italic;max-width:520px;font-size:1.1rem}
+#intro.go{display:flex;animation:intro 2.2s forwards}
+@keyframes intro{0%{opacity:0}18%,75%{opacity:1}100%{opacity:0}}
+.pt{position:absolute;width:9px;height:9px;border-radius:2px;z-index:600;pointer-events:none}
+#menu{position:fixed;inset:0;background:radial-gradient(circle,#1a2530,#000 75%);z-index:1000;display:flex;flex-direction:column;align-items:center;justify-content:center;color:#fff;padding:20px;overflow:auto}
+.menu-title{font-family:'Dancing Script',cursive;font-size:clamp(2.4rem,6vw,4rem);margin-bottom:6px;text-shadow:0 0 20px rgba(255,255,255,.5);text-align:center}
+.menu-sub{color:#999;margin-bottom:22px;font-style:italic;text-align:center;max-width:640px}
+.stage-list{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:14px;width:min(920px,100%)}
+.stage-card{padding:16px 10px;background:#1a1a1a;border:3px solid #333;border-radius:10px;cursor:pointer;transition:.3s;text-align:center}
+.stage-card:hover:not(.locked){border-color:#fff;transform:translateY(-6px);background:#222}
+.stage-card.locked{opacity:.3;cursor:not-allowed}
+.stage-card.done{border-color:#7b2cbf}
+.stage-card .num{font-size:.7rem;color:#888;letter-spacing:2px}
+.stage-card .ico{font-size:1.7rem;margin:6px 0}
+.stage-card .name{font-size:1rem;font-weight:800}
+.menu-foot{margin-top:24px;display:flex;gap:12px;flex-wrap:wrap;justify-content:center;align-items:center}
+.menu-stats{margin-top:16px;color:#aaa;font-size:.9rem}
+label.hard{color:#ffd166;font-weight:800;font-size:.9rem;cursor:pointer}
+.fade{position:fixed;inset:0;background:#000;z-index:2000;pointer-events:none;opacity:0;transition:.7s}
+#ending{position:fixed;inset:0;z-index:1500;background:radial-gradient(circle,#1d2a3a,#000);display:none;flex-direction:column;align-items:center;justify-content:center;color:#fff;text-align:center;padding:30px}
+#ending h1{font-family:'Dancing Script',cursive;font-size:clamp(2.4rem,7vw,4.4rem);margin:0 0 14px;text-shadow:0 0 25px #c77dff}
+#ending p{max-width:600px;font-size:1.15rem;line-height:1.6}
+.rank{font-size:5rem;font-weight:800;color:#ffd166;text-shadow:0 0 20px #ffd166;margin:6px 0}
+@media(max-width:700px){#scene{padding:70px 100px 10px 6px}.inventory{width:76px}.inv-slot{width:52px;height:52px}.room{transform:scale(.7);transform-origin:top center}}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<svg style="display:none"><filter id="rough-edge"><feTurbulence type="fractalNoise" baseFrequency="0.04" numOctaves="3" result="n"/><feDisplacementMap in="SourceGraphic" in2="n" scale="2"/></filter></svg>
+<div class="fade" id="fade"></div>
+<div id="intro"><div class="n" id="inN"></div><h1 id="inT"></h1><p id="inS"></p></div>
+
+<div id="menu">
+  <div class="menu-title">O Enigma do Cantinho II</div>
+  <div class="menu-sub">Além da Mansão. Você escapou, mas o jardim guarda mais segredos. Vinte e nove enigmas, nenhum deles de conta: aqui só valem olhos, memória e imaginação.</div>
+  <div class="stage-list" id="stageList"></div>
+  <div class="menu-foot">
+    <a href="enigma.html" class="pill">← Parte 1</a>
+    <a href="../jogos_hub.html" class="pill">Sair</a>
+    <label class="hard"><input type="checkbox" id="hardChk" onchange="setHard(this.checked)"> Modo Difícil (sem dicas, menos folga, desafios maiores)</label>
+    <button class="pill" onclick="resetProgress()">Reiniciar progresso</button>
+  </div>
+  <div class="menu-stats" id="menuStats"></div>
+</div>
+
+<div id="game">
+  <div class="wallpaper"></div><div class="vignette"></div>
+  <div class="topbar">
+    <button class="pill" onclick="openMenu()">☰ Capítulos</button>
+    <button class="pill" onclick="showNotebook()">📓 Caderno</button>
+    <button class="pill" onclick="showHint()">💡 Dica</button>
+    <div class="spacer"></div>
+    <div id="prog"><span id="progT"></span><div id="bar"><i></i></div></div>
+    <div id="timer">⏱ 00:00</div>
+    <button class="pill" id="muteBtn" onclick="toggleMute()">🔊</button>
+  </div>
+  <div class="title" id="chTitle"></div>
+  <div class="message-box" id="msgBox"></div>
+  <div class="inventory" id="inventory"></div>
+  <div id="scene"></div>
+</div>
+<div id="modal"></div>
+
+<div id="ending">
+  <h1>Você chegou ao Cantinho!</h1>
+  <p id="endText"></p>
+  <div class="rank" id="endRank"></div>
+  <p id="endStats" style="color:#aaa;font-size:1rem"></p>
+  <div style="margin-top:26px;display:flex;gap:12px;flex-wrap:wrap;justify-content:center">
+    <a class="pill" href="enigma.html">← Parte 1</a>
+    <button class="pill" onclick="location.href='../jogos_hub.html'">Voltar ao hub</button>
+    <button class="pill" onclick="replay()">Jogar de novo</button>
+  </div>
+</div>
+
+<script>
+const LS_KEY='enigma_cantinho2_v1';
+const DEF=()=>({unlocked:1,frag:{},notes:[],items:[],sec:0,hints:0,errors:0,hard:false});
+function loadProgress(){try{const d=JSON.parse(localStorage.getItem(LS_KEY));if(d&&d.unlocked)return Object.assign(DEF(),d)}catch(e){}return DEF()}
+const S={stage:0,inv:[],sel:null,p:loadProgress(),muted:false,hintIdx:0,busy:false,done:false,kp:null};
+const saveProgress=()=>{try{localStorage.setItem(LS_KEY,JSON.stringify(S.p))}catch(e){}};
+
+/* utilidades */
+const $id=id=>document.getElementById(id);
+const sceneEl=$id('scene'),msgBox=$id('msgBox'),fade=$id('fade');
+const $=(s,r=sceneEl)=>r.querySelector(s), $$=(s,r=sceneEl)=>[...r.querySelectorAll(s)];
+const wait=ms=>new Promise(r=>setTimeout(r,ms));
+const rnd=(a,b)=>a+Math.floor(Math.random()*(b-a+1));
+function shuffle(a){a=[...a];for(let i=a.length-1;i>0;i--){const j=rnd(0,i);[a[i],a[j]]=[a[j],a[i]]}return a}
+const fmt=s=>String(Math.floor(s/60)).padStart(2,'0')+':'+String(s%60).padStart(2,'0');
+const norm=s=>s.normalize('NFD').replace(/[\u0300-\u036f]/g,'').trim().toUpperCase();
+
+/* som */
+let actx=null,drone=null;
+function ac(){if(!actx){try{actx=new(window.AudioContext||window.webkitAudioContext)()}catch(e){}}return actx}
+function tone(f,dur=.15,type='sine',vol=.12,delay=0){
+  if(S.muted)return;const c=ac();if(!c)return;
+  const t=c.currentTime+delay,o=c.createOscillator(),g=c.createGain();
+  o.type=type;o.frequency.value=f;g.gain.setValueAtTime(vol,t);g.gain.exponentialRampToValueAtTime(.001,t+dur);
+  o.connect(g);g.connect(c.destination);o.start(t);o.stop(t+dur);
+}
+function startDrone(){
+  const c=ac();if(!c||drone)return;
+  const g=c.createGain();g.gain.value=S.muted?0:.025;g.connect(c.destination);
+  [49,73.4,98].forEach(f=>{const o=c.createOscillator();o.type='sine';o.frequency.value=f;o.connect(g);o.start()});
+  drone=g;
+}
+const sfx={click:()=>tone(300,.05,'square',.05),pick(){tone(660,.1,'triangle');tone(880,.15,'triangle',.1,.08)},
+  ok(){[523,659,784,1047].forEach((f,i)=>tone(f,.25,'triangle',.12,i*.1))},bad(){tone(140,.3,'sawtooth',.1);navigator.vibrate&&navigator.vibrate(80)},
+  creak(){tone(90,.5,'sawtooth',.06);tone(120,.4,'sawtooth',.05,.2)}};
+function toggleMute(){S.muted=!S.muted;$id('muteBtn').textContent=S.muted?'🔇':'🔊';if(drone)drone.gain.value=S.muted?0:.025}
+
+/* efeitos */
+function burst(n=40){
+  const g=$id('game'),w=g.clientWidth/2,h=g.clientHeight/2;
+  for(let i=0;i<n;i++){
+    const p=document.createElement('i');p.className='pt';p.style.cssText=`left:${w}px;top:${h}px;background:hsl(${rnd(0,360)},90%,60%)`;g.appendChild(p);
+    const a=Math.random()*6.28,d=rnd(120,380);
+    p.animate([{transform:'translate(0,0)',opacity:1},{transform:`translate(${Math.cos(a)*d}px,${Math.sin(a)*d+120}px) rotate(540deg)`,opacity:0}],{duration:rnd(800,1400),easing:'ease-out'}).onfinish=()=>p.remove();
+  }
+}
+function shakeScene(){sceneEl.classList.remove('shake');void sceneEl.offsetWidth;sceneEl.classList.add('shake')}
+
+/* mensagens, erro, caderno */
+let msgTimer;
+function showMsg(t,ms=3000){msgBox.textContent=t;msgBox.classList.add('show');clearTimeout(msgTimer);msgTimer=setTimeout(()=>msgBox.classList.remove('show'),ms)}
+function fail(msg){S.p.errors++;saveProgress();sfx.bad();shakeScene();showMsg(msg)}
+function addNote(t){if(!S.p.notes.includes(t)){S.p.notes.push(t);saveProgress()}}
+function openModal(html,onMount){
+  const m=$id('modal');
+  m.innerHTML=`<div class="modal-box">${html}<div style="margin-top:16px;text-align:center"><button class="btn" id="mclose">Fechar</button></div></div>`;
+  m.style.display='flex';$id('mclose').onclick=closeModal;if(onMount)onMount(m.querySelector('.modal-box'));
+}
+function closeModal(){$id('modal').style.display='none'}
+function showNotebook(){
+  if(!S.stage)return;const n=S.p.notes;
+  openModal('<h2>📓 Caderno</h2>'+(n.length?n.map(t=>`<div class="note-item ${t.startsWith('Fragmento')?'frag':''}">${t}</div>`).join(''):'<div class="note-item">Ainda não há anotações.</div>'));
+}
+addEventListener('keydown',e=>{
+  if(e.key==='Escape')closeModal();
+  else if(S.kp&&document.activeElement.tagName!=='INPUT')S.kp(e.key);
+});
+
+/* inventário */
+function addItem(id,icon,persist=false){
+  if(S.inv.find(i=>i.id===id))return;S.inv.push({id,icon});
+  if(persist&&!S.p.items.find(i=>i.id===id)){S.p.items.push({id,icon});saveProgress()}
+  renderInv();sfx.pick();showMsg('Você obteve: '+id);
+}
+function removeItem(id){S.inv=S.inv.filter(i=>i.id!==id);S.p.items=S.p.items.filter(i=>i.id!==id);saveProgress();if(S.sel===id)S.sel=null;renderInv()}
+function renderInv(){
+  const el=$id('inventory');el.innerHTML='';
+  for(let i=0;i<Math.max(5,S.inv.length);i++){
+    const it=S.inv[i],d=document.createElement('div');
+    d.className='inv-slot'+(it&&S.sel===it.id?' active':'');
+    if(it){d.textContent=it.icon;d.title=it.id;d.onclick=()=>{
+      sfx.click();
+      if(S.sel&&S.sel!==it.id){S.sel=null;renderInv();showMsg('Esses itens não se combinam.');return}
+      S.sel=S.sel===it.id?null:it.id;renderInv();
+      if(S.sel)showMsg('Selecionado: '+it.id,1800);
+    }}
+    el.appendChild(d);
+  }
+}
+
+/* menu e progresso */
+const ICONS=['⛲','🪟','🌿','🌊','🐦‍⬛','🕯️','🍄','🖼️','🌫️','⏳','🔍','🌉','🔤','🌈','🌑','👻','🗿','📜','🏠','🦋','🔌','📻','🧩','🗣️','🏛️','🎂','🪞','🧠','🚪'];
+function renderMenu(){
+  const list=$id('stageList');list.innerHTML='';
+  STAGES.forEach((st,i)=>{
+    const n=i+1,locked=n>S.p.unlocked,done=n<S.p.unlocked,c=document.createElement('div');
+    c.className='stage-card'+(locked?' locked':'')+(done?' done':'');
+    c.innerHTML=`<div class="num">CAPÍTULO ${n}</div><div class="ico">${locked?'🔒':ICONS[i]}</div><div class="name">${st.nome}</div>`;
+    if(!locked)c.onclick=()=>startStage(n);list.appendChild(c);
+  });
+  $id('hardChk').checked=S.p.hard;
+  $id('menuStats').textContent=`Tempo: ${fmt(S.p.sec)} · Dicas usadas: ${S.p.hints} · Erros: ${S.p.errors}`;
+}
+function openMenu(){S.kp=null;renderMenu();$id('menu').style.display='flex'}
+function setHard(v){S.p.hard=v;saveProgress()}
+function doReset(){
+  const h=S.p.hard;S.p=DEF();S.p.hard=h;
+  S.inv=[];S.sel=null;S.stage=0;S.done=false;S.kp=null;S.hintIdx=0;
+  sceneEl.innerHTML='';sceneEl.onpointermove=sceneEl.onpointerdown=null;
+  $id('chTitle').textContent='';$id('progT').textContent='';$id('bar').firstChild.style.width='0%';
+  renderInv();saveProgress();openMenu();
+}
+function resetProgress(){
+  openModal('<h2>Reiniciar progresso?</h2><p>Capítulos, tempo, dicas, erros e anotações serão apagados.</p><div style="text-align:center"><button class="btn" id="rsOk">Sim, reiniciar</button></div>',b=>{
+    b.querySelector('#rsOk').onclick=()=>{closeModal();doReset()};
+  });
+}
+function replay(){$id('ending').style.display='none';doReset()}
+
+setInterval(()=>{
+  const active=S.stage>0&&$id('menu').style.display==='none'&&$id('ending').style.display!=='flex';
+  if(active){S.p.sec++;if(S.p.sec%5===0)saveProgress()}
+  $id('timer').textContent='⏱ '+fmt(S.p.sec);
+},1000);
+
+/* fases */
+async function startStage(n){
+  if(S.busy)return;S.busy=true;ac();startDrone();
+  try{
+    fade.style.opacity=1;await wait(700);
+    $id('menu').style.display='none';closeModal();
+    S.stage=n;S.sel=null;S.hintIdx=0;S.done=false;S.kp=null;
+    S.inv=S.p.items.map(i=>({id:i.id,icon:i.icon}));
+    sceneEl.innerHTML='';sceneEl.onpointermove=sceneEl.onpointerdown=null;
+    const st=STAGES[n-1];
+    $id('chTitle').textContent=`Capítulo ${n}: ${st.nome}`;
+    $id('progT').textContent=`${n}/${STAGES.length}`;$id('bar').firstChild.style.width=((n-1)/STAGES.length*100)+'%';
+    st.build(sceneEl);renderInv();
+    $id('inN').textContent=`CAPÍTULO ${n}`;$id('inT').textContent=st.nome;$id('inS').textContent=st.story;
+    const it=$id('intro');it.classList.remove('go');void it.offsetWidth;it.classList.add('go');
+    fade.style.opacity=0;await wait(2200);it.classList.remove('go');
+  }finally{S.busy=false;fade.style.opacity=0}
+}
+async function completeStage(n,o={}){
+  if(S.done)return;S.done=true;
+  if(o.frag!=null)S.p.frag[n]=o.frag;if(o.note)addNote(o.note);
+  if(S.p.unlocked<n+1&&n<STAGES.length)S.p.unlocked=n+1;
+  saveProgress();sfx.ok();burst();$id('bar').firstChild.style.width=(n/STAGES.length*100)+'%';
+  await wait(2300);
+  if(n<STAGES.length)startStage(n+1);else finish();
+}
+function showHint(){
+  if(!S.stage)return;
+  if(S.p.hard){showMsg('Modo Difícil: dicas desativadas.');return}
+  const h=STAGES[S.stage-1].hints;S.p.hints++;saveProgress();
+  showMsg('💡 '+h[Math.min(S.hintIdx,h.length-1)]+'  (−100 pontos)',5000);S.hintIdx++;
+}
+
+/* auxiliares reutilizáveis */
+const win=(n,msg,o)=>{showMsg(msg);completeStage(n,o)};
+const alive=root=>root.isConnected&&!S.done;
+
+/* perguntas com resposta escrita */
+function textQuiz(root,pre,items,done){
+  let i=0;
+  root.innerHTML=`<div class="paper">${pre}</div><div class="cipher" id="q" style="margin-top:16px"></div><div class="clock-ctrl"><input class="txt" id="a" maxlength="24" placeholder="resposta" autocomplete="off"><button class="btn" id="ok">Responder</button></div><div class="sub" id="qi"></div>`;
+  const show=()=>{$('#q').innerHTML=items[i][0];$('#qi').textContent=`Pergunta ${i+1} de ${items.length}`;$('#a').value=''};
+  const send=()=>{if(S.done)return;const a=norm($('#a').value);
+    if(items[i][1].includes(a)){sfx.pick();if(++i>=items.length)done();else show()}else fail('Resposta incorreta.')};
+  $('#ok').onclick=send;$('#a').onkeydown=e=>{if(e.key==='Enter')send()};show();
+}
+/* perguntas de múltipla escolha: rounds=[{q,o:[...],a:índice da certa}] */
+function pickQuiz(root,pre,rounds,done,cls='opt2'){
+  let i=0;
+  root.innerHTML=`<div class="paper">${pre}</div><div class="cipher" id="q" style="margin-top:16px"></div><div class="moons" id="o"></div><div class="sub" id="qi"></div>`;
+  const show=()=>{
+    const r=rounds[i];$('#q').innerHTML=r.q;$('#qi').textContent=`Rodada ${i+1} de ${rounds.length}`;
+    $('#o').innerHTML=shuffle(r.o.map((h,k)=>[h,k===r.a])).map(x=>`<button class="btn ${cls}" data-ok="${x[1]?1:0}">${x[0]}</button>`).join('');
+    $$('#o .btn').forEach(b=>b.onclick=()=>{if(S.done)return;sfx.click();
+      if(b.dataset.ok==='1'){sfx.pick();if(++i>=rounds.length)done();else show()}else fail('Não é isso.')});
+  };show();
+}
+/* trocar de lugar até ficar na ordem certa */
+function swapGame(root,pre,sol,render,done,cls=''){
+  let order;do{order=shuffle(sol)}while(order.join()===sol.join());
+  root.innerHTML=`<div class="paper">${pre}</div><div class="swap ${cls}" id="sw"></div><div class="clock-ctrl"><button class="btn" id="ok">Confirmar ordem</button></div>`;
+  let pick=-1;
+  const draw=()=>{
+    $('#sw').innerHTML=order.map((k,i)=>`<div class="sitem ${pick===i?'up':''}" data-i="${i}">${render(k)}</div>`).join('');
+    $$('.sitem').forEach(el=>el.onclick=()=>{const i=+el.dataset.i;sfx.click();
+      if(pick<0)pick=i;else{if(pick!==i)[order[pick],order[i]]=[order[i],order[pick]];pick=-1}draw()});
+  };draw();
+  $('#ok').onclick=()=>{if(S.done)return;if(order.join()===sol.join())done();else fail('Ainda não está na ordem certa.')};
+}
+/* ligar pares: clique na esquerda e depois na direita */
+function pairGame(root,pre,pairs,done){
+  const L=pairs.map((p,i)=>[i,p[0]]),R=shuffle(pairs.map((p,i)=>[i,p[1]])),ok=new Set();let sel=-1;
+  root.innerHTML=`<div class="paper">${pre}</div><div class="pairs"><div class="pcol" id="pl"></div><div class="pcol" id="pr"></div></div>`;
+  const draw=()=>{
+    $('#pl').innerHTML=L.map(([i,h])=>`<button class="btn pb ${ok.has(i)?'okp':''} ${sel===i?'selp':''}" data-i="${i}" ${ok.has(i)?'disabled':''}>${h}</button>`).join('');
+    $('#pr').innerHTML=R.map(([i,h])=>`<button class="btn pb ${ok.has(i)?'okp':''}" data-i="${i}" ${ok.has(i)?'disabled':''}>${h}</button>`).join('');
+    $$('#pl .pb').forEach(b=>b.onclick=()=>{sfx.click();sel=+b.dataset.i;draw()});
+    $$('#pr .pb').forEach(b=>b.onclick=()=>{
+      if(S.done)return;
+      if(sel<0){showMsg('Escolha primeiro algo do lado esquerdo.');return}
+      sfx.click();
+      if(+b.dataset.i===sel){ok.add(sel);sel=-1;sfx.pick();draw();if(ok.size===pairs.length)done()}
+      else{sel=-1;fail('Esses dois não combinam.');draw()}
+    });
+  };draw();
+}
+
+const STAGES=[
+/* 1 */
+{nome:'O Portão',story:'Você deixou a mansão, mas o portão do jardim está trancado. Um espantalho vigia em silêncio.',
+ hints:['Examine o espantalho. Espantalhos escondem coisas nos bolsos.','A moeda serve onde houver uma fenda. Selecione-a no inventário e clique na fonte.','Pegue a chave que surgir na água, selecione-a e clique no portão.'],
+ build(root){
+  root.innerHTML=`<div class="room">
+   <div class="gdn" id="sc" style="left:6%;bottom:10px;font-size:6.5rem" title="Espantalho">🎃</div>
+   <div class="gdn" id="fo" style="left:40%;bottom:6px;font-size:7rem" title="Fonte">⛲</div>
+   <div class="gdn" id="fk" style="left:46%;bottom:80px;font-size:2.4rem;display:none;animation:bob 1.4s infinite">🗝️</div>
+   <div class="gate hand-drawn" id="gt">🔒</div></div>`;
+  let coin=false,keyOut=false;
+  $('#sc').onclick=()=>{if(coin){showMsg('Só palha e poeira.');return}coin=true;sfx.creak();addItem('Moeda Antiga','🪙')};
+  $('#fo').onclick=()=>{
+    if(keyOut){showMsg('A água está calma.');return}
+    if(S.sel==='Moeda Antiga'){removeItem('Moeda Antiga');keyOut=true;sfx.creak();$('#fk').style.display='block';showMsg('Algo brilhou no fundo da fonte.')}
+    else showMsg('Há uma fenda na borda, do tamanho de uma moeda.');
+  };
+  $('#fk').onclick=()=>{$('#fk').style.display='none';addItem('Chave de Ferro','🗝️')};
+  $('#gt').onclick=()=>{
+    if(S.sel==='Chave de Ferro'){removeItem('Chave de Ferro');$('#gt').classList.add('open');$('#gt').textContent='';sfx.creak();showMsg('O portão rangeu e se abriu.');completeStage(1)}
+    else fail('Está trancado.');
+  };
+ }},
+/* 2 */
+{nome:'O Vitral',story:'Uma capela abandonada. Três vidros do vitral perderam a cor.',
+ hints:['Escolha duas tintas e clique em Misturar.','Azul com amarelo dá verde.','Vermelho com amarelo dá laranja. Vermelho com azul dá roxo.'],
+ build(root){
+  const P={R:'#c1121f',B:'#3a86ff',Y:'#fcbf49'};
+  const T=shuffle([['VERDE','#2a9d8f','BY'],['LARANJA','#fb8500','RY'],['ROXO','#7b2cbf','BR']]);
+  root.innerHTML=`<div class="paper"><b>Vitral quebrado</b><br>Cada vidro pede uma cor. Misture duas tintas básicas para devolvê-la.</div>
+   <div style="display:flex;gap:18px;align-items:center;margin-top:16px"><div class="glass hand-drawn" id="gl"></div><div class="cipher" id="gt"></div></div>
+   <div class="moons">${Object.keys(P).map(k=>`<div class="pot" data-k="${k}" style="background:${P[k]}"></div>`).join('')}</div>
+   <div class="clock-ctrl"><button class="btn" id="mx">Misturar</button><button class="btn" id="cl">Limpar</button></div><div class="sub" id="vi"></div>`;
+  let r=0,sel=[];
+  const paint=()=>{$('#gt').innerHTML=`Vidro ${r+1} de 3: <span style="color:${T[r][1]}">${T[r][0]}</span>`;$('#vi').textContent='Tintas na mistura: '+(sel.length?sel.map(k=>({R:'vermelho',B:'azul',Y:'amarelo'}[k])).join(' + '):'nenhuma');$$('.pot').forEach(p=>p.classList.toggle('sel2',sel.includes(p.dataset.k)))};
+  $$('.pot').forEach(p=>p.onclick=()=>{if(S.done)return;sfx.click();const k=p.dataset.k;if(sel.includes(k))sel=sel.filter(x=>x!==k);else if(sel.length<2)sel.push(k);paint()});
+  $('#cl').onclick=()=>{sel=[];paint()};
+  $('#mx').onclick=()=>{
+    if(S.done||sel.length<2)return;
+    if([...sel].sort().join('')===T[r][2]){$('#gl').style.background=T[r][1];sfx.pick();r++;sel=[];
+      if(r>=3){win(2,'O vitral voltou a brilhar.',{frag:'C',note:'Fragmento do Vitral: C'})}else setTimeout(()=>{$('#gl').style.background='#222';paint()},900)}
+    else{sel=[];fail('Essa mistura não deu a cor certa.');paint()}
+  };paint();
+ }},
+/* 3 */
+{nome:'O Herbário',story:'Estantes de plantas secas. Cada etiqueta descreve uma planta, mas os desenhos se soltaram.',
+ hints:['Leia a descrição e escolha a planta que combina.','Pense onde cada planta vive e o que ela tem de especial.','O cogumelo é o que cresce na sombra úmida.'],
+ build(root){
+  const R=shuffle([
+   {q:'Sou vermelha, cheia de espinhos e símbolo do amor.',o:['🌹','🌻','🌷','🍀'],a:0},
+   {q:'Vivo no deserto, tenho espinhos e guardo água.',o:['🌵','🌴','🌿','🍁'],a:0},
+   {q:'Sou amarela e viro o rosto acompanhando o sol.',o:['🌻','🌹','🌺','🍄'],a:0},
+   {q:'Cresço na sombra úmida, sem flores e sem folhas.',o:['🍄','🌹','🌲','🌾'],a:0}]).slice(0,S.p.hard?4:3);
+  pickQuiz(root,'<b>Herbário</b><br>Qual planta é descrita na etiqueta?',R,()=>win(3,'As etiquetas voltaram aos lugares.'),'bigopt');
+ }},
+/* 4 */
+{nome:'O Lago',story:'Um lago parado. O reflexo na água não conta a mesma história que a margem.',
+ hints:['Compare os dois lados casa por casa.','Clique na diferença em qualquer um dos dois lados.','O reflexo trocou alguns bichos e objetos por coisas que não combinam com o lago.'],
+ build(root){
+  const base=shuffle(['🌲','🌳','🌸','🍄','🪨','🦆','🐸','🌿','🦋','🐟','🌾','🪷','🐢','🌻','🐞','🌙']);
+  const alt=shuffle(['🔥','🍎','🐙','⭐','🎈','🔔']),nd=S.p.hard?4:3;
+  const diff=shuffle([...Array(16).keys()]).slice(0,nd),right=base.map((e,i)=>diff.includes(i)?alt[diff.indexOf(i)]:e),found=new Set();
+  root.innerHTML=`<div class="paper"><b>Águas gêmeas</b><br>O reflexo do lago não é fiel. Ache o que mudou entre os dois lados.</div>
+   <div style="display:flex;gap:24px;flex-wrap:wrap;justify-content:center;margin-top:14px"><div class="sdg" id="g1"></div><div class="sdg" id="g2"></div></div><div class="sub" id="sm"></div>`;
+  const draw=()=>{
+    [['#g1',base],['#g2',right]].forEach(([id,arr])=>$(id).innerHTML=arr.map((e,i)=>`<div class="sd ${found.has(i)?'ok':''}" data-i="${i}">${e}</div>`).join(''));
+    $$('.sd').forEach(c=>c.onclick=()=>{
+      if(S.done)return;const i=+c.dataset.i;if(found.has(i))return;
+      if(diff.includes(i)){found.add(i);sfx.pick();draw();if(found.size===nd)win(4,'O reflexo se acalmou.')}
+      else fail('Aqui os dois lados são iguais.');
+    });
+    $('#sm').textContent=`Diferenças: ${found.size} de ${nd}`;
+  };draw();
+ }},
+/* 5 */
+{nome:'O Corvo',story:'Um corvo grasna palavras embaralhadas. Ele só se acalma quando você as arruma.',
+ hints:['As letras são de uma palavra comum de casa mal-assombrada.','Tente separar vogais e consoantes.','Digite a palavra inteira, sem espaços.'],
+ build(root){
+  const W=shuffle(['ESPELHO','CORUJA','LANTERNA','FANTASMA','JARDIM','SEGREDO','MISTERIO']).slice(0,S.p.hard?4:3);
+  const scr=w=>{let s;do{s=shuffle([...w]).join('')}while(s===w);return [...s].join(' ')};
+  textQuiz(root,'<b>Grasnados</b><br>Desembaralhe as letras e escreva a palavra.',W.map(w=>[scr(w),[w]]),()=>win(5,'O corvo se acalmou.'));
+ }},
+/* 6 */
+{nome:'A Forca',story:'Uma forca antiga, com velas no lugar da corda. A cada erro, uma se apaga.',
+ hints:['Comece pelas vogais: A, E, O.','Palavras assombradas: corvo, fantasma, espelho, segredo...','Se as velas acabarem, uma nova palavra aparece.'],
+ build(root){
+  const W=['CORVO','LANTERNA','FANTASMA','JARDIM','ESPELHO','SEGREDO'],max=S.p.hard?5:7;let word,got,used,lives;
+  root.innerHTML=`<div class="paper"><b>Forca do corvo</b><br>Descubra a palavra antes que as velas se apaguem.</div><div class="cipher" id="fw" style="margin-top:14px;font-size:2rem;letter-spacing:6px"></div><div class="sub" id="fl"></div><div class="keyb" id="kb"></div>`;
+  const draw=()=>{
+    $('#fw').textContent=[...word].map(c=>got.has(c)?c:'_').join(' ');$('#fl').textContent='🕯️'.repeat(lives)+'🌑'.repeat(max-lives);
+    $('#kb').innerHTML=[...'ABCDEFGHIJKLMNOPQRSTUVWXYZ'].map(c=>`<button class="btn sm" data-c="${c}" ${used.has(c)?'disabled':''}>${c}</button>`).join('');
+    $$('#kb .btn').forEach(b=>b.onclick=()=>guess(b.dataset.c));
+  };
+  const newW=()=>{word=W[rnd(0,W.length-1)];got=new Set();used=new Set();lives=max;draw()};
+  const guess=c=>{
+    if(S.done||used.has(c))return;used.add(c);
+    if(word.includes(c)){got.add(c);sfx.pick()}else{lives--;sfx.bad()}
+    draw();
+    if([...word].every(ch=>got.has(ch)))win(6,'A palavra era '+word+'. As velas ficaram acesas.',{frag:'A',note:'Fragmento da Forca: A'});
+    else if(lives<=0){fail('As velas se apagaram. Nova palavra.');setTimeout(newW,700)}
+  };
+  S.kp=k=>{if(/^[a-z]$/i.test(k))guess(k.toUpperCase())};
+  newW();
+ }},
+/* 7 */
+{nome:'A Estufa',story:'Vidros embaçados e plantas estranhas. Em cada canteiro, um intruso se esconde.',
+ hints:['Procure o que não combina com o resto.','Pense em categorias: frutas, aves, ferramentas...','Cada grupo tem três coisas parecidas e uma diferente.'],
+ build(root){
+  const R=shuffle([
+   {o:['🍎','🍌','🍇','🥕'],a:3},{o:['🦅','🦉','🦜','🐧'],a:3},{o:['🌹','🌻','🌷','🍄'],a:3},
+   {o:['🚗','🚲','🚌','🏠'],a:3},{o:['🔨','🪚','🔧','🎻'],a:3}]).slice(0,S.p.hard?5:4).map(r=>({q:'Qual NÃO pertence ao grupo?',o:r.o,a:r.a}));
+  pickQuiz(root,'<b>Canteiros</b><br>Em cada grupo, um item é o intruso.',R,()=>win(7,'Os intrusos foram arrancados.'),'bigopt');
+ }},
+/* 8 */
+{nome:'Os Retratos',story:'Um dos retratos da galeria é do ladrão da chave. Os depoimentos descrevem como ele se veste.',
+ hints:['Elimine quem contraria cada pista.','Note os acessórios de cada retrato: chapéu, óculos e cachecol.','Quando só restar um retrato que cumpre todas as pistas, é ele.'],
+ build(root){
+  const A=[['🎩','chapéu'],['👓','óculos'],['🧣','cachecol']],names=['Ana','Bia','Caio','Davi','Eva','Fred','Gil','Helô'];
+  const cand=shuffle([0,1,2,3,4,5,6,7]).slice(0,S.p.hard?8:6),target=cand[rnd(0,cand.length-1)];
+  const has=(c,a)=>(c>>a)&1;let pool=cand;const clues=[];
+  for(const a of shuffle([0,1,2])){clues.push(`O ladrão ${has(target,a)?'usa':'NÃO usa'} ${A[a][1]}.`);pool=pool.filter(c=>has(c,a)===has(target,a));if(pool.length===1)break}
+  root.innerHTML=`<div class="paper"><b>Depoimentos</b><br>${clues.join('<br>')}</div><div class="moons">${cand.map((c,i)=>`<button class="btn pcard" data-c="${c}"><div style="font-size:2.4rem">🧑</div><div>${names[i]}</div><div style="font-size:1.6rem;min-height:2rem">${A.map((x,a)=>has(c,a)?x[0]:'').join('')}</div></button>`).join('')}</div><div class="sub">Quem é o ladrão?</div>`;
+  $$('.pcard').forEach(b=>b.onclick=()=>{if(S.done)return;sfx.click();if(+b.dataset.c===target)win(8,'Pego! O ladrão devolveu a chave.');else fail('Esse retrato contraria alguma pista.')});
+ }},
+/* 9 */
+{nome:'A Neblina',story:'Uma neblina espessa cobre o gramado. Um bilhete diz que algo foi enterrado onde ela é mais quente.',
+ hints:['Mova o cursor (ou o dedo) devagar pela neblina.','A cor muda conforme você se aproxima.','Quando aparecer FERVENDO, clique ali.'],
+ build(root){
+  root.innerHTML=`<div class="paper"><b>Bilhete</b><br>“Enterrei a urna onde a neblina é mais quente.”</div><div class="fog" id="fog"><div class="fogt" id="ft">Mova o cursor pela neblina...</div></div>`;
+  const f=$('#fog'),tx=rnd(12,88)/100,ty=rnd(20,85)/100;
+  const dist=e=>{const r=f.getBoundingClientRect();return Math.hypot(e.clientX-r.left-tx*r.width,e.clientY-r.top-ty*r.height)};
+  const upd=e=>{const d=dist(e),m=d<50?['FERVENDO 🔥',0]:d<110?['Quente',22]:d<200?['Morno',45]:['Frio ❄️',210];f.style.background=`hsl(${m[1]} 60% 28%)`;$('#ft').textContent=m[0]};
+  f.onpointermove=f.onpointerdown=upd;
+  f.onclick=e=>{
+    if(S.done)return;
+    if(dist(e)<40){f.innerHTML=`<div style="position:absolute;left:${tx*100}%;top:${ty*100}%;transform:translate(-50%,-50%);font-size:3rem">🏺</div>`;win(9,'Você desenterrou a urna.',{frag:'N',note:'Fragmento da Neblina: N'})}
+    else showMsg('Só terra fofa. Procure onde esquenta mais.');
+  };
+ }},
+/* 10 */
+{nome:'O Pêndulo',story:'Um pêndulo de ouro balança sem parar. Só o toque no momento certo o faz parar.',
+ hints:['Clique quando o marcador amarelo passar pela zona verde.','Você precisa acertar vários toques seguidos.','Observe um ou dois balanços antes de clicar.'],
+ build(root){
+  const need=S.p.hard?4:3,w=S.p.hard?9:14;let ok=0,c=rnd(25,75),pos=50;
+  root.innerHTML=`<div class="paper"><b>Pêndulo de ouro</b><br>Toque quando o marcador passar pela zona verde. Acerte em sequência.</div><div class="pbar" id="pb"><div class="pzone" id="pz"></div><div class="pmark" id="pm"></div></div><div class="clock-ctrl"><button class="btn" id="go">AGORA!</button></div><div class="sub" id="ps"></div>`;
+  const zone=()=>{$('#pz').style.left=(c-w/2)+'%';$('#pz').style.width=w+'%';$('#ps').textContent=`Acertos seguidos: ${ok} de ${need}`};
+  const t0=performance.now(),sp=S.p.hard?.0024:.0017;
+  const tick=t=>{if(!alive(root))return;pos=(Math.sin((t-t0)*sp)+1)*50;$('#pm').style.left=pos+'%';requestAnimationFrame(tick)};
+  requestAnimationFrame(tick);
+  $('#go').onclick=()=>{
+    if(S.done)return;
+    if(Math.abs(pos-c)<=w/2){ok++;sfx.pick();c=rnd(25,75);zone();if(ok>=need)win(10,'O pêndulo parou.')}
+    else{ok=0;fail('Fora da zona. Recomece a sequência.');zone()}
+  };zone();
+ }},
+/* 11 */
+{nome:'A Bagunça',story:'O sótão está um caos. Três coisas pequenas se perderam no meio de dezenas de outras parecidas.',
+ hints:['Procure com calma, linha por linha.','Cada alvo tem “primos” muito parecidos. Confira o desenho.','O alvo é sempre exatamente o emoji mostrado no topo.'],
+ build(root){
+  const R=[['🔑',['🗝️','🔒','🔓','🪝','🔔']],['🐞',['🐛','🐜','🪲','🐝','🦟']],['🌙',['🌛','🌜','⭐','🌕','☀️']]];
+  const cols=S.p.hard?14:12,rows=6;let i=0;
+  const show=()=>{
+    const [t,dec]=R[i],ti=rnd(0,cols*rows-1);
+    root.innerHTML=`<div class="paper"><b>Procure no meio da bagunça</b><br>Encontre: <span style="font-size:1.6rem">${t}</span> (${i+1} de ${R.length})</div><div class="clutter" style="grid-template-columns:repeat(${cols},34px)">${Array.from({length:cols*rows},(_,k)=>`<button class="cl" data-t="${k===ti?1:0}">${k===ti?t:dec[rnd(0,dec.length-1)]}</button>`).join('')}</div>`;
+    $$('.cl').forEach(b=>b.onclick=()=>{if(S.done)return;sfx.click();if(b.dataset.t==='1'){sfx.pick();if(++i>=R.length)win(11,'Tudo encontrado.');else show()}else fail('Não é esse.')});
+  };show();
+ }},
+/* 12 */
+{nome:'A Ponte de Vidro',story:'Uma ponte de vidro sobre o abismo. Só um vidro de cada par aguenta o seu peso. O corvo sabe quais.',
+ hints:['Os vidros verdes são os seguros. Eles aparecem só por um instante.','Atravesse de baixo para cima, uma fileira por vez.','Se errar, o caminho é mostrado de novo.'],
+ build(root){
+  const N=S.p.hard?7:6,seq=Array.from({length:N},()=>rnd(0,1));let pos=0,ready=false;
+  root.innerHTML=`<div class="paper"><b>Ponte de vidro</b><br>O corvo pousou nos vidros seguros. Memorize antes que ele voe.</div><div id="br" style="margin-top:14px"></div><div class="sub" id="bs"></div>`;
+  const draw=show=>{
+    $('#br').innerHTML=[...Array(N).keys()].reverse().map(r=>`<div class="brow">${[0,1].map(s=>`<button class="gl ${show&&seq[r]===s?'safe':''} ${r<pos&&seq[r]===s?'done':''}" data-r="${r}" data-s="${s}">🪟</button>`).join('')}</div>`).join('');
+    $$('.gl').forEach(b=>b.onclick=()=>{
+      if(!ready||S.done)return;const r=+b.dataset.r,s=+b.dataset.s;if(r!==pos)return;
+      if(seq[r]===s){pos++;sfx.pick();draw(false);if(pos>=N){ready=false;win(12,'Você atravessou.')}}
+      else{ready=false;fail('O vidro quebrou! Memorize de novo.');setTimeout(show_,900)}
+    });
+  };
+  const show_=async()=>{ready=false;pos=0;draw(true);$('#bs').textContent='Memorize o caminho...';await wait(S.p.hard?3500:4800);if(!alive(root))return;draw(false);ready=true;$('#bs').textContent='Atravesse, de baixo para cima.'};
+  show_();
+ }},
+/* 13 */
+{nome:'O Caça-Palavras',story:'Uma lápide de letras soltas. Três palavras do jardim estão escondidas nela.',
+ hints:['Selecione as letras em ordem e clique em Verificar.','As palavras estão em linha reta, na horizontal ou na vertical.','Procure: CORVO, VELA e SOMBRA.'],
+ build(root){
+  const G=['CORVOT','PINEUD','GKFLHZ','QJBAMY','XWDPUK','SOMBRA'].map(r=>[...r]),flat=G.flat(),T=['CORVO','VELA','SOMBRA'],foundW=new Set(),foundC=new Set();let sel=[];
+  root.innerHTML=`<div class="paper"><b>Lápide</b><br>Ache: <b>CORVO</b>, <b>VELA</b> e <b>SOMBRA</b>.</div><div class="cgrid g6" id="cg" style="margin-top:14px"></div><div class="cipher" id="cw" style="margin-top:10px;min-width:160px;min-height:2.4rem"></div><div class="clock-ctrl"><button class="btn" id="vf">Verificar</button><button class="btn" id="lp">Limpar</button></div>`;
+  const draw=()=>{
+    $('#cg').innerHTML=flat.map((c,i)=>`<div class="cell ${foundC.has(i)?'found':''} ${sel.includes(i)?'pickd':''}" data-i="${i}">${c}</div>`).join('');
+    $$('.cell').forEach(e=>e.onclick=()=>{if(S.done)return;const i=+e.dataset.i;sfx.click();if(sel.includes(i))sel=sel.filter(x=>x!==i);else sel.push(i);draw()});
+    $('#cw').textContent=sel.map(i=>flat[i]).join('')+(sel.length?'':'…');
+  };
+  $('#lp').onclick=()=>{sel=[];draw()};
+  $('#vf').onclick=()=>{
+    if(S.done)return;const w=sel.map(i=>flat[i]).join('');
+    if(T.includes(w)&&!foundW.has(w)){foundW.add(w);sel.forEach(i=>foundC.add(i));sel=[];sfx.pick();draw();
+      if(foundW.size===T.length)win(13,'Todas as palavras foram achadas.',{frag:'T',note:'Fragmento das Palavras: T'})}
+    else{sel=[];fail(foundW.has(w)?'Essa já foi achada.':'Isso não é uma das palavras.');draw()}
+  };draw();
+ }},
+/* 14 */
+{nome:'O Arco-íris',story:'Um arco-íris desbotado, desmontado em faixas. Cada uma precisa voltar ao seu lugar no céu.',
+ hints:['Clique em duas faixas para trocá-las de lugar.','O arco-íris começa no vermelho e termina no violeta.','Ordem: vermelho, laranja, amarelo, verde, azul, violeta.'],
+ build(root){
+  const C={R:'#e63946',L:'#fb8500',Y:'#ffd60a',G:'#3cb043',B:'#3a86ff',V:'#7b2cbf'};
+  swapGame(root,'<b>Faixas soltas</b><br>Coloque as cores na ordem do arco-íris, começando pelo vermelho.',['R','L','Y','G','B','V'],k=>`<div style="width:56px;height:96px;border-radius:6px;background:${C[k]}"></div>`,()=>win(14,'O arco-íris voltou ao céu.'));
+ }},
+/* 15 */
+{nome:'As Sombras',story:'Uma parede de teatro de sombras. Só as silhuetas aparecem, e cada uma pede seu dono.',
+ hints:['Observe o contorno: orelhas, asas, patas, tentáculos.','Descarte as opções que têm formato diferente.','Cada silhueta é de um dos bichos das opções.'],
+ build(root){
+  const B=shuffle([['🦉',['🦅','🐔','🦇']],['🐘',['🦏','🐃','🦛']],['🦋',['🐝','🦇','🐞']],['🐢',['🦀','🐌','🐊']],['🐙',['🦑','🦀','🐚']]]).slice(0,S.p.hard?4:3);
+  const R=B.map(([a,d])=>({q:`<span style="font-size:5rem;filter:brightness(0) invert(.85)">${a}</span>`,o:[a,...d],a:0}));
+  pickQuiz(root,'<b>Teatro de sombras</b><br>De quem é esta silhueta?',R,()=>win(15,'As sombras ganharam donos.'),'bigopt');
+ }},
+/* 16 */
+{nome:'O Fantasma',story:'Um fantasminha brinca de esconde-esconde pelo salão. Ele ri cada vez que escapa.',
+ hints:['Seja rápido: ele muda de lugar sozinho.','Clique nele várias vezes.','Cada captura o faz pular para outro canto.'],
+ build(root){
+  const need=S.p.hard?8:6;let hits=0;
+  root.innerHTML=`<div class="paper"><b>Assombração</b><br>Capture o fantasma clicando nele.</div><div class="arena" id="ar"><div class="gdn" id="gh" style="font-size:3.2rem;left:40%;top:40%">👻</div></div><div class="sub" id="gs">Capturas: 0 de ${need}</div>`;
+  const mv=()=>{$('#gh').style.left=rnd(2,86)+'%';$('#gh').style.top=rnd(2,76)+'%'};
+  const iv=setInterval(()=>{if(!alive(root)){clearInterval(iv);return}mv()},S.p.hard?650:950);
+  $('#gh').onclick=()=>{
+    if(S.done)return;hits++;sfx.pick();tone(900,.1,'triangle',.1);$('#gs').textContent=`Capturas: ${hits} de ${need}`;
+    if(hits>=need){clearInterval(iv);win(16,'O fantasma se rendeu.')}else mv();
+  };
+ }},
+/* 17 */
+{nome:'A Cifra de Símbolos',story:'Uma pedra rúnica troca cada letra por um símbolo. A legenda está gravada na lateral.',
+ hints:['Troque cada símbolo pela letra da legenda.','Faça uma palavra de cada vez.','As palavras são coisas deste lugar: corvo, lago, vela...'],
+ build(root){
+  const SY=shuffle([...'☀☾★♦♣♠♥✿☂⚑✂♫☘⚓✈☎⌛✉✎❄☢☮⚡✪♞☠']),L=[...'ABCDEFGHIJKLMNOPQRSTUVWXYZ'],M={};L.forEach((c,i)=>M[c]=SY[i]);
+  const W=shuffle(['CORVO','LAGO','VELA','NEBLINA','JARDIM','PORTAO']).slice(0,3);
+  const used=[...new Set(W.join('').split(''))].sort();
+  const leg='<div style="margin-top:6px;font-size:1rem;letter-spacing:1px">'+used.map(c=>`${M[c]} = ${c}`).join(' &nbsp;·&nbsp; ')+'</div>';
+  textQuiz(root,'<b>Pedra rúnica</b>'+leg,W.map(w=>[[...w].map(c=>M[c]).join(' '),[w]]),()=>win(17,'A pedra falou.',{frag:'I',note:'Fragmento dos Símbolos: I'}));
+ }},
+/* 18 */
+{nome:'O Acróstico',story:'Poemas riscados na parede. As primeiras letras de cada verso escondem algo.',
+ hints:['Leia só a primeira letra de cada verso.','Junte as letras de cima para baixo.','Cada poema esconde uma palavra curta.'],
+ build(root){
+  const P=[
+   ['Lá no alto, o céu se abre<br>Umidade cobre o jardim<br>A noite inteira me guia',['LUA']],
+   ['Vento frio na janela<br>Entre sombras, algo brilha<br>Lentamente se consome<br>Ali, na mesa, ela fica',['VELA']],
+   ['Canta baixo a madrugada<br>Os galhos balançam sozinhos<br>Rangem portas esquecidas<br>Vozes dentro da parede<br>Ouça: alguém te chamou',['CORVO']]];
+  textQuiz(root,'<b>Poemas riscados</b><br>Qual palavra se esconde em cada um?',P.map(([t,a])=>[`<div style="font-size:1rem;letter-spacing:1px;text-align:left;font-family:'Nunito'">${t}</div>`,a]),()=>win(18,'Os poemas se revelaram.'));
+ }},
+/* 19 */
+{nome:'A Casa dos Bichos',story:'Três casinhas no jardim e três bichos. Ninguém lembra de quem é cada um.',
+ hints:['Comece pela pista que dá o dono do gato.','Se o gato é de Caio, sobram o cão e o pássaro para Ana e Bia.','Ana não tem o cão e Bia não tem o pássaro.'],
+ build(root){
+  const sol={Ana:'Pássaro',Bia:'Cão',Caio:'Gato'};
+  root.innerHTML=`<div class="paper"><b>A casa dos bichos</b><br>Ana, Bia e Caio têm um bicho cada: um cão, um gato e um pássaro.<br>1. Ana não tem o cão.<br>2. Quem tem o gato não é Ana nem Bia.<br>3. Bia não tem o pássaro.</div>
+   <div style="margin-top:14px;display:flex;flex-direction:column;gap:8px">${Object.keys(sol).map(n=>`<div class="clock-ctrl" style="margin:0"><b style="min-width:54px;color:#fff">${n}</b><select class="sel" data-n="${n}"><option value="">?</option><option>Cão</option><option>Gato</option><option>Pássaro</option></select></div>`).join('')}</div>
+   <div class="clock-ctrl"><button class="btn" id="ok">Verificar</button></div>`;
+  $('#ok').onclick=()=>{if(S.done)return;sfx.click();
+    if($$('.sel').every(s=>s.value===sol[s.dataset.n]))win(19,'Cada bicho voltou para casa.');else fail('Alguma das pistas não bate.')};
+ }},
+/* 20 */
+{nome:'A Metamorfose',story:'Um casulo se abre no escuro. Tudo no jardim está mudando de forma, e você precisa saber em quê.',
+ hints:['Clique em algo da esquerda e depois no que ele vira, na direita.','Pense em cada transformação da natureza.','Girino vira sapo; ovo vira pintinho; lagarta vira borboleta.'],
+ build(root){
+  const P=shuffle([['🐛 Lagarta','🦋 Borboleta'],['🥚 Ovo','🐥 Pintinho'],['🌰 Semente','🌳 Árvore'],['🐸 Girino','🐸 Sapo'],['☁️ Nuvem','🌧️ Chuva']]).slice(0,S.p.hard?5:4);
+  pairGame(root,'<b>Transformações</b><br>Ligue cada coisa ao que ela se torna.',P,()=>win(20,'A metamorfose se completou.',{frag:'N',note:'Fragmento da Metamorfose: N'}));
+ }},
+/* 21 */
+{nome:'Os Fios',story:'A luz do jardim apagou. Os fios da caixa de força estão soltos e só aceitam objetos da cor certa.',
+ hints:['Clique na cor à esquerda e depois no objeto da mesma cor.','Tomate é vermelho, limão é amarelo.','Mirtilo é azul, maçã verde é verde.'],
+ build(root){
+  const sw=c=>`<span class="swatch" style="background:${c}"></span>`;
+  const P=shuffle([[sw('#c1121f'),'<span style="font-size:1.6rem">🍅</span>'],[sw('#fcbf49'),'<span style="font-size:1.6rem">🍋</span>'],[sw('#3a86ff'),'<span style="font-size:1.6rem">🫐</span>'],[sw('#3cb043'),'<span style="font-size:1.6rem">🍏</span>'],[sw('#7b2cbf'),'<span style="font-size:1.6rem">🍆</span>'],[sw('#fb8500'),'<span style="font-size:1.6rem">🥕</span>']]).slice(0,S.p.hard?6:4);
+  pairGame(root,'<b>Caixa de força</b><br>Ligue cada fio ao objeto da mesma cor.',P,()=>win(21,'A energia voltou ao jardim.'));
+ }},
+/* 22 */
+{nome:'O Rádio',story:'Um rádio velho chia no meio da noite. Há uma voz escondida na estática.',
+ hints:['Gire o botão devagar e observe a mensagem aparecer.','Quando a estática sumir, leia a frase inteira.','Escreva só a palavra que vem depois de “A SENHA É”.'],
+ build(root){
+  const word=['LUZ','VELA','CORVO','LUA'][rnd(0,3)],msg='A SENHA E '+word,target=rnd(15,85);
+  root.innerHTML=`<div class="paper"><b>Rádio velho</b><br>Gire o botão até a estática sumir. Depois escreva a palavra que a voz disser.</div><div class="cipher" id="rd" style="margin-top:16px;min-width:300px;font-size:1.6rem"></div><input type="range" id="rg" min="0" max="100" value="0" style="width:min(420px,80vw);margin-top:14px"><div class="clock-ctrl"><input class="txt" id="a" maxlength="12" placeholder="palavra" autocomplete="off"><button class="btn" id="ok">Responder</button></div>`;
+  const paint=()=>{const d=Math.abs(+$('#rg').value-target),cl=d<=2?1:Math.max(0,1-(d-2)/18);
+    $('#rd').textContent=[...msg].map(c=>c===' '?' ':(Math.random()<cl?c:'#%&@?*▒'[rnd(0,6)])).join('')};
+  const iv=setInterval(()=>{if(!alive(root)){clearInterval(iv);return}paint()},140);
+  const send=()=>{if(S.done)return;if(norm($('#a').value)===word){clearInterval(iv);win(22,'A voz se calou.')}else fail('Não é essa a senha.')};
+  $('#ok').onclick=send;$('#a').onkeydown=e=>{if(e.key==='Enter')send()};paint();
+ }},
+/* 23 */
+{nome:'O Quadro Quebrado',story:'Um quadro caiu e se partiu em seis pedaços. A moldura guarda uma cópia pequena do desenho.',
+ hints:['Clique em dois pedaços para trocá-los de lugar.','Use a cópia do quadro como modelo.','Lua, estrela e nuvem em cima; casa, árvore e lobo embaixo.'],
+ build(root){
+  const pics=['🌙','⭐','☁️','🏠','🌲','🐺'];
+  const ref=`<div class="swap g3" style="margin:6px 0">${pics.map(p=>`<div class="sitem" style="cursor:default;font-size:1.6rem;padding:4px">${p}</div>`).join('')}</div>`;
+  swapGame(root,'<b>Modelo na moldura</b>'+ref,[0,1,2,3,4,5],k=>`<span style="font-size:2.6rem">${pics[k]}</span>`,()=>win(23,'O quadro foi restaurado.'),'g3');
+ }},
+/* 24 */
+{nome:'Os Provérbios',story:'Sussurros de sabedoria antiga vêm do poço. Cada frase está incompleta.',
+ hints:['São ditados populares brasileiros.','Complete com uma única palavra.','Quem cedo madruga... e cão que ladra...'],
+ build(root){
+  const Q=shuffle([
+   ['Água mole em pedra dura, tanto bate até que ...',['FURA']],
+   ['Quem ri por último, ri ...',['MELHOR']],
+   ['Deus ajuda quem cedo ...',['MADRUGA']],
+   ['Cão que ladra não ...',['MORDE']],
+   ['De grão em grão, a galinha enche o ...',['PAPO','BUCHO']],
+   ['Pimenta nos olhos dos outros é ...',['REFRESCO']]]).slice(0,S.p.hard?5:4);
+  textQuiz(root,'<b>Sussurros do poço</b><br>Complete o ditado com uma palavra.',Q,()=>win(24,'O poço silenciou.',{frag:'H',note:'Fragmento dos Provérbios: H'}));
+ }},
+/* 25 */
+{nome:'O Museu',story:'Um pequeno museu esquecido. O guarda fantasma só deixa passar quem conhece o mundo.',
+ hints:['Pense com calma: são perguntas de cultura geral.','O único mamífero que voa é o morcego.','Marte é o planeta vermelho; o maior oceano é o Pacífico.'],
+ build(root){
+  const T=shuffle([
+   ['Qual é o único mamífero capaz de voar?',['Morcego','Esquilo','Pinguim','Coruja']],
+   ['Qual planeta é chamado de Planeta Vermelho?',['Marte','Vênus','Júpiter','Saturno']],
+   ['Qual é o maior oceano do mundo?',['Pacífico','Atlântico','Índico','Ártico']],
+   ['Quem pintou a Mona Lisa?',['Leonardo da Vinci','Van Gogh','Picasso','Michelangelo']],
+   ['Qual é a capital do Brasil?',['Brasília','Salvador','Rio de Janeiro','São Paulo']],
+   ['De que cor é a pedra esmeralda?',['Verde','Vermelha','Azul','Amarela']]]).slice(0,S.p.hard?5:4);
+  pickQuiz(root,'<b>Guarda do museu</b><br>Responda para passar.',T.map(([q,o])=>({q:`<span style="font-size:1.15rem;letter-spacing:0;font-family:'Nunito'">${q}</span>`,o,a:0})),()=>win(25,'O guarda abriu caminho.'));
+ }},
+/* 26 */
+{nome:'O Bolo Assombrado',story:'Na cozinha do porão, um bolo precisa ser feito antes da meia-noite. A receita está embaralhada.',
+ hints:['Clique em dois passos para trocá-los de lugar.','Pense em como se faz um bolo de verdade.','Primeiro os ovos, no fim o enfeite.'],
+ build(root){
+  const S_={e:['🥚','Quebrar os ovos na tigela'],m:['🥄','Misturar a massa'],a:['🔥','Assar no forno'],d:['🍰','Desenformar o bolo'],f:['🍓','Enfeitar com morangos']};
+  swapGame(root,'<b>Receita embaralhada</b><br>Coloque os passos na ordem, de cima para baixo.',['e','m','a','d','f'],k=>`<span style="font-size:1.6rem">${S_[k][0]}</span><span>${S_[k][1]}</span>`,()=>win(26,'O bolo ficou pronto.'),'col');
+ }},
+/* 27 */
+{nome:'O Espelho Simétrico',story:'Um espelho de moldura dourada. O lado direito do desenho se perdeu, e o lado esquerdo guarda a resposta.',
+ hints:['A coluna do meio (com borda dourada) é o eixo do espelho.','A coluna ao lado do eixo se repete do outro lado.','A coluna da ponta esquerda se repete na ponta direita.'],
+ build(root){
+  const rows=S.p.hard?6:5;let t;
+  do{t=Array.from({length:rows},()=>{const a=[rnd(0,1),rnd(0,1),rnd(0,1)];return[a[0],a[1],a[2],a[1],a[0]]})}while(!t.some(r=>r[0]||r[1]));
+  const v=t.map(r=>r.map((c,x)=>x<3?c:0));
+  root.innerHTML=`<div class="paper"><b>Espelho quebrado</b><br>Complete o lado direito para que o desenho fique igual dos dois lados do eixo dourado.</div><div class="mgrid" id="mg" style="grid-template-columns:repeat(5,46px);margin-top:16px"></div>`;
+  const draw=()=>{
+    $('#mg').innerHTML=v.map((r,y)=>r.map((c,x)=>`<div class="mcell ${c?'on':''} ${x<3?'fx':''} ${x===2?'axis':''}" data-y="${y}" data-x="${x}"></div>`).join('')).join('');
+    $$('.mcell').forEach(e=>e.onclick=()=>{const y=+e.dataset.y,x=+e.dataset.x;if(S.done||x<3)return;sfx.click();v[y][x]^=1;draw();
+      if(v.every((r,yy)=>r[3]===t[yy][3]&&r[4]===t[yy][4]))win(27,'O espelho se completou.',{frag:'O',note:'Fragmento do Espelho: O'})});
+  };draw();
+ }},
+/* 28 */
+{nome:'A Memória do Corvo',story:'O corvo mostra um padrão de luzes por um instante e depois o esconde. Quem não lembra, recomeça.',
+ hints:['Memorize as casas acesas antes que apaguem.','Depois toque nelas, em qualquer ordem.','Tente agrupar as casas em formas: linha, canto, L.'],
+ build(root){
+  const n=S.p.hard?4:3,ks=S.p.hard?[4,5,6]:[3,4,5];let r=0,pat=[],picks=new Set(),ready=false;
+  root.innerHTML=`<div class="paper"><b>Memória do corvo</b><br>As casas acendem por um instante. Toque nelas depois que apagarem.</div><div class="cgrid" id="mg" style="grid-template-columns:repeat(${n},62px);margin-top:16px"></div><div class="sub" id="ms"></div>`;
+  const draw=lit=>{
+    $('#mg').innerHTML=Array.from({length:n*n},(_,i)=>`<div class="cell ${lit&&pat.includes(i)?'lit':''} ${picks.has(i)?'pickd':''}" data-i="${i}"></div>`).join('');
+    $$('.cell').forEach(c=>c.onclick=()=>{
+      if(!ready||S.done)return;const i=+c.dataset.i;sfx.click();
+      if(picks.has(i))picks.delete(i);else picks.add(i);draw(false);
+      if(picks.size===pat.length){
+        ready=false;
+        if(pat.every(p=>picks.has(p))){sfx.pick();r++;if(r>=ks.length){win(28,'O corvo assentiu.',{note:'DICA FINAL: junte as letras dos fragmentos, na ordem em que as encontrou.'})}else setTimeout(round,700)}
+        else{fail('Esse não era o padrão.');setTimeout(round,900)}
+      }
+    });
+  };
+  const round=async()=>{ready=false;picks=new Set();pat=shuffle([...Array(n*n).keys()]).slice(0,ks[r]);draw(true);$('#ms').textContent=`Rodada ${r+1} de ${ks.length}`;await wait(1900);if(!alive(root))return;draw(false);ready=true};
+  round();
+ }},
+/* 29 */
+{nome:'O Cantinho',story:'O último portão do jardim. Atrás dele, o lugar que você procurou desde o começo.',
+ hints:['Abra o Caderno: há oito fragmentos, cada um com uma letra.','Junte as letras na ordem em que os fragmentos aparecem.','É o nome do lugar que dá título ao jogo.'],
+ build(root){
+  root.innerHTML=`<div class="paper"><b>O último portão</b><br>Cada vitória deixou uma letra no seu Caderno. Junte-as, na ordem em que as encontrou, e diga o nome do lugar que você procurava.</div><div class="clock-ctrl"><input class="txt" id="a" maxlength="12" placeholder="o nome" autocomplete="off"><button class="btn" id="ok">Abrir</button></div><div class="sub">Abra o Caderno (📓) e leia os fragmentos.</div>`;
+  const send=()=>{if(S.done)return;if(norm($('#a').value)==='CANTINHO')win(29,'O portão se abriu, e você finalmente chegou ao Cantinho.');else fail('Não é esse o nome.')};
+  $('#ok').onclick=send;$('#a').onkeydown=e=>{if(e.key==='Enter')send()};
+ }}
+];
+
+function finish(){
+  const pts=Math.max(0,8000-S.p.sec*2-S.p.hints*100-S.p.errors*15+(S.p.hard?500:0));
+  const rank=pts>=6400?'S':pts>=4800?'A':pts>=2800?'B':'C';
+  $id('endText').textContent='O jardim ficou para trás e o Cantinho estava ali o tempo todo. A Parte 2 do Enigma do Cantinho foi resolvida.'+(S.p.hard?' E no Modo Difícil!':'');
+  $id('endRank').textContent=rank;
+  $id('endStats').textContent=`Tempo ${fmt(S.p.sec)} · Dicas ${S.p.hints} · Erros ${S.p.errors} · ${pts} pontos`;
+  $id('ending').style.display='flex';sfx.ok();burst(80);
+  setTimeout(()=>[784,988,1175,1568].forEach((f,i)=>tone(f,.5,'triangle',.12,i*.15)),400);
+}
+renderMenu();
+</script>
+</body>
+</html>
