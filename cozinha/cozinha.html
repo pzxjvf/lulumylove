@@ -277,6 +277,8 @@ table.aj.l td:last-child{ text-align:left; font-weight:600; color:var(--plum); }
       <tr><td>✋ <b>Mão</b></td><td>toque num ingrediente embaixo e depois no lugar onde quer colocar. Também dá pra pegar de uma estação e soltar em outra.</td></tr>
       <tr><td>🔪 <b>Faca</b></td><td>na tábua, <b>toque ou arraste</b> sobre o ingrediente. Cada golpe faz um corte onde você bateu, e dá pra ver o miolo. Cortes bem espaçados valem mais estrelas.</td></tr>
       <tr><td>🥄 <b>Colher</b></td><td>mexe a frigideira (não deixa grudar), a panela e a tigela (mistura massas e molhos).</td></tr>
+      <tr><td>🫗 <b>Derramar</b></td><td><b>segure o botão 🫗</b> dentro da frigideira (ou da panela) e <b>solte no ponto</b>: quanto mais tempo segura, mais cai — <b>muito pouco, pouco, na medida, muito ou demais</b>. Na frigideira o líquido frita mais rápido, queima menos e não gruda; na panela ferve mais rápido. Pra derramar azeite, shoyu ou vinagre, toque nele na despensa antes. O <b>nome e o nível</b> aparecem do lado do botão, e a receita mostra o que pede (ex: <b>🫗 na medida de óleo</b>). <b>Algumas receitas pedem uma quantidade exata</b> — errar deixa o cliente irritado. Pra outros ingredientes a quantidade é a <b>porção no prato</b>: 1 unidade = pouco, 2 = na medida, 3 = muito, 4+ = demais.</td></tr>
+      <tr><td>🗑️ <b>Jogar fora</b></td><td>tira da mão o que você pegou. Se a mão estiver vazia, <b>escorre o líquido</b> da frigideira ou da panela.</td></tr>
       <tr><td>🍳 <b>Frigideira</b></td><td>aquece rápido. Mexa de vez em quando senão gruda e queima.</td></tr>
       <tr><td>🍲 <b>Panela</b></td><td>a água demora a ferver. Ideal pra macarrão, arroz e legumes de sopa.</td></tr>
       <tr><td>♨️ <b>Forno</b></td><td>demora a esquentar, mas assa por igual sem precisar mexer.</td></tr>
@@ -1615,11 +1617,14 @@ function draw(){
    ENTRADA
    ============================================================ */
 function pos(e){ const r=cv.getBoundingClientRect(); return {x:e.clientX-r.left,y:e.clientY-r.top}; }
+/* gancho do "segurar pra derramar" (o botão fica desenhado dentro da frigideira/panela) */
+const POURAPI={down:null,up:null,drag:null};
 cv.addEventListener('pointerdown',e=>{
   cv.setPointerCapture(e.pointerId);
   const p=pos(e); ptr.x=p.x; ptr.y=p.y; ptr.down=true; ptr.dx=0; ptr.cut=0; ptr.lastStir=0;
   AC();
   const z=zonaEm(p.x,p.y); hoverZ=z;
+  if(POURAPI.down && POURAPI.down(z,p)) return;
   if(!z) return;
   if(tool==='mao'){ if(!hand) pickFrom(z); }
   else if(tool==='faca'){ if(z==='board') chopAt(p.x); }
@@ -1630,6 +1635,7 @@ cv.addEventListener('pointermove',e=>{
   ptr.x=p.x; ptr.y=p.y;
   const z=zonaEm(p.x,p.y); hoverZ=z;
   if(!ptr.down) return;
+  if(POURAPI.drag && POURAPI.drag(p)) return;
   ptr.dx+=Math.hypot(dx,dy);
   if(tool==='faca' && z==='board' && board){
     ptr.cut+=Math.abs(dx);
@@ -1642,10 +1648,11 @@ cv.addEventListener('pointermove',e=>{
 cv.addEventListener('pointerup',e=>{
   if(!ptr.down) return;
   const p=pos(e); ptr.x=p.x; ptr.y=p.y; ptr.down=false;
+  if(POURAPI.up && POURAPI.up(p)) return;
   const z=zonaEm(p.x,p.y);
   if(tool==='mao' && hand && z) placeOn(z);
 });
-cv.addEventListener('pointercancel',()=>{ ptr.down=false; });
+cv.addEventListener('pointercancel',()=>{ ptr.down=false; if(POURAPI.up) POURAPI.up(null); });
 cv.addEventListener('pointerleave',()=>{ hoverZ=null; });
 
 /* ============================================================
@@ -1697,6 +1704,1008 @@ resize();
 new ResizeObserver(()=>resize()).observe($('stage'));
 renderRec(); renderTickets(); atualizaTopo();
 requestAnimationFrame(loop);
+</script>
+
+<script>
+/* ============================================================
+   COZINHA DA LULU — EXTRA (integrado)
+   Roda DEPOIS do script principal acima: amplia ingredientes,
+   seções da despensa, receitas, misturas e ajusta o prato.
+   ============================================================ */
+(function(){
+const g=id=>document.getElementById(id);
+
+/* ---------- estilo ---------- */
+const st=document.createElement('style');
+st.textContent=`
+.pantry{flex-wrap:wrap;max-height:21vh;overflow-y:auto;overflow-x:hidden}
+.ptabs{display:flex;gap:6px;flex-wrap:wrap}
+.ptab{border:2px solid #ffd9ec;background:#fff;border-radius:999px;padding:6px 12px;font:900 .74rem Nunito,sans-serif;color:#6b2d5c;cursor:pointer;box-shadow:0 2px 0 #f3cfe3}
+.ptab.on{background:linear-gradient(180deg,#8a3d76,#5b2450);color:#fff;border-color:#5b2450}
+.rsec{font-weight:900;font-size:.78rem;color:#6b2d5c;margin:8px 2px 2px;text-transform:uppercase;letter-spacing:.4px}
+.recline .rn,.recline .rd{border:0;background:#f6e6f0;border-radius:10px;width:30px;height:30px;cursor:pointer;font-size:.85rem;padding:0;flex:0 0 auto}
+.recline.lock{opacity:1;background:#fffdf7;border-color:#ffd9ec}
+.recline.lock .nm{font-size:.9rem}
+.recline.lock .sub{font-size:.82rem;opacity:1;font-weight:800;color:#8a3d76}
+.recline.lock .q{width:46px;height:46px;font-size:1.4rem}
+.recline.lock .mi{height:34px;margin:3px 2px 0 0}
+.recline .sub{font-size:.7rem}
+#nmIn{width:100%;margin:10px 0 2px;font:800 1.1rem Nunito,sans-serif;padding:12px;border:3px solid #ffd9ec;border-radius:14px;text-align:center;color:#3f1d38;user-select:text;-webkit-user-select:text;background:#fff}
+#ovHelp.pz{visibility:hidden}
+@media (min-width:901px){.panel{flex:0 0 330px;width:330px}}
+`;
+document.head.appendChild(st);
+
+/* ---------- seções ---------- */
+const CATS=['Legumes','Verduras','Frutas','Carnes','Peixes e frutos do mar','Laticínios e ovos','Grãos e massas','Despensa','Doces','Temperos'];
+const OLD={cenoura:0,tomate:0,batata:0,cebola:0,pimentao:0,cogumelo:0,alface:1,brocolis:1,morango:2,banana:2,maca:2,frango:3,carne:3,bacon:3,peixe:4,ovo:5,queijo:5,manteiga:5,leite:5,pao:6,massa:6,arroz:6,farinha:6,acucar:8,choco:8};
+/* menos cortes pra considerar "picado" (ex.: queijo 6 -> 3 cortes) */
+INGS.forEach(i=>{i.cat=CATS[OLD[i.id]];if(i.max>=6)i.max=4;else if(i.max===4)i.max=3;});
+
+/* ---------- pintores (vetor) ---------- */
+const sh=(c,t)=>mix(c,'#000000',t||0.25);
+const P={};
+P.round=(c1,c2,o)=>x=>{const k=c=>K(c,x),s=o.sc||1;ctx.save();ctx.scale(s,s);
+ if(o.crown)for(const a of[-0.45,0,0.45]){ctx.save();ctx.translate(0,-0.42);ctx.rotate(a);ell(0,-0.1,0.07,0.16,k(o.crown));ctx.restore();}
+ if(o.leaf){ell(0.08,-0.5,0.16,0.06,k(o.leaf),-0.4);ell(-0.04,-0.47,0.04,0.07,k('#6b4a1c'));}
+ ell(0,0.03,0.6,0.52,rg(-0.2,-0.2,0.05,0.85,k(c1),k(c2)));
+ if(o.seg){ln(o.segw||0.025,k(o.seg));for(let i=1;i<=3;i++){ctx.beginPath();ctx.ellipse(0,0.03,0.6*i/3.3,0.5,0,0,TAU);ctx.stroke();}}
+ ell(-0.25,-0.2,0.2,0.07,'rgba(255,255,255,.4)',-0.5);ctx.restore();};
+P.long=(c1,c2,o)=>x=>{const k=c=>K(c,x),t=o.th||0.2;ctx.save();
+ rr(-0.9,-t,1.8,t*2,t);ctx.fillStyle=lg(0,-t,0,t,k(c1),k(c2));ctx.fill();
+ if(o.kern){for(let i=0;i<8;i++)for(let j=0;j<3;j++)ell(-0.72+i*0.2,-t*0.55+j*t*0.55,0.045,0.045,k('#fff0a0'));}
+ else if(t>0.15){ln(0.02,'rgba(0,0,0,.12)');for(let i=0;i<5;i++){ctx.beginPath();ctx.moveTo(-0.6+i*0.3,-t*0.8);ctx.lineTo(-0.55+i*0.3,t*0.8);ctx.stroke();}}
+ if(o.cap)ell(-0.86,0,0.1,t*0.7,k(o.cap));
+ ell(0,-t*0.5,0.7,t*0.16,'rgba(255,255,255,.3)');ctx.restore();};
+P.pile=(c1,c2,o)=>x=>{const k=c=>K(c,x),r=rngSeed(o.seed||11),n=o.n||30,g2=o.g||0.07;
+ ell(0,0.22,0.82,0.26,k(c2));
+ for(let i=0;i<n;i++){const a=r()*TAU,d=Math.sqrt(r()),gx=Math.cos(a)*d*0.78,gy=0.2+Math.sin(a)*d*0.24-(1-d)*0.14;
+  ell(gx,gy,g2,g2*(o.fl?0.5:0.8),k(o.m?o.m[i%o.m.length]:(i%3?c1:c2)),r()*3);}};
+P.bottle=(c1,c2)=>x=>{const k=c=>K(c,x);
+ rr(-0.1,-0.5,0.2,0.2,0.04);ctx.fillStyle=k(c2);ctx.fill();
+ rr(-0.15,-0.32,0.3,0.16,0.05);ctx.fillStyle=k(c1);ctx.fill();
+ rr(-0.3,-0.2,0.6,0.7,0.12);ctx.fillStyle=lg(-0.3,0,0.3,0,k(c1),k(sh(c1)));ctx.fill();
+ rr(-0.22,0.02,0.44,0.28,0.04);ctx.fillStyle='rgba(255,255,255,.85)';ctx.fill();
+ ell(0,0.16,0.07,0.07,k(c2));ell(-0.2,-0.04,0.04,0.22,'rgba(255,255,255,.35)');};
+P.jar=(c1,c2)=>x=>{const k=c=>K(c,x);
+ rr(-0.38,-0.42,0.76,0.18,0.05);ctx.fillStyle=k(c2);ctx.fill();
+ rr(-0.34,-0.26,0.68,0.74,0.14);ctx.fillStyle=lg(-0.34,0,0.34,0,k(c1),k(sh(c1,0.18)));ctx.fill();
+ rr(-0.26,-0.02,0.52,0.3,0.05);ctx.fillStyle='rgba(255,255,255,.85)';ctx.fill();
+ ell(0,0.13,0.08,0.08,k(c2));ell(-0.25,-0.05,0.04,0.25,'rgba(255,255,255,.35)');};
+P.can=(c1,c2)=>x=>{const k=c=>K(c,x);
+ rr(-0.3,-0.4,0.6,0.86,0.05);ctx.fillStyle=lg(-0.3,0,0.3,0,k(c1),k(sh(c1,0.2)));ctx.fill();
+ rr(-0.3,-0.14,0.6,0.4,0);ctx.fillStyle=k(c2);ctx.fill();
+ ell(0,0.06,0.1,0.1,'#ffffff');ell(0,-0.4,0.3,0.06,k('#c9ced8'));ell(-0.22,0,0.035,0.4,'rgba(255,255,255,.3)');};
+P.leaf=(c1,c2)=>x=>{const k=c=>K(c,x),gr=lg(0,-0.4,0,0.4,k(c1),k(c2));
+ ell(-0.35,0.05,0.5,0.32,gr);ell(0.35,0.05,0.5,0.3,gr);ell(0,-0.08,0.48,0.3,lg(0,-0.4,0,0.3,k(mix(c1,'#ffffff',0.3)),k(c1)));
+ ln(0.025,'rgba(255,255,255,.5)');for(const a of[-0.4,-0.1,0.2]){ctx.beginPath();ctx.moveTo(-0.6,0.25);ctx.quadraticCurveTo(-0.1,a*0.5,0.6,a*0.7-0.1);ctx.stroke();}};
+P.meat=(c1,c2,o)=>x=>{const k=c=>K(c,x);
+ if(o.bone){rr(0.35,-0.07,0.5,0.14,0.07);ctx.fillStyle=k('#f3ead9');ctx.fill();ell(0.88,-0.1,0.09,0.09,k('#f3ead9'));ell(0.88,0.1,0.09,0.09,k('#f3ead9'));}
+ ell(-0.05,0,0.82,0.44,rg(-0.2,-0.1,0.05,0.9,k(c1),k(c2)));
+ ln(0.02,'rgba(255,235,225,.5)');for(const p of[[-0.5,-0.1],[0,0.1],[0.3,-0.12]]){ctx.beginPath();ctx.moveTo(p[0],p[1]);ctx.quadraticCurveTo(p[0]+0.1,p[1]+0.08,p[0]+0.22,p[1]);ctx.stroke();}
+ ell(-0.3,-0.2,0.25,0.05,'rgba(255,255,255,.3)',-0.3);};
+P.saus=(c1,c2)=>x=>{const k=c=>K(c,x);ctx.save();ctx.lineCap='round';
+ const pa=()=>{ctx.beginPath();ctx.moveTo(-0.7,0.15);ctx.quadraticCurveTo(0,-0.45,0.7,0.15);};
+ pa();ctx.lineWidth=0.36;ctx.strokeStyle=k(c2);ctx.stroke();
+ pa();ctx.lineWidth=0.28;ctx.strokeStyle=k(c1);ctx.stroke();
+ pa();ctx.lineWidth=0.06;ctx.strokeStyle='rgba(255,255,255,.35)';ctx.stroke();ctx.restore();};
+P.patty=(c1,c2,o)=>x=>{const k=c=>K(c,x);
+ ell(0,0.05,0.82,0.4,rg(-0.2,-0.1,0.05,0.9,k(c1),k(c2)));
+ if(o.grill){ln(0.05,'rgba(40,20,10,.5)');for(let i=0;i<4;i++){ctx.beginPath();ctx.moveTo(-0.5+i*0.3,-0.2);ctx.lineTo(-0.3+i*0.3,0.3);ctx.stroke();}}
+ if(o.fold){ln(0.025,'rgba(150,50,50,.4)');ctx.beginPath();ctx.moveTo(-0.5,-0.2);ctx.quadraticCurveTo(0,0.2,0.5,-0.2);ctx.stroke();}
+ if(o.spots)for(const p of[[-0.4,-0.1],[0.1,0.1],[0.45,-0.12],[-0.1,-0.2],[0.3,0.22]])ell(p[0],p[1],0.06,0.04,'rgba(150,90,30,.45)');
+ ell(-0.3,-0.15,0.3,0.05,'rgba(255,255,255,.3)',-0.2);};
+P.fish=(c1,c2,o)=>x=>{const k=c=>K(c,x);
+ ctx.beginPath();ctx.moveTo(0.5,0);ctx.lineTo(0.98,-0.32);ctx.quadraticCurveTo(0.86,0,0.98,0.32);ctx.closePath();ctx.fillStyle=k(c2);ctx.fill();
+ ell(-0.1,0,0.68,0.34,lg(0,-0.34,0,0.34,k(c1),k(c2)));ell(-0.1,0.14,0.55,0.15,k(o.belly||'#ffffff'));
+ ell(-0.5,-0.06,0.065,0.065,'#ffffff');ell(-0.49,-0.06,0.035,0.035,'#1b1b2b');};
+P.shrimp=(c1,c2)=>x=>{const k=c=>K(c,x);ctx.save();ctx.lineCap='round';
+ ctx.beginPath();ctx.arc(0,0.05,0.45,-2.7,0.9);ctx.lineWidth=0.3;ctx.strokeStyle=k(c2);ctx.stroke();
+ ctx.beginPath();ctx.arc(0,0.05,0.45,-2.7,0.9);ctx.lineWidth=0.22;ctx.strokeStyle=k(c1);ctx.stroke();
+ ln(0.02,'rgba(120,40,20,.45)');for(let i=0;i<5;i++){const a=-2.3+i*0.6;ctx.beginPath();ctx.moveTo(Math.cos(a)*0.34,0.05+Math.sin(a)*0.34);ctx.lineTo(Math.cos(a)*0.56,0.05+Math.sin(a)*0.56);ctx.stroke();}
+ ell(0.32,0.46,0.14,0.07,k(c2),0.6);ell(-0.38,-0.32,0.03,0.03,'#1b1b2b');ctx.restore();};
+P.cheese=(c1,c2)=>x=>{const k=c=>K(c,x);
+ ctx.beginPath();ctx.moveTo(-0.9,0.38);ctx.lineTo(0.9,0.38);ctx.lineTo(0.9,-0.08);ctx.lineTo(-0.9,0.1);ctx.closePath();ctx.fillStyle=lg(0,-0.1,0,0.4,k(c1),k(c2));ctx.fill();
+ ctx.beginPath();ctx.moveTo(-0.9,0.1);ctx.lineTo(0.9,-0.08);ctx.lineTo(0.7,-0.3);ctx.lineTo(-0.7,-0.18);ctx.closePath();ctx.fillStyle=k(mix(c1,'#ffffff',0.4));ctx.fill();
+ for(const h of[[-0.5,0.22,0.1],[0.1,0.2,0.13],[0.55,0.18,0.08]])ell(h[0],h[1],h[2],h[2]*0.8,k(c2));};
+P.blob=(c1,c2,o)=>x=>{const k=c=>K(c,x);o=o||{};
+ ell(0,0.1,0.82,0.36,rg(-0.1,0,0.05,0.85,k(c1),k(c2)));
+ ell(-0.25,-0.02,0.3,0.06,'rgba(255,255,255,.35)',-0.2);
+ if(o.dots){const r=rngSeed(5);for(let i=0;i<8;i++)ell((r()-0.5)*1.2,0.1+(r()-0.5)*0.4,0.045,0.025,k(o.dots),r()*3);}
+ if(o.peak){ctx.beginPath();ctx.moveTo(-0.3,0.05);ctx.quadraticCurveTo(-0.1,-0.4,0,-0.3);ctx.quadraticCurveTo(0.1,-0.4,0.3,0.05);ctx.fillStyle=k(c1);ctx.fill();}};
+
+/* ---------- ingredientes novos: A(id,nome,seção,cortes,coz,queima,tipo,cor1,cor2,miolo,opções) ---------- */
+function A(id,n,cat,max,coz,q,type,c1,c2,ic,o){o=o||{};
+ const it={id:id,n:n,c:c1,cc:c2,ic:ic,max:max,coz:coz,queima:q,cat:CATS[cat]};
+ if(o.br!==undefined)it.br=o.br;
+ INGS.push(it);IT[id]=it;PAINT[id]=P[type](c1,c2,o);}
+/* 0 Legumes */
+A('abobora','Abóbora',0,4,12,11,'round','#f39a2b','#c9701a','#ffc15e',{seg:'#a85a10',leaf:'#5a8a30'});
+A('abobrinha','Abobrinha',0,4,8,9,'long','#5aa845','#2f7d32','#e9f5c8');
+A('alho','Alho',0,3,5,6,'round','#f6efe0','#d8c9a8','#fffdf2',{sc:0.7,seg:'#cdbb94'});
+A('batatadoce','Batata-doce',0,4,12,12,'long','#c4683c','#8a3f22','#ffb36b',{th:0.24});
+A('berinjela','Berinjela',0,4,9,9,'long','#6b3a8f','#3b1f55','#efe6c8',{th:0.27,cap:'#3f9a3a'});
+A('beterraba','Beterraba',0,4,14,12,'round','#b22a5a','#6e1236','#d9558a',{leaf:'#3f9a3a',sc:0.9});
+A('couveflor','Couve-flor',0,4,9,10,'round','#f4f0dc','#d8d0a8','#fffbea',{leaf:'#6fb55a',seg:'#e0d8b0'});
+A('ervilha','Ervilha',0,0,6,7,'pile','#6fc24f','#3f8f2e','#8fd070',{n:30,g:0.075,br:0.5});
+A('mandioca','Mandioca',0,4,16,12,'long','#b88a5a','#7a5230','#fffaf0',{th:0.22});
+A('milho','Milho',0,0,8,9,'long','#ffd84a','#e0a800','#fff1a0',{th:0.26,kern:1,cap:'#8fcf5a'});
+A('pepino','Pepino',0,4,5,6,'long','#4fa84a','#2d7a2c','#d8f0b5',{th:0.22});
+A('vagem','Vagem',0,4,6,7,'long','#5cb04a','#2f7d32','#c5e8a0',{th:0.1});
+/* 1 Verduras */
+A('couve','Couve',1,4,5,6,'leaf','#3f9a3a','#1f6b2a','#a8dc86');
+A('espinafre','Espinafre',1,4,4,5,'leaf','#2f8a3a','#17602a','#8fd070');
+A('repolho','Repolho',1,4,6,7,'round','#9bd673','#5ea23f','#e6f7c8',{seg:'#d8f5b8'});
+A('rucula','Rúcula',1,4,4,5,'leaf','#7ccf5a','#3f8f2e','#c8f0a0');
+/* 2 Frutas */
+A('abacate','Abacate',2,4,6,7,'round','#4f8a3a','#2c5a22','#d4e58a');
+A('abacaxi','Abacaxi',2,4,6,8,'round','#f3c72e','#c8941a','#fff1a0',{crown:'#43a047',seg:'#b5801a',sc:0.75});
+A('coco','Coco',2,4,8,9,'round','#7a4e2e','#4a2c18','#ffffff');
+A('kiwi','Kiwi',2,4,5,6,'round','#8a6a3a','#5e4524','#a8d84a',{sc:0.8});
+A('laranja','Laranja',2,4,6,7,'round','#ff9f2a','#e06a0a','#ffcf7a',{leaf:'#43a047'});
+A('limao','Limão',2,4,5,6,'round','#ffe94a','#d8b800','#fff9b0',{leaf:'#43a047',sc:0.85});
+A('manga','Manga',2,4,7,8,'round','#ffb43a','#e0502a','#ffd45a');
+A('melancia','Melancia',2,4,6,7,'round','#4fa84a','#1f6b2a','#ff5a6a',{seg:'#2f7d32',segw:0.07});
+A('mirtilo','Mirtilo',2,0,4,5,'pile','#4a5bb8','#2a3580','#4a5bb8',{n:18,g:0.12});
+A('pera','Pera',2,4,7,8,'round','#c8dc4a','#8aa81f','#fffbe0',{leaf:'#43a047'});
+A('pessego','Pêssego',2,4,6,7,'round','#ffb27a','#e0663a','#ffd9a0');
+A('uva','Uva',2,0,4,5,'pile','#7b3fa0','#4a2068','#7b3fa0',{n:16,g:0.13});
+/* 3 Carnes */
+A('costela','Costela',3,4,18,13,'meat','#b04a3a','#6e2218','#a8382a',{bone:1});
+A('hamburguer','Hambúrguer',3,0,8,9,'patty','#a8503a','#6a2a1c','#a8503a',{grill:1});
+A('linguica','Linguiça',3,4,10,10,'saus','#c4553a','#8a2f1e','#e58a68');
+A('peru','Peru',3,4,17,12,'meat','#d8a070','#a86a38','#fbe3cc',{bone:1});
+A('porco','Carne de porco',3,4,16,12,'meat','#e6a090','#b86a5a','#f8d0c0');
+A('presunto','Presunto',3,4,4,6,'patty','#f2a0a0','#d97878','#f8c8c8',{fold:1});
+A('salsicha','Salsicha',3,4,8,9,'saus','#d9645a','#a83a32','#f4a090');
+/* 4 Peixes e frutos do mar */
+A('salmao','Salmão',4,4,11,10,'fish','#f08a5a','#d85a30','#ffc0a0',{belly:'#ffd9c2'});
+A('atum','Atum',4,4,11,10,'fish','#8a5060','#5a2a3a','#c04a5a',{belly:'#c9a0aa'});
+A('camarao','Camarão',4,0,6,7,'shrimp','#f2906a','#d8603a','#ffd0b8');
+/* 5 Laticínios */
+A('iogurte','Iogurte',5,0,5,6,'jar','#fdf2f7','#e8658a','#ffffff',{br:0.3});
+A('creme','Creme de leite',5,0,5,6,'bottle','#fff7e0','#e8a030','#ffffff',{br:0.3});
+A('mussarela','Mussarela',5,4,5,7,'cheese','#fff7d8','#e8dca8','#fffdf0',{br:0.6});
+A('parmesao','Parmesão',5,4,6,8,'cheese','#f6e3a0','#d4b45a','#fff3c4',{br:0.6});
+A('requeijao','Requeijão',5,0,5,6,'jar','#fff2d6','#c85a3a','#fff2d6',{br:0.3});
+A('leitecond','Leite condensado',5,0,5,6,'can','#e8eef8','#2f5fc0','#ffffff',{br:0.3});
+/* 6 Grãos e massas */
+A('aveia','Aveia',6,0,6,7,'pile','#e8d6a8','#c9a96a','#e8d6a8',{n:28,g:0.07,fl:1,br:0.3});
+A('feijao','Feijão',6,0,14,12,'pile','#8a4a2a','#4e2612','#8a4a2a',{n:24,g:0.09,br:0.4});
+A('fuba','Fubá',6,0,6,7,'pile','#ffe27a','#e0b830','#ffe27a',{n:70,g:0.04,br:0.3});
+A('graodebico','Grão-de-bico',6,0,14,12,'pile','#e8c98a','#c0a060','#e8c98a',{n:22,g:0.085,br:0.4});
+A('lentilha','Lentilha',6,0,10,10,'pile','#b0702f','#7a4a1e','#b0702f',{n:34,g:0.06,br:0.4});
+A('tapioca','Tapioca (goma)',6,0,6,7,'pile','#fffaf0','#e4dcc8','#fffaf0',{n:50,g:0.05,br:0.3});
+A('tortilha','Tortilha',6,0,4,6,'patty','#f2d9a0','#d8b070','#f2d9a0',{spots:1});
+/* 7 Despensa */
+A('azeite','Azeite',7,0,4,6,'bottle','#9cb83a','#2f5a1a','#ffffff',{br:0.2});
+A('oleo','Óleo',7,0,4,6,'bottle','#ffe066','#e0a800','#ffffff',{br:0.2});
+A('sal','Sal',7,0,4,6,'pile','#ffffff','#d8d8e0','#ffffff',{n:60,g:0.035,br:0});
+A('pimentareino','Pimenta-do-reino',7,0,4,6,'pile','#3a3028','#1c1612','#3a3028',{n:50,g:0.035,br:0});
+A('ketchup','Ketchup',7,0,4,6,'bottle','#d93a2a','#ffffff','#ffffff',{br:0.2});
+A('maionese','Maionese',7,0,4,6,'jar','#fff6d0','#e8c030','#ffffff',{br:0.2});
+A('mostarda','Mostarda',7,0,4,6,'bottle','#e8b820','#a07800','#ffffff',{br:0.2});
+A('shoyu','Molho shoyu',7,0,4,6,'bottle','#3a2418','#c83a28','#ffffff',{br:0.2});
+A('vinagre','Vinagre',7,0,4,6,'bottle','#e8d8f0','#8a3d76','#ffffff',{br:0.1});
+A('fermento','Fermento',7,0,4,6,'pile','#f2e6c8','#d8c89a','#f2e6c8',{n:55,g:0.035,br:0.2});
+/* 8 Doces */
+A('mel','Mel',8,0,4,6,'jar','#f3a81a','#a06a0a','#ffffff',{br:0.3});
+A('cacau','Cacau em pó',8,0,4,5,'pile','#5a2e18','#2e1608','#5a2e18',{n:55,g:0.04,br:0.2});
+A('granulado','Granulado',8,0,4,6,'pile','#ff7aa8','#7ab8ff','#ffffff',{n:40,g:0.045,m:['#ff7aa8','#7ab8ff','#ffcf5a','#8ae0a0','#b69cff'],br:0});
+A('geleia','Geleia',8,0,4,6,'jar','#b22a4a','#f2e6c8','#ffffff',{br:0.3});
+A('amendoim','Amendoim',8,0,6,8,'pile','#d8a868','#a8743a','#d8a868',{n:18,g:0.1,br:0.6});
+A('castanha','Castanha',8,0,6,8,'pile','#c9904a','#8a5a22','#c9904a',{n:14,g:0.12,br:0.6});
+A('baunilha','Essência de baunilha',8,0,4,6,'bottle','#6e4020','#f2e6c8','#ffffff',{br:0.1});
+/* 9 Temperos */
+A('manjericao','Manjericão',9,4,3,4,'leaf','#4fa83a','#2a7a22','#9ee070');
+A('salsinha','Salsinha',9,4,3,4,'leaf','#5cb84a','#2f8a30','#9fe08a');
+A('cebolinha','Cebolinha',9,4,3,4,'long','#7ed957','#3f9a3a','#d4f5a8',{th:0.08});
+A('canela','Canela',9,0,5,6,'long','#b0713a','#6e3f1c','#d9a066',{th:0.12,br:0.3});
+A('oregano','Orégano',9,0,3,4,'pile','#6a8a3a','#3f5a20','#6a8a3a',{n:55,g:0.03,br:0.3});
+A('pimenta','Pimenta malagueta',9,4,5,6,'long','#e0302a','#9a1410','#ff8a7a',{th:0.1,cap:'#3f9a3a'});
+
+/* ---------- MAIS ingredientes (comida do dia a dia) ---------- */
+/* 0 Legumes */
+A('chuchu','Chuchu',0,4,8,9,'round','#8fd35a','#5a9a2a','#e8f7c8',{sc:0.88});
+A('quiabo','Quiabo',0,4,7,8,'long','#6fae4a','#3f7a2a','#d8f0b0',{th:0.1});
+A('jilo','Jiló',0,4,8,9,'round','#5a7a2a','#3a5218','#c8dc8a',{sc:0.84});
+A('rabanete','Rabanete',0,4,6,7,'round','#e8405a','#a81f3a','#fff4f0',{leaf:'#43a047',sc:0.85});
+A('nabo','Nabo',0,4,10,10,'round','#f4f0e0','#d8d0b0','#ffffff',{leaf:'#6fb55a'});
+/* 1 Verduras */
+A('agriao','Agrião',1,4,4,5,'leaf','#2f8a3a','#17602a','#8fd070');
+A('acelga','Acelga',1,4,5,6,'leaf','#4fa83a','#2a7a22','#e0f5c0');
+/* 2 Frutas */
+A('mamao','Mamão',2,4,6,7,'long','#f2a03a','#d0600a','#ffd07a',{th:0.26});
+A('melao','Melão',2,4,6,7,'round','#e8e0a0','#c8b860','#ff9a5a',{seg:'#c8b860'});
+A('goiaba','Goiaba',2,4,6,7,'round','#d8e04a','#9aa81f','#ff6a7a',{sc:0.9});
+A('maracuja','Maracujá',2,4,6,7,'round','#8a5a2a','#5a3418','#ffb03a',{sc:0.85});
+A('ameixa','Ameixa',2,4,6,7,'round','#7a2a5a','#4a1236','#ffb0d0',{leaf:'#43a047',sc:0.85});
+A('tangerina','Tangerina',2,4,6,7,'round','#ff9f2a','#e06a0a','#ffcf7a',{leaf:'#43a047'});
+/* 3 Carnes */
+A('carvemo','Carne moída',3,0,12,10,'patty','#c4553a','#8a2f1e','#e08a68',{spots:1});
+A('calabresa','Calabresa',3,4,10,10,'saus','#c4553a','#8a2f1e','#e58a68');
+/* 4 Peixes e frutos do mar */
+A('tilapia','Tilápia',4,4,9,9,'fish','#c8d0d8','#9aa4b0','#f6f2ea',{belly:'#ffffff'});
+A('sardinha','Sardinha',4,4,8,8,'fish','#b8c4cc','#8a949c','#f2f0e8',{belly:'#f8f4ec'});
+A('bacalhau','Bacalhau',4,4,10,10,'fish','#f0e0b8','#d8c08a','#fffaf0',{belly:'#fffaf0'});
+A('lula','Lula',4,4,7,8,'shrimp','#f2d0c8','#d8a0a0','#fff0ea');
+/* 5 Laticínios */
+A('ricota','Ricota',5,4,5,7,'cheese','#fdfaf2','#e8e0d0','#ffffff',{br:0.6});
+A('catupiry','Catupiry',5,0,4,6,'jar','#fffaf0','#e8dcc0','#ffffff',{br:0.3});
+A('nata','Nata',5,0,5,6,'jar','#fffdf6','#f0e8d8','#ffffff',{br:0.3});
+A('leitepo','Leite em pó',5,0,5,6,'can','#e8eef8','#2f5fc0','#ffffff',{br:0.3});
+/* 6 Grãos e massas */
+A('lasanha','Massa de lasanha',6,0,10,10,'long','#f2dfa8','#d8b870','#fff0c0',{th:0.06});
+A('polvilho','Polvilho',6,0,6,7,'pile','#fffdf5','#e8e0cc','#fffdf5',{n:55,g:0.04,br:0.3});
+A('farinhar','Farinha de rosca',6,0,6,7,'pile','#f0e0b0','#d0b878','#f0e0b0',{n:45,g:0.05,br:0.5});
+A('cuscuz','Flocos de milho',6,0,6,7,'pile','#ffe27a','#e0b830','#ffe27a',{n:60,g:0.045,br:0.3});
+A('quinoa','Quinoa',6,0,10,10,'pile','#e8d0a0','#c8a868','#e8d0a0',{n:30,g:0.055,br:0.4});
+/* 7 Despensa */
+A('agua','Água',7,0,4,6,'bottle','#dff0ff','#8fc4e0','#ffffff',{br:0.1});
+A('azeitona','Azeitona',7,0,4,6,'pile','#5a6a2a','#2f3a12','#7a8a3a',{n:16,g:0.11,br:0.2});
+A('palmito','Palmito',7,4,4,6,'long','#f2e8c8','#d0c090','#fffaf0',{th:0.14});
+A('caldo','Caldo de carne',7,0,4,6,'can','#c8a050','#8a6a20','#ffffff',{br:0.3});
+A('extrato','Extrato de tomate',7,0,4,6,'can','#c02a1a','#8a1408','#ffffff',{br:0.3});
+/* 8 Doces */
+A('doceleite','Doce de leite',8,0,4,6,'jar','#b06a2a','#7a4418','#ffffff',{br:0.4});
+A('goiabada','Goiabada',8,0,4,6,'blob','#b8262a','#7a1014','#b8262a');
+A('chocobranco','Chocolate branco',8,0,6,8,'pile','#f6ecd8','#e0d0b0','#f6ecd8',{n:24,g:0.09,br:0.8});
+A('suspiro','Suspiro',8,0,4,6,'pile','#ffffff','#f0e8f0','#ffffff',{n:14,g:0.12,br:0});
+/* 9 Temperos */
+A('paprica','Páprica',9,0,4,6,'pile','#e05a2a','#a82a10','#f08a5a',{n:55,g:0.035,br:0.2});
+A('curcuma','Cúrcuma',9,0,4,6,'pile','#f0b020','#c08000','#f0b020',{n:55,g:0.035,br:0.2});
+A('cominho','Cominho',9,0,4,6,'pile','#a8703a','#6a4018','#a8703a',{n:55,g:0.035,br:0.2});
+A('colorau','Colorau',9,0,4,6,'pile','#d83a1a','#a01a08','#e86a3a',{n:55,g:0.035,br:0.2});
+A('louro','Folha de louro',9,0,3,4,'leaf','#3f7a2a','#24501a','#7aa84a');
+A('hortela','Hortelã',9,4,3,4,'leaf','#4fb85a','#2a7a3a','#a8f0b0');
+A('coentro','Coentro',9,4,3,4,'leaf','#4fa83a','#2a7a22','#9ee070');
+A('gengibre','Gengibre',9,4,4,5,'round','#e8c07a','#c09048','#fff2c8',{sc:0.8});
+
+/* ---------- preparos novos (saem da tigela) ---------- */
+function C(id,n,c1,c2,coz,q,fn){IT[id]={id:id,n:n,c:c1,cc:c2,ic:c1,max:0,coz:coz,queima:q,comp:1,br:0.3};PAINT[id]=fn;MIXCOL[id]=c1;}
+const assado=(x)=>x&&x.coz>=0.6;
+C('massa_pizza','Massa de pizza','#f6e2b0','#d8a860',12,10,x=>{if(!assado(x))return P.blob('#fbeccb','#e6c78a')(x);const k=c=>K(c,x);
+ ell(0,0.05,0.88,0.42,k('#dfa65a'));ell(0,0.05,0.76,0.34,k('#f4d27a'));
+ for(const p of[[-0.4,-0.05],[0.1,0.15],[0.45,-0.08],[-0.1,-0.18]])ell(p[0],p[1],0.07,0.04,k('#e6b04a'));});
+C('massa_pao','Massa de pão','#fbeccb','#e6c78a',12,10,x=>assado(x)?PAINT.pao(x):P.blob('#fbeccb','#e6c78a')(x));
+C('massa_fuba','Massa de bolo de fubá','#ffe88a','#e8c04a',13,10,x=>assado(x)?cake(x,'#f6d35a','#c9962a',false):P.blob('#ffe88a','#e8c04a')(x));
+C('massa_pudim','Mistura de pudim','#fff1c8','#f0d78e',14,10,x=>{if(!assado(x))return P.blob('#fff1c8','#f0d78e')(x);const k=c=>K(c,x);
+ ctx.beginPath();ctx.moveTo(-0.55,0.4);ctx.lineTo(0.55,0.4);ctx.lineTo(0.4,-0.2);ctx.lineTo(-0.4,-0.2);ctx.closePath();ctx.fillStyle=k('#f6d98a');ctx.fill();
+ ell(0,-0.2,0.4,0.14,k('#8a4a14'));ell(0,0.43,0.62,0.07,k('#7a3d10'));});
+C('molho_branco','Molho branco','#fff6e0','#ecd9a8',8,9,P.blob('#fff6e0','#ecd9a8'));
+C('vinagrete','Vinagrete','#f06a50','#b02616',3,5,P.blob('#f06a50','#b02616',{dots:'#e8f5d0'}));
+C('guacamole','Guacamole','#a8c84a','#6a8a22',4,5,P.blob('#a8c84a','#6a8a22',{dots:'#e8503a'}));
+C('brigadeiro','Brigadeiro','#6a3a22','#3a1c0e',6,7,P.blob('#6a3a22','#3a1c0e'));
+C('chantilly','Chantilly','#ffffff','#ece4f0',3,4,P.blob('#ffffff','#ece4f0',{peak:1}));
+C('vitamina','Vitamina de banana','#fff1b0','#e8cf6a',3,4,P.blob('#fff1b0','#e8cf6a'));
+C('smoothie','Smoothie de frutas','#ff9ab0','#e0607a',3,4,P.blob('#ff9ab0','#e0607a'));
+C('pesto','Pesto','#6fa83a','#3f7a22',4,5,P.blob('#6fa83a','#3f7a22',{dots:'#f0e6b0'}));
+C('tempero_alho','Tempero de alho','#f6efd0','#d8c88a',3,4,P.blob('#f6efd0','#d8c88a',{dots:'#8fbf5a'}));
+[
+ ['massa_pizza',[{id:'farinha'},{id:'fermento'},{id:'azeite'}]],
+ ['massa_pao',[{id:'farinha'},{id:'fermento'},{id:'leite'},{id:'manteiga'}]],
+ ['massa_fuba',[{id:'fuba'},{id:'ovo'},{id:'leite'},{id:'acucar'}]],
+ ['massa_pudim',[{id:'leitecond'},{id:'leite'},{id:'ovo'}]],
+ ['molho_branco',[{id:'leite'},{id:'farinha'},{id:'manteiga'}]],
+ ['vinagrete',[{id:'tomate',c:1},{id:'cebola',c:1},{id:'azeite'},{id:'vinagre'}]],
+ ['guacamole',[{id:'abacate',c:1},{id:'tomate',c:1},{id:'limao'}]],
+ ['brigadeiro',[{id:'leitecond'},{id:'cacau'},{id:'manteiga'}]],
+ ['chantilly',[{id:'creme'},{id:'acucar'}]],
+ ['vitamina',[{id:'leite'},{id:'banana',c:1},{id:'mel'}]],
+ ['smoothie',[{id:'iogurte'},{id:'morango',c:1},{id:'banana',c:1}]],
+ ['pesto',[{id:'manjericao',c:1},{id:'alho',c:1},{id:'azeite'},{id:'parmesao',c:1}]],
+ ['tempero_alho',[{id:'alho',c:1},{id:'sal'},{id:'azeite'}]]
+].forEach(m=>MIX.push({out:m[0],in:m[1]}));
+
+/* ---------- receitas novas: id|nome|dia|itens (c=picado f=frito b=fervido a=assado) ---------- */
+const MM={f:'fry',b:'boil',a:'bake'};
+`ovosmex|Ovos Mexidos|1|ovo:f,sal
+arrozbranco|Arroz Branco|1|arroz:b,sal
+saladapepino|Salada de Pepino|1|pepino:c,tomate:c,azeite
+tapioca|Tapioca com Queijo|1|tapioca:f,queijo:f
+pipoca|Pipoca Salgada|1|milho:f,sal
+vitaminab|Vitamina de Banana|1|vitamina
+paogeleia|Pão com Geleia|1|pao:f,geleia
+vinagretef|Vinagrete Fresco|1|vinagrete
+smoothief|Smoothie de Frutas|1|smoothie
+temperof|Tempero de Alho|1|tempero_alho
+arrozfeijao|Arroz com Feijão|2|arroz:b,feijao:b
+cachorro|Cachorro-quente|2|pao:f,salsicha:f,ketchup,mostarda
+omepresunto|Omelete de Presunto|2|ovo:f,presunto:cf,mussarela:c
+pure|Purê de Batata|2|batata:cb,manteiga,leite
+sopaabobora|Sopa de Abóbora|2|abobora:cb,cebola:cb,alho:cb
+canja|Canja de Galinha|2|frango:cb,arroz:b,cenoura:cb
+vapor|Legumes no Vapor|2|couveflor:cb,vagem:cb,cenoura:cb
+alhoeoleo|Macarrão Alho e Óleo|2|massa:b,alho:cf,azeite
+grega|Salada Grega|2|pepino:c,tomate:c,mussarela:c,azeite
+natural|Sanduíche Natural|2|pao,presunto,mussarela:c,alface:c
+tropical|Salada Tropical|2|manga:c,abacaxi:c,melancia:c,uva
+iogurtefrutas|Iogurte com Frutas|2|iogurte,morango:c,mel,aveia
+mingau|Mingau de Aveia|2|aveia:b,leite:b,canela
+chantimorango|Morango com Chantilly|2|chantilly,morango:c
+espinafre|Espinafre Refogado|2|espinafre:cf,alho:cf
+batatadocef|Batata-doce Frita|2|batatadoce:cf
+milhocozido|Milho Cozido|2|milho:b,manteiga
+hamb|Hambúrguer|3|pao:f,hamburguer:f,mussarela:c,alface:c
+nachos|Nachos com Guacamole|3|tortilha:f,guacamole
+pizza|Pizza Margherita|3|massa_pizza:a,molho,mussarela:c
+risoto|Risoto de Cogumelo|3|arroz:b,cogumelo:cf,parmesao:c
+camaraoalho|Camarão ao Alho|3|camarao:f,alho:cf,limao
+salmaobroc|Salmão com Brócolis|3|salmao:f,brocolis:cf,limao
+linguicamand|Linguiça com Mandioca|3|linguica:cf,mandioca:cf
+brigadeirof|Brigadeiro|3|brigadeiro:f,granulado
+paocaseiro|Pão Caseiro|3|massa_pao:a
+paoalho|Pão de Alho|3|pao:a,manteiga:a,alho:c
+lentilhas|Sopa de Lentilha|3|lentilha:b,cenoura:cb,cebola:cb
+saladabeterraba|Salada de Beterraba|3|beterraba:cb,cenoura:cb,azeite
+coleslaw|Salada de Repolho|3|repolho:c,cenoura:c,maionese
+feijoada|Feijoada|4|feijao:b,linguica:cb,bacon:cb
+sushi|Sushi Simples|4|arroz:b,salmao:c,pepino:c
+tacos|Tacos de Carne|4|tortilha:f,carne:cf,tomate:c,alface:c
+bolofuba|Bolo de Fubá|4|massa_fuba:a
+bolobanana|Bolo de Banana|4|massa_bolo:a,banana:c,canela
+graobico|Grão-de-bico Refogado|4|graodebico:b,cebola:cf,alho:cf
+panqmel|Panqueca com Mel|4|massa_panq:f,mel
+macmolhobranco|Macarrão ao Molho Branco|4|massa:b,molho_branco,presunto:c
+macpesto|Macarrão ao Pesto|4|massa:b,pesto
+crepe|Crepe de Queijo|4|massa_panq:f,presunto:c,mussarela:c
+churrasco|Churrasco|5|costela:ca,linguica:ca,mandioca:cf
+pernil|Porco Assado|5|porco:ca,batata:ca,cebola:ca
+moqueca|Moqueca de Peixe|5|peixe:cb,tomate:cb,pimentao:cb,coco:cb
+ratatouille|Ratatouille|5|berinjela:ca,abobrinha:ca,tomate:ca,pimentao:ca
+tortamaca|Torta de Maçã|5|massa_bolo:a,maca:ca,canela
+bolocenoura|Bolo de Cenoura|5|massa_bolo:a,cenoura:c,choco:c
+atumlegumes|Atum com Legumes|5|atum:cf,vagem:cf,batata:cf
+peruass|Peru Assado|6|peru:ca,batata:ca,milho:a
+pudim|Pudim|6|massa_pudim:a,acucar`.split('\n').forEach(l=>{
+ const p=l.split('|'),itens=p[3].split(',').map(t=>{const q=t.split(':'),o={id:q[0]};
+  if(q[1]){if(q[1].indexOf('c')>=0)o.c=1;for(const ch of q[1])if(MM[ch])o.m=MM[ch];}return o;});
+ if(itens.some(x=>!IT[x.id])){console.warn('receita inválida:',p[0]);return;}
+ const nm=itens.filter(x=>x.m).length,d=+p[2];
+ RECIPES.push({id:p[0],n:p[1],premio:12+6*itens.length+3*nm+2*d,tempo:50+26*itens.length+10*nm,dia:d,itens:itens});});
+
+/* ---------- níveis de quantidade (usados pelas receitas) ---------- */
+const QTD=[
+  {n:'muito pouco',c:'#7fc8f0'},
+  {n:'pouco',      c:'#8fd06a'},
+  {n:'na medida',  c:'#f2c14a'},
+  {n:'muito',      c:'#f2944a'},
+  {n:'demais',     c:'#e8564a'}
+];
+const NIV={mp:0,p:1,nm:2,m:3,d:4};
+const nvTxt=i=>i<0?'nada':QTD[i].n;
+const qtdIdx=a=>{ a=a||0; if(a<0.03) return -1; if(a<0.24) return 0; if(a<0.46) return 1; if(a<0.66) return 2; if(a<0.86) return 3; return 4; };
+
+/* ---------- +++ MAIS receitas (comida do dia a dia) ---------- */
+function R2(txt){txt.split('\n').forEach(l=>{ if(!l)return;
+ const p=l.split('|'),itens=p[3].split(',').map(t=>{const q=t.split(':'),o={id:q[0]};
+  if(q[1]){if(q[1].indexOf('c')>=0)o.c=1;for(const ch of q[1])if(MM[ch])o.m=MM[ch];}return o;});
+ if(itens.some(x=>!IT[x.id])){console.warn('receita inválida:',p[0]);return;}
+ if(RECIPES.some(r=>r.id===p[0]))return;
+ const nm=itens.filter(x=>x.m).length,d=+p[2];
+ const rec={id:p[0],n:p[1],premio:12+6*itens.length+3*nm+2*d,tempo:50+26*itens.length+10*nm,dia:d,itens:itens};
+ if(p[4]){const f=p[4].split(':');const lv=NIV[f[1]];if(f[0]&&lv!==undefined)rec.fat={id:f[0],lv:lv};}
+ RECIPES.push(rec);});}
+R2(`farofinha|Farofa|1|farinhar:cf,cebola:cf,bacon:cf|f:oleo:p
+macarraomanteiga|Macarrão na Manteiga|1|massa:b,manteiga
+arrozovo|Arroz com Ovo|1|arroz:b,ovo:f
+paodequeijo|Pão de Queijo|1|polvilho:a,queijo:c,ovo
+cuscuzovo|Cuscuz com Ovo|1|cuscuz:b,ovo:f
+sucoabacaxi|Suco de Abacaxi|1|abacaxi:c,agua,acucar
+sucogoia|Suco de Goiaba|1|goiaba:c,agua,acucar
+vitaminamamao|Vitamina de Mamão|1|mamao:c,leite,aveia
+quibebe|Quibebe de Abóbora|2|abobora:cb,cebola:cb,alho:cb
+chuchurefogado|Chuchu Refogado|2|chuchu:cf,alho:cf,cebola:cf|f:oleo:nm
+quiabofrito|Quiabo Frito|2|quiabo:cf,alho:cf|f:oleo:nm
+couverefogada|Couve Refogada|2|couve:cf,alho:cf|f:oleo:p
+saladaagriao|Salada de Agrião|2|agriao,tomate:c,azeite
+arrozbrocolis|Arroz com Brócolis|2|arroz:b,brocolis:cf,alho:cf
+atumsalada|Salada de Atum|2|atum,maionese,cebola:c,milho
+pipocacaramelo|Pipoca Caramelizada|2|milho:f,acucar,manteiga
+tapiocacoco|Tapioca de Coco|2|tapioca:f,coco:c,leitecond
+romeuejulieta|Romeu e Julieta|2|goiabada,queijo
+curau|Curau de Milho|2|milho:cb,leite,acucar,canela
+sopaervilha|Sopa de Ervilha|3|ervilha:b,batata:cb,linguica:cf
+caldoverde|Caldo Verde|3|batata:cb,couve:cf,linguica:cf
+polentafrita|Polenta Frita|3|fuba:cb,queijo:c
+bolinhobacalhau|Bolinho de Bacalhau|3|bacalhau:cb,batata:cb,cebola:c,ovo
+tilapiagrelhada|Tilápia Grelhada|3|tilapia:cf,limao,azeite
+sardinhaassada|Sardinha Assada|3|sardinha:ca,limao,cebola:c
+bifeacebolado|Bife Acebolado|3|carne:cf,cebola:cf|f:oleo:nm
+estrogonofe|Estrogonofe de Carne|3|carvemo:cf,creme,cogumelo:cf,cebola:cf
+macarronada|Macarronada|3|massa:b,molho,carvemo:cf
+beirute|Beirute|3|pao:f,carvemo:cf,queijo:c,alface:c,tomate:c
+bauru|Bauru|3|pao:a,queijo:a,tomate:c
+pamonha|Pamonha|3|milho:cb,leite,acucar
+cocada|Cocada|3|coco:c,acucar,ovo
+docedeleitecaseiro|Doce de Leite Caseiro|3|leite:b,acucar:b
+frangoassado|Frango Assado|4|frango:ca,alho:c,limao,batata:ca
+galinhada|Galinhada|4|arroz:b,frango:cb,cenoura:cb
+baiaodeois|Baião de Dois|4|arroz:b,feijao:b,queijo:c
+feijaotropeiro|Feijão Tropeiro|4|feijao:b,farinhar:cf,linguica:cf,ovo:f
+tutu|Tutu à Mineira|4|feijao:b,farinhar:cf,bacon:cf|f:oleo:p
+escondidinho|Escondidinho|4|mandioca:cb,carvemo:cf,mussarela:c
+panquecacarne|Panqueca de Carne|4|massa_panq:f,carvemo:cf,molho
+risotofrango|Risoto de Frango|4|arroz:b,frango:cf,cebola:cf,parmesao:c
+nhoque|Nhoque de Batata|4|batata:cb,farinha,ovo,molho
+lasanha|Lasanha à Bolonhesa|4|lasanha:b,molho,carvemo:cf,mussarela:c
+rocambole|Rocambole de Carne|4|carvemo:cf,bacon:cf,ovo:f
+salmaogrelhado|Salmão Grelhado|4|salmao:cf,limao,azeite
+moussemaracuja|Mousse de Maracujá|4|maracuja:c,leitecond,creme
+quindim|Quindim|4|ovo,coco:c,acucar
+brownie|Brownie|4|massa_choc:a,castanha:c
+vatapa|Vatapá|5|pao:b,camarao:cb,coco:cb,amendoim
+pudimleite|Pudim de Leite|5|leitecond,leite,ovo,acucar`);
+
+/* ---------- receitas do jogador / nomes ---------- */
+const KX='cozinha_extra';let nomes={};
+function saveX(){try{localStorage.setItem(KX,JSON.stringify({custom:RECIPES.filter(r=>r.custom),nomes:nomes}));}catch(e){}}
+try{const s=JSON.parse(localStorage.getItem(KX)||'{}');nomes=s.nomes||{};
+ (s.custom||[]).forEach(r=>{if(r&&r.id&&Array.isArray(r.itens)&&r.itens.every(x=>IT[x.id])&&!RECIPES.some(q=>q.id===r.id)){r.custom=1;RECIPES.push(r);}});
+ RECIPES.forEach(r=>{if(nomes[r.id])r.n=nomes[r.id];});}catch(e){}
+
+/* ---------- caixa de nome ---------- */
+const ov=document.createElement('div');ov.className='ov hide';ov.id='ovNome';ov.style.zIndex=45;
+ov.innerHTML='<div class="card"><h2 id="nmTit"></h2><p id="nmSub"></p><input id="nmIn" maxlength="30" autocomplete="off" placeholder="Nome da receita"><div><button class="big gr" id="nmOk">Salvar</button><button class="big" id="nmNo">Pular</button></div></div>';
+document.body.appendChild(ov);
+let nmCb=null;
+function askName(tit,sub,ini,cb,okTxt,noTxt){
+ g('nmTit').textContent=tit;g('nmSub').textContent=sub||'';g('nmIn').value=ini||'';
+ g('nmOk').textContent=okTxt||'Salvar';g('nmNo').textContent=noTxt||'Pular';
+ nmCb=cb;ov.classList.remove('hide');
+ g('ovHelp').classList.remove('hide');g('ovHelp').classList.add('pz'); /* pausa o jogo enquanto digita */
+ setTimeout(()=>g('nmIn').focus(),60);}
+function closeName(ok){
+ if(!nmCb)return;const cb=nmCb;nmCb=null;const v=g('nmIn').value.trim().slice(0,30);
+ ov.classList.add('hide');g('ovHelp').classList.remove('pz');g('ovHelp').classList.add('hide');cb(ok?v:'');}
+g('nmOk').addEventListener('click',()=>closeName(true));
+g('nmNo').addEventListener('click',()=>closeName(false));
+window.addEventListener('keydown',e=>{if(e.target&&e.target.id==='nmIn'){e.stopPropagation();if(e.key==='Enter')closeName(true);if(e.key==='Escape')closeName(false);}},true);
+
+/* ---------- despensa por seções ---------- */
+let catSel='Todos';
+const tabs=document.createElement('div');tabs.className='ptabs';g('pantry').before(tabs);
+function pantry2(){
+ tabs.innerHTML=['Todos'].concat(CATS).map(c=>'<button class="ptab'+(c===catSel?' on':'')+'" data-c="'+c+'">'+c+'</button>').join('');
+ const items=INGS.filter(i=>catSel==='Todos'||i.cat===catSel).sort((a,b)=>a.n.localeCompare(b.n,'pt'));
+ g('pantry').innerHTML=items.map(i=>'<button class="ing" data-id="'+i.id+'"><img src="'+ingURL(i.id)+'" alt=""><span class="n">'+i.n+'</span><span class="tag">'+(i.max>0?'✂ picar':(ILIQ[i.id]?'🫗 derramar':'inteiro'))+'</span></button>').join('');}
+tabs.addEventListener('click',e=>{const b=e.target.closest('.ptab');if(b){catSel=b.dataset.c;pantry2();g('pantry').scrollTop=0;}});
+
+/* ---------- livro de receitas ---------- */
+const byName=(a,b)=>a.n.localeCompare(b.n,'pt');
+/* separa doces das comidinhas do dia a dia */
+const DOCE_IDS=new Set(['frutas','frutaschoc','bolo','macaassada','panqueca','panqchoc','bolomorango','bolochoc','tropical','iogurtefrutas','mingau','chantimorango','brigadeirof','bolofuba','bolobanana','panqmel','tortamaca','bolocenoura','pudim','vitaminab','smoothief','paogeleia','pamonha','curau','moussemaracuja','quindim','cocada','romeuejulieta','docedeleitecaseiro','brownie','pudimleite','pipocacaramelo','tapiocacoco','sucoabacaxi','sucogoia','vitaminamamao']);
+const DOCE_ING=new Set(['acucar','choco','morango','banana','maca','mel','cacau','granulado','geleia','brigadeiro','chantilly','leitecond','baunilha','massa_bolo','massa_choc','massa_pudim','massa_fuba','vitamina','smoothie','canela','aveia','doceleite','goiabada','chocobranco','suspiro']);
+const doce=r=>!!r.doc||DOCE_IDS.has(r.id)||r.itens.some(x=>DOCE_ING.has(x.id));
+/* abas do livro */
+const recTabs=document.createElement('div');recTabs.className='ptabs';recTabs.id='recTabs';recTabs.style.marginTop='6px';
+g('pnFree').insertBefore(recTabs,g('recList'));
+let recTab='comida';
+function pintaTabs(){
+ const nMin=RECIPES.filter(r=>known[r.id]&&r.custom).length;
+ const t=(k,lbl)=>'<button class="ptab'+(recTab===k?' on':'')+'" data-t="'+k+'">'+lbl+'</button>';
+ recTabs.innerHTML=t('comida','🍽️ Comidas')+t('doce','🍰 Doces')+t('minhas','⭐ Minhas ('+nMin+')');}
+recTabs.addEventListener('click',e=>{const b=e.target.closest('.ptab');if(!b)return;recTab=b.dataset.t;pintaTabs();renderRec();g('recList').scrollTop=0;});
+renderRec=function(){
+ const el=g('recList');if(!el)return;
+ const line=r=>'<div class="recline on"><img class="di" src="'+dishURL(r)+'" alt=""><span class="nm">'+r.n+'<span class="sub">'+r.itens.map(ingTxt).join(', ')+ftTxt(r)+'</span></span>'+
+  '<button class="rn" data-r="'+r.id+'" title="Renomear">✏️</button>'+(r.custom?'<button class="rd" data-r="'+r.id+'" title="Apagar">🗑️</button>':'')+'</div>';
+ const kn=RECIPES.filter(r=>known[r.id]),un=RECIPES.filter(r=>!known[r.id]);
+ let h='';
+ if(recTab==='minhas'){
+  const mine=kn.filter(r=>r.custom).sort(byName);
+  h=mine.length?mine.map(line).join(''):'<div class="legend">Nenhuma ainda. No modo <b>Cozinha Livre</b>, monte um prato que ainda não existe e toque em Guardar para dar um nome. A receita fica salva e passa a aparecer nos pedidos.</div>';
+ } else {
+  const dce=(recTab==='doce');
+  const kk=kn.filter(r=>!r.custom&&doce(r)===dce).sort(byName);
+  const uu=un.filter(r=>doce(r)===dce).sort((a,b)=>a.dia-b.dia||byName(a,b));
+  const tot=RECIPES.filter(r=>!r.custom&&doce(r)===dce).length;
+  h='<div class="rsec">Descobertas ('+kk.length+'/'+tot+')</div>'+(kk.map(line).join('')||'<div class="legend">Nenhuma ainda. Cozinhe e guarde um prato!</div>');
+  h+='<div class="rsec">Receitas misteriosas ('+uu.length+')</div>'+uu.map(r=>
+   '<div class="recline lock"><span class="q">?</span><span class="nm">Receita misteriosa<span class="sub">Pista: '+r.itens.map(x=>IT[x.id].n).join(' + ')+ftTxt(r)+'</span>'+
+   '<span>'+r.itens.map(x=>'<img class="mi" src="'+ingURL(x.id)+'" alt="">').join('')+'</span></span></div>').join('');
+ }
+ el.innerHTML=h;};
+g('recList').addEventListener('click',e=>{
+ const rn=e.target.closest('.rn'),rd=e.target.closest('.rd');
+ if(rn){const r=RECIPES.find(q=>q.id===rn.dataset.r);if(!r)return;
+  askName('Renomear receita','',r.n,nm=>{if(!nm)return;r.n=nm;if(!r.custom)nomes[r.id]=nm;saveX();renderRec();renderTickets();},'Salvar','Cancelar');}
+ if(rd){const r=RECIPES.find(q=>q.id===rd.dataset.r);if(!r)return;
+  if(modo!=='livre'){toast('Apague receitas no modo Livre');return;}
+  if(!confirm('Apagar a receita "'+r.n+'"?'))return;
+  RECIPES.splice(RECIPES.indexOf(r),1);delete known[r.id];shelf=shelf.filter(s=>s.rec!==r.id);
+  save();saveX();renderRec();toast('Receita apagada');}
+});
+
+/* ---------- dica: por que o prato não bate? ---------- */
+const cnt=l=>{const m={};l.forEach(i=>m[i]=(m[i]||0)+1);return m;};
+let dk='',dv='';
+function dica(){
+ if(!plate.length)return '';
+ const key=plate.map(o=>o.id+':'+o.cuts.length+':'+Math.round(o.coz*20)+':'+Math.round(o.queimado*20)).join('|');
+ if(key===dk)return dv;dk=key;dv='';
+ if(receitaDoPrato())return dv;
+ const pc=cnt(plate.map(o=>o.id));let best=null,bs=0.2;
+ for(const r of RECIPES){const rc=cnt(r.itens.map(x=>x.id));let ok=0,tot=0;
+  for(const q in rc){tot+=rc[q];ok+=Math.min(rc[q],pc[q]||0);}
+  const extra=plate.length-ok,sc=ok/tot-extra*0.3;if(ok>0&&sc>bs){bs=sc;best={r:r,rc:rc,extra:extra};}}
+ if(!best)return dv='prato livre';
+ const fl=[];for(const q in best.rc)if((pc[q]||0)<best.rc[q])fl.push(IT[q].n);
+ if(fl.length)return dv=best.r.n+'? falta: '+fl.join(', ');
+ if(best.extra>0)return dv=best.r.n+'? tem ingrediente a mais';
+ for(const x of best.r.itens){
+  if(plate.some(p=>p.id===x.id&&okPrato(x,p)))continue;
+  const p=plate.find(q=>q.id===x.id);if(!p)continue;
+  if(x.c&&!estaPicado(p))return dv=best.r.n+': '+IT[x.id].n+' precisa estar picado';
+  if(x.m){if(!noPonto(p))return dv=best.r.n+': '+IT[x.id].n+' precisa estar '+MET_TXT[x.m]+' no ponto';
+   return dv=best.r.n+': '+IT[x.id].n+' deve ser '+MET_TXT[x.m];}
+  return dv=best.r.n+': '+IT[x.id].n+' deve estar cru';}
+ return dv;}
+const _draw=draw;
+draw=function(){_draw();if(!plate.length)return;const h=dica();if(!h)return;
+ ctx.save();ctx.font='800 10px Nunito, sans-serif';ctx.fillStyle='#b06a00';ctx.textAlign='center';
+ ctx.fillText(h,Z.plate.x+Z.plate.w/2,Z.plate.y+Z.plate.h-8,Z.plate.w-10);ctx.restore();};
+
+/* ============================================================
+   DERRAMAR LÍQUIDOS — botão 🫗 dentro da frigideira/panela
+   Segure o botão: o líquido escorre (com animação) e você solta
+   quando quiser. A quantidade vira um nível:
+   muito pouco · pouco · na medida · muito · demais.
+   Algumas receitas pedem uma quantidade exata de óleo/azeite/água
+   e o cliente reclama se sair diferente.
+   ============================================================ */
+const POUR={fry:['oleo','azeite'],pot:['agua','oleo','azeite','shoyu','vinagre','balsamico']};
+const ILIQ={oleo:1,azeite:1,agua:1,shoyu:1,vinagre:1,balsamico:1};
+const LIQCOL={oleo:'#ffd54a',azeite:'#c8d84a',agua:'#cfeaff',shoyu:'#5a3a22',vinagre:'#e8d8f0',balsamico:'#7a4022'};
+const POURRATE=0.32;   /* quanto enche por segundo segurando o botão */
+ST.fry.liq=0; ST.pot.liq=0; ST.fry.liqCol='#ffd54a'; ST.pot.liqCol='#cfeaff';
+ST.fry.liqId=null; ST.pot.liqId=null;
+const sfxPour=()=>{ ruido(0.34,0.05,1000); tom(280,0.16,'sine',0.035); setTimeout(()=>tom(210,0.22,'sine',0.03),110); };
+/* etiqueta da quantidade exigida por uma receita */
+const ftTxt=r=>r.fat?' · <b>🫗 '+nvTxt(r.fat.lv)+' de '+IT[r.fat.id].n+'</b>':'';
+/* ---------- quantidade: o que de fato foi usado no preparo ----------
+   Líquidos (óleo, azeite, água, shoyu, vinagre...) usam o nível que
+   ficou na frigideira/panela. Sólidos contam as porções no prato
+   (1 = pouco, 2 = na medida, 3 = muito, 4+ = demais). */
+function qtdUsada(id,items){
+  if(ILIQ[id]){
+    let lv=-1;
+    for(const o of items) if(o.liqId===id) lv=Math.max(lv,qtdIdx(o.liqQ||0));
+    return lv;
+  }
+  const n=items.filter(o=>o.id===id).length;
+  return n<=0?-1:Math.min(4,n);
+}
+function checaQtd(rec,items){
+  if(!rec.fat) return null;
+  const id=rec.fat.id, alvo=rec.fat.lv, lv=qtdUsada(id,items);
+  const dif=lv<0?-9:lv-alvo;
+  let txt;
+  if(lv<0) txt='faltou '+IT[id].n;
+  else if(dif===0) txt=IT[id].n+' na medida';
+  else if(dif<0) txt=(lv<=0?'quase nada':QTD[lv].n)+' de '+IT[id].n+' — faltou';
+  else txt=QTD[lv].n+' de '+IT[id].n+' — passou';
+  return {id:id,alvo:alvo,lv:lv,dif:dif,txt:txt};
+}
+/* poça / camada de líquido no fundo da panela */
+function poca(s,cx,cy,R){
+  const l=Math.min(1,s.liq||0), col=s.liqCol||'#ffd54a', r=R*(0.5+0.3*l);
+  ctx.save();
+  ctx.globalAlpha=0.42+0.3*l;
+  ell(cx,cy+3,r,r*0.74,rg(cx-r*0.3,cy-r*0.25,r*0.08,r*1.15,mix(col,'#ffffff',0.45),col));
+  ctx.globalAlpha=0.28+0.2*l;
+  ell(cx-r*0.3,cy-r*0.2,r*0.34,r*0.1,'rgba(255,255,255,.85)',-0.4);
+  ctx.globalAlpha=0.32;
+  const rnd=rngSeed((s.liq||1)*97+7);
+  for(let i=0;i<5;i++) ell(cx+(rnd()-0.5)*r*1.3,cy+3+(rnd()-0.5)*r*0.9,r*0.07,r*0.035,'rgba(255,255,255,.7)');
+  ctx.restore();
+}
+/* desenha a poça ANTES da comida */
+const _foodsIn=foodsIn;
+foodsIn=function(s,cx,cy,R,rot,jit){ if(s.liq>0) poca(s,cx,cy,R); _foodsIn(s,cx,cy,R,rot,jit); };
+
+/* cozimento com gordura: frita mais rápido, queima menos e quase não gruda */
+const _cook=cook;
+cook=function(s,dt){
+  const R=RIT[ritmo];
+  const target=s.set/100;
+  const rate={fry:0.45,boil:0.14,bake:0.07}[s.k];
+  if(s.temp<target) s.temp=Math.min(target,s.temp+rate*dt);
+  else s.temp=Math.max(target,s.temp-rate*0.7*dt);
+  s.e=(s.k==='boil')?Math.max(0,(s.temp-0.35)/0.65):s.temp;
+  if(!s.itens.length){ s.stuck=Math.max(0,s.stuck-dt*0.35); return; }
+  const e=s.e, liq=s.liq||0, gorduroso=(s.k==='fry'&&liq>0.86);
+  const fm=1+liq*0.3, bm=Math.max(0.3,1-liq*0.55);
+  let queimando=false;
+  for(const o of s.itens){
+    const it=IT[o.id];
+    const m=estaPicado(o)?(s.k==='boil'?1.3:1.6):1;
+    if(o.coz<1){
+      const d=dt*e*m*1.25/it.coz*fm;
+      o.coz=Math.min(1,o.coz+d);
+      o.mt[s.k]=(o.mt[s.k]||0)+d;
+      if(s.k==='fry'&&liq>0.12) o.gordura=1;
+    } else if(o.queimado<1){
+      const f=(s.k==='boil')?0.3:1;
+      o.queimado=Math.min(1,o.queimado+dt*e*1.15*f*R.b/it.queima*bm);
+    }
+    o.liqQ=liq; o.liqId=s.liqId||null; o.gorduroso=gorduroso?1:0;
+    if(o.queimado>0.15) queimando=true;
+  }
+  if(s.k==='fry'){
+    if(e>0.05) s.stuck=Math.min(1,s.stuck+dt*e*(liq>0.12?0.05:0.14)*R.k);
+    if(s.stuck>0.62) for(const o of s.itens) o.queimado=Math.min(1,o.queimado+dt*e*0.2*R.b);
+    if(e>0.3 && som && tempoTotal>sizzleT){ sizzleT=tempoTotal+0.6; ruido(0.17,0.018,1400); }
+  }
+  if(e>0.3 && Math.random()<dt*7)
+    parts.push({x:s.cx+(Math.random()*30-15),y:s.cy-14,vx:Math.random()*10-5,vy:-26,g:-10,life:0.9,max:0.9,col:'rgba(255,255,255,.6)',r:4+Math.random()*4});
+  if(queimando && Math.random()<dt*9)
+    parts.push({x:s.cx+(Math.random()*30-15),y:s.cy-18,vx:Math.random()*8-4,vy:-22,g:-14,life:0.7,max:0.7,col:'rgba(60,60,60,.55)',r:4+Math.random()*4});
+};
+/* prato feito na gordura vale um pouquinho mais — mas gordura demais estraga */
+const _qItem=qItem;
+qItem=function(x,o){
+  let q=_qItem(x,o);
+  if(o&&o.gordura) q=Math.min(1,q+0.05);
+  if(o&&o.gorduroso) q=Math.max(0,q-0.12);
+  return q;
+};
+/* receitas do jogador aparecem com mais frequência nos pedidos/maratona */
+const _pickRec=pickRec;
+pickRec=function(p,items){
+  if(p.some(r=>r.custom) && Math.random()<0.35){
+    const c=p.filter(r=>r.custom && !items.some(x=>x.rec.id===r.id));
+    if(c.length) return c[Math.floor(Math.random()*c.length)];
+  }
+  return _pickRec(p,items);
+};
+
+/* ---------- prato: limpar + capacidade ---------- */
+const _place=placeOn;
+placeOn=function(z){
+ if(hand && ILIQ[hand.id] && POUR[z] && POUR[z].indexOf(hand.id)>=0){
+  toast('🫗 Segure o botão 🫗 da '+(z==='fry'?'frigideira':'panela')+' pra derramar o '+IT[hand.id].n); return; }
+ if(z==='plate'&&hand){
+  if(plate.length>=7){toast('Prato cheio — use 🧽 Limpar prato');return;}
+  if(plate.length>=5){plate.push(hand);hand=null;tom(600,0.06,'sine',0.04);return;}}
+ _place(z);};
+const lb=document.createElement('button');lb.className='act alt';lb.id='btnPrato';lb.textContent='🧽 Limpar prato';
+g('btnLimpar').after(lb);
+lb.addEventListener('click',()=>{if(!plate.length){toast('O prato já está vazio');return;}plate=[];toast('Prato limpo 🧽');});
+
+/* ---------- jogar fora: escorrer o líquido ---------- */
+let ultimaEst=null;
+cv.addEventListener('pointerdown',e=>{const r=cv.getBoundingClientRect();const z=zonaEm(e.clientX-r.left,e.clientY-r.top);if(z)ultimaEst=z;},true);
+descartar=function(){
+  if(hand){ hand=null; toast('Jogado fora 🗑️'); return; }
+  const zs=['fry','pot'].filter(z=>ST[z]&&ST[z].liq>0);
+  if(!zs.length){ toast('Sua mão está vazia e as panelas estão sem líquido'); return; }
+  const z=(ultimaEst&&zs.indexOf(ultimaEst)>=0)?ultimaEst:zs[0];
+  const s=ST[z], col=s.liqCol||'#ffd54a';
+  s.liq=0; s.liqId=null;
+  const cx=s.cx||Z[z].x+Z[z].w/2, cy=(s.cy||Z[z].y+Z[z].h/2)-10;
+  for(let i=0;i<16;i++) parts.push({x:cx+(Math.random()*22-11),y:cy,vx:Math.random()*26-13,vy:-16-Math.random()*20,g:340,life:0.5,max:0.5,col:col,r:1.5+Math.random()*1.8});
+  ruido(0.26,0.04,900); tom(260,0.14,'sine',0.03);
+  toast('🫗 Escorreu o líquido da '+(z==='fry'?'frigideira':'panela'));
+};
+(function(){const b=g('btnLimpar'),nb=b.cloneNode(true);b.parentNode.replaceChild(nb,b);nb.addEventListener('click',()=>descartar());})();
+
+/* ============================================================
+   BOTÃO 🫗 — SEGURAR PRA DERRAMAR (com animação e quantidade)
+   ============================================================ */
+let pour=null;
+function liqAlvo(z){
+  if(hand && ILIQ[hand.id] && POUR[z].indexOf(hand.id)>=0) return hand.id;
+  const s=ST[z];
+  if(s.liqId && POUR[z].indexOf(s.liqId)>=0) return s.liqId;
+  return POUR[z][0];
+}
+POURAPI.down=function(z,p){
+  if(z!=='fry'&&z!=='pot') return false;
+  const s=ST[z], pb=s.pb;
+  if(!pb || Math.hypot(p.x-pb.cx,p.y-pb.cy)>pb.r+10) return false;
+  const id=liqAlvo(z);
+  pour={z:z,id:id,col:LIQCOL[id]||'#ffd54a',sfx:0,drop:0};
+  s.liqId=id; s.liqCol=pour.col;
+  sfxPour();
+  return true;
+};
+POURAPI.drag=function(){ return !!pour; };
+POURAPI.up=function(){
+  if(!pour) return false;
+  const s=ST[pour.z], n=qtdIdx(s.liq||0);
+  if(n<0) s.liq=0;
+  else toast('🫗 '+IT[pour.id].n+': '+QTD[n].n);
+  tom(300,0.08,'sine',0.03);
+  pour=null;
+  return true;
+};
+/* enquanto segura, o líquido escorre */
+const _upd=update;
+update=function(dt){
+  if(pour && !pausado()){
+    const z=pour.z, s=ST[z], zz=Z[z];
+    s.liq=Math.min(1,(s.liq||0)+dt*POURRATE);
+    const cx=s.cx||zz.x+zz.w/2, cy=(s.cy||zz.y+zz.h/2);
+    if(tempoTotal>(pour.sfx||0)){ pour.sfx=tempoTotal+0.3; ruido(0.2,0.02,900); }
+    if(tempoTotal>(pour.drop||0)){
+      pour.drop=tempoTotal+0.07;
+      for(let i=0;i<2;i++)
+        parts.push({x:cx+(Math.random()-0.5)*8,y:cy-6,vx:(Math.random()-0.5)*34,vy:-40-Math.random()*40,g:380,life:0.3,max:0.3,col:s.liqCol,r:1.4+Math.random()*1.6});
+    }
+  }
+  _upd(dt);
+};
+/* desenha o botão e a animação */
+const _draw2=draw;
+draw=function(){
+  _draw2();
+  for(const z of ['fry','pot']){
+    const s=ST[z], zz=Z[z]; if(!s||!zz) continue;
+    const r=Math.max(22,Math.min(38,Math.min(zz.w,zz.h)*0.15));
+    const cx=zz.x+zz.w-r-11, cy=zz.y+zz.h-r-11;
+    s.pb={cx:cx,cy:cy,r:r};
+    const ativo=!!(pour&&pour.z===z);
+    const id=ativo?pour.id:liqAlvo(z);
+    const col=LIQCOL[id]||'#ffd54a';
+    ctx.save();
+    ctx.globalAlpha=ativo?1:0.9;
+    ctx.beginPath(); ctx.arc(cx,cy,r,0,TAU);
+    ctx.fillStyle=rg(cx-r*0.4,cy-r*0.5,r*0.15,cy+r*1.1,col,mix(col,'#000000',0.4));
+    ctx.fill(); ctx.lineWidth=3;
+    ctx.strokeStyle=ativo?'#8a3d76':'rgba(90,70,100,.45)'; ctx.stroke();
+    if(ativo){
+      ctx.beginPath(); ctx.arc(cx,cy,r+4.5,-Math.PI/2,-Math.PI/2+TAU*Math.min(1,s.liq||0));
+      ctx.lineWidth=4; ctx.lineCap='round';
+      ctx.strokeStyle=nvTxt(qtdIdx(s.liq||0))==='nada'?'#7fc8f0':QTD[qtdIdx(s.liq||0)].c;
+      ctx.stroke();
+    }
+    ctx.font='700 '+Math.round(r*0.9)+'px Nunito, sans-serif';
+    ctx.textAlign='center'; ctx.textBaseline='middle'; ctx.fillStyle='#fff';
+    ctx.fillText('🫗',cx,cy+1);
+    ctx.textBaseline='alphabetic';
+    ctx.restore();
+    txt(ativo?nvTxt(qtdIdx(s.liq||0)):(IT[id]?IT[id].n:''),cx+r,cy-r-6,'800 10px Nunito, sans-serif','#6b2d5c','right');
+  }
+  if(pour){
+    const z=pour.z, s=ST[z], zz=Z[z];
+    if(zz){
+      const cx=s.cx||zz.x+zz.w/2, cy=(s.cy||zz.y+zz.h/2), top=zz.y+8, l=Math.min(1,s.liq||0), col=pour.col;
+      ctx.save();
+      ctx.translate(cx+15,top+7); ctx.rotate(0.95);
+      rr(-8,-24,16,30,5); ctx.fillStyle=mix(col,'#ffffff',0.3); ctx.fill();
+      ctx.lineWidth=2; ctx.strokeStyle='rgba(60,40,70,.45)'; ctx.stroke();
+      rr(-4,-34,8,12,3); ctx.fillStyle='#8a7f96'; ctx.fill();
+      ctx.restore();
+      ctx.save();
+      ctx.lineCap='round';
+      ctx.globalAlpha=0.9; ctx.strokeStyle=col; ctx.lineWidth=3+(1-l)*1.8;
+      ctx.beginPath(); ctx.moveTo(cx+4,top+22); ctx.lineTo(cx,cy-6); ctx.stroke();
+      ctx.globalAlpha=0.45; ctx.strokeStyle='#ffffff'; ctx.lineWidth=1+(1-l)*0.6;
+      ctx.beginPath(); ctx.moveTo(cx+3,top+22); ctx.lineTo(cx,cy-6); ctx.stroke();
+      ctx.globalAlpha=0.5;
+      ell(cx,cy-2,10+l*16,4+l*6,'rgba(255,255,255,.7)');
+      ctx.restore();
+    }
+  }
+};
+
+/* ---------- pedidos: mostra a quantidade de líquido pedida ---------- */
+renderTickets=function(){
+  $('rodada').textContent=rodada.inf?('Vidas '+rodada.vidas):(rodada.feitos+'/'+rodada.alvo);
+  $('rodadaTit').textContent=rodada.inf?'Maratona':'Pedidos do dia';
+  if(!orders.length){ $('tickets').innerHTML='<div class="recline lock"><span class="nm">Ninguém na janela ainda<span class="sub">os clientes estão chegando...</span></span></div>'; return; }
+  const frozen=RIT[ritmo].frozen;
+  $('tickets').innerHTML=orders.map(o=>{
+    const urg=!frozen && o.t<o.total*0.3;
+    const lines=o.items.map(it=>'<div class="dl'+(it.done?' dn':'')+'"><img class="di" src="'+dishURL(it.rec)+'" alt=""><span><span class="nm">'+it.rec.n+'</span><span class="need">'+it.rec.itens.map(ingHtml).join(' ')+ftTxt(it.rec)+'</span></span></div>').join('');
+    const tr=o.trait!=='normal'?'<span class="trait '+o.trait+'">'+o.tr.nome+'</span>':'';
+    return '<div class="tk '+(urg?'urg ':'')+(o.trait==='vip'?'vip':'')+'" data-tk="'+o.n+'"><img class="av" src="'+custURL(o.c)+'" alt="">'+
+      '<div class="tkb">'+tr+lines+'</div><span class="tm '+(urg?'low':'')+'">'+(frozen?'':Math.ceil(o.t)+'s')+'</span></div>';
+  }).join('');
+};
+
+/* ---------- prateleira: toque mostra o nome ---------- */
+const _pf=pickFrom;
+pickFrom=function(z){
+ if(z==='shelf'&&modo==='livre'){
+  const s0=Z.shelf,cw=(s0.w-16)/2,ch=(s0.h-36)/7;
+  const i=Math.floor((ptr.y-s0.y-28)/ch)*2+Math.floor((ptr.x-s0.x-8)/cw),s=shelf[i];
+  if(s){const r=s.rec&&RECIPES.find(q=>q.id===s.rec);toast((r?r.n:(s.nome||'Prato caseiro'))+(s.st?' '+starTxt(s.st):''));}
+  else toast(shelf.length+' pratos guardados');
+  return false;}
+ return _pf(z);};
+
+/* ---------- servir (guardar com nome / pedidos com dica) ---------- */
+function defDoPrato(){
+ const d=[];
+ for(const o of plate){const it={id:o.id};
+  if(maxCorte(o)>0&&estaPicado(o))it.c=1;
+  if(o.coz>0.3){if(!noPonto(o)||!metodo(o))return null;it.m=metodo(o);}
+  else if(o.queimado>0)return null;
+  d.push(it);}
+ return d;}
+servir=function(){
+ if(!plate.length){toast('O prato está vazio');return;}
+ const r=receitaDoPrato();
+ if(modo==='livre'){
+  if(r){const qt=checaQtd(r.rec,plate);
+   const q=clamp(qualidade(r.pares)+(qt?(qt.dif===0?0.08:(Math.abs(qt.dif)===1?-0.07:-0.22)):0),0,1),stn=estrelasDe(q);
+   if(!known[r.rec.id]){known[r.rec.id]=true;addCoins(10);toast('🎉 Nova receita: '+r.rec.n+'! +10💗');}else toast(r.rec.n+' '+starTxt(stn)+(qt&&qt.dif!==0?' · 🫗 '+qt.txt:''));
+   if(shelf.length>=14)shelf.shift();shelf.push({rec:r.rec.id,st:stn});sfxOk();save();renderRec();plate=[];return;}
+  if(plate.some(estragado)){toast('🤢 Tem coisa queimada... use 🧽 Limpar prato');sfxErro();return;}
+  const itens=plate.map(o=>({id:o.id,cuts:o.cuts.length,coz:o.coz,q:o.queimado,m:metodo(o)})),def=defDoPrato();
+  askName('Prato novo! 🎉',def?'Dê um nome pra sua invenção. Ela vira uma receita sua.':'Esse prato tem algo meio cozido demais pra virar receita, mas dá pra guardar com um nome.','',nm=>{
+   if(def&&nm){
+    const rec={id:'u'+Date.now().toString(36),n:nm,premio:12+7*def.length+3*def.filter(x=>x.m).length,tempo:50+26*def.length,dia:0,itens:def,custom:1};
+    RECIPES.push(rec);known[rec.id]=true;saveX();addCoins(10);
+    const pr=casa(rec.itens,plate,okPrato),stn=pr?estrelasDe(qualidade(pr)):1;
+    if(shelf.length>=14)shelf.shift();shelf.push({rec:rec.id,st:stn});
+    toast('🎉 Receita criada: '+nm+'! +10💗');renderRec();
+   }else{
+    if(shelf.length>=14)shelf.shift();shelf.push({rec:null,st:1,itens:itens,nome:nm});
+    toast(nm?'Guardado: '+nm:'Prato caseiro guardado!');}
+   plate=[];sfxOk();save();});
+  return;}
+ /* modo pedidos */
+ if(!r){toast('🤔 '+(dica()||'Isso não bate com nenhum pedido')+' · o prato continua montado');sfxErro();return;}
+ let best=null,bi=null;
+ for(const o of orders)for(const it of o.items)if(!it.done&&it.rec.id===r.rec.id&&(!best||o.t<best.t)){best=o;bi=it;}
+ if(!best){toast('Ninguém pediu '+r.rec.n+' agora · o prato continua montado');sfxErro();return;}
+ bi.done=true;
+ /* a quantidade de óleo/azeite/água (ou porções de um ingrediente) saiu certa? */
+ const qt=checaQtd(r.rec,plate);
+ let qAjuste=0, extraMsg='';
+ if(qt){
+  if(qt.dif===0){ qAjuste=0.08; extraMsg=' · 🫗 '+qt.txt; }
+  else if(Math.abs(qt.dif)===1){ qAjuste=-0.07; extraMsg=' · 😕 cliente estranhou: '+qt.txt; tom(150,0.16,'square',0.03); }
+  else { qAjuste=-0.22; extraMsg=' · 😠 cliente reclamou: '+qt.txt; tom(120,0.24,'square',0.04); }
+  if(qt.dif<=-2||qt.lv<0){ best.t=Math.min(best.t,3); combo=0; }
+ }
+ const q=clamp(qualidade(r.pares)+qAjuste,0,1),stn=estrelasDe(q),frozen=RIT[ritmo].frozen;
+ const rap=frozen?0.8:clamp(best.t/best.total,0,1),bonusC=1+Math.min(0.5,combo*0.1);
+ let gg=Math.round(r.rec.premio*(0.6+0.5*q)*(0.75+0.5*rap)*bonusC*best.tr.r);
+ let msg='✅ '+r.rec.n+' '+starTxt(stn)+' +'+gg+'💗'+extraMsg;
+ if(stn===3&&Math.random()<0.4){const tip=Math.round(gg*0.25);gg+=tip;msg+=' · gorjeta +'+tip;}
+ combo++;score+=gg;addCoins(gg);rodada.pratos++;rodada.moedas+=gg;rodada.estrelas+=stn;
+ if(combo>1)msg+=' · combo x'+combo;
+ toast(msg);if(qAjuste<0)sfxErro();else sfxOk();sparks(Z.shelf.x+Z.shelf.w/2,Z.shelf.y+60,14,qAjuste<0?'#e8564a':'#ffd166');
+ if(best.items.every(x=>x.done)){
+  orders.splice(orders.indexOf(best),1);rodada.feitos++;rodada.acertos++;
+  if(best.items.length>1){const extra=Math.round(best.items.reduce((a,x)=>a+x.rec.premio,0)*0.15);addCoins(extra);rodada.moedas+=extra;score+=extra;toast('🍽️ Mesa completa! +'+extra+'💗');}}
+ plate=[];renderTickets();atualizaTopo();checaFim();};
+(function(){const b=g('btnServir'),nb=b.cloneNode(true);b.parentNode.replaceChild(nb,b);nb.addEventListener('click',()=>servir());})();
+
+/* ============================================================
+   +++ MAIS ingredientes — despensa bem cheia
+   ============================================================ */
+/* 0 Legumes */
+A('mandioquinha','Batata-baroa',0,4,12,11,'round','#e8c88a','#c0a050','#fff2c8',{seg:'#b8924a'});
+A('inhame','Inhame',0,4,12,11,'round','#c8a878','#8a6a3a','#f2e0c0',{sc:0.92});
+A('tomatecereja','Tomate-cereja',0,4,5,6,'round','#ff5a4a','#c02a20','#ff9a8a',{sc:0.55,leaf:'#43a047'});
+A('brotofeijao','Broto de feijão',0,4,4,5,'long','#f2f0e0','#cfc8a8','#ffffff',{th:0.07});
+A('shimeji','Shimeji',0,0,7,8,'pile','#e8d8b8','#b89868','#f2e8cc',{n:22,g:0.09,br:0.2});
+/* 1 Verduras */
+A('almeirao','Almeirão',1,4,4,5,'leaf','#4fa83a','#2a6a22','#a8e070');
+A('mostardafolha','Mostarda (folha)',1,4,4,5,'leaf','#6ab84a','#2f7a2a','#c0e890');
+A('chicoria','Chicória',1,4,4,5,'leaf','#7ac85a','#3f8a30','#d0f0a8');
+/* 2 Frutas */
+A('caqui','Caqui',2,4,6,7,'round','#f2802a','#c04e10','#ffc07a',{leaf:'#43a047'});
+A('figo','Figo',2,4,6,7,'round','#8a3a6a','#5a1e42','#f2a8cc',{sc:0.8});
+A('roma','Romã',2,4,7,8,'round','#c83a3a','#8a1a1a','#ff8a8a',{crown:'#8a6a2a',sc:0.85});
+A('nectarina','Nectarina',2,4,6,7,'round','#ff8a4a','#d85a20','#ffd0a0',{leaf:'#43a047'});
+A('acerola','Acerola',2,0,4,5,'pile','#e83a3a','#a80f0f','#ff7a6a',{n:28,g:0.06});
+A('jabuticaba','Jabuticaba',2,0,5,6,'pile','#3a2a4a','#1c1226','#6a4a7a',{n:18,g:0.11});
+A('graviola','Graviola',2,4,7,8,'round','#4f8a3a','#2c5a22','#d4e58a',{sc:0.95,seg:'#2f6a24'});
+/* 3 Carnes */
+A('alcatra','Alcatra',3,4,15,12,'meat','#b0443a','#6e2118','#c05040');
+A('picanha','Picanha',3,4,16,12,'meat','#c04a3a','#7a2418','#d86048',{cap:'#f0dca0'});
+A('coxaasa','Coxa de frango',3,4,17,12,'meat','#e8b49a','#b87a50','#fbe3cc',{bone:1});
+A('bisteca','Bisteca',3,4,15,12,'meat','#c85a4a','#7a2a20','#e08a70',{bone:1});
+A('filemignon','Filé mignon',3,4,14,11,'meat','#a83a34','#661c18','#c04a40',{fold:1});
+/* 4 Peixes e frutos do mar */
+A('robalo','Robalo',4,4,11,10,'fish','#c8d8e0','#8fa8b8','#f2f7fa',{belly:'#ffffff'});
+A('merluza','Merluza',4,4,10,9,'fish','#e0e8f0','#a8b8c8','#ffffff',{belly:'#ffffff'});
+A('corvina','Corvina',4,4,11,10,'fish','#c0c8d0','#8898a8','#eef4f8',{belly:'#f6fafc'});
+A('truta','Truta',4,4,11,10,'fish','#f0a878','#d07840','#ffd0a8',{belly:'#ffe0c8'});
+/* 5 Laticínios e ovos */
+A('queijominas','Queijo minas',5,4,5,7,'cheese','#fffbe8','#e8dcb0','#ffffff',{br:0.6});
+A('creamcheese','Cream cheese',5,0,5,6,'jar','#fffaf0','#e8dcb8','#ffffff',{br:0.3});
+A('coalhada','Coalhada',5,0,5,6,'jar','#ffffff','#eef2f6','#ffffff',{br:0.3});
+/* 6 Grãos e massas */
+A('espaguete','Espaguete',6,0,10,10,'long','#f6e2a8','#dcc06a','#fff2c8',{th:0.08});
+A('parafuso','Macarrão parafuso',6,0,10,10,'long','#f2d89a','#d8b45a','#fff0c0',{th:0.14});
+A('trigo','Farinha de trigo',6,0,6,7,'pile','#fffdf6','#e8e2d0','#ffffff',{n:60,g:0.04,br:0.3});
+A('amido','Amido de milho',6,0,6,7,'pile','#ffffff','#f0f0f4','#ffffff',{n:60,g:0.035,br:0.2});
+A('granola','Granola',6,0,6,7,'pile','#d8a860','#a87838','#e8c088',{n:34,g:0.07,br:0.4});
+A('arrozintegral','Arroz integral',6,0,16,12,'pile','#d8c090','#a8895a','#e8d4a8',{n:26,g:0.075,br:0.4});
+/* 7 Despensa */
+A('leitecoco','Leite de coco',7,0,5,6,'can','#f6f2ee','#8ac0d8','#ffffff',{br:0.3});
+A('molhopimenta','Molho de pimenta',7,0,4,6,'bottle','#c8201a','#7a0f0a','#ffffff',{br:0.2});
+A('vinhobranco','Vinho branco',7,0,4,6,'bottle','#f2ecd0','#c8b878','#ffffff',{br:0.1});
+A('farinhapanko','Farinha panko',7,0,6,7,'pile','#f6ecd4','#d8c49a','#fffaf0',{n:40,g:0.05,br:0.5});
+/* 8 Doces */
+A('compota','Compota',8,0,4,6,'jar','#b8324a','#7a1a2a','#ffffff',{br:0.3});
+A('marshmallow','Marshmallow',8,0,4,6,'pile','#ffffff','#f0e0ec','#ffffff',{n:12,g:0.13,br:0});
+A('nutella','Creme de avelã',8,0,4,6,'jar','#6a3a1a','#3a1c08','#ffffff',{br:0.4});
+/* 9 Temperos */
+A('alecrim','Alecrim',9,4,3,4,'leaf','#3f7a4a','#204a2c','#7ac08a');
+A('tomilho','Tomilho',9,4,3,4,'leaf','#4f8a5a','#2a5a3a','#8ac09a');
+A('cravo','Cravo',9,0,3,4,'pile','#4a2a1a','#241206','#6a4028',{n:20,g:0.06,br:0.2});
+A('nozmoscada','Noz-moscada',9,0,4,5,'round','#b08a5a','#7a5a30','#e8cc9a',{sc:0.5});
+A('acafrao','Açafrão',9,0,4,6,'pile','#f0a018','#c07000','#f0a018',{n:55,g:0.035,br:0.2});
+A('gergelim','Gergelim',9,0,4,6,'pile','#f2e6c8','#d0c090','#ffffff',{n:60,g:0.03,br:0.2});
+
+/* ---------- +++ mais uma leva de ingredientes ---------- */
+/* 0 Legumes */
+A('maxixe','Maxixe',0,4,7,8,'round','#8fd04a','#4f8a28','#e0f0a8',{sc:0.72,cap:'#5aa030'});
+/* 2 Frutas */
+A('pitanga','Pitanga',2,0,5,6,'pile','#e83a4a','#a8102a','#ff8a90',{n:24,g:0.07});
+A('carambola','Carambola',2,4,6,7,'round','#f2c81a','#c0a000','#fff08a',{sc:0.8});
+A('amora','Amora',2,0,5,6,'pile','#5a2a6a','#2e1038','#a86ab0',{n:22,g:0.08});
+/* 3 Carnes */
+A('lombo','Lombo suíno',3,4,15,12,'meat','#e0a890','#b07050','#f6d8c0',{fold:1});
+A('pernilsuino','Pernil suíno',3,0,17,12,'meat','#c85848','#7a2a20','#e08a70',{bone:1});
+A('patinho','Patinho moído',3,0,12,10,'patty','#b8483a','#7a2618','#d87858',{spots:1});
+/* 4 Peixes */
+A('pescada','Pescada',4,4,10,9,'fish','#e8eef2','#b0c0cc','#ffffff',{belly:'#ffffff'});
+/* 5 Laticínios */
+A('gorgonzola','Gorgonzola',5,4,5,7,'cheese','#f6f0dc','#82904a','#ffffff',{br:0.5});
+/* 6 Grãos e massas */
+A('graomoco','Grão-de-bico',6,0,14,12,'pile','#e8d6a0','#c0a860','#f2e4b8',{n:24,g:0.075,br:0.4});
+A('linguine','Linguine',6,0,10,10,'long','#f6e2a8','#dcc06a','#fff2c8',{th:0.08});
+/* 7 Despensa */
+A('balsamico','Vinagre balsâmico',7,0,4,6,'bottle','#5a2a12','#2e1408','#ffffff',{br:0.1});
+A('vinhotinto','Vinho tinto',7,0,4,6,'bottle','#6a1430','#2e0812','#ffffff',{br:0.1});
+A('extratomate','Extrato de tomate',7,0,4,6,'can','#c8301a','#7a170a','#ffffff',{br:0.3});
+/* 8 Doces */
+A('geleiamorango','Geleia de morango',8,0,4,6,'jar','#d8204a','#8a0f28','#ffffff',{br:0.3});
+/* 9 Temperos */
+A('pimentadoreino','Pimenta-do-reino',9,0,4,6,'pile','#3a2a20','#1c120a','#5a4030',{n:60,g:0.03,br:0.2});
+A('curry','Curry',9,0,4,6,'pile','#e0a018','#a86a00','#e0a018',{n:50,g:0.035,br:0.2});
+
+/* ---------- +++ receitas novas (com os ingredientes novos) ---------- */
+R2(`picanhaacebolada|Picanha Acebolada|5|picanha:cf,cebola:cf,alho:cf|f:oleo:m
+bistecafrita|Bisteca Frita|4|bisteca:cf,alho:cf|f:oleo:m
+bistecamandioca|Bisteca com Mandioca|4|bisteca:cf,mandioca:cb|f:oleo:nm
+lomboassado|Lombo Assado|4|lombo:ca,batata:ca,alecrim
+pernilsuinoassado|Pernil Assado|5|pernilsuino:a,batata:ca,milho:a
+frangoalecrim|Frango ao Alecrim|4|frango:ca,alecrim,alho:c
+patinhomolho|Macarrão com Patinho|4|massa:b,patinho:f,extratomate|f:oleo:nm
+filemignonmolho|Filé Mignon ao Molho|6|filemignon:cf,molho,batata:ca
+trutagrelhada|Truta Grelhada|4|truta:cf,limao,azeite
+robaloassado|Robalo Assado|4|robalo:ca,limao,alecrim
+pescadamilanesa|Pescada à Milanesa|3|pescada:cf,farinhapanko,ovo:f|f:oleo:m
+espaguetebolonhesa|Espaguete à Bolonhesa|4|espaguete:b,carvemo:f,molho|f:agua:nm
+linguinepesto|Linguine ao Pesto|4|linguine:b,pesto,parmesao:c
+parafusoalho|Parafuso ao Alho e Óleo|2|parafuso:b,alho:cf|f:azeite:nm
+pennegorgonzola|Penne ao Gorgonzola|5|parafuso:b,gorgonzola:cf,creme|f:agua:nm
+sopalentilha|Sopa de Lentilha|3|lentilha:b,cebola:cb,cenoura:cb|f:agua:m
+arrozintegrallegumes|Arroz Integral com Legumes|4|arrozintegral:b,cenoura:cb,vagem:cb|f:agua:nm
+saladagraomoco|Salada de Grão-de-bico|2|graomoco:b,tomate:c,cebola:c,azeite
+saladaquinoa|Salada de Quinoa|3|quinoa:b,pepino:c,tomate:c,hortela
+maxixerefogado|Maxixe Refogado|2|maxixe:cf,alho:cf,cebola:cf|f:oleo:p
+palmitosalada|Salada de Palmito|2|palmito:c,alface:c,tomate:c,azeite
+saladacaqui|Salada de Caqui|2|caqui:c,alface:c,azeite
+saladacarambola|Salada de Carambola|2|carambola:c,maca:c,mel
+saladaamora|Salada de Amora|3|amora,iogurte,hortela
+sucoroma|Suco de Romã|2|roma:c,agua,acucar
+sucopitanga|Suco de Pitanga|1|pitanga,agua,acucar
+vitaminacreamcheese|Vitamina de Cream Cheese|2|creamcheese,banana:c,leite
+tortafigo|Torta de Figo|5|massa_bolo:a,figo:ca,acucar
+biscoitogranola|Biscoito de Granola|3|granola,massa_bolo:a,mel
+torradageleia|Torrada com Geleia|1|pao:a,geleiamorango
+frangocurry|Frango ao Curry|4|frango:cf,curry,creme|f:oleo:nm
+carvemopimenta|Carne Moída com Pimenta|3|carvemo:f,cebola:cf,pimentadoreino|f:oleo:nm
+vinhotintobife|Bife ao Vinho Tinto|5|filemignon:cf,vinhotinto,alecrim|f:oleo:nm`);
+R2(`cevichepescada|Ceviche de Pescada|3|pescada:c,limao:c,cebola:c,hortela
+quinoaburguer|Hambúrguer de Quinoa|4|quinoa:b,trigo,cebola:c|f:oleo:nm
+tomateextrato|Molho de Tomate Caseiro|2|tomate:c,alho:c,extratomate|f:azeite:p
+arrozcurry|Arroz com Curry|3|arroz:b,curry,cebola:cf|f:agua:nm`);
+
+/* ---------- liga tudo ---------- */
+pintaTabs();pantry2();renderRec();
+})();
 </script>
 </body>
 </html>

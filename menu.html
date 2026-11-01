@@ -489,10 +489,45 @@
    ========================================================= */
 const PATCHES = [
   {
+    id: "v2.16.0",
+    date: "1 de Novembro de 2026",
+    title: "Cozinha da Lulu: quanto de óleo? 🫗",
+    latest: true,
+    items: [
+      { type: "feat", text: "🫗 Derramar virou segurar-e-soltar: dentro da frigideira e da panela agora tem um botão 🫗. É só manter o dedo pressionado — o líquido escorre com animação (o frasco inclina, cai o fio e respinga) e você solta quando quiser. Acabou o toque duplo." },
+      { type: "feat", text: "📏 Quanto caiu? Um anel em volta do botão mostra a quantidade em tempo real, e a etiqueta do lado diz o nível: muito pouco, pouco, na medida, muito ou demais. O nome do líquido aparece embaixo (óleo, azeite, água, shoyu, vinagre, balsâmico)." },
+      { type: "feat", text: "😠 Algumas receitas pedem uma quantidade exata — e agora isso importa. Fritar o bife com \"na medida\" de óleo rende um prato melhor; exagerar (\"muito\" ou \"demais\") deixa o cliente irritado, derruba o combo, a paciência dele e o valor do pedido. O que a receita quer aparece escrito na lista de ingredientes (ex: 🫗 na medida de óleo)." },
+      { type: "feat", text: "🥕 Mesma regra pros outros ingredientes: a quantidade também vale como porção no prato — 1 unidade é pouco, 2 é na medida, 3 é muito e 4 ou mais é demais. Colocar a mais de um ingrediente exigido deixa o cliente reclamando igual." },
+      { type: "feat", text: "🫗 Pra trocar o líquido é só tocar nele na despensa antes de segurar o botão (azeite, shoyu, vinagre, vinagre balsâmico...). Com a mão vazia o botão repete o que já estava na panela." },
+      { type: "feat", text: "🧈 Manteiga voltou a ser ingrediente de verdade: dá pra colocar ela na frigideira como item (a torrada com manteiga agradece)." },
+      { type: "feat", text: "🍽️ 33 receitas novas, puxando os ingredientes da última atualização: picanha acebolada, bisteca frita, lombo assado, pernil, frango ao alecrim, filé mignon ao molho, espaguete à bolonhesa, linguine ao pesto, parafuso ao alho e óleo, penne ao gorgonzola, sopa de lentilha, arroz integral com legumes, saladas (grão-de-bico, quinoa, palmito, caqui, carambola, amora), sucos de romã e pitanga, ceviche de pescada, torta de figo, biscoito de granola, frango ao curry e bife ao vinho tinto." },
+      { type: "feat", text: "🥬 Despensa em 207 ingredientes: maxixe, pitanga, carambola, amora, lombo suíno, pernil suíno, patinho moído, pescada, gorgonzola, grão-de-bico, linguine, vinagre balsâmico, vinho tinto, extrato de tomate, geleia de morango, pimenta-do-reino e curry." },
+      { type: "fix", text: "🔧 O balcão de pedidos agora mostra a quantidade de líquido pedida na própria linha do pedido, junto dos ingredientes." }
+    ]
+  },
+  {
+    id: "v2.15.0",
+    date: "1 de Novembro de 2026",
+    title: "Cozinha da Lulu: agora a gente derrama o óleo 🫗",
+    latest: false,
+    items: [
+      { type: "feat", text: "🫗 Derramar de verdade: pegue o óleo, o azeite ou a manteiga e toque na frigideira (ou a água, o shoyu e o vinagre e toque na panela) — o líquido escorre lá dentro, com som e respingos. Um toque no ingrediente, um toque na panela. Sem arrastar, funciona igual no notebook e no celular." },
+      { type: "feat", text: "🍳 Fritar na gordura faz diferença: com óleo na frigideira a comida frita mais rápido, queima menos e quase não gruda no fundo — e o prato ainda vale um pouquinho mais." },
+      { type: "feat", text: "🗑️ Jogar o líquido fora: com a mão vazia, o botão 🗑️ Jogar fora escorre o óleo, o azeite ou a água que ficou na frigideira ou na panela — com som e respingos. Se você tocou na frigideira por último, é ela que esvazia; na panela, é a panela." },
+      { type: "feat", text: "🥕 Muito mais ingredientes do dia a dia: chuchu, quiabo, jiló, rabanete, nabo, agrião, acelga, mamão, melão, goiaba, maracujá, ameixa, tangerina, carne moída, calabresa, tilápia, sardinha, bacalhau, lula, ricota, catupiry, nata, leite em pó, massa de lasanha, polvilho, farinha de rosca, flocos de milho, quinoa, azeitona, palmito, caldo, extrato e vários temperos — páprica, cúrcuma, cominho, colorau, louro, hortelã, coentro, gengibre." },
+      { type: "feat", text: "🥬 Despensa ainda mais cheia (190 ingredientes!): batata-baroa, inhame, tomate-cereja, broto de feijão, shimeji, almeirão, mostarda, chicória, caqui, figo, romã, nectarina, acerola, jabuticaba, graviola, alcatra, picanha, coxa de frango, bisteca, filé mignon, robalo, merluza, corvina, truta, queijo minas, cream cheese, coalhada, espaguete, macarrão parafuso, farinha de trigo, amido de milho, granola, arroz integral, leite de coco, molho de pimenta, vinho branco, farinha panko, compota, marshmallow, creme de avelã, alecrim, tomilho, cravo, noz-moscada, açafrão e gergelim." },
+      { type: "feat", text: "🍲 Muitas receitas novas de comida de todo dia: farofa, pão de queijo, cuscuz com ovo, quibebe, caldo verde, polenta frita, bife acebolado, estrogonofe, macarronada, beirute, bauru, frango assado, galinhada, baião de dois, feijão tropeiro, tutu, escondidinho, nhoque, lasanha, rocambole, salmão grelhado, sucos e vitaminas — e mais." },
+      { type: "feat", text: "📖 Livro de receitas com abas: 🍽️ Comidas, 🍰 Doces e ⭐ Minhas. Cada coisa no seu lugar, sem misturar o almoço com a sobremesa." },
+      { type: "feat", text: "⭐ Suas receitas valem em tudo: invente um prato, dê um nome pra ele e pronto — ele passa a aparecer também nos pedidos e na maratona, com direito a cliente pedindo a sua invenção." },
+      { type: "feat", text: "🧽 Limpar prato: botão pra esvaziar o prato de uma vez quando a montagem não deu certo." },
+      { type: "feat", text: "🍫 Doces continuam aqui: bolos, pudins e sobremesas seguem no jogo, só mudaram pra aba 🍰 Doces." }
+    ]
+  },
+  {
     id: "v2.14.0",
     date: "26 de Outubro de 2026",
     title: "Nosso Quartinho: vista de cima e bem pertinho 🔭",
-    latest: true,
+    latest: false,
     items: [
       { type: "feat",   text: "📐 Visão de cima: toque no botão do quadradinho (📐) pra ver o quarto todo de cima, como uma planta — perfeito pra enxergar o espaço inteiro e arrumar os móveis sem nada atrapalhando. Toque de novo pra voltar." },
       { type: "feat",   text: "🔭 Focar no item: com um móvel selecionado, toque em 🔭 Focar e a câmera chega bem pertinho dele, deixando ele no meio da tela pra você ajustar os detalhes." },
