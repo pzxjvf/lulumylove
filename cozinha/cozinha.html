@@ -1860,7 +1860,7 @@ A('beterraba','Beterraba',0,4,14,12,'round','#b22a5a','#6e1236','#d9558a',{leaf:
 A('couveflor','Couve-flor',0,4,9,10,'round','#f4f0dc','#d8d0a8','#fffbea',{leaf:'#6fb55a',seg:'#e0d8b0'});
 A('ervilha','Ervilha',0,0,6,7,'pile','#6fc24f','#3f8f2e','#8fd070',{n:30,g:0.075,br:0.5});
 A('mandioca','Mandioca',0,4,16,12,'long','#b88a5a','#7a5230','#fffaf0',{th:0.22});
-A('milho','Milho',0,0,8,9,'long','#ffd84a','#e0a800','#fff1a0',{th:0.26,kern:1,cap:'#8fcf5a'});
+A('milho','Milho',0,4,8,9,'long','#ffd84a','#e0a800','#fff1a0',{th:0.26,kern:1,cap:'#8fcf5a'});
 A('pepino','Pepino',0,4,5,6,'long','#4fa84a','#2d7a2c','#d8f0b5',{th:0.22});
 A('vagem','Vagem',0,4,6,7,'long','#5cb04a','#2f7d32','#c5e8a0',{th:0.1});
 /* 1 Verduras */
@@ -1892,7 +1892,7 @@ A('salsicha','Salsicha',3,4,8,9,'saus','#d9645a','#a83a32','#f4a090');
 /* 4 Peixes e frutos do mar */
 A('salmao','Salmão',4,4,11,10,'fish','#f08a5a','#d85a30','#ffc0a0',{belly:'#ffd9c2'});
 A('atum','Atum',4,4,11,10,'fish','#8a5060','#5a2a3a','#c04a5a',{belly:'#c9a0aa'});
-A('camarao','Camarão',4,0,6,7,'shrimp','#f2906a','#d8603a','#ffd0b8');
+A('camarao','Camarão',4,2,6,7,'shrimp','#f2906a','#d8603a','#ffd0b8');
 /* 5 Laticínios */
 A('iogurte','Iogurte',5,0,5,6,'jar','#fdf2f7','#e8658a','#ffffff',{br:0.3});
 A('creme','Creme de leite',5,0,5,6,'bottle','#fff7e0','#e8a030','#ffffff',{br:0.3});
@@ -1924,7 +1924,7 @@ A('cacau','Cacau em pó',8,0,4,5,'pile','#5a2e18','#2e1608','#5a2e18',{n:55,g:0.
 A('granulado','Granulado',8,0,4,6,'pile','#ff7aa8','#7ab8ff','#ffffff',{n:40,g:0.045,m:['#ff7aa8','#7ab8ff','#ffcf5a','#8ae0a0','#b69cff'],br:0});
 A('geleia','Geleia',8,0,4,6,'jar','#b22a4a','#f2e6c8','#ffffff',{br:0.3});
 A('amendoim','Amendoim',8,0,6,8,'pile','#d8a868','#a8743a','#d8a868',{n:18,g:0.1,br:0.6});
-A('castanha','Castanha',8,0,6,8,'pile','#c9904a','#8a5a22','#c9904a',{n:14,g:0.12,br:0.6});
+A('castanha','Castanha',8,3,6,8,'pile','#c9904a','#8a5a22','#c9904a',{n:14,g:0.12,br:0.6});
 A('baunilha','Essência de baunilha',8,0,4,6,'bottle','#6e4020','#f2e6c8','#ffffff',{br:0.1});
 /* 9 Temperos */
 A('manjericao','Manjericão',9,4,3,4,'leaf','#4fa83a','#2a7a22','#9ee070');
@@ -2115,7 +2115,7 @@ function R2(txt){txt.split('\n').forEach(l=>{ if(!l)return;
  const rec={id:p[0],n:p[1],premio:12+6*itens.length+3*nm+2*d,tempo:50+26*itens.length+10*nm,dia:d,itens:itens};
  if(p[4]){const f=p[4].split(':');const lv=NIV[f[1]];if(f[0]&&lv!==undefined)rec.fat={id:f[0],lv:lv};}
  RECIPES.push(rec);});}
-R2(`farofinha|Farofa|1|farinhar:cf,cebola:cf,bacon:cf|f:oleo:p
+R2(`farofinha|Farofa|1|farinhar:f,cebola:cf,bacon:cf|f:oleo:p
 macarraomanteiga|Macarrão na Manteiga|1|massa:b,manteiga
 arrozovo|Arroz com Ovo|1|arroz:b,ovo:f
 paodequeijo|Pão de Queijo|1|polvilho:a,queijo:c,ovo
@@ -2136,14 +2136,14 @@ romeuejulieta|Romeu e Julieta|2|goiabada,queijo
 curau|Curau de Milho|2|milho:cb,leite,acucar,canela
 sopaervilha|Sopa de Ervilha|3|ervilha:b,batata:cb,linguica:cf
 caldoverde|Caldo Verde|3|batata:cb,couve:cf,linguica:cf
-polentafrita|Polenta Frita|3|fuba:cb,queijo:c
+polentafrita|Polenta Frita|3|fuba:b,queijo:c
 bolinhobacalhau|Bolinho de Bacalhau|3|bacalhau:cb,batata:cb,cebola:c,ovo
 tilapiagrelhada|Tilápia Grelhada|3|tilapia:cf,limao,azeite
 sardinhaassada|Sardinha Assada|3|sardinha:ca,limao,cebola:c
 bifeacebolado|Bife Acebolado|3|carne:cf,cebola:cf|f:oleo:nm
-estrogonofe|Estrogonofe de Carne|3|carvemo:cf,creme,cogumelo:cf,cebola:cf
-macarronada|Macarronada|3|massa:b,molho,carvemo:cf
-beirute|Beirute|3|pao:f,carvemo:cf,queijo:c,alface:c,tomate:c
+estrogonofe|Estrogonofe de Carne|3|carvemo:f,creme,cogumelo:cf,cebola:cf
+macarronada|Macarronada|3|massa:b,molho,carvemo:f
+beirute|Beirute|3|pao:f,carvemo:f,queijo:c,alface:c,tomate:c
 bauru|Bauru|3|pao:a,queijo:a,tomate:c
 pamonha|Pamonha|3|milho:cb,leite,acucar
 cocada|Cocada|3|coco:c,acucar,ovo
@@ -2151,14 +2151,14 @@ docedeleitecaseiro|Doce de Leite Caseiro|3|leite:b,acucar:b
 frangoassado|Frango Assado|4|frango:ca,alho:c,limao,batata:ca
 galinhada|Galinhada|4|arroz:b,frango:cb,cenoura:cb
 baiaodeois|Baião de Dois|4|arroz:b,feijao:b,queijo:c
-feijaotropeiro|Feijão Tropeiro|4|feijao:b,farinhar:cf,linguica:cf,ovo:f
-tutu|Tutu à Mineira|4|feijao:b,farinhar:cf,bacon:cf|f:oleo:p
-escondidinho|Escondidinho|4|mandioca:cb,carvemo:cf,mussarela:c
-panquecacarne|Panqueca de Carne|4|massa_panq:f,carvemo:cf,molho
+feijaotropeiro|Feijão Tropeiro|4|feijao:b,farinhar:f,linguica:cf,ovo:f
+tutu|Tutu à Mineira|4|feijao:b,farinhar:f,bacon:cf|f:oleo:p
+escondidinho|Escondidinho|4|mandioca:cb,carvemo:f,mussarela:c
+panquecacarne|Panqueca de Carne|4|massa_panq:f,carvemo:f,molho
 risotofrango|Risoto de Frango|4|arroz:b,frango:cf,cebola:cf,parmesao:c
 nhoque|Nhoque de Batata|4|batata:cb,farinha,ovo,molho
-lasanha|Lasanha à Bolonhesa|4|lasanha:b,molho,carvemo:cf,mussarela:c
-rocambole|Rocambole de Carne|4|carvemo:cf,bacon:cf,ovo:f
+lasanha|Lasanha à Bolonhesa|4|lasanha:b,molho,carvemo:f,mussarela:c
+rocambole|Rocambole de Carne|4|carvemo:f,bacon:cf,ovo:f
 salmaogrelhado|Salmão Grelhado|4|salmao:cf,limao,azeite
 moussemaracuja|Mousse de Maracujá|4|maracuja:c,leitecond,creme
 quindim|Quindim|4|ovo,coco:c,acucar
@@ -2304,9 +2304,11 @@ function dica(){
   const p=plate.find(q=>q.id===x.id);if(!p)continue;
   const podePicar=IT[x.id].max>0;
   if(x.c&&podePicar&&!estaPicado(p))return dv=best.r.n+': '+IT[x.id].n+' precisa estar picado';
-  if(x.m){if(!noPonto(p))return dv=best.r.n+': '+IT[x.id].n+' está fora do ponto — devia ser '+MET_TXT[x.m];
-   return dv=best.r.n+': '+IT[x.id].n+' devia ser '+MET_TXT[x.m]+', não '+(metodo(p)?MET_TXT[metodo(p)]:'cru');}
-  /* sem picar e sem método (ex.: sal, farinha): só avisa se algo cozível veio cozido */
+  if(x.m){
+   if(metodo(p)!==x.m)return dv=best.r.n+': '+IT[x.id].n+' devia ser '+MET_TXT[x.m]+', não '+(metodo(p)?MET_TXT[metodo(p)]:'cru');
+   if(p.queimado>0.25)return dv=best.r.n+': '+IT[x.id].n+' passou do ponto — devia ser '+MET_TXT[x.m];
+   return dv=best.r.n+': '+IT[x.id].n+' ainda não está '+MET_TXT[x.m]+' — deixe mais tempo';}
+  /* sem método (ex.: sal, farinha): só avisa se algo que não deveria cozinhar veio cozido */
   if(podePicar&&p.coz>0.3)return dv=best.r.n+': '+IT[x.id].n+' devia ir cru';}
  return dv;}
 
@@ -2917,9 +2919,9 @@ pipocacaseira|Pipoca da Casa|1|milhopipoca:f,sal|f:oleo:p
 canjicacremosa|Canjica Cremosa|4|canjica:b,leitecoco,acucar
 polvoalho|Polvo ao Alho e Óleo|6|polvo:b,alho:cf,azeite|f:agua:nm
 mexilhaovinho|Mexilhão ao Vinho|5|mexilhao:b,vinhobranco,alho:c|f:agua:nm
-quibefrito|Quibe Frito|3|quibe,carvemo:cf,hortela:c|f:oleo:m
+quibefrito|Quibe Frito|3|quibe,carvemo:f,hortela:c|f:oleo:m
 massapizzacaseira|Pizza Caseira|3|massa_pizza:a,mussarela:c,oregano
-pastelfrito|Pastel Frito|2|massapastel,carvemo:cf,queijo:c|f:oleo:m
+pastelfrito|Pastel Frito|2|massapastel,carvemo:f,queijo:c|f:oleo:m
 sucocajamanga|Suco de Cajá|1|cajamanga:c,agua,acucar
 vitaminaacai|Vitamina de Açaí|2|acai,leite,banana:c
 escarolarefogada|Escarola Refogada|2|escarola:cf,alho:cf|f:azeite:p
