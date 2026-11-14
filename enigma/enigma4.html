@@ -146,10 +146,12 @@ label.hard{color:#ffd166;font-weight:800;font-size:.9rem;cursor:pointer}
 <div id="menu">
   <div class="menu-title">O Enigma do Cantinho IV</div>
   <div class="menu-sub">A Torre dos Sonhos. Você dorme dentro de um sonho que não quer acabar. Vinte e nove enigmas mais difíceis e mais estranhos, sem contas: lógica, linguagem, reflexos e imaginação.</div>
+  <button class="pill" id="contBtn" onclick="continuar()" style="display:none;margin-bottom:16px;font-size:1rem"></button>
   <div class="stage-list" id="stageList"></div>
   <div class="menu-foot">
     <a href="enigma3.html" class="pill">← Parte 3</a>
     <a href="../jogos_hub.html" class="pill">Sair</a>
+    <a href="enigma5.html" class="pill">Parte 5 →</a>
     <label class="hard"><input type="checkbox" id="hardChk" onchange="setHard(this.checked)"> Modo Difícil (sem dicas, desafios maiores)</label>
     <button class="pill" onclick="resetProgress()">Reiniciar progresso</button>
   </div>
@@ -181,6 +183,7 @@ label.hard{color:#ffd166;font-weight:800;font-size:.9rem;cursor:pointer}
     <a class="pill" href="enigma3.html">← Parte 3</a>
     <button class="pill" onclick="location.href='../jogos_hub.html'">Voltar ao hub</button>
     <button class="pill" onclick="replay()">Jogar de novo</button>
+    <button class="pill" onclick="location.href='enigma5.html'">Parte 5 →</button>
   </div>
 </div>
 
@@ -203,12 +206,12 @@ const norm=s=>s.normalize('NFD').replace(/[\u0300-\u036f]/g,'').trim().toUpperCa
 let actx=null,drone=null;
 function ac(){if(!actx){try{actx=new(window.AudioContext||window.webkitAudioContext)()}catch(e){}}return actx}
 function tone(f,dur=.15,type='sine',vol=.12,delay=0){
-  if(S.muted)return;const c=ac();if(!c)return;
+  if(S.muted)return;const c=ac();if(!c)return;if(c.state==='suspended')c.resume();
   const t=c.currentTime+delay,o=c.createOscillator(),g=c.createGain();
   o.type=type;o.frequency.value=f;g.gain.setValueAtTime(vol,t);g.gain.exponentialRampToValueAtTime(.001,t+dur);
   o.connect(g);g.connect(c.destination);o.start(t);o.stop(t+dur);
 }
-function startDrone(){const c=ac();if(!c||drone)return;const g=c.createGain();g.gain.value=S.muted?0:.025;g.connect(c.destination);[44,66,88.5].forEach(f=>{const o=c.createOscillator();o.type='sine';o.frequency.value=f;o.connect(g);o.start()});drone=g}
+function startDrone(){const c=ac();if(!c)return;if(c.state==='suspended')c.resume();if(drone)return;const g=c.createGain();g.gain.value=S.muted?0:.025;g.connect(c.destination);[44,66,88.5].forEach(f=>{const o=c.createOscillator();o.type='sine';o.frequency.value=f;o.connect(g);o.start()});drone=g}
 const sfx={click:()=>tone(300,.05,'square',.05),pick(){tone(660,.1,'triangle');tone(880,.15,'triangle',.1,.08)},
   ok(){[523,659,784,1047].forEach((f,i)=>tone(f,.25,'triangle',.12,i*.1))},bad(){tone(140,.3,'sawtooth',.1);navigator.vibrate&&navigator.vibrate(80)},
   creak(){tone(90,.5,'sawtooth',.06);tone(120,.4,'sawtooth',.05,.2)}};
@@ -253,8 +256,10 @@ function renderMenu(){
     c.innerHTML=`<div class="num">CAPÍTULO ${n}</div><div class="ico">${locked?'🔒':ICONS[i]}</div><div class="name">${st.nome}</div>`;
     if(!locked)c.onclick=()=>startStage(n);list.appendChild(c)});
   $id('hardChk').checked=S.p.hard;
+  const cb=$id('contBtn');if(S.p.unlocked>1||S.p.sec>0){cb.style.display='inline-block';cb.textContent=S.p.done?'↻ Rever o capítulo '+STAGES.length:'▶ Continuar do capítulo '+Math.min(S.p.unlocked,STAGES.length)}else cb.style.display='none';
   $id('menuStats').textContent=`Tempo: ${fmt(S.p.sec)} · Dicas usadas: ${S.p.hints} · Erros: ${S.p.errors}`;
 }
+function continuar(){startStage(Math.min(S.p.unlocked,STAGES.length))}
 function openMenu(){S.kp=null;renderMenu();$id('menu').style.display='flex'}
 function setHard(v){S.p.hard=v;saveProgress()}
 function doReset(){
@@ -652,6 +657,7 @@ const STAGES=[
 
 
 function finish(){
+  S.p.done=true;saveProgress();
   const pts=Math.max(0,8000-S.p.sec*2-S.p.hints*100-S.p.errors*15+(S.p.hard?500:0));
   const rank=pts>=6400?'S':pts>=4800?'A':pts>=2800?'B':'C';
   $id('endText').textContent='A torre se desfez em névoa e você abriu os olhos, em casa, ouvindo o Cantinho ao fundo. A Parte 4 do Enigma do Cantinho foi resolvida.'+(S.p.hard?' E no Modo Difícil!':'');
@@ -661,6 +667,7 @@ function finish(){
   setTimeout(()=>[784,988,1175,1568].forEach((f,i)=>tone(f,.5,'triangle',.12,i*.15)),400);
 }
 renderMenu();
+if(location.hash==='#continuar'&&!S.p.done&&(S.p.unlocked>1||S.p.sec>0))continuar();
 </script>
 </body>
 </html>

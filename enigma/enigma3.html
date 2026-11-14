@@ -63,7 +63,7 @@ button,select{font-family:inherit}
 .mcell.on{background:#c77dff;box-shadow:0 0 12px #7b2cbf}
 .mcell.fx{cursor:default}
 .mgrid{display:grid;gap:3px;background:#000;padding:6px;border:6px solid #000}
-.dark{position:absolute;inset:0;z-index:50;pointer-events:none;background:radial-gradient(circle at var(--x,50%) var(--y,50%),transparent 0,transparent 40px,rgba(0,0,0,.985) 140px)}
+.dark{position:absolute;inset:0;z-index:50;pointer-events:none;background:radial-gradient(circle at var(--x,50%) var(--y,50%),transparent 0,transparent 26px,rgba(0,0,0,.99) 90px)}
 .uvhint{position:absolute;bottom:24px;left:0;right:110px;text-align:center;color:#fff;z-index:120;font-style:italic;font-family:'Dancing Script';font-size:1.4rem}
 .tubes{display:flex;gap:14px;flex-wrap:wrap;justify-content:center;margin-top:16px}
 .tube{width:54px;height:190px;border:5px solid #000;border-radius:0 0 26px 26px;background:rgba(0,0,0,.4);display:flex;flex-direction:column-reverse;cursor:pointer;overflow:hidden}
@@ -125,11 +125,12 @@ label.hard{color:#ffd166;font-weight:800;font-size:.9rem;cursor:pointer}
 <div id="menu">
   <div class="menu-title">O Enigma do Cantinho III</div>
   <div class="menu-sub">O Observatório. Do alto da colina, o céu esconde o último segredo. Vinte e nove enigmas, sem contas: só lógica, memória, palavras e olhos atentos.</div>
+  <button class="pill" id="contBtn" onclick="continuar()" style="display:none;margin-bottom:16px;font-size:1rem"></button>
   <div class="stage-list" id="stageList"></div>
   <div class="menu-foot">
     <a href="enigma2.html" class="pill">← Parte 2</a>
-    <a href="enigma4.html" class="pill">Parte 4 →</a>
     <a href="../jogos_hub.html" class="pill">Sair</a>
+    <a href="enigma4.html" class="pill">Parte 4 →</a>
     <label class="hard"><input type="checkbox" id="hardChk" onchange="setHard(this.checked)"> Modo Difícil (sem dicas, desafios maiores)</label>
     <button class="pill" onclick="resetProgress()">Reiniciar progresso</button>
   </div>
@@ -161,6 +162,7 @@ label.hard{color:#ffd166;font-weight:800;font-size:.9rem;cursor:pointer}
     <a class="pill" href="enigma2.html">← Parte 2</a>
     <button class="pill" onclick="location.href='../jogos_hub.html'">Voltar ao hub</button>
     <button class="pill" onclick="replay()">Jogar de novo</button>
+    <button class="pill" onclick="location.href='enigma4.html'">Parte 4 →</button>
   </div>
 </div>
 
@@ -183,12 +185,12 @@ const norm=s=>s.normalize('NFD').replace(/[\u0300-\u036f]/g,'').trim().toUpperCa
 let actx=null,drone=null;
 function ac(){if(!actx){try{actx=new(window.AudioContext||window.webkitAudioContext)()}catch(e){}}return actx}
 function tone(f,dur=.15,type='sine',vol=.12,delay=0){
-  if(S.muted)return;const c=ac();if(!c)return;
+  if(S.muted)return;const c=ac();if(!c)return;if(c.state==='suspended')c.resume();
   const t=c.currentTime+delay,o=c.createOscillator(),g=c.createGain();
   o.type=type;o.frequency.value=f;g.gain.setValueAtTime(vol,t);g.gain.exponentialRampToValueAtTime(.001,t+dur);
   o.connect(g);g.connect(c.destination);o.start(t);o.stop(t+dur);
 }
-function startDrone(){const c=ac();if(!c||drone)return;const g=c.createGain();g.gain.value=S.muted?0:.025;g.connect(c.destination);[44,66,88.5].forEach(f=>{const o=c.createOscillator();o.type='sine';o.frequency.value=f;o.connect(g);o.start()});drone=g}
+function startDrone(){const c=ac();if(!c)return;if(c.state==='suspended')c.resume();if(drone)return;const g=c.createGain();g.gain.value=S.muted?0:.025;g.connect(c.destination);[44,66,88.5].forEach(f=>{const o=c.createOscillator();o.type='sine';o.frequency.value=f;o.connect(g);o.start()});drone=g}
 const sfx={click:()=>tone(300,.05,'square',.05),pick(){tone(660,.1,'triangle');tone(880,.15,'triangle',.1,.08)},
   ok(){[523,659,784,1047].forEach((f,i)=>tone(f,.25,'triangle',.12,i*.1))},bad(){tone(140,.3,'sawtooth',.1);navigator.vibrate&&navigator.vibrate(80)},
   creak(){tone(90,.5,'sawtooth',.06);tone(120,.4,'sawtooth',.05,.2)}};
@@ -233,8 +235,10 @@ function renderMenu(){
     c.innerHTML=`<div class="num">CAPÍTULO ${n}</div><div class="ico">${locked?'🔒':ICONS[i]}</div><div class="name">${st.nome}</div>`;
     if(!locked)c.onclick=()=>startStage(n);list.appendChild(c)});
   $id('hardChk').checked=S.p.hard;
+  const cb=$id('contBtn');if(S.p.unlocked>1||S.p.sec>0){cb.style.display='inline-block';cb.textContent=S.p.done?'↻ Rever o capítulo '+STAGES.length:'▶ Continuar do capítulo '+Math.min(S.p.unlocked,STAGES.length)}else cb.style.display='none';
   $id('menuStats').textContent=`Tempo: ${fmt(S.p.sec)} · Dicas usadas: ${S.p.hints} · Erros: ${S.p.errors}`;
 }
+function continuar(){startStage(Math.min(S.p.unlocked,STAGES.length))}
 function openMenu(){S.kp=null;renderMenu();$id('menu').style.display='flex'}
 function setHard(v){S.p.hard=v;saveProgress()}
 function doReset(){
@@ -322,121 +326,134 @@ function pairGame(root,pre,pairs,done){
 
 const STAGES=[
 /* 1 */
-{nome:'O Observatório',story:'No alto da colina, uma cúpula antiga. A porta está trancada e o telescópio parece incompleto.',
- hints:['Procure algo que possa servir de lente.','O globo guarda algo. Selecione a lente e clique no telescópio.','Pegue a chave que aparecer, selecione-a e clique na porta.'],
+{nome:'O Observatório',story:'No alto da colina, uma cúpula antiga. A porta está trancada, o relógio parou e nada aqui está onde deveria.',
+ hints:['O relógio parado esconde uma peça. Depois, ache onde ela encaixa.','A engrenagem faz o globo girar. A lente que cair vai no telescópio.','Pelo telescópio você vê uma fila de símbolos. Repita a mesma ordem no fecho da escrivaninha e use a chave na porta.'],
  build(root){
-  root.innerHTML=`<div class="room"><div class="gdn" id="gl" style="left:8%;bottom:10px;font-size:6rem">🌍</div><div class="gdn" id="ts" style="left:38%;bottom:10px;font-size:8rem">🔭</div><div class="gdn" id="ky" style="left:52%;bottom:170px;font-size:2.4rem;display:none;animation:bob 1.4s infinite">🗝️</div><div class="gate hand-drawn" id="dr">🔒</div></div>`;
-  let lens=false,key=false;
-  $('#gl').onclick=()=>{if(lens){showMsg('Só um globo girando.');return}lens=true;sfx.creak();addItem('Lente','🔍')};
-  $('#ts').onclick=()=>{if(key){showMsg('Já está ajustado.');return}if(S.sel==='Lente'){removeItem('Lente');key=true;sfx.creak();$('#ky').style.display='block';showMsg('Algo caiu do tubo do telescópio.')}else showMsg('Falta uma lente neste tubo.')};
-  $('#ky').onclick=()=>{$('#ky').style.display='none';addItem('Chave de Latão','🗝️')};
+  const SY=['🌙','⭐','☀️','🪐','☄️'],seq=shuffle(SY).slice(0,4);
+  root.innerHTML=`<div class="room"><div class="gdn" id="ck" style="left:1%;bottom:90px;font-size:5rem">🕰️</div><div class="gdn" id="gl" style="left:14%;bottom:10px;font-size:5.5rem">🌍</div><div class="gdn" id="ts" style="left:30%;bottom:10px;font-size:7rem">🔭</div><div class="gdn" id="dk" style="left:50%;bottom:10px;font-size:5.5rem">🗄️</div><div class="gdn" id="bk" style="left:63%;bottom:150px;font-size:3rem">📚</div><div class="gate hand-drawn" id="dr">🔒</div></div>`;
+  let gear=false,lens=false,seen=false,key=false;
+  const look=()=>openModal('<h2>🔭 Pelo telescópio</h2><p>Em fila, no céu:</p><div class="cipher" style="font-size:2.2rem">'+seq.join(' ')+'</div>');
+  $('#ck').onclick=()=>{if(gear){showMsg('O relógio continua parado.');return}gear=true;sfx.creak();addItem('Engrenagem','⚙️')};
+  $('#gl').onclick=()=>{if(lens){showMsg('Só um globo girando.');return}if(S.sel==='Engrenagem'){removeItem('Engrenagem');lens=true;sfx.creak();addItem('Lente','🔍')}else showMsg('O eixo do globo está emperrado. Falta uma peça.')};
+  $('#ts').onclick=()=>{if(seen){look();return}if(S.sel==='Lente'){removeItem('Lente');seen=true;sfx.pick();look()}else showMsg('O tubo está vazio. Falta uma lente.')};
+  $('#bk').onclick=()=>showMsg('Livros de astronomia. Nenhum fala de chaves.');
+  $('#dk').onclick=()=>{
+    if(key){showMsg('A gaveta está vazia.');return}
+    openModal('<h2>🗄️ Fecho da gaveta</h2><div class="moons" id="lk"></div><div class="clock-ctrl"><button class="btn" id="lkok">Abrir</button></div>',box=>{
+      let v=[0,0,0,0];
+      const draw=()=>{$('#lk',box).innerHTML=v.map((x,i)=>`<button class="btn bigopt" data-i="${i}">${SY[x]}</button>`).join('');$$('#lk .btn',box).forEach(b=>b.onclick=()=>{sfx.click();const i=+b.dataset.i;v[i]=(v[i]+1)%5;draw()})};
+      $('#lkok',box).onclick=()=>{if(v.map(x=>SY[x]).join('')===seq.join('')){key=true;closeModal();sfx.creak();addItem('Chave de Latão','🗝️')}else fail('O fecho não cede.')};
+      draw();
+    });
+  };
   $('#dr').onclick=()=>{if(S.sel==='Chave de Latão'){removeItem('Chave de Latão');$('#dr').classList.add('open');$('#dr').textContent='';sfx.creak();showMsg('A porta se abriu.');completeStage(1)}else fail('Está trancada.')};
  }},
 /* 2 */
-{nome:'As Charadas',story:'Vozes antigas ecoam sob a cúpula, cada uma com um enigma.',
- hints:['Pense em objetos do dia a dia.','Uma resposta tem dentes e fica no banheiro; outra vive nas montanhas.','Uma dá as horas; outra precisa de lenha e de ar.'],
+{nome:'As Charadas',story:'Vozes antigas ecoam sob a cúpula, cada uma com um enigma sem pressa.',
+ hints:['Pense em coisas abstratas, não só em objetos.','Uma delas some quando a luz some; outra você usa para escrever.','Uma você nunca alcança; outra repete o que você grita.'],
  build(root){
-  const Q=shuffle([['Tenho dentes, mas não mordo. Passo pelos seus cabelos.',['PENTE','O PENTE','UM PENTE']],['Falo sem boca e ouço sem ouvidos. Só existo se alguém gritar nas montanhas.',['ECO','O ECO','UM ECO']],['Tenho ponteiros, mas não sou mágico. Ando em círculos sem sair do lugar.',['RELOGIO','O RELOGIO','UM RELOGIO']],['Quanto mais você me alimenta, mais eu cresço. Mas se me der água, eu morro.',['FOGO','O FOGO','UM FOGO']]]).slice(0,S.p.hard?4:3);
+  const Q=shuffle([['Passo diante do sol e ele não me queima. Passo na água e não me molho.',['SOMBRA','A SOMBRA','UMA SOMBRA']],['Vou sempre à sua frente, mas você nunca me alcança.',['FUTURO','O FUTURO']],['Tenho teclas e espaço, mas não sou piano nem casa. Você me usa para escrever.',['TECLADO','O TECLADO','UM TECLADO']],['Falo sem boca e ouço sem ouvidos. Só existo se alguém gritar nas montanhas.',['ECO','O ECO','UM ECO']],['Quanto mais você me alimenta, mais eu cresço. Mas se me der água, eu morro.',['FOGO','O FOGO','UM FOGO']],['Tenho ponteiros, mas não sou mágico. Ando em círculos sem sair do lugar.',['RELOGIO','O RELOGIO','UM RELOGIO']]]).slice(0,S.p.hard?5:4);
   textQuiz(root,'<b>Vozes da cúpula</b><br>Responda com uma palavra.',Q,()=>win(2,'As vozes se calaram.'));
  }},
 /* 3 */
 {nome:'A Escala',story:'Seis criaturas esperam na fila do zoológico celeste, sem ordem nenhuma.',
  hints:['Clique em dois bichos para trocá-los de lugar.','Da menor criatura para a maior, da esquerda para a direita.','A formiga é a menor. A baleia é a maior.'],
- build(root){swapGame(root,'<b>Zoológico celeste</b><br>Ordene do MENOR para o MAIOR.',['🐜','🐭','🐕','🐎','🐘','🐋'],k=>`<span style="font-size:2.4rem">${k}</span>`,()=>win(3,'A fila se organizou.',fr('E','da Escala')))}},
+ build(root){swapGame(root,'<b>Zoológico celeste</b><br>Ordene do MENOR para o MAIOR.',['🐜','🐭','🐓','🐕','🐎','🐘','🐋'],k=>`<span style="font-size:2.4rem">${k}</span>`,()=>win(3,'A fila se organizou.',fr('E','da Escala')))}},
 /* 4 */
 {nome:'A Palavra que Falta',story:'Uma gaveta de etiquetas rasgadas. Cada grupo de palavras perdeu a que liga todas.',
  hints:['Pense em uma palavra que se cola antes de cada termo.','Guarda-… e escova de…','Bola de neve, bola de cristal…'],
  build(root){textQuiz(root,'<b>Etiquetas rasgadas</b><br>Qual palavra completa todas?',[
   ['Qual palavra vem ANTES de <b style="color:#fff">CHUVA, SOL, ROUPA</b> e <b style="color:#fff">COSTAS</b>?',['GUARDA']],
   ['Qual palavra vem ANTES de <b style="color:#fff">DE DENTES, DE CABELO</b> e <b style="color:#fff">DE ROUPA</b>?',['ESCOVA','A ESCOVA','UMA ESCOVA']],
-  ['Qual palavra vem ANTES de <b style="color:#fff">DE NEVE, DE CRISTAL</b> e <b style="color:#fff">DE FOGO</b>?',['BOLA','A BOLA','UMA BOLA']]],()=>win(4,'As etiquetas se completaram.'))}},
+  ['Qual palavra vem ANTES de <b style="color:#fff">DE NEVE, DE CRISTAL</b> e <b style="color:#fff">DE FOGO</b>?',['BOLA','A BOLA','UMA BOLA']],
+  ['Qual palavra vem ANTES de <b style="color:#fff">DE AULA, DE ESPERA</b> e <b style="color:#fff">DE JANTAR</b>?',['SALA','A SALA','UMA SALA']]],()=>win(4,'As etiquetas se completaram.'))}},
 /* 5 */
-{nome:'Os Padrões',story:'Um mapa estelar com lacunas. Cada fileira segue uma regra secreta.',
- hints:['Observe o que se repete.','Em algumas, a figura gira; em outras, cresce ou alterna.','A lua vai enchendo; a seta gira no sentido horário.'],
+{nome:'Os Padrões',story:'Um mapa estelar com lacunas. Cada fileira segue uma regra secreta, e nenhuma é óbvia.',
+ hints:['Veja se o padrão repete, cresce ou avança passo a passo.','Na terceira, os grupos de cada cor vão crescendo.','A lua vai de nova a cheia e depois começa a minguar.'],
  build(root){pickQuiz(root,'<b>Mapa com lacunas</b><br>O que vem a seguir?',[
-  {q:'🌑 🌒 🌓 🌔 ❓',o:['🌕','🌑','🌘','☀️'],a:0},
-  {q:'🔴 🔵 🔵 🔴 🔵 🔵 🔴 ❓',o:['🔵','🔴','🟡','⚫'],a:0},
-  {q:'⬆️ ➡️ ⬇️ ⬅️ ⬆️ ➡️ ❓',o:['⬇️','⬆️','⬅️','↗️'],a:0},
-  {q:'🌱 🌿 🌳 🌱 🌿 ❓',o:['🌳','🌱','🌿','🍂'],a:0}],()=>win(5,'O mapa se completou.'),'bigopt')}},
+  {q:'🔴 🔴 🔵 🔴 🔴 🔵 🔴 ❓',o:['🔴','🔵','🟡','⚫'],a:0},
+  {q:'🌑 🌒 🌓 🌔 🌕 🌖 ❓',o:['🌗','🌘','🌑','🌕'],a:0},
+  {q:'🟥 🟦 🟦 🟥 🟥 🟥 🟦 🟦 🟦 🟦 ❓',o:['🟥','🟦','🟨','⬛'],a:0},
+  {q:'➡️ ⬇️ ⬅️ ⬆️ ➡️ ⬇️ ⬅️ ❓',o:['⬆️','➡️','⬇️','⬅️'],a:0}],()=>win(5,'O mapa se completou.'),'bigopt')}},
 /* 6 */
-{nome:'O Criptex',story:'Um cilindro de latão com seis rodas de letras. A inscrição é uma charada.',
- hints:['Gire cada roda com as setas.','A resposta é um corpo celeste de seis letras.','Começa com C e termina com A.'],
+{nome:'O Criptex',story:'Um cilindro de latão com sete rodas de letras. A inscrição é uma charada.',
+ hints:['Gire cada roda com as setas.','A resposta é um conjunto enorme de estrelas, com sete letras.','Começa com G e termina com A.'],
  build(root){
-  const W='COMETA',L=[...'ABCDEFGHIJKLMNOPQRSTUVWXYZ'];let v=[...W].map(()=>rnd(0,25));
-  root.innerHTML=`<div class="paper"><b>Criptex</b><br>Tenho cauda, mas não sou bicho. Visito o céu de séculos em séculos e brilho ao me aproximar do Sol.</div><div class="moons" id="wh"></div><div class="clock-ctrl"><button class="btn" id="ok">Abrir</button></div>`;
-  const draw=()=>{$('#wh').innerHTML=v.map((x,i)=>`<div class="pcol" style="align-items:center"><button class="btn sm" data-i="${i}" data-d="1">▲</button><div class="cipher" style="min-width:50px;padding:8px">${L[x]}</div><button class="btn sm" data-i="${i}" data-d="-1">▼</button></div>`).join('');
+  const W='GALAXIA',L=[...'ABCDEFGHIJKLMNOPQRSTUVWXYZ'];let v=[...W].map(()=>rnd(0,25));
+  root.innerHTML=`<div class="paper"><b>Criptex</b><br>Sou casa de bilhões de estrelas. O Sol é só um vizinho dentro de mim, e a Via Láctea é a minha representante mais famosa.</div><div class="moons" id="wh"></div><div class="clock-ctrl"><button class="btn" id="ok">Abrir</button></div>`;
+  const draw=()=>{$('#wh').innerHTML=v.map((x,i)=>`<div class="pcol" style="align-items:center"><button class="btn sm" data-i="${i}" data-d="1">▲</button><div class="cipher" style="min-width:46px;padding:8px">${L[x]}</div><button class="btn sm" data-i="${i}" data-d="-1">▼</button></div>`).join('');
     $$('#wh .btn').forEach(b=>b.onclick=()=>{sfx.click();const i=+b.dataset.i;v[i]=(v[i]+(+b.dataset.d)+26)%26;draw()})};
   $('#ok').onclick=()=>{if(S.done)return;if(v.map(x=>L[x]).join('')===W)win(6,'O criptex se abriu.',fr('C','do Criptex'));else fail('O criptex não cede.')};draw();
  }},
 /* 7 */
-{nome:'O Espelho Falante',story:'Um espelho antigo escreve do jeito que bem entende: ao contrário, de cabeça para baixo...',
- hints:['Incline a cabeça, ou imagine o texto no espelho.','A primeira está espelhada; a segunda, de cabeça para baixo.','Leia as letras uma a uma, com calma.'],
+{nome:'O Espelho Falante',story:'Um espelho antigo escreve do jeito que bem entende: ao contrário, de cabeça para baixo, de lado...',
+ hints:['Incline a cabeça, ou imagine o texto refletido.','A primeira está espelhada; a segunda, de cabeça para baixo.','Leia as letras uma a uma, com calma. São palavras do observatório.'],
  build(root){
   const f=(w,t)=>`<span style="display:inline-block;transform:${t}">${[...w].join(' ')}</span>`;
-  const I=[[f('LUNETA','scaleX(-1)'),['LUNETA']],[f('ESTRELA','rotate(180deg)'),['ESTRELA']],[f('ORBITA','scaleY(-1)'),['ORBITA']]];
-  if(S.p.hard)I.push([f('GALAXIA','scaleX(-1)'),['GALAXIA']]);
+  const I=[[f('CONSTELACAO','scaleX(-1)'),['CONSTELACAO']],[f('ASTRONAUTA','rotate(180deg)'),['ASTRONAUTA']],[f('OBSERVATORIO','scaleY(-1)'),['OBSERVATORIO']]];
+  if(S.p.hard)I.push([f('TELESCOPIO','scaleX(-1) rotate(180deg)'),['TELESCOPIO']]);
   textQuiz(root,'<b>Espelho falante</b><br>Leia o que ele escreveu.',I,()=>win(7,'O espelho se calou.'));
  }},
 /* 8 */
-{nome:'O Alfabeto do Avesso',story:'Uma tabuleta onde A vale Z, B vale Y... o alfabeto lido de trás para frente.',
- hints:['A↔Z, B↔Y, C↔X, D↔W...','Troque cada letra pela sua oposta no alfabeto.','A primeira palavra tem cinco letras e fala do céu.'],
+{nome:'O Alfabeto do Avesso',story:'Uma tabuleta em que A vale Z, B vale Y... e não há tabela para ajudar.',
+ hints:['A↔Z, B↔Y, C↔X, D↔W, E↔V...','Troque cada letra pela sua oposta no alfabeto. O meio é entre M e N.','As palavras são do universo do observatório.'],
  build(root){
   const A=c=>String.fromCharCode(155-c.charCodeAt(0));
-  const W=shuffle(['ASTRO','NOITE','CORVO','PLANETA','SILENCIO']).slice(0,S.p.hard?4:3);
-  textQuiz(root,'<b>Alfabeto do avesso</b><div style="font-size:.8rem;letter-spacing:1px">ABCDEFGHIJKLMNOPQRSTUVWXYZ<br>ZYXWVUTSRQPONMLKJIHGFEDCBA</div>',W.map(w=>[[...w].map(A).join(' '),[w]]),()=>win(8,'A tabuleta foi decifrada.'));
+  const W=shuffle(['OBSERVATORIO','TELESCOPIO','ASTRONAUTA','UNIVERSO','SATELITE']).slice(0,S.p.hard?4:3);
+  textQuiz(root,'<b>Alfabeto do avesso</b><br>A vira Z, B vira Y, C vira X... Cada letra é trocada pela sua oposta no alfabeto. Decifre, sem tabela.',W.map(w=>[[...w].map(A).join(' '),[w]]),()=>win(8,'A tabuleta foi decifrada.'));
  }},
 /* 9 */
-{nome:'O Dominó de Palavras',story:'Peças de dominó com palavras. Cada uma só encosta na que começa com a letra em que ela termina.',
- hints:['Veja com que letra cada palavra termina e começa.','CORVO é a única que nenhuma outra termina na letra do começo.','Comece pelo CORVO.'],
- build(root){swapGame(root,'<b>Dominó</b><br>Forme uma corrente: a última letra de cada palavra é a primeira da seguinte.',['CORVO','OVELHA','ANEL','LAGO','OSSO'],k=>k,()=>win(9,'A corrente se fechou.',fr('L','do Dominó')),'',o=>o.every((w,i)=>!i||o[i-1].slice(-1)===w[0]))}},
+{nome:'O Dominó de Palavras',story:'Oito peças de dominó com palavras. Cada uma só encosta na que começa com a letra em que ela termina.',
+ hints:['Veja com que letra cada palavra termina e começa.','SOMBRA é a única que nenhuma outra termina na letra do começo. Ela abre a corrente.','Depois de ASTRO, procure os O: OSSO, OLHO, OVELHA... e quem termina em A e L ao longo do caminho.'],
+ build(root){swapGame(root,'<b>Dominó</b><br>Forme uma corrente com todas: a última letra de cada palavra é a primeira da seguinte.',['SOMBRA','ASTRO','OSSO','OLHO','OVELHA','ANEL','LAGO','OCEANO'],k=>k,()=>win(9,'A corrente se fechou.',fr('L','do Dominó')),'',o=>o.every((w,i)=>!i||o[i-1].slice(-1)===w[0]))}},
 /* 10 */
-{nome:'Os Ofícios',story:'Ferramentas espalhadas pela oficina. Cada uma pertence a um profissional.',
- hints:['Clique no profissional e depois na ferramenta.','O médico escuta o coração.','O carteiro leva cartas.'],
- build(root){pairGame(root,'<b>Oficina</b><br>Ligue cada profissional à sua ferramenta.',shuffle([['🔭 Astrônomo','Telescópio'],['🎨 Pintor','Pincel'],['🩺 Médico','Estetoscópio'],['🍳 Cozinheiro','Panela'],['✉️ Carteiro','Carta']]).slice(0,S.p.hard?5:4),()=>win(10,'Tudo no lugar.'))}},
+{nome:'As Metades',story:'Palavras compostas rasgadas ao meio, espalhadas pela oficina do relojoeiro.',
+ hints:['Clique na primeira metade e depois na segunda.','Pense em palavras e expressões que você já ouviu.','Beija-flor, quebra-cabeça, arco-íris, guarda-chuva...'],
+ build(root){pairGame(root,'<b>Metades</b><br>Ligue cada começo ao seu final.',shuffle([['Beija-','flor'],['Quebra-','cabeça'],['Arco-','íris'],['Guarda-','chuva'],['Pé de','moleque'],['Mão de','obra'],['Dor de','cotovelo']]).slice(0,S.p.hard?7:6),()=>win(10,'Tudo emendado.'))}},
 /* 11 */
-{nome:'O Jantar dos Fantasmas',story:'Quatro fantasmas sentados à mesa, cada um com uma xícara de cor diferente.',
- hints:['Comece pelo azul: só um fantasma pode usá-lo.','Se Caio é o azul, Davi e Bia ficam limitados.','Davi não pode ser verde, azul nem vermelho.'],
+{nome:'O Jantar dos Fantasmas',story:'Cinco fantasmas sentados à mesa, cada um com uma xícara de cor diferente.',
+ hints:['Comece pelo azul: pense em quem pode e quem não pode usá-lo.','Se Caio é o azul, Davi ainda tem duas possibilidades de cor.','Davi só pode ser amarelo. Depois resolva Ana, e por fim Bia e Eva.'],
  build(root){
-  const sol={Ana:'Verde',Bia:'Vermelho',Caio:'Azul',Davi:'Amarelo'};
-  root.innerHTML=`<div class="paper"><b>Quem usa qual xícara?</b><br>1. Ana não usa vermelho nem azul.<br>2. Quem usa azul não é Bia nem Davi.<br>3. Davi não usa verde.<br>4. Bia não usa amarelo.<br>5. O vermelho não é de Davi.</div><div style="margin-top:14px;display:flex;flex-direction:column;gap:8px">${Object.keys(sol).map(n=>`<div class="clock-ctrl" style="margin:0"><b style="min-width:60px;color:#fff">👻 ${n}</b><select class="sel" data-n="${n}"><option value="">?</option><option>Vermelho</option><option>Azul</option><option>Verde</option><option>Amarelo</option></select></div>`).join('')}</div><div class="clock-ctrl"><button class="btn" id="ok">Verificar</button></div>`;
+  const sol={Ana:'Verde',Bia:'Vermelho',Caio:'Azul',Davi:'Amarelo',Eva:'Roxo'};
+  root.innerHTML=`<div class="paper"><b>Quem usa qual xícara?</b><br>1. Ana não usa azul, vermelho nem roxo.<br>2. Quem usa azul não é Bia, Davi nem Eva.<br>3. Davi não usa verde, vermelho nem roxo.<br>4. Eva não usa vermelho.<br>5. Bia não usa verde nem amarelo.</div><div style="margin-top:14px;display:flex;flex-direction:column;gap:8px">${Object.keys(sol).map(n=>`<div class="clock-ctrl" style="margin:0"><b style="min-width:60px;color:#fff">👻 ${n}</b><select class="sel" data-n="${n}"><option value="">?</option><option>Vermelho</option><option>Azul</option><option>Verde</option><option>Amarelo</option><option>Roxo</option></select></div>`).join('')}</div><div class="clock-ctrl"><button class="btn" id="ok">Verificar</button></div>`;
   $('#ok').onclick=()=>{if(S.done)return;sfx.click();if($$('.sel').every(s=>s.value===sol[s.dataset.n]))win(11,'Cada xícara no seu fantasma.');else fail('Alguma pista não bate.')};
  }},
 /* 12 */
-{nome:'A Fila Assombrada',story:'Cinco criaturas disputam quem entra primeiro na biblioteca. Só as pistas dizem a ordem.',
- hints:['Comece pelo Mago: ele é o último.','O Gato vem colado depois do Corvo.','A Bruxa não pode ficar ao lado do Gato.'],
+{nome:'A Fila Assombrada',story:'Seis criaturas disputam quem entra primeiro na biblioteca. Só as pistas dizem a ordem.',
+ hints:['Comece pelo Mago: ele é o último.','O Corvo e o Gato formam um par, nessa ordem. O Fantasma não é o primeiro.','O Esqueleto fica entre o Fantasma e a Bruxa.'],
  build(root){
-  const E={Corvo:'🐦‍⬛',Gato:'🐈‍⬛',Fantasma:'👻',Bruxa:'🧙‍♀️',Mago:'🧙'};
-  swapGame(root,'<b>Fila</b> (esquerda = primeiro)<br>1. O Mago é o último.<br>2. O Gato vem logo depois do Corvo.<br>3. O Fantasma vem antes da Bruxa.<br>4. A Bruxa não é vizinha do Gato.<br>5. O Corvo é o primeiro ou o segundo.',['Corvo','Gato','Fantasma','Bruxa','Mago'],k=>`<span style="font-size:1.8rem">${E[k]}</span><span>${k}</span>`,()=>win(12,'A fila entrou na ordem.',fr('I','da Fila')));
+  const E={Corvo:'🐦‍⬛',Gato:'🐈‍⬛',Fantasma:'👻',Esqueleto:'💀',Bruxa:'🧙‍♀️',Mago:'🧙'};
+  swapGame(root,'<b>Fila</b> (esquerda = primeiro)<br>1. O Mago é o último.<br>2. O Gato vem logo depois do Corvo.<br>3. O Fantasma vem antes da Bruxa.<br>4. A Bruxa não é vizinha do Gato.<br>5. O Corvo é o primeiro ou o segundo.<br>6. O Esqueleto fica entre o Fantasma e a Bruxa.<br>7. O Fantasma não é o primeiro.',['Corvo','Gato','Fantasma','Esqueleto','Bruxa','Mago'],k=>`<span style="font-size:1.8rem">${E[k]}</span><span>${k}</span>`,()=>win(12,'A fila entrou na ordem.',fr('I','da Fila')));
  }},
 /* 13 */
-{nome:'A Sala Escura',story:'O gerador queimou. Três objetos importantes estão perdidos na escuridão.',
- hints:['Mova o cursor, ou o dedo, pela tela inteira.','Vá varrendo em linhas, como quem passa um pano.','Procure um telescópio, uma chave e um diário.'],
+{nome:'A Sala Escura',story:'O gerador queimou. Cinco objetos importantes estão perdidos na escuridão, e a luz mal dá para um palmo.',
+ hints:['Mova o cursor, ou o dedo, pela tela inteira.','Vá varrendo em linhas, como quem passa um pano.','Procure um telescópio, uma chave, um diário, uma vela e uma bússola.'],
  build(root){
-  const T=S.tok,it=['🔭','🗝️','📖'].map(e=>[e,rnd(8,80),rnd(18,76)]);
-  root.innerHTML=it.map(e=>`<div class="gdn" style="left:${e[1]}%;top:${e[2]}%;font-size:2.6rem;z-index:1;pointer-events:none">${e[0]}</div>`).join('')+`<div class="dark" id="dk"></div><div class="uvhint" id="uh">Passe o cursor pela escuridão e ache 3 objetos...</div>`;
+  const T=S.tok,it=['🔭','🗝️','📖','🕯️','🧭'].map(e=>[e,rnd(6,78),rnd(16,74)]);
+  root.innerHTML=it.map(e=>`<div class="gdn" style="left:${e[1]}%;top:${e[2]}%;font-size:2.6rem;z-index:1;pointer-events:none">${e[0]}</div>`).join('')+`<div class="dark" id="dk"></div><div class="uvhint" id="uh">Passe o cursor pela escuridão e ache 5 objetos...</div>`;
   sceneEl.style.touchAction='none';const fd=new Set();
   root.onpointermove=root.onpointerdown=e=>{
     if(T!==S.tok||S.done)return;const r=root.getBoundingClientRect(),x=e.clientX-r.left,y=e.clientY-r.top,dk=$('#dk');
     dk.style.setProperty('--x',x+'px');dk.style.setProperty('--y',y+'px');
-    $$('.gdn').forEach((g,i)=>{const b=g.getBoundingClientRect();if(!fd.has(i)&&Math.hypot(x-(b.left-r.left+b.width/2),y-(b.top-r.top+b.height/2))<55){fd.add(i);g.style.zIndex=60;sfx.pick();$('#uh').textContent=`Encontrados: ${fd.size} de 3`;if(fd.size===3)win(13,'A luz voltou.')}});
+    $$('.gdn').forEach((g,i)=>{const b=g.getBoundingClientRect();if(!fd.has(i)&&Math.hypot(x-(b.left-r.left+b.width/2),y-(b.top-r.top+b.height/2))<38){fd.add(i);g.style.zIndex=60;sfx.pick();$('#uh').textContent=`Encontrados: ${fd.size} de 5`;if(fd.size===5)win(13,'A luz voltou.')}});
   };
  }},
 /* 14 */
-{nome:'O Desenho Girado',story:'Uma lousa mostra um desenho. A outra lousa quer o mesmo desenho, só que de ponta-cabeça.',
- hints:['Girar 180° é virar de cabeça para baixo.','O canto superior esquerdo vai para o inferior direito.','Faça uma linha de cada vez, de baixo para cima.'],
+{nome:'O Desenho Girado',story:'Uma lousa mostra um desenho. A outra quer o mesmo desenho, mas girado para o lado.',
+ hints:['Girar para a direita é virar o desenho um quarto de volta no sentido do relógio.','A coluna da esquerda do desenho vira a linha de cima, lida de baixo para cima.','Faça uma linha de cada vez: a primeira linha nova vem da primeira coluna antiga.'],
  build(root){
-  const n=S.p.hard?5:4;let t;do{t=Array.from({length:n},()=>Array.from({length:n},()=>rnd(0,1)))}while(t.flat().filter(Boolean).length<5);
-  const v=Array.from({length:n},()=>Array(n).fill(0)),gs=`grid-template-columns:repeat(${n},46px)`;
-  root.innerHTML=`<div class="paper"><b>Lousas gêmeas</b><br>Copie o desenho da esquerda na lousa da direita, girado em 180° (de cabeça para baixo).</div><div style="display:flex;gap:30px;flex-wrap:wrap;justify-content:center;margin-top:16px"><div class="mgrid" style="${gs}">${t.map(r=>r.map(c=>`<div class="mcell fx ${c?'on':''}"></div>`).join('')).join('')}</div><div class="mgrid" id="mg" style="${gs}"></div></div>`;
-  const draw=()=>{$('#mg').innerHTML=v.map((r,y)=>r.map((c,x)=>`<div class="mcell ${c?'on':''}" data-y="${y}" data-x="${x}"></div>`).join('')).join('');
+  const n=S.p.hard?6:5;let t;do{t=Array.from({length:n},()=>Array.from({length:n},()=>rnd(0,1)))}while(t.flat().filter(Boolean).length<7);
+  const v=Array.from({length:n},()=>Array(n).fill(0)),gs=`grid-template-columns:repeat(${n},40px)`;
+  root.innerHTML=`<div class="paper"><b>Lousas gêmeas</b><br>Copie o desenho da esquerda na lousa da direita, girado um quarto de volta para a DIREITA (sentido horário).</div><div style="display:flex;gap:30px;flex-wrap:wrap;justify-content:center;margin-top:16px"><div class="mgrid" style="${gs}">${t.map(r=>r.map(c=>`<div class="mcell fx ${c?'on':''}" style="width:34px;height:34px"></div>`).join('')).join('')}</div><div class="mgrid" id="mg" style="${gs}"></div></div>`;
+  const draw=()=>{$('#mg').innerHTML=v.map((r,y)=>r.map((c,x)=>`<div class="mcell ${c?'on':''}" style="width:34px;height:34px" data-y="${y}" data-x="${x}"></div>`).join('')).join('');
     $$('#mg .mcell').forEach(e=>e.onclick=()=>{if(S.done)return;sfx.click();const y=+e.dataset.y,x=+e.dataset.x;v[y][x]^=1;draw();
-      if(v.every((r,yy)=>r.every((c,xx)=>c===t[n-1-yy][n-1-xx])))win(14,'As lousas coincidem.')})};draw();
+      if(v.every((r,yy)=>r.every((c,xx)=>c===t[n-1-xx][yy])))win(14,'As lousas coincidem.')})};draw();
  }},
 /* 15 */
 {nome:'Os Tubos de Tinta',story:'Tintas misturadas em tubos de vidro. Cada cor precisa ficar sozinha em seu tubo.',
  hints:['Clique num tubo para pegar a tinta do topo, depois em outro para soltá-la.','Só se despeja em tubo vazio ou com a mesma cor no topo.','Use os tubos vazios como espaço de manobra.'],
  build(root){
-  const C=['#c1121f','#3a86ff','#fcbf49','#2a9d8f'],nc=S.p.hard?4:3;let tb;
+  const C=['#c1121f','#3a86ff','#fcbf49','#2a9d8f','#fb8500'],nc=S.p.hard?5:4;let tb;
   do{const a=shuffle(Array.from({length:nc*4},(_,i)=>i%nc));tb=Array.from({length:nc+2},(_,i)=>i<nc?a.slice(i*4,i*4+4):[])}while(tb.some(t=>t.length===4&&t.every(x=>x===t[0])));
   root.innerHTML=`<div class="paper"><b>Laboratório</b><br>Deixe cada tubo com uma cor só (ou vazio).</div><div class="tubes" id="tb"></div>`;let sel=-1;
   const draw=()=>{$('#tb').innerHTML=tb.map((t,i)=>`<div class="tube ${sel===i?'sel':''}" data-i="${i}">${t.map(c=>`<div class="tl" style="background:${C[c]}"></div>`).join('')}</div>`).join('');
@@ -449,7 +466,7 @@ const STAGES=[
 {nome:'Os Sinos',story:'Cinco sinos de bronze tocam sozinhos uma melodia longa. Repita-a.',
  hints:['Cada rodada acrescenta um sino à melodia.','Olhe a cor e escute o tom de cada um.','Use “Repetir” para ouvir de novo.'],
  build(root){
-  const T=S.tok,cols=['#c1121f','#fcbf49','#2a9d8f','#3a86ff','#7b2cbf'],fq=[262,330,392,494,587],N=S.p.hard?10:8,seq=Array.from({length:N},()=>rnd(0,4));
+  const T=S.tok,cols=['#c1121f','#fcbf49','#2a9d8f','#3a86ff','#7b2cbf'],fq=[262,330,392,494,587],N=S.p.hard?13:11,seq=Array.from({length:N},()=>rnd(0,4));
   root.innerHTML=`<div class="keys">${cols.map((c,i)=>`<div class="pkey" data-i="${i}" style="background:${c}">🔔</div>`).join('')}</div><div class="dots" id="dots">${seq.map(()=>'<div class="dot"></div>').join('')}</div><div style="margin-top:16px"><button class="btn" id="rep">↻ Repetir</button></div><div class="sub" id="rnd"></div>`;
   let round=1,pos=0,playing=false;const ks=$$('.pkey'),ok=()=>T===S.tok&&!S.done;
   const flash=async(i,d=360)=>{ks[i].classList.add('lit');tone(fq[i],d/1000,'triangle',.18);await wait(d);ks[i].classList.remove('lit')};
@@ -460,68 +477,69 @@ const STAGES=[
   setTimeout(play,800);
  }},
 /* 17 */
-{nome:'A Frase Embaralhada',story:'Um pergaminho rasgado em palavras soltas. Juntas, elas contam o que o corvo faz.',
- hints:['Clique em duas palavras para trocá-las.','Quem vigia o quê? E quando?','Algo como: O corvo vigia a torre na noite.'],
+{nome:'A Frase Embaralhada',story:'Um pergaminho rasgado em nove palavras soltas. Juntas, contam o que acontece durante a noite.',
+ hints:['Clique em duas palavras para trocá-las.','Há duas ações: alguém vigia algo, e alguém dorme. Uma palavra liga as duas.','Algo como: O corvo vigia a torre enquanto a lua dorme.'],
  build(root){
-  const OK=['O CORVO VIGIA A TORRE NA NOITE','A TORRE VIGIA O CORVO NA NOITE','NA NOITE O CORVO VIGIA A TORRE','NA NOITE A TORRE VIGIA O CORVO'];
-  swapGame(root,'<b>Pergaminho</b><br>Reordene as palavras para formar uma frase com sentido.',['O','CORVO','VIGIA','A','TORRE','NA','NOITE'],k=>k,()=>win(17,'O pergaminho foi lido.'),'',o=>OK.includes(o.join(' ')));
+  const OK=['O CORVO VIGIA A TORRE ENQUANTO A LUA DORME','A LUA DORME ENQUANTO O CORVO VIGIA A TORRE','ENQUANTO A LUA DORME O CORVO VIGIA A TORRE','ENQUANTO O CORVO VIGIA A TORRE A LUA DORME','A TORRE VIGIA O CORVO ENQUANTO A LUA DORME','A LUA DORME ENQUANTO A TORRE VIGIA O CORVO','ENQUANTO A LUA DORME A TORRE VIGIA O CORVO','ENQUANTO A TORRE VIGIA O CORVO A LUA DORME'];
+  swapGame(root,'<b>Pergaminho</b><br>Reordene as palavras para formar uma frase com sentido.',['O','CORVO','VIGIA','A','TORRE','ENQUANTO','A','LUA','DORME'],k=>k,()=>win(17,'O pergaminho foi lido.'),'',o=>OK.includes(o.join(' ')));
  }},
 /* 18 */
-{nome:'O Quadrado de Runas',story:'Quatro runas, em uma grade de pedra. Nenhuma pode se repetir na mesma linha ou coluna.',
- hints:['Clique numa casa vazia para trocar a runa.','Cada linha e cada coluna têm as 4 runas, sem repetir.','Comece pela linha com mais runas já postas.'],
+{nome:'O Quadrado de Runas',story:'Cinco runas em uma grade de pedra. Nenhuma pode se repetir na mesma linha ou coluna.',
+ hints:['Clique numa casa vazia para trocar a runa.','Cada linha e cada coluna têm as 5 runas, sem repetir.','Comece pelas linhas e colunas com mais runas já postas.'],
  build(root){
-  const R=['🌙','⭐','☀️','☁️'],G=[[1,0,0,4],[0,4,0,0],[0,0,2,0],[2,0,0,1]],v=G.map(r=>[...r]);
-  root.innerHTML=`<div class="paper"><b>Grade de runas</b><br>Cada linha e cada coluna deve ter 🌙 ⭐ ☀️ ☁️, sem repetir.</div><div class="mgrid" id="g" style="grid-template-columns:repeat(4,56px);margin-top:16px"></div>`;
-  const s=a=>new Set(a).size===4&&a.every(x=>x>0);
+  const R=['🌙','⭐','☀️','☁️','🪐'],G=[[1,0,0,0,5],[0,0,5,0,0],[0,1,0,0,4],[2,0,0,5,0],[4,0,1,0,0]],v=G.map(r=>[...r]);
+  root.innerHTML=`<div class="paper"><b>Grade de runas</b><br>Cada linha e cada coluna deve ter 🌙 ⭐ ☀️ ☁️ 🪐, sem repetir.</div><div class="mgrid" id="g" style="grid-template-columns:repeat(5,56px);margin-top:16px"></div>`;
+  const s=a=>new Set(a).size===5&&a.every(x=>x>0);
   const draw=()=>{$('#g').innerHTML=v.map((r,y)=>r.map((c,x)=>`<div class="cell ${G[y][x]?'fix':''}" data-y="${y}" data-x="${x}">${c?R[c-1]:''}</div>`).join('')).join('');
-    $$('.cell').forEach(e=>e.onclick=()=>{const y=+e.dataset.y,x=+e.dataset.x;if(S.done||G[y][x])return;sfx.click();v[y][x]=(v[y][x]+1)%5;draw();
-      if([0,1,2,3].every(i=>s(v[i])&&s(v.map(r=>r[i]))))win(18,'A grade se encaixou.')})};draw();
+    $$('.cell').forEach(e=>e.onclick=()=>{const y=+e.dataset.y,x=+e.dataset.x;if(S.done||G[y][x])return;sfx.click();v[y][x]=(v[y][x]+1)%6;draw();
+      if([0,1,2,3,4].every(i=>s(v[i])&&s(v.map(r=>r[i]))))win(18,'A grade se encaixou.')})};draw();
  }},
 /* 19 */
-{nome:'Os Intrusos',story:'Quatro placas em um corredor, cada uma com um item que não pertence.',
- hints:['Ache o que liga três das palavras.','Planetas, luas, objetos de observação...','Nem tudo no céu está no céu.'],
+{nome:'Os Intrusos',story:'Cinco placas em um corredor, cada uma com um item que não pertence. Desta vez, as aparências enganam.',
+ hints:['Ache o que liga três das palavras e descarte o diferente.','Pense em classificações científicas: planeta, mamífero, inseto, fruto.','Nem tudo que parece planeta é planeta; nem tudo que nada é peixe.'],
  build(root){pickQuiz(root,'<b>Placas</b><br>Qual item é o intruso?',[
-  {q:'Qual NÃO pertence?',o:['Marte','Vênus','Saturno','Órion'],a:3},
+  {q:'Qual NÃO pertence?',o:['Mercúrio','Vênus','Terra','Plutão'],a:3},
   {q:'Qual NÃO pertence?',o:['Lua','Titã','Europa','Sol'],a:3},
-  {q:'Qual NÃO pertence?',o:['Cometa','Asteroide','Meteoro','Fogueira'],a:3},
-  {q:'Qual NÃO pertence?',o:['Telescópio','Luneta','Binóculo','Violão'],a:3}],()=>win(19,'Os intrusos saíram.'))}},
+  {q:'Qual NÃO pertence?',o:['Baleia','Golfinho','Morcego','Tubarão'],a:3},
+  {q:'Qual NÃO pertence?',o:['Formiga','Abelha','Besouro','Aranha'],a:3},
+  {q:'Qual NÃO pertence?',o:['Tomate','Pepino','Abóbora','Cenoura'],a:3}],()=>win(19,'Os intrusos saíram.'))}},
 /* 20 */
-{nome:'Os Bichos Escondidos',story:'Palavras comuns guardam animais dentro delas. Basta olhar com atenção.',
- hints:['Procure uma palavra menor dentro da maior.','SA-PATO tem um bicho que nada.','MARATONA tem um roedor no meio.'],
+{nome:'Os Bichos Escondidos',story:'Palavras comuns guardam animais dentro delas. Basta olhar com atenção, sem se deixar enganar.',
+ hints:['Procure uma palavra menor dentro da maior.','SA-PATO tem um bicho que nada; CO-BRA-DOR tem um que rasteja.','Pode estar no começo, no meio ou no fim.'],
  build(root){
-  const W=shuffle([['SAPATO','PATO'],['MARATONA','RATO'],['LOBOTOMIA','LOBO'],['GALOPE','GALO']]).slice(0,S.p.hard?4:3);
-  textQuiz(root,'<b>Bichos escondidos</b><br>Qual animal está dentro da palavra?',W.map(([w,a])=>[`<span style="color:#fff">${w}</span>`,[a,'O '+a,'UM '+a]]),()=>win(20,'Os bichos saíram da toca.'));
+  const W=shuffle([['SAPATO','PATO'],['MARATONA','RATO'],['LOBOTOMIA','LOBO'],['COBRADOR','COBRA'],['PERUCA','PERU'],['BOIADA','BOI']]).slice(0,S.p.hard?5:4);
+  textQuiz(root,'<b>Bichos escondidos</b><br>Qual animal está dentro da palavra?',W.map(([w,a])=>[`<span style="color:#fff">${w}</span>`,[a,'O '+a,'UM '+a,'A '+a,'UMA '+a]]),()=>win(20,'Os bichos saíram da toca.'));
  }},
 /* 21 */
-{nome:'O Sistema Solar',story:'Uma maquete de planetas sem as plaquinhas. Cada um tem uma descrição.',
- hints:['São quatro planetas famosos.','O de anéis é Saturno; o maior é Júpiter.','O mais próximo do Sol é Mercúrio.'],
+{nome:'O Sistema Solar',story:'Uma maquete de planetas sem as plaquinhas. As descrições não entregam o nome de graça.',
+ hints:['São planetas do Sistema Solar.','O de vulcão gigante é vermelho; o mais quente não é o mais próximo do Sol.','Um deles gira deitado; outro é o último da fila.'],
  build(root){
-  const Q=shuffle([['Tenho anéis, mas não sou joia. Sou o segundo maior.',['SATURNO']],['Levo o nome do deus da guerra e sou vermelho.',['MARTE']],['Sou o planeta mais próximo do Sol.',['MERCURIO']],['Tenho uma tempestade gigante que dura séculos. Sou o maior de todos.',['JUPITER']]]).slice(0,S.p.hard?4:3);
+  const Q=shuffle([['Meu dia dura mais que meu ano. Sou o mais quente, mesmo não sendo o mais próximo do Sol.',['VENUS']],['Giro deitado, com o eixo quase paralelo à minha órbita, e tenho cor azul-esverdeada.',['URANO']],['Sou o último planeta, o mais distante, e tenho os ventos mais rápidos.',['NETUNO']],['Meu vulcão, o Monte Olimpo, é o maior de todo o Sistema Solar.',['MARTE']],['Tenho uma tempestade gigante que dura séculos. Sou o maior de todos.',['JUPITER']],['Tenho anéis, mas não sou joia. Sou o segundo maior.',['SATURNO']]]).slice(0,S.p.hard?6:5);
   textQuiz(root,'<b>Maquete</b><br>Qual planeta é descrito?',Q,()=>win(21,'A maquete se completou.',fr('S','do Sistema')));
  }},
 /* 22 */
-{nome:'O Cofre de Cores',story:'Um cofre com quatro luzes coloridas. Ele diz quantas cores você acertou, mas não quais.',
- hints:['● = cor e lugar certos. ○ = cor certa, lugar errado.','As cores não se repetem no código.','Comece com dois palpites bem diferentes.'],
+{nome:'O Cofre de Cores',story:'Um cofre com cinco luzes coloridas, escolhidas entre oito cores. Ele diz quantas você acertou, mas não quais.',
+ hints:['● = cor e lugar certos. ○ = cor certa, lugar errado.','As cores não se repetem no código.','Comece testando cores diferentes para descobrir quais estão no código.'],
  build(root){
-  const C=['🔴','🟠','🟡','🟢','🔵','🟣'],max=S.p.hard?7:10;let code=shuffle([0,1,2,3,4,5]).slice(0,4),tries=0,cur=[];
+  const C=['🔴','🟠','🟡','🟢','🔵','🟣','🟤','⚫'],L=5,max=S.p.hard?9:12,nc=()=>shuffle([0,1,2,3,4,5,6,7]).slice(0,L);let code=nc(),tries=0,cur=[];
   root.innerHTML=`<div class="mm"><div class="mm-hist hand-drawn" id="hist"></div><div class="mm-cur" id="cur"></div><div class="mm-keys">${C.map((c,i)=>`<button class="btn sm" data-k="${i}">${c}</button>`).join('')}<button class="btn sm" data-k="D">⌫</button><button class="btn sm" data-k="OK">OK</button></div></div><div class="sub" id="info"></div>`;
-  const info=()=>{$('#info').textContent=`Tentativas: ${max-tries} · ● cor e lugar certos · ○ cor certa, lugar errado`;$('#cur').textContent=cur.map(i=>C[i]).join('')||'····'};info();
+  const info=()=>{$('#info').textContent=`Tentativas: ${max-tries} · ● cor e lugar certos · ○ cor certa, lugar errado`;$('#cur').textContent=cur.map(i=>C[i]).join('')||'·····'};info();
   $$('.mm-keys .btn').forEach(b=>b.onclick=()=>{const k=b.dataset.k;sfx.click();
     if(k==='D')cur.pop();
-    else if(k==='OK'){if(cur.length<4||S.done)return;tries++;let ex=0,co=0;for(let i=0;i<4;i++){if(cur[i]===code[i])ex++;else if(code.includes(cur[i]))co++}
+    else if(k==='OK'){if(cur.length<L||S.done)return;tries++;let ex=0,co=0;for(let i=0;i<L;i++){if(cur[i]===code[i])ex++;else if(code.includes(cur[i]))co++}
       $('#hist').innerHTML+=`<div class="mm-row"><span>${cur.map(i=>C[i]).join('')}</span><span><span class="pg">${'●'.repeat(ex)}</span><span class="pw">${'○'.repeat(co)}</span></span></div>`;$('#hist').scrollTop=9999;
-      if(ex===4){win(22,'O cofre destravou!');return}
+      if(ex===L){win(22,'O cofre destravou!');return}
       S.p.errors++;saveProgress();sfx.bad();
-      if(tries>=max){showMsg('Sem tentativas. O cofre trocou o código.',3500);shakeScene();code=shuffle([0,1,2,3,4,5]).slice(0,4);tries=0;setTimeout(()=>{$('#hist').innerHTML=''},900)}
+      if(tries>=max){showMsg('Sem tentativas. O cofre trocou o código.',3500);shakeScene();code=nc();tries=0;setTimeout(()=>{$('#hist').innerHTML=''},900)}
       cur=[]}
-    else if(cur.length<4&&!cur.includes(+k))cur.push(+k);
+    else if(cur.length<L&&!cur.includes(+k))cur.push(+k);
     info()});
  }},
 /* 23 */
-{nome:'Os Anagramas',story:'Letras de um cartaz caíram no chão. Reordene-as para ler o cartaz.',
- hints:['As palavras são coisas do observatório e do céu.','Separe vogais e consoantes.','Uma delas é o instrumento do capítulo 1.'],
+{nome:'Os Anagramas',story:'Letras de um cartaz caíram no chão. Reordene-as para ler o cartaz. As palavras agora são longas.',
+ hints:['As palavras são coisas do observatório e do céu.','Separe vogais e consoantes.','Uma delas é o instrumento do capítulo 1; outra é o próprio lugar.'],
  build(root){
-  const W=shuffle(['TELESCOPIO','COMETA','GALAXIA','NEBULOSA','ORBITA']).slice(0,S.p.hard?4:3);
+  const W=shuffle(['OBSERVATORIO','CONSTELACAO','TELESCOPIO','ASTRONAUTA','METEORITO']).slice(0,S.p.hard?5:4);
   const scr=w=>{let s;do{s=shuffle([...w]).join('')}while(s===w);return[...s].join(' ')};
   textQuiz(root,'<b>Cartaz caído</b><br>Reordene as letras para formar a palavra.',W.map(w=>[scr(w),[w]]),()=>win(23,'O cartaz foi remontado.'));
  }},
@@ -529,13 +547,13 @@ const STAGES=[
 {nome:'O Gelo Lunar',story:'Uma planície de gelo na Lua. Quando você começa a deslizar, só para ao bater em algo.',
  hints:['Use as setas do teclado ou os botões.','Você desliza até esbarrar numa pedra ou na borda.','A bandeira te segura. Planeje as paradas, uma por vez.'],
  build(root){
-  const n=6,D=[[0,1],[0,-1],[1,0],[-1,0]];let rocks=new Set(),goal=n*n-1;
+  const n=7,D=[[0,1],[0,-1],[1,0],[-1,0]];let rocks=new Set(),goal=n*n-1;
   const slide=(y,x,d,R,g)=>{for(;;){const ny=y+d[0],nx=x+d[1];if(ny<0||nx<0||ny>=n||nx>=n||R.has(ny*n+nx))break;y=ny;x=nx;if(y*n+x===g)break}return[y,x]};
-  for(let t=0;t<800;t++){
-    const R=new Set(shuffle([...Array(n*n).keys()].slice(1)).slice(0,8)),g=rnd(1,n*n-1);if(R.has(g))continue;
+  for(let t=0;t<5000;t++){
+    const R=new Set(shuffle([...Array(n*n).keys()].slice(1)).slice(0,12)),g=rnd(1,n*n-1);if(R.has(g))continue;
     const dist={0:0},q=[0];
     while(q.length){const c=q.shift();for(const d of D){const[ny,nx]=slide(Math.floor(c/n),c%n,d,R,g),k=ny*n+nx;if(!(k in dist)){dist[k]=dist[c]+1;q.push(k)}}}
-    if(dist[g]>=(S.p.hard?6:4)){rocks=R;goal=g;break}
+    if(dist[g]>=(S.p.hard?8:6)){rocks=R;goal=g;break}
   }
   let py=0,px=0,mv=0;
   root.innerHTML=`<div class="paper"><b>Planície de gelo</b><br>Chegue à bandeira 🚩. Você desliza até bater numa pedra 🪨 ou na borda.</div><div class="mgrid" id="mz" style="grid-template-columns:repeat(${n},46px);margin-top:14px"></div><div class="clock-ctrl"><button class="btn sm" data-d="2">◀</button><button class="btn sm" data-d="1">▲</button><button class="btn sm" data-d="3">▼</button><button class="btn sm" data-d="0">▶</button></div><div class="sub" id="mc"></div>`;
@@ -548,20 +566,20 @@ const STAGES=[
 /* 25 */
 {nome:'Os Ditados',story:'Pedaços de ditados antigos, escritos em fitas rasgadas ao meio.',
  hints:['Clique na primeira metade e depois na segunda.','Ferreiro, macaco, gato escaldado...','“Cada macaco no seu galho.”'],
- build(root){pairGame(root,'<b>Fitas rasgadas</b><br>Ligue as duas metades de cada ditado.',shuffle([['Em casa de ferreiro,','espeto de pau.'],['Gato escaldado','tem medo de água fria.'],['Cada macaco','no seu galho.'],['Mais vale um pássaro na mão','que dois voando.'],['Não adianta chorar','pelo leite derramado.']]).slice(0,S.p.hard?5:4),()=>win(25,'As fitas se emendaram.'))}},
+ build(root){pairGame(root,'<b>Fitas rasgadas</b><br>Ligue as duas metades de cada ditado.',shuffle([['Em casa de ferreiro,','espeto de pau.'],['Gato escaldado','tem medo de água fria.'],['Cada macaco','no seu galho.'],['Mais vale um pássaro na mão','que dois voando.'],['Não adianta chorar','pelo leite derramado.'],['Em terra de cego,','quem tem um olho é rei.'],['Quem semeia vento','colhe tempestade.']]).slice(0,S.p.hard?7:6),()=>win(25,'As fitas se emendaram.'))}},
 /* 26 */
 {nome:'A Lista do Bibliotecário',story:'Fichas de um catálogo caíram da gaveta. Só a ordem alfabética as devolve ao lugar.',
  hints:['Compare as primeiras letras, depois as segundas, depois as seguintes.','CASA e CASCA começam igual até CAS.','A quarta letra decide: A vem antes de C.'],
- build(root){swapGame(root,'<b>Catálogo</b><br>Ordene em ordem alfabética (A → Z), de cima para baixo.',['CASA','CASCA','CASTELO','CAVALO','CAVERNA','CEGO'],k=>k,()=>win(26,'O catálogo foi arrumado.',fr('E','do Catálogo')),'col')}},
+ build(root){swapGame(root,'<b>Catálogo</b><br>Ordene em ordem alfabética (A → Z), de cima para baixo.',['CABELO','CARRO','CASA','CASCA','CASTELO','CAVERNA','CEGO','CEIA'],k=>k,()=>win(26,'O catálogo foi arrumado.',fr('E','do Catálogo')),'col')}},
 /* 27 */
 {nome:'O Observador',story:'O céu está cheio de astros. Você precisa notar o que muda quando ninguém está olhando.',
  hints:['Memorize o conjunto antes que ele mude.','Um astro sumiu na segunda tela.','Compare mentalmente as duas telas.'],
  build(root){
-  const T=S.tok,P=['🌙','⭐','🪐','☄️','🔭','🛸','🌍','🚀','🌞','🌟'],R=S.p.hard?4:3;let r=0;
+  const T=S.tok,P=['🌙','⭐','🪐','☄️','🔭','🛸','🌍','🚀','🌞','🌟','🌈','🌌','⚡','🛰️'],R=S.p.hard?5:4;let r=0;
   const round=async()=>{
-    const set=shuffle(P).slice(0,8),gone=rnd(0,7),tile=e=>`<div class="sitem" style="font-size:2.2rem;cursor:default">${e}</div>`;
+    const set=shuffle(P).slice(0,10),gone=rnd(0,9),tile=e=>`<div class="sitem" style="font-size:2.2rem;cursor:default">${e}</div>`;
     root.innerHTML=`<div class="paper"><b>Céu completo</b><br>Decore o céu. Um astro vai sumir.</div><div class="swap">${set.map(tile).join('')}</div><div class="sub">Rodada ${r+1} de ${R}</div>`;
-    await wait(S.p.hard?3200:4500);if(T!==S.tok||S.done)return;
+    await wait(S.p.hard?3000:4000);if(T!==S.tok||S.done)return;
     root.innerHTML=`<div class="paper"><b>Céu depois</b></div><div class="swap">${set.filter((_,i)=>i!==gone).map(tile).join('')}</div><div class="sub">Qual astro desapareceu?</div><div class="moons">${shuffle(set).map(e=>`<button class="btn bigopt" data-e="${e}">${e}</button>`).join('')}</div>`;
     $$('.bigopt').forEach(b=>b.onclick=async()=>{if(S.done)return;sfx.click();
       if(b.dataset.e===set[gone]){sfx.pick();if(++r>=R)win(27,'Olhos de águia.');else round()}else{fail('Não foi esse.');await wait(700);if(T===S.tok&&!S.done)round()}});
@@ -572,7 +590,8 @@ const STAGES=[
  hints:['Você não sabe quem é quem, então a pergunta precisa funcionar com ambos.','Pergunte algo que faça os dois apontarem para a mesma porta errada.','Perguntar sobre o que o OUTRO diria funciona: um mente sobre a verdade, o outro diz a verdade sobre a mentira.'],
  build(root){pickQuiz(root,'<b>Charada dos guardas</b><br>Escolha a melhor opção.',[
   {q:'<span style="font-size:1rem;letter-spacing:0;font-family:Nunito">Duas portas: uma leva à saída, a outra a uma armadilha. Um guarda sempre mente, o outro sempre fala a verdade, e você não sabe qual é qual. Você pode fazer UMA pergunta a UM guarda. Qual?</span>',o:['“Qual porta o OUTRO guarda diria que leva à saída?”','“Qual porta leva à saída?”','“Você é o guarda que mente?”','“Qual guarda é o mentiroso?”'],a:0},
-  {q:'<span style="font-size:1rem;letter-spacing:0;font-family:Nunito">Um prisioneiro diz: “Esta frase é falsa.” O que há de estranho nela?</span>',o:['Se for verdadeira, é falsa; se for falsa, é verdadeira','Ela é claramente verdadeira','Ela é claramente falsa','Ela é só uma pergunta'],a:0}],()=>win(28,'Os guardas se curvaram.'))}},
+  {q:'<span style="font-size:1rem;letter-spacing:0;font-family:Nunito">Um prisioneiro diz: “Esta frase é falsa.” O que há de estranho nela?</span>',o:['Se for verdadeira, é falsa; se for falsa, é verdadeira','Ela é claramente verdadeira','Ela é claramente falsa','Ela é só uma pergunta'],a:0},
+  {q:'<span style="font-size:1rem;letter-spacing:0;font-family:Nunito">Numa ilha vivem Verdadeiros (sempre falam a verdade) e Mentirosos (sempre mentem). Você pergunta a um nativo: “Você é um Mentiroso?” O que ele responde?</span>',o:['“Não”, seja ele quem for','“Sim”, se for mentiroso','“Sim”, seja ele quem for','Fica em silêncio'],a:0}],()=>win(28,'Os guardas se curvaram.'))}},
 /* 29 */
 {nome:'O Eclipse',story:'A última porta se esconde atrás de um fenômeno raro, quando um astro cobre o outro.',
  hints:['Abra o Caderno: há sete fragmentos, cada um com uma letra.','Junte as letras na ordem em que os capítulos apareceram.','É o nome do fenômeno em que a Lua cobre o Sol.'],
@@ -585,6 +604,7 @@ const STAGES=[
 ];
 
 function finish(){
+  S.p.done=true;saveProgress();
   const pts=Math.max(0,8000-S.p.sec*2-S.p.hints*100-S.p.errors*15+(S.p.hard?500:0));
   const rank=pts>=6400?'S':pts>=4800?'A':pts>=2800?'B':'C';
   $id('endText').textContent='A cúpula se abriu e o céu inteiro apareceu. A Parte 3 do Enigma do Cantinho foi resolvida.'+(S.p.hard?' E no Modo Difícil!':'');
@@ -594,6 +614,7 @@ function finish(){
   setTimeout(()=>[784,988,1175,1568].forEach((f,i)=>tone(f,.5,'triangle',.12,i*.15)),400);
 }
 renderMenu();
+if(location.hash==='#continuar'&&!S.p.done&&(S.p.unlocked>1||S.p.sec>0))continuar();
 </script>
 </body>
 </html>
