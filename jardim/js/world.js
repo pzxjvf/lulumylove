@@ -60,6 +60,14 @@ var NJ = (window.NJ = window.NJ || {});
     [[13, 8], [5, 10], [48, 24], [52, 25], [10, 44]].forEach(([x, y]) => { W.sol[ix(x, y)] = 1; W.addE('sak', x * T + 8, y * T + T, -16, -48, { tree: 1, ti: -1, tx: x, ty: y }); });
     W.sol[ix(24, 43)] = 1; W.sol[ix(24, 44)] = 1; W.addE('silo', 24 * T + 8, 45 * T, -16, -48);
 
+    // ---------- biblioteca ----------
+    rect(44, 16, 4, 2, 1);   // caminho até a biblioteca
+    const blx = 46, bly = 11;
+    for (let y = bly; y < bly + 3; y++) for (let x = blx; x < blx + 4; x++) W.sol[ix(x, y)] = 1;
+    W.addE('library', blx * T + 32, (bly + 3) * T, -40, -64);
+    W.LT.push([blx * T + 32, bly * T + 8, 44, '255,200,110']);
+    W.libPoint = { x: blx * T + 32, y: (bly + 3) * T };
+
     // ---------- pomar ----------
     for (let x = 57; x <= 81; x += 3) for (let y = 7; y <= 16; y += 3) {
       W.sol[ix(x, y)] = 1; W.addE('tree', x * T + 8, y * T + T, -16, -48, { tree: 1, ti: (x + y) % 3, tx: x, ty: y });

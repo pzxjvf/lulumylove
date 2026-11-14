@@ -13,7 +13,7 @@ var NJ = (window.NJ = window.NJ || {});
 
   let SC, VW, VH, DK, dk, zoom = 1;
   const cam = { x: 0, y: 0 };
-  let K = {}, jx = 0, jy = 0, wt = 0, destination = null, abDown = false, paint = 0, lastPaint = [-1, -1], fishHold = false;
+  let K = {}, jx = 0, jy = 0, wt = 0, destination = null, abDown = false, paint = 0, lastPaint = [-1, -1], fishHold = false, downPt = null;
   let swingT = 0, swingTool = null, SWING = 0.34;   // animação do golpe da ferramenta
   let FX = [], undoStack = [];
   let ints = [];
@@ -47,6 +47,12 @@ var NJ = (window.NJ = window.NJ || {});
   }
   addEventListener('resize', rs);
 
+  // converte coordenadas de mundo para pixels CSS da tela (usado pelo balão DOM)
+  NJ.w2s = function (x, y) {
+    const r = cv.getBoundingClientRect();
+    return { x: r.left + (x - cam.x) / VW * r.width, y: r.top + (y - cam.y) / VH * r.height };
+  };
+
   // ---------- pontos de interação ----------
   function well() {
     const S = NJ.S;
@@ -56,21 +62,32 @@ var NJ = (window.NJ = window.NJ || {});
     else { const c = U.pick(D.seedsFor(S.season)); NJ.econ.add('S_' + c.id, 2); UI.say('Poço mágico', ['A chama azul brilha… e surgem 2× ' + c.e + ' sementes de ' + c.n.toLowerCase() + '!']); }
     NJ.state.save();
   }
-  function houseMenu() {
-    UI.say('Sua casinha', ['Dormir até amanhã ou preparar algo? 🌙🍳'], null, [
-      ['Dormir 💤', () => NJ.state.newDay(false)],
-      ['Cozinhar 🍳', () => NJ.econ.craft()],
-      ['Ainda não', () => 0]
-    ]);
-  }
+  // pontos de interação do mapa — cada um pode oferecer várias ações no balão
   function buildInts() {
+    const S = NJ.S;
     ints = [
-      { x: 152, y: 168, r: 22, e: '🌙', fn: houseMenu },
-      { x: 590, y: 152, r: 20, e: '🛍️', fn: () => NJ.econ.shop() },
-      { x: 26 * T + 8, y: 14 * T - 6, r: 20, e: '💧', fn: well },
-      { x: W.minePoint.x, y: W.minePoint.y + 10, r: 28, e: '⛏️', fn: () => NJ.mine.enter() }
+      { x: 152, y: 168, r: 24, n: 'Sua casinha', acts: [
+        { e: '🌙', l: 'Dormir', fn: () => NJ.state.newDay(false) },
+        { e: '🍳', l: 'Cozinhar', fn: () => NJ.econ.craft() },
+        { e: '🎒', l: 'Mochila', fn: () => UI.inv() }
+      ] },
+      { x: 590, y: 152, r: 22, n: 'Loja da Lia', acts: [
+        { e: '🛒', l: 'Loja', fn: () => NJ.econ.shop() },
+        { e: '💬', l: 'Falar', fn: () => NJ.npc.talk('Lia') }
+      ] },
+      { x: 26 * T + 8, y: 14 * T - 6, r: 22, n: 'Poço mágico', acts: [
+        { e: '⭐', l: 'Pedido', fn: well },
+        { e: '🌊', l: 'Regador', fn: () => { S.water = S.rain ? 20 : 12; NJ.audio.beep(540); UI.toast('Regador reabastecido no poço 💧'); NJ.state.save(); } }
+      ] },
+      { x: W.minePoint.x, y: W.minePoint.y + 10, r: 28, n: 'Mina do norte', acts: [
+        { e: '⛏️', l: 'Entrar', fn: () => NJ.mine.enter() }
+      ] }
     ];
-    // moradores são procurados na posição atual (eles passeiam) — ver findTarget()
+    if (W.libPoint) ints.push({ x: W.libPoint.x, y: W.libPoint.y, r: 30, n: 'Biblioteca', acts: [
+      { e: '📖', l: 'Ler livro', fn: () => UI.books() },
+      { e: '📚', l: 'Almanaque', fn: () => UI.almanac() }
+    ] });
+    // moradores são procurados na posição atual (eles passeiam) — ver targetAt()
   }
 
   // ---------- ações ----------
@@ -153,12 +170,12 @@ var NJ = (window.NJ = window.NJ || {});
     pushUndo({ cells: [[tx, ty]], wd: b.w, coins: b.c });
     NJ.fx(tx * T + 8, ty * T + 8, b.e); NJ.audio.beep(620); UI.hb(); NJ.state.save();
   }
-  function petPet() {
+  // ---------- pet: carinho, petisco, brincar e banho ----------
+  // soma felicidade e, ao encher, sorteia um "achado" do pet
+  function petJoy(v, e) {
     const S = NJ.S;
-    S.pet.h = Math.min(100, S.pet.h + 10);
-    NJ.audio.beep(760);
-    NJ.fx(S.pet.x, S.pet.y - 14, '💗');
-    if (Math.random() < 0.45) UI.toast(U.pick(['Seu pet abana o rabo de alegria! 🐾', 'Ele se aconchega na sua mão. 💜', 'Adora carinho! 🥰', 'Faz um som fofo de felicidade. 💗']));
+    S.pet.h = Math.min(100, S.pet.h + v);
+    NJ.fx(S.pet.x, S.pet.y - 14, e || '💗');
     if (S.pet.h >= 100) {
       S.pet.h = 0;
       if (Math.random() < 0.6) {
@@ -168,6 +185,35 @@ var NJ = (window.NJ = window.NJ || {});
       }
     }
     NJ.state.save();
+  }
+  function petPet() {
+    NJ.audio.beep(760); petJoy(10, '💗');
+    if (Math.random() < 0.45) UI.toast(U.pick(['Seu pet abana o rabo de alegria! 🐾', 'Ele se aconchega na sua mão. 💜', 'Adora carinho! 🥰', 'Faz um som fofo de felicidade. 💗']));
+  }
+  function petTreat() {
+    const S = NJ.S, k = ['hay', 'f', 'p1', 'egg'].find((i) => NJ.econ.have(i));
+    if (!k) { UI.toast('Sem petiscos — compre 🌾 feno na loja 🛍️'); NJ.audio.beep(200); return; }
+    NJ.econ.take(k, 1); NJ.audio.beep(880); petJoy(24, D.IT[k].e);
+    UI.toast('(o_o) ' + (S.pet.name || 'Seu pet') + ' devorou ' + D.IT[k].e + ' ' + D.IT[k].n + '! 🐾');
+  }
+  function petPlay() {
+    const S = NJ.S;
+    NJ.audio.chord([659, 988]); petJoy(18, '🎾');
+    UI.toast('🎾 Você jogou a bolinha — ' + (S.pet.name || 'Seu pet') + ' corre atrás, feliz!');
+  }
+  function petBath() {
+    const S = NJ.S;
+    NJ.audio.beep(600); petJoy(8, '🫧');
+    UI.toast('🛁 Banho tomado! ' + (S.pet.name || 'Seu pet') + ' ficou cheiroso e fofo.');
+  }
+  function petTarget() {
+    const S = NJ.S;
+    return { x: S.pet.x, y: S.pet.y - 16, name: S.pet.name || 'Seu pet', acts: [
+      { e: '💗', l: 'Carinho', fn: petPet },
+      { e: '🍖', l: 'Petisco', fn: petTreat },
+      { e: '🎾', l: 'Brincar', fn: petPlay },
+      { e: '🛁', l: 'Banho', fn: petBath }
+    ] };
   }
 
   // ---------- interações do mundo ----------
@@ -194,27 +240,50 @@ var NJ = (window.NJ = window.NJ || {});
     }
     NJ.state.save();
   }
-  // descobre o alvo de interação mais próximo (usado pela ação e pela dica flutuante)
-  function findTarget(f, tx, ty) {
+  const BNM = { bench: 'Banco', fountain: 'Fontinha', pot: 'Vaso de flores' };
+  function builtTarget(id, tx, ty) {
+    return { x: tx * T + 8, y: ty * T, name: BNM[id] || 'Móvel', acts: [{ e: BACT[id], l: 'Usar', fn: () => builtAct(id, tx, ty) }] };
+  }
+  function npcTarget(n) {
+    const S = NJ.S, r = NJ.npc.pos(n.n);
+    return { x: r.x, y: r.y - 32, name: n.n + ' ' + NJ.npc.hearts(S.fr[n.n] || 0), acts: [
+      { e: '💬', l: 'Conversar', fn: () => NJ.npc.talk(n.n) },
+      { e: '🎁', l: 'Presentear', fn: () => NJ.npc.gift(n.n) }
+    ] };
+  }
+  function houseTarget(hi) {
+    const S = NJ.S, h = S.houses[hi];
+    const nm = h.type === 'silo' ? 'Silo' : h.type === 'coop' ? 'Galinheiro' : 'Celeiro';
+    const acts = h.type === 'silo'
+      ? [{ e: '🌾', l: 'Feno', fn: () => UI.toast('🌾 O silo produz ' + S.houses.filter((x) => x.type === 'silo').length + ' feno por manhã') }]
+      : [{ e: '🐔', l: 'Animais', fn: () => NJ.animals.panel(hi) }, { e: '🧺', l: 'Coletar', fn: () => NJ.animals.collect(hi) }];
+    return { x: (h.x + h.w / 2) * T, y: h.y * T - 6, name: nm, acts };
+  }
+
+  // descobre o alvo de interação no ponto (x,y) do mundo → { x, y, name, acts[] }
+  function targetAt(px, py) {
     const S = NJ.S;
-    if (Math.hypot(S.pet.x - f.x, S.pet.y - f.y) < 22) return { x: S.pet.x, y: S.pet.y - 18, e: '💗', run: petPet };
-    const n = NJ.npc.nearest(f.x, f.y, 30);
-    if (n) { const r = NJ.npc.pos(n.n); return { x: r.x, y: r.y - 28, e: '💬', run: () => NJ.npc.talk(n.n) }; }
-    let best = null, bd = 24;
-    ints.forEach((i) => { const d = Math.hypot(i.x - f.x, i.y - f.y); if (d < bd) { bd = d; best = i; } });
-    if (best) return { x: best.x, y: best.y - 24, e: best.e || '❕', run: best.fn };
-    const hIdx = S.houses.findIndex((h) => tx >= h.x && tx < h.x + h.w && ty >= h.y && ty < h.y + h.h);
-    if (hIdx >= 0) {
-      const h = S.houses[hIdx];
-      return { x: (h.x + h.w / 2) * T, y: h.y * T - 4, e: h.type === 'silo' ? '🌾' : '🐔', run: () => (h.type === 'silo' ? UI.toast('🌾 O silo produz feno a cada manhã') : NJ.animals.panel(hIdx)) };
-    }
+    const tx = Math.floor(px / T), ty = Math.floor(py / T);
+    if (Math.hypot(S.pet.x - px, S.pet.y - py) < 15) return petTarget();
+    const n = NJ.npc.nearest(px, py, 22);
+    if (n) return npcTarget(n);
+    let best = null, bd = 26;
+    ints.forEach((i) => { const d = Math.hypot(i.x - px, i.y - py); if (d < bd) { bd = d; best = i; } });
+    if (best) return { x: best.x, y: best.y - 26, name: best.n, acts: best.acts };
+    const hi = S.houses.findIndex((h) => tx >= h.x && tx < h.x + h.w && ty >= h.y && ty < h.y + h.h);
+    if (hi >= 0) return houseTarget(hi);
     const fi = S.fg.findIndex((a) => a.x === tx && a.y === ty);
-    if (fi > -1) return { x: tx * T + 8, y: ty * T, e: '✋', run: () => pickForage(fi) };
+    if (fi > -1) return { x: tx * T + 8, y: ty * T, name: D.IT[S.fg[fi].k].n, acts: [{ e: '✋', l: 'Colher', fn: () => pickForage(fi) }] };
     const c = S.crops[tx + ',' + ty];
-    if (c && Farm.ready(c)) return { x: tx * T + 8, y: ty * T, e: '✋', run: () => harvestCrop(tx, ty) };
+    if (c && Farm.ready(c)) return { x: tx * T + 8, y: ty * T, name: D.CROPMAP[c.t].n, acts: [{ e: '✋', l: 'Colher', fn: () => harvestCrop(tx, ty) }] };
     const bId = S.built[tx + ',' + ty];
-    if (BACT[bId]) return { x: tx * T + 8, y: ty * T, e: BACT[bId], run: () => builtAct(bId, tx, ty) };
+    if (BACT[bId]) return builtTarget(bId, tx, ty);
     return null;
+  }
+  // alvo logo à frente da personagem (para a dica flutuante e o botão A)
+  function findTarget() {
+    const S = NJ.S;
+    return targetAt(S.px + DX[S.d] * 12, S.py - 4 + DY[S.d] * 12);
   }
 
   // inicia a animação do golpe com a ferramenta na mão
@@ -223,15 +292,14 @@ var NJ = (window.NJ = window.NJ || {});
     swingTool = id; swingT = SWING;
   }
 
-  // tt = tile clicado (opcional): quando o jogador clica no chão, agimos no tile clicado
-  function act(tt) {
+  // ação do botão A / tecla Espaço: interage com o que está à frente
+  function act() {
     const S = NJ.S;
     if (UI.pOpen || UI.creating) return;
     if (UI.dlg) { UI.dnext(); return; }
     if (NJ.fish.active) return;
     const f = { x: S.px + DX[S.d] * 10, y: S.py - 4 + DY[S.d] * 10 };
-    let tx = Math.floor(f.x / T), ty = Math.floor(f.y / T);
-    if (tt) { tx = tt[0]; ty = tt[1]; }
+    const tx = Math.floor(f.x / T), ty = Math.floor(f.y / T);
 
     if (NJ.loc === 'cave') {
       const tool = D.TOOLS[S.tool].id;
@@ -243,8 +311,12 @@ var NJ = (window.NJ = window.NJ || {});
     }
     if (NJ.buildMode) { doBuild(tx, ty); return; }
 
-    const tgt = findTarget(f, tx, ty);
-    if (tgt) { tgt.run(); return; }
+    const tgt = findTarget();
+    if (tgt) {
+      // alvos com várias opções abrem o balão; os de ação única são diretos
+      if (tgt.acts.length > 1) { NJ.inter.open(tgt); return; }
+      tgt.acts[0].fn(); return;
+    }
 
     const tool = D.TOOLS[S.tool].id;
     if (tool === 'rod') {
@@ -258,19 +330,42 @@ var NJ = (window.NJ = window.NJ || {});
     UI.hb();
   }
 
+  // ---------- pet: vagueia por perto em vez de seguir a jogadora o tempo todo ----------
+  function petAI(dt) {
+    const S = NJ.S, P = S.pet;
+    if (P.hx == null) { P.hx = P.x; P.hy = P.y; P.wt = 0; P.wa = null; P.gx = null; P.gy = null; }
+    // o "cantinho" do pet acompanha a jogadora só quando ela se afasta bastante
+    const hd = Math.hypot(S.px - P.hx, S.py - P.hy);
+    if (hd > 130) {
+      P.hx += (S.px - P.hx) * Math.min(1, dt * 1.5);
+      P.hy += (S.py - P.hy) * Math.min(1, dt * 1.5);
+      P.wa = null;
+    }
+    P.wt -= dt;
+    if (P.wt <= 0) {
+      P.wt = U.R(1.4, 4.2);
+      if (Math.random() < 0.45) P.wa = null;                        // descansa quietinho
+      else { const a = U.R(0, 6.283), r = U.R(14, 46); P.gx = P.hx + Math.cos(a) * r; P.gy = P.hy + Math.sin(a) * r; P.wa = a; }
+    }
+    if (P.wa != null && P.gx != null) {
+      const dx = P.gx - P.x, dy = P.gy - P.y, d = Math.hypot(dx, dy);
+      if (d < 4) { P.wa = null; P.f = 0; }
+      else {
+        const a = Math.atan2(dy, dx), sp = Math.min(24, d * 2.2);
+        const nx = P.x + Math.cos(a) * sp * dt, ny = P.y + Math.sin(a) * sp * dt;
+        if (!W.blk(nx, P.y)) P.x = nx; else P.wa = null;
+        if (!W.blk(P.x, ny)) P.y = ny; else P.wa = null;
+        P.f += dt * 6;
+        P.d = Math.abs(Math.cos(a)) > Math.abs(Math.sin(a)) ? (Math.cos(a) < 0 ? 2 : 3) : (Math.sin(a) < 0 ? 1 : 0);
+      }
+    } else P.f = 0;
+  }
+
   // ---------- simulação ----------
   function upd(dt) {
     const S = NJ.S;
     if (NJ.loc === 'world') {
-      const pdx = S.px - S.pet.x, pdy = S.py - S.pet.y, pdd = Math.hypot(pdx, pdy);
-      if (pdd > 26) {
-        const a = Math.atan2(pdy, pdx), sp = Math.min(78, pdd * 2.4);
-        const nx = S.pet.x + Math.cos(a) * sp * dt, ny = S.pet.y + Math.sin(a) * sp * dt;
-        if (!W.blk(nx, S.pet.y)) S.pet.x = nx;
-        if (!W.blk(S.pet.x, ny)) S.pet.y = ny;
-        S.pet.f += dt * 9;
-        S.pet.d = Math.abs(Math.cos(a)) > Math.abs(Math.sin(a)) ? (Math.cos(a) < 0 ? 2 : 3) : (Math.sin(a) < 0 ? 1 : 0);
-      } else S.pet.f = 0;
+      petAI(dt);
       NJ.animals.update(dt);
       NJ.npc.update(dt);
     }
@@ -281,7 +376,11 @@ var NJ = (window.NJ = window.NJ || {});
       let vy = (K.arrowdown || K.s ? 1 : 0) - (K.arrowup || K.w ? 1 : 0) + jy;
       if (destination) {
         const dx = destination.x - S.px, dy = destination.y - S.py, dist = Math.hypot(dx, dy);
-        if (dist < 9) { const d = destination; destination = null; if (d.auto) act(d.tt); } else { vx = dx / dist; vy = dy / dist; }
+        if (dist < 9) {
+          const d = destination; destination = null;
+          // se o destino era um alvo de interação, abre o balão ao chegar
+          if (d.rt) { const tg = NJ.loc === 'world' ? targetAt(d.rt[0], d.rt[1]) : null; if (tg) NJ.inter.open(tg); }
+        } else { vx = dx / dist; vy = dy / dist; }
       }
       const l = Math.hypot(vx, vy);
       if (l > 0.2) {
@@ -464,12 +563,11 @@ var NJ = (window.NJ = window.NJ || {});
     if (!cave && S.rain) { g.fillStyle = '#bcd8ffaa'; for (let i = 0; i < 80; i++) g.fillRect(((i * 47 + t * 40) % VW) | 0, ((i * 31 + t * 220) % VH) | 0, 1, 4); }
 
     // dica de interação: ícone flutuante no que está logo à frente
-    if (!cave && !UI.dlg && !UI.pOpen && !UI.creating && !NJ.buildMode && !NJ.fish.active) {
-      const fx2 = S.px + DX[S.d] * 10, fy2 = S.py - 4 + DY[S.d] * 10;
-      const tgt = findTarget({ x: fx2, y: fy2 }, Math.floor((S.px + DX[S.d] * 14) / T), Math.floor((S.py + DY[S.d] * 14) / T));
+    if (!cave && !UI.dlg && !UI.pOpen && !UI.creating && !NJ.buildMode && !NJ.fish.active && !NJ.inter.isOpen()) {
+      const tgt = findTarget();
       if (tgt) {
         g.font = '13px sans-serif'; g.textAlign = 'center'; g.globalAlpha = 0.9;
-        g.fillText(tgt.e, Math.round(tgt.x) - cx, Math.round(tgt.y) - cy - 6 + Math.sin(t * 3.4) * 2);
+        g.fillText(tgt.acts[0].e, Math.round(tgt.x) - cx, Math.round(tgt.y) - cy - 6 + Math.sin(t * 3.4) * 2);
         g.globalAlpha = 1;
       }
     }
@@ -566,21 +664,29 @@ var NJ = (window.NJ = window.NJ || {});
     else if (k === 'q' && !UI.creating) { UI.pOpen ? UI.closeP() : UI.quests(); }
     else if (k === 'm' && !UI.creating) { UI.pOpen ? UI.closeP() : UI.menu(); }
     else if (k === 'escape') {
-      if (UI.pOpen && !UI.creating) UI.closeP();
+      if (NJ.inter.isOpen()) NJ.inter.close();
+      else if (UI.pOpen && !UI.creating) UI.closeP();
       else if (NJ.buildMode) NJ.actions.bd();
     }
   });
   addEventListener('keyup', (e) => { K[(e.key || '').toLowerCase()] = 0; });
 
   const js = $('#js');
+  let jpid = null;   // dedo/mouse que está segurando o joystick agora
+  const jzero = () => { jpid = null; jx = jy = 0; const k = $('#kn'); if (k) k.style.transform = ''; };
   const jm = (e) => {
     const b = js.getBoundingClientRect(), dx = e.clientX - b.left - 55, dy = e.clientY - b.top - 55, l = Math.hypot(dx, dy) || 1, m = Math.min(l, 40) / 40;
     jx = dx / l * m; jy = dy / l * m;
     $('#kn').style.transform = 'translate(' + jx * 28 + 'px,' + jy * 28 + 'px)';
   };
-  js.addEventListener('pointerdown', (e) => { js.setPointerCapture(e.pointerId); jm(e); });
-  js.addEventListener('pointermove', (e) => { if (e.buttons) jm(e); });
-  ['pointerup', 'pointercancel'].forEach((n) => js.addEventListener(n, () => { jx = jy = 0; $('#kn').style.transform = ''; }));
+  js.addEventListener('pointerdown', (e) => {
+    e.preventDefault();
+    jpid = e.pointerId;
+    try { js.setPointerCapture(e.pointerId); } catch (err) {}
+    jm(e);
+  });
+  js.addEventListener('pointermove', (e) => { if (jpid != null && e.pointerId === jpid) jm(e); });
+  ['pointerup', 'pointercancel', 'lostpointercapture'].forEach((n) => js.addEventListener(n, (e) => { if (jpid == null || e.pointerId === jpid) jzero(); }));
 
   const ab = $('#ab');
   ab.addEventListener('pointerdown', (e) => { e.preventDefault(); abDown = true; act(); });
@@ -597,24 +703,40 @@ var NJ = (window.NJ = window.NJ || {});
     if (NJ.fish.active) { e.preventDefault(); fishHold = true; return; }
     if (UI.pOpen || UI.dlg || UI.creating) return;
     e.preventDefault(); paint = 1;
+    if (NJ.inter.isOpen()) NJ.inter.close();   // tocar no chão fecha o balão
     const p = pointAt(e);
     const tx = Math.floor(p.x / T), ty = Math.floor(p.y / T);
     if (NJ.buildMode) { lastPaint = [tx, ty]; doBuild(tx, ty); return; }
     const dx = p.x - NJ.S.px, dy = p.y - NJ.S.py, dist = Math.hypot(dx, dy) || 1;
     NJ.S.d = Math.abs(dx) > Math.abs(dy) ? (dx < 0 ? 2 : 3) : (dy < 0 ? 1 : 0);
-    // toque/clique simples: caminha até lá e interage no tile clicado
-    destination = { x: p.x - dx / dist * 18, y: p.y - dy / dist * 18, tt: [tx, ty], auto: true };
+    downPt = { cx: e.clientX, cy: e.clientY };
+    const off = Math.min(14, dist * 0.5);
+    // toque simples: só anda. Se havia um alvo no ponto, caminha até ele e abre o balão ao chegar.
+    destination = { x: p.x - dx / dist * off, y: p.y - dy / dist * off };
+    if (targetAt(p.x, p.y)) destination.rt = [p.x, p.y];
   });
   cv.addEventListener('pointermove', (e) => {
     if (UI.pOpen || UI.dlg || UI.creating || !paint) return;
     const p = pointAt(e);
     if (NJ.buildMode) { const tx = Math.floor(p.x / T), ty = Math.floor(p.y / T); if (tx != lastPaint[0] || ty != lastPaint[1]) { lastPaint = [tx, ty]; doBuild(tx, ty); } return; }
+    // ignora o tremor do toque logo após encostar o dedo
+    if (downPt && Math.hypot(e.clientX - downPt.cx, e.clientY - downPt.cy) < 6) return;
+    downPt = null;   // virou arrasto: anda livre, sem abrir balão
     const dx = p.x - NJ.S.px, dy = p.y - NJ.S.py, dist = Math.hypot(dx, dy) || 1;
     NJ.S.d = Math.abs(dx) > Math.abs(dy) ? (dx < 0 ? 2 : 3) : (dy < 0 ? 1 : 0);
-    // arrastar = só andar (não dispara ação ao chegar)
-    destination = { x: p.x, y: p.y, tt: [Math.floor(p.x / T), Math.floor(p.y / T)], auto: false };
+    destination = { x: p.x, y: p.y };
   });
-  ['pointerup', 'pointercancel'].forEach((n) => cv.addEventListener(n, () => { paint = 0; fishHold = false; }));
+  ['pointerup', 'pointercancel'].forEach((n) => cv.addEventListener(n, () => { paint = 0; fishHold = false; downPt = null; }));
+
+  // rede de segurança: soltar o dedo/mouse em QUALQUER lugar (ou trocar de app) libera todos os controles
+  // — mas se foi outro dedo (ex.: botão A) que soltou, o joystick continua firme
+  const releaseAll = (e) => {
+    if (!e || jpid == null || e.pointerId === jpid) jzero();
+    paint = 0; fishHold = false; abDown = false; downPt = null;
+  };
+  ['pointerup', 'pointercancel'].forEach((n) => window.addEventListener(n, releaseAll));
+  window.addEventListener('blur', () => releaseAll(null));
+  document.addEventListener('visibilitychange', () => { if (document.hidden) releaseAll(null); });
   $('#zin').addEventListener('click', () => { zoom = Math.min(1.8, zoom + 0.15); rs(); });
   $('#zout').addEventListener('click', () => { zoom = Math.max(0.65, zoom - 0.15); rs(); });
 
@@ -641,6 +763,21 @@ var NJ = (window.NJ = window.NJ || {});
     t: (b, k) => { selTool(+k); if (UI.pCur === 'inv') UI.inv(); },
     menu: () => UI.menu(),
     help: () => UI.help(),
+    // balão de interação: executa uma ação do alvo / fecha
+    ia: (b) => NJ.inter.act(+b.dataset.k),
+    ix: () => NJ.inter.close(),
+    // biblioteca
+    lib: () => UI.almanac(),
+    readBk: (b, k) => {
+      const S = NJ.S, bk = D.BOOKS.find((x) => x.id === k);
+      if (!bk) return;
+      const first = !S.st['bk_' + bk.id];
+      S.st['bk_' + bk.id] = 1;
+      if (first && bk.sk) NJ.prog.xp(bk.sk, bk.xp);
+      NJ.audio.beep(640); NJ.state.save();
+      UI.closeP();
+      UI.say(bk.e + ' ' + bk.n, [bk.d + (first && bk.sk ? ' <br><b>(você aprendeu ' + bk.xp + ' de XP!)</b>' : '')]);
+    },
     save: () => { NJ.state.save(); UI.toast('💾 Jogo salvo'); UI.closeP(); },
     reset: () => {
       UI.closeP();

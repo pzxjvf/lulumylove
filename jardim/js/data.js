@@ -124,6 +124,16 @@ var NJ = (window.NJ = window.NJ || {});
     { id: 'cake', n: 'Bolo', e: '🎂', need: { egg: 2, milk: 1, trig: 1 }, out: 'cake', outN: 1, time: 80 }
   ];
 
+  // livros da biblioteca: ler rende uma dica e um pouco de experiência (uma vez cada)
+  D.BOOKS = [
+    { id: 'farm', n: 'Almanaque da Fazenda', e: '🌾', sk: 'farming', xp: 12, d: 'Are a terra com a enxada, plante e regue todo dia. A planta cresce na manhã seguinte se estiver molhada — e cada cultura gosta de certas estações.' },
+    { id: 'for', n: 'Guia de Coleta', e: '🍄', sk: 'foraging', xp: 12, d: 'Florzinhas, cogumelos e frutinhas nascem pelo mato todo dia e mudam com a estação. Dão bom dinheiro sem custar nada.' },
+    { id: 'fish', n: 'Segredos do Lago', e: '🎣', sk: 'fishing', xp: 12, d: 'Fique de frente para a água, lance e segure para subir a barra quando o peixe morder. À noite e nas noites de estrela aparecem peixes raros.' },
+    { id: 'mine', n: 'Veias da Montanha', e: '⛏️', sk: 'mining', xp: 14, d: 'Na mina ao norte, quebre pedras com a picareta ⚒️. Cada andar mais fundo guarda minérios melhores — cobre, ferro, ouro e até gemas 💎.' },
+    { id: 'pet', n: 'Como agradar um pet', e: '🐾', d: 'Seu bichinho adora carinho 💗, petisco 🍖, brincadeira 🎾 e banho 🛁. Quanto mais feliz, mais ele ajuda e traz achadinhos.' },
+    { id: 'valley', n: 'Histórias do Vale', e: '📖', d: 'Há oito moradores pelo vale. Conversar e presentear enche os corações 💗 e abre novas missões, receitas e segredos.' }
+  ];
+
   // ---------- animais ----------
   D.ANIM = [
     { id: 'chicken', n: 'Galinha', e: '🐔', cost: 800, prod: 'egg', every: 1, house: 'coop', c: ['#f2f2f2', '#e8d0a0', '#c98a4a'] },

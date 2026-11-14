@@ -58,22 +58,78 @@ var NJ = (window.NJ = window.NJ || {});
     UI.panel(h, 'inv');
   };
 
+  // biblioteca: leitura de livros (dica + experiência, uma vez cada)
+  UI.books = function () {
+    const s = S();
+    let h = '<h3>📖 Biblioteca</h3><p style="margin:2px 0"><small>Cada livro ensina uma dica e rende experiência na primeira leitura.</small></p>';
+    D.BOOKS.forEach((b) => {
+      const read = !!s.st['bk_' + b.id];
+      const sk = b.sk ? D.SKILLS.find((x) => x.id === b.sk) : null;
+      h += '<div class="r"><span>' + b.e + ' <b>' + b.n + '</b><br><small>' + (read ? '✔️ lido' : '📕 não lido') + (sk ? ' · +' + b.xp + ' ' + sk.e + ' ' + sk.n : '') + '</small></span><button data-a="readBk" data-k="' + b.id + '">' + (read ? 'Reler' : 'Ler') + '</button></div>';
+    });
+    h += '<div class="r"><span></span><button data-a="lib">📚 Abrir almanaque</button></div>';
+    UI.panel(h, 'books');
+  };
+
+  // almanaque: tudo o que já se descobriu no vale
+  UI.almanac = function () {
+    const s = S(), hv = (k) => s.st[k] || 0;
+    const row = (e, name, sub, right) => '<div class="r"><span>' + e + ' ' + name + (sub ? '<br><small>' + sub + '</small>' : '') + '</span>' + (right ? '<b>' + right + '</b>' : '') + '</div>';
+    let h = '<h3>📚 Almanaque do vale</h3><p>💰 ' + s.coins + ' · 📅 Dia ' + s.day + ' · Ano ' + s.year + ' · 🏆 ' + Object.keys(s.ach).length + '/' + D.ACH.length + '</p>';
+
+    h += '<h3>🌾 Culturas</h3>';
+    D.CROPS.forEach((c) => {
+      const n = hv('h_' + c.id), own = n > 0 || (s.inv['S_' + c.id] || 0) > 0;
+      h += own
+        ? row(c.e, '<b>' + c.n + '</b>', c.seasons.map((x) => D.SEASON_E[x] + D.SEASON_PT[x]).join(' ') + ' · ' + c.days + ' dias · ' + c.sell + '💰', n ? n + '×' : '')
+        : row('🌫️', '???', 'cultive na estação certa para descobrir');
+    });
+
+    h += '<h3>🐟 Peixes <small>(' + hv('fish') + ' no total)</small></h3>';
+    [['p1', ''], ['p2', ''], ['p3', hv('star') ? hv('star') + '×' : ''], ['p4', hv('legend') ? hv('legend') + '×' : '']].forEach(([k, r]) => {
+      const it = D.IT[k];
+      h += row(it.e, it.n, it.s + '💰' + (k === 'p3' ? ' · 🌟 raro à noite' : k === 'p4' ? ' · 🐋 lendário' : ''), r);
+    });
+
+    h += '<h3>🍄 Forragem</h3>';
+    [['f', 'spring'], ['dand', 'spring'], ['a', 'summer'], ['chili', 'summer'], ['c', 'fall'], ['hazel', 'fall'], ['wroot', 'winter'], ['ice', 'winter']].forEach(([k, se]) => {
+      const it = D.IT[k], n = hv(k);
+      h += row(it.e, it.n, D.SEASON_E[se] + D.SEASON_PT[se] + ' · ' + it.s + '💰', n ? n + '×' : '');
+    });
+
+    h += '<h3>🐔 Animais</h3>';
+    D.ANIM.forEach((a) => { h += row(a.e, a.n, a.cost + '💰 · ' + (a.house === 'coop' ? 'Galinheiro' : 'Celeiro') + ' · produz ' + D.IT[a.prod].e + ' a cada ' + a.every + 'd'); });
+
+    h += '<h3>🍳 Receitas</h3>';
+    D.RECIPES.forEach((rc) => { h += row(rc.e, rc.n, Object.keys(rc.need).map((k) => D.IT[k].e + '×' + rc.need[k]).join(' + ') + ' → ' + D.IT[rc.out].s + '💰'); });
+
+    h += '<h3>👥 Moradores</h3>';
+    D.NPCS.forEach((n) => { h += row('🧑', n.n, NJ.npc.hearts(s.fr[n.n] || 0)); });
+
+    h += '<h3>🏆 Conquistas</h3>';
+    D.ACH.forEach((a) => { h += row(s.ach[a.id] ? a.e : '⬜', a.n, a.d); });
+
+    UI.panel(h, 'almanac');
+  };
+
   // menu de pausa (☰): reúne tudo num lugar só
   UI.menu = function () {
     const btn = (a, k, label) => '<button class="mb" data-a="' + a + '"' + (k != null ? ' data-k="' + k + '"' : '') + '>' + label + '</button>';
     UI.panel('<h3>☰ Menu</h3><div class="grid">' +
       btn('inv', null, '🎒 Mochila') + btn('qs', null, '📜 Missões') +
-      btn('prog', null, '📈 Progresso') + btn('cl', null, '👗 Aparência') +
-      btn('bd', null, '🔨 Construir') + btn('help', null, '❓ Como jogar') +
-      btn('music', null, '🎵 Música') + btn('snd', null, '🔊 Som') +
-      btn('zin', null, '＋ Zoom') + btn('zout', null, '－ Zoom') +
-      btn('save', null, '💾 Salvar') + btn('reset', null, '🏠 Reiniciar') +
+      btn('prog', null, '📈 Progresso') + btn('lib', null, '📚 Biblioteca') +
+      btn('cl', null, '👗 Aparência') + btn('bd', null, '🔨 Construir') +
+      btn('help', null, '❓ Como jogar') + btn('music', null, '🎵 Música') +
+      btn('snd', null, '🔊 Som') + btn('zin', null, '＋ Zoom') +
+      btn('zout', null, '－ Zoom') + btn('save', null, '💾 Salvar') +
+      btn('reset', null, '🏠 Reiniciar') +
       '</div>', 'menu');
   };
 
   UI.help = function () {
     UI.panel('<h3>❓ Como jogar</h3>' +
       '<p><b>Mover:</b> setas/WASD, joystick ou toque no chão. <b>Ação:</b> Espaço/E ou botão A.</p>' +
+      '<p><b>Interagir:</b> toque num objeto, animal ou morador — a personagem anda até lá e abre um <b>balão de ações</b> (estilo The Sims). Toque no chão para só andar.</p>' +
       '<p><b>Mochila (🎒):</b> toque numa ferramenta para deixá-la <b>na mão</b>. Ela aparece equipada na personagem.</p>' +
       '<p><b>Menu (☰ ou M):</b> mochila, missões, aparência, música, som, zoom, salvar e reiniciar.</p>' +
       '<p><b>Ferramentas (1-7):</b> Enxada are a terra na fazenda; Regador rega; Sementes plantam; Vara pesca na água (minigame); Mão coleta; Machado corta árvore; Picareta só na mina.</p>' +

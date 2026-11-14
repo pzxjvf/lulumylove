@@ -174,6 +174,47 @@ var NJ = (window.NJ = window.NJ || {});
       r(3, 2, 10, 3, '#e8c46a'); r(3, 2, 10, 1, '#f6d98a'); r(2, 3, 12, 2, '#c9a94a');
     });
 
+    // ---------- biblioteca (80x64) ----------
+    SPR.library = U.mk(80, 64, (x, r) => {
+      oval(r, 40, 62, 34, 4, 'rgba(0,0,0,.22)');
+      // telhado azul em duas águas
+      for (let i = 0; i < 11; i++) {
+        const hw = 9 + i * 3.6, w = Math.round(hw * 2), x0 = Math.round(40 - hw), y = i * 3;
+        r(x0, y, w, 3, i % 2 ? '#3a4f8a' : '#4a63a8');
+        r(x0, y, Math.round(hw), 3, i % 2 ? '#4560a0' : '#5573bb');
+        r(x0 + Math.round(hw), y, Math.round(hw), 3, '#2f4272');
+        r(x0, y, w, 1, '#00000018');
+      }
+      r(0, 30, 80, 3, '#25335c');
+      // claraboia / cúpula
+      r(33, 4, 14, 5, '#7f97d8'); r(34, 3, 12, 2, '#9fb2e8'); r(38, 1, 4, 3, '#c6d2f4');
+      // paredes de pedra clara
+      r(6, 33, 68, 31, '#cdbfa4'); r(6, 33, 68, 3, '#e0d4bc'); r(6, 61, 68, 3, '#a3937a');
+      for (let i = 0; i < 7; i++) r(6, 37 + i * 4, 68, 1, '#b8a98c');
+      r(6, 33, 3, 31, '#9a8b70'); r(71, 33, 3, 31, '#9a8b70');
+      // colunas
+      [10, 62].forEach((a) => { r(a, 33, 6, 31, '#e6dcc6'); r(a, 33, 6, 2, '#f4ecda'); r(a + 4, 33, 2, 31, '#c2b598'); r(a - 1, 60, 8, 4, '#b0a284'); });
+      // janelas altas iluminadas
+      [21, 51].forEach((a) => {
+        r(a - 1, 38, 12, 17, '#6c5f46'); r(a, 39, 10, 15, '#3a4a6a');
+        r(a + 1, 40, 8, 13, '#ffd98a'); r(a + 1, 40, 8, 4, '#fff2cc');
+        r(a + 4, 40, 2, 13, '#6c5f46'); r(a + 1, 45, 8, 1, '#6c5f46');
+        r(a - 2, 55, 14, 2, '#6c5f46');
+      });
+      // porta dupla
+      r(34, 42, 12, 22, '#5f5238'); r(35, 43, 10, 21, '#8a7a52');
+      r(40, 43, 1, 21, '#5f5238'); r(35, 43, 10, 1, '#a89a6c'); r(35, 52, 10, 1, '#6f6244');
+      r(38, 53, 1, 1, '#ffd23f'); r(41, 53, 1, 1, '#ffd23f');
+      r(33, 62, 14, 3, '#9a9080');
+      // placa "LIVROS"
+      r(24, 20, 32, 10, '#5f5238'); r(25, 21, 30, 8, '#2f4272');
+      r(27, 23, 6, 4, '#ffe9b0'); r(28, 24, 2, 2, '#e8607a'); r(30, 24, 2, 2, '#7ad0ff');
+      x.font = 'bold 5px monospace'; x.fillStyle = '#ffe9b0'; x.textAlign = 'left';
+      x.fillText('LIVROS', 36, 27);
+      // lampiãozinho
+      r(30, 45, 2, 14, '#4a4a5a'); r(28, 43, 6, 6, '#ffd98a'); r(28, 43, 6, 2, '#fff0c0'); r(27, 42, 8, 2, '#3a3a4a');
+    });
+
     SP.HOLE = U.mkRad('rgba(0,0,0,.96)', 'rgba(0,0,0,0)');
     SP.GLW = U.mkRad('rgba(255,205,120,.34)', 'rgba(255,205,120,0)');
     SP.GLB = U.mkRad('rgba(110,180,255,.34)', 'rgba(110,180,255,0)');
