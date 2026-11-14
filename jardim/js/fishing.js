@@ -40,11 +40,11 @@ var NJ = (window.NJ = window.NJ || {});
 
   F.catch = function () {
     const s = NJ.S, night = NJ.time.isNight() || s.ev == 'star';
-    const lvl = NJ.prog.level('fishing');
+    const lvl = NJ.prog.level('fishing'), lk = NJ.extra ? NJ.extra.luck() : 0;
     const r = Math.random();
     let k = 'p1';
-    if (r < (night ? 0.1 : 0.03) + lvl * 0.006) k = 'p4';
-    else if (r < (night ? 0.35 : 0.18) + lvl * 0.01) k = 'p3';
+    if (r < (night ? 0.1 : 0.03) + lvl * 0.006 + lk * 0.06) k = 'p4';
+    else if (r < (night ? 0.35 : 0.18) + lvl * 0.01 + lk * 0.12) k = 'p3';
     else if (r < 0.6) k = 'p2';
     NJ.econ.add(k, 1);
     s.st.fish = (s.st.fish || 0) + 1; if (k == 'p3') s.st.star = (s.st.star || 0) + 1; if (k == 'p4') s.st.legend = (s.st.legend || 0) + 1;

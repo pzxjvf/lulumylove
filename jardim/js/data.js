@@ -113,6 +113,30 @@ var NJ = (window.NJ = window.NJ || {});
   it('bread', 'Pão', '🍞', { s: 74 });
   it('wine', 'Vinho', '🍷', { s: 190 });
   it('cake', 'Bolo', '🎂', { s: 240 });
+  it('juice', 'Suco de uva', '🧃', { s: 88 });
+  it('butter', 'Manteiga', '🧈', { s: 120 });
+  it('oil', 'Óleo de girassol', '🫙', { s: 140 });
+
+  // pratos cozinhados: comem e dão um efeito temporário (buff)
+  it('salad', 'Salada fresca', '🥗', { s: 42 });
+  it('soup', 'Sopa da vovó', '🍲', { s: 66 });
+  it('roast', 'Peixe assado', '🍤', { s: 78 });
+  it('pie', 'Torta de amora', '🥧', { s: 96 });
+  it('tea', 'Chá de lavanda', '🍵', { s: 48 });
+
+  D.BUFFS = {
+    speed: { n: 'Velocidade', e: '⚡', d: 'anda mais rápido' },
+    vigor: { n: 'Vigor', e: '💪', d: 'o dia passa mais devagar' },
+    luck: { n: 'Sorte', e: '🍀', d: 'melhores peixes e minérios' }
+  };
+  // receitas de cozinha (dão buff ao comer)
+  D.FOOD = [
+    { id: 'salad', need: { str: 2, pot: 1 }, buff: { k: 'speed', t: 180 } },
+    { id: 'soup', need: { cab: 2, c: 2 }, buff: { k: 'vigor', t: 240 } },
+    { id: 'roast', need: { p1: 2 }, buff: { k: 'luck', t: 180 } },
+    { id: 'pie', need: { a: 3, trig: 2 }, buff: { k: 'vigor', t: 300 } },
+    { id: 'tea', need: { lav: 2, f: 1 }, buff: { k: 'luck', t: 240 } }
+  ];
 
   // receitas de artesanato (máquina simples)
   D.RECIPES = [
@@ -121,7 +145,10 @@ var NJ = (window.NJ = window.NJ || {});
     { id: 'bread', n: 'Pão', e: '🍞', need: { trig: 2 }, out: 'bread', outN: 1, time: 30 },
     { id: 'jam', n: 'Geleia', e: '🍯', need: { a: 3 }, out: 'jam', outN: 1, time: 30 },
     { id: 'wine', n: 'Vinho', e: '🍷', need: { gra: 3 }, out: 'wine', outN: 1, time: 60 },
-    { id: 'cake', n: 'Bolo', e: '🎂', need: { egg: 2, milk: 1, trig: 1 }, out: 'cake', outN: 1, time: 80 }
+    { id: 'cake', n: 'Bolo', e: '🎂', need: { egg: 2, milk: 1, trig: 1 }, out: 'cake', outN: 1, time: 80 },
+    { id: 'juice', n: 'Suco de uva', e: '🧃', need: { gra: 2 }, out: 'juice', outN: 1, time: 40 },
+    { id: 'butter', n: 'Manteiga', e: '🧈', need: { milk: 2 }, out: 'butter', outN: 1, time: 35 },
+    { id: 'oil', n: 'Óleo de girassol', e: '🫙', need: { sun: 2 }, out: 'oil', outN: 1, time: 45 }
   ];
 
   // livros da biblioteca: ler rende uma dica e um pouco de experiência (uma vez cada)
@@ -179,6 +206,14 @@ var NJ = (window.NJ = window.NJ || {});
     BL.push(b); BLM[b.id] = b;
   });
 
+  // ---------- máquinas de processamento (posicionáveis como as outras peças) ----------
+  const MACH = (D.MACH = []);
+  const mach = (id, n, e, o) => { const b = Object.assign({ id, n, e, w: 0, c: 0, solid: 1, machine: 1 }, o); MACH.push(b); BL.push(b); BLM[b.id] = b; return b; };
+  mach('keg', 'Barril', '🛢️', { w: 3, c: 10, out: ['wine', 'juice', 'oil'] });
+  mach('dairy', 'Laticínio', '🧈', { w: 4, c: 16, out: ['cheese', 'butter'] });
+  mach('stove', 'Fogão a lenha', '🍳', { w: 4, c: 18, out: ['bread', 'jam', 'cake'] });
+  const MACHMAP = (D.MACHMAP = {}); MACH.forEach((b) => (MACHMAP[b.id] = b));
+
   // ---------- moradores ----------
   D.NPCS = [
     { n: 'Lia', x: 560, y: 158, shop: 1, o: { skin: 1, hair: 7, hs: 2, out: 3, os: 0, c2: 7, acc: 0 } },
@@ -210,6 +245,20 @@ var NJ = (window.NJ = window.NJ || {});
     { id: 14, npc: 'Mira', t: 'Trazer uma Gema 💎', k: 'gem', n: 1, r: 260, req: 12, ask: 'Uma gema brilharia lindo no meu colar. Acha uma?', ok: 'É a coisa mais bonita que já vi!' },
     { id: 15, npc: 'Lia', t: 'Colher 10 plantações', k: 'harv', n: 10, r: 300, req: 2, ask: 'Você já é uma fazendeira e tanto! Me prova com 10 colheitas?', ok: 'Inacreditável! Vou fazer um banquete.' }
   ];
+
+  // ---------- quadro de recados: missões diárias ----------
+  D.DAILY = [
+    { k: 'harv', t: 'Colher %n plantações', e: '🧺', min: 3, max: 6, r: 45 },
+    { k: 'plant', t: 'Plantar %n sementes', e: '🌱', min: 3, max: 6, r: 45 },
+    { k: 'fish', t: 'Pescar %n peixes', e: '🎣', min: 2, max: 4, r: 55 },
+    { k: 'forage', t: 'Achar %n forragens', e: '🍄', min: 3, max: 7, r: 35 },
+    { k: 'stone', t: 'Quebrar %n pedras', e: '⛏️', min: 4, max: 9, r: 55 },
+    { k: 'build', t: 'Construir %n pecinhas', e: '🔨', min: 2, max: 4, r: 65 }
+  ];
+
+  // ---------- festival das estações (na praça, no meio da estação) ----------
+  D.FEST_DAY = 14;
+  D.FEST_STOCK = ['S_cry', 'S_sun', 'S_tul', 'S_pum', 'gem', 'wine', 'cake', 'cheese', 'butter'];
 
   // ---------- conversas ----------
   D.CH = {

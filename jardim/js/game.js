@@ -68,7 +68,8 @@ var NJ = (window.NJ = window.NJ || {});
     ints = [
       { x: 152, y: 168, r: 24, n: 'Sua casinha', acts: [
         { e: '🌙', l: 'Dormir', fn: () => NJ.state.newDay(false) },
-        { e: '🍳', l: 'Cozinhar', fn: () => NJ.econ.craft() },
+        { e: '🍳', l: 'Cozinhar', fn: () => NJ.extra.cook() },
+        { e: '🧑‍🍳', l: 'Artesanato', fn: () => NJ.econ.craft() },
         { e: '🎒', l: 'Mochila', fn: () => UI.inv() }
       ] },
       { x: 590, y: 152, r: 22, n: 'Loja da Lia', acts: [
@@ -86,6 +87,12 @@ var NJ = (window.NJ = window.NJ || {});
     if (W.libPoint) ints.push({ x: W.libPoint.x, y: W.libPoint.y, r: 30, n: 'Biblioteca', acts: [
       { e: '📖', l: 'Ler livro', fn: () => UI.books() },
       { e: '📚', l: 'Almanaque', fn: () => UI.almanac() }
+    ] });
+    if (W.boardPoint) ints.push({ x: W.boardPoint.x, y: W.boardPoint.y, r: 26, n: 'Quadro de recados', acts: [
+      { e: '📋', l: 'Recados do dia', fn: () => NJ.extra.dailyPanel() }
+    ] });
+    if (W.festPoint) ints.push({ x: W.festPoint.x, y: W.festPoint.y, r: 40, n: 'Praça do festival', acts: [
+      { e: '🎪', l: 'Festival', fn: () => NJ.inter.open(NJ.extra.festTarget()) }
     ] });
     // moradores são procurados na posição atual (eles passeiam) — ver targetAt()
   }
@@ -206,13 +213,21 @@ var NJ = (window.NJ = window.NJ || {});
     NJ.audio.beep(600); petJoy(8, '🫧');
     UI.toast('🛁 Banho tomado! ' + (S.pet.name || 'Seu pet') + ' ficou cheiroso e fofo.');
   }
+  function petFollow() {
+    const S = NJ.S;
+    S.pet.follow = S.pet.follow ? 0 : 1;
+    NJ.audio.beep(S.pet.follow ? 760 : 380);
+    UI.toast(S.pet.follow ? '🐾 ' + (S.pet.name || 'Seu pet') + ' vai te seguir por aí!' : '🛑 ' + (S.pet.name || 'Seu pet') + ' ficou por aqui.');
+    NJ.state.save();
+  }
   function petTarget() {
     const S = NJ.S;
     return { x: S.pet.x, y: S.pet.y - 16, name: S.pet.name || 'Seu pet', acts: [
       { e: '💗', l: 'Carinho', fn: petPet },
       { e: '🍖', l: 'Petisco', fn: petTreat },
       { e: '🎾', l: 'Brincar', fn: petPlay },
-      { e: '🛁', l: 'Banho', fn: petBath }
+      { e: '🛁', l: 'Banho', fn: petBath },
+      { e: S.pet.follow ? '🛑' : '🐾', l: S.pet.follow ? 'Parar de seguir' : 'Seguir', fn: petFollow }
     ] };
   }
 
@@ -277,6 +292,7 @@ var NJ = (window.NJ = window.NJ || {});
     const c = S.crops[tx + ',' + ty];
     if (c && Farm.ready(c)) return { x: tx * T + 8, y: ty * T, name: D.CROPMAP[c.t].n, acts: [{ e: '✋', l: 'Colher', fn: () => harvestCrop(tx, ty) }] };
     const bId = S.built[tx + ',' + ty];
+    if (bId && D.MACHMAP[bId]) return NJ.extra.machTarget(bId, tx, ty);
     if (BACT[bId]) return builtTarget(bId, tx, ty);
     return null;
   }
@@ -334,6 +350,20 @@ var NJ = (window.NJ = window.NJ || {});
   function petAI(dt) {
     const S = NJ.S, P = S.pet;
     if (P.hx == null) { P.hx = P.x; P.hy = P.y; P.wt = 0; P.wa = null; P.gx = null; P.gy = null; }
+    // com "Seguir" ligado, o pet anda colado na jogadora
+    if (P.follow) {
+      const dx = S.px - P.x, dy = S.py - P.y, d = Math.hypot(dx, dy);
+      P.hx = P.x; P.hy = P.y;
+      if (d > 22) {
+        const a = Math.atan2(dy, dx), sp = Math.min(74, d * 2.4);
+        const nx = P.x + Math.cos(a) * sp * dt, ny = P.y + Math.sin(a) * sp * dt;
+        if (!W.blk(nx, P.y)) P.x = nx;
+        if (!W.blk(P.x, ny)) P.y = ny;
+        P.f += dt * 8;
+        P.d = Math.abs(dx) > Math.abs(dy) ? (dx < 0 ? 2 : 3) : (dy < 0 ? 1 : 0);
+      } else P.f = 0;
+      return;
+    }
     // o "cantinho" do pet acompanha a jogadora só quando ela se afasta bastante
     const hd = Math.hypot(S.px - P.hx, S.py - P.hy);
     if (hd > 130) {
@@ -370,7 +400,8 @@ var NJ = (window.NJ = window.NJ || {});
       NJ.npc.update(dt);
     }
     if (!UI.dlg && !UI.pOpen) {
-      S.min += dt * 2.2;
+      NJ.extra.tick(dt);
+      S.min += dt * NJ.extra.timeScale();
       if (S.min >= 1560) NJ.state.newDay(true);
       let vx = (K.arrowright || K.d ? 1 : 0) - (K.arrowleft || K.a ? 1 : 0) + jx;
       let vy = (K.arrowdown || K.s ? 1 : 0) - (K.arrowup || K.w ? 1 : 0) + jy;
@@ -385,7 +416,7 @@ var NJ = (window.NJ = window.NJ || {});
       const l = Math.hypot(vx, vy);
       if (l > 0.2) {
         if (l > 1) { vx /= l; vy /= l; }
-        const spd = K.shift ? 92 : 58;
+        const spd = (K.shift ? 92 : 58) * NJ.extra.spd();
         const nx = S.px + vx * spd * dt, ny = S.py + vy * spd * dt;
         if (!W.blk(nx, S.py)) S.px = nx;
         if (!W.blk(S.px, ny)) S.py = ny;
@@ -781,8 +812,8 @@ var NJ = (window.NJ = window.NJ || {});
     save: () => { NJ.state.save(); UI.toast('💾 Jogo salvo'); UI.closeP(); },
     reset: () => {
       UI.closeP();
-      UI.say('Começar de novo', ['Quer apagar o progresso e começar um novo jogo? Isso não pode ser desfeito. 😦'], null, [
-        ['Sim, reiniciar 🔄', () => { NJ.state.reset(); location.reload(); }],
+      UI.say('🗑️ Zerar progresso', ['Quer apagar TUDO e começar do zero de novo? Moedas, plantação, moradores, tudo. Isso não pode ser desfeito. 😦'], null, [
+        ['Sim, começar do zero 🔄', () => { NJ.state.reset(); location.reload(); }],
         ['Não, continuar', () => 0]
       ]);
     },
@@ -826,6 +857,7 @@ var NJ = (window.NJ = window.NJ || {});
     W.buildGround(NJ.S.season);
     if (!NJ.S.fg || !NJ.S.fg.length) W.spawnFG();
     buildInts();
+    NJ.extra.ensure();
     rs();
     UI.hb(); UI.hud();
     if (first) UI.creator(true);

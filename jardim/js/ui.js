@@ -54,7 +54,10 @@ var NJ = (window.NJ = window.NJ || {});
     });
     h += '</div>';
     const items = Object.keys(s.inv).filter((k) => s.inv[k] > 0 && D.IT[k]);
-    h += '<h3>📦 Itens</h3>' + (items.map((k) => '<div class="r"><span>' + D.IT[k].e + ' ' + D.IT[k].n + '</span><b>×' + s.inv[k] + '</b></div>').join('') || '<p>Vazia por enquanto.</p>');
+    h += '<h3>📦 Itens</h3>' + (items.map((k) => {
+      const food = D.FOOD.some((f) => f.id === k);
+      return '<div class="r"><span>' + D.IT[k].e + ' ' + D.IT[k].n + '</span>' + (food ? '<button data-a="eat" data-k="' + k + '">🍽️ Comer ×' + s.inv[k] + '</button>' : '<b>×' + s.inv[k] + '</b>') + '</div>';
+    }).join('') || '<p>Vazia por enquanto.</p>');
     UI.panel(h, 'inv');
   };
 
@@ -117,12 +120,13 @@ var NJ = (window.NJ = window.NJ || {});
     const btn = (a, k, label) => '<button class="mb" data-a="' + a + '"' + (k != null ? ' data-k="' + k + '"' : '') + '>' + label + '</button>';
     UI.panel('<h3>☰ Menu</h3><div class="grid">' +
       btn('inv', null, '🎒 Mochila') + btn('qs', null, '📜 Missões') +
+      btn('daily', null, '📋 Recados') + btn('cook', null, '🍳 Cozinha') +
       btn('prog', null, '📈 Progresso') + btn('lib', null, '📚 Biblioteca') +
       btn('cl', null, '👗 Aparência') + btn('bd', null, '🔨 Construir') +
       btn('help', null, '❓ Como jogar') + btn('music', null, '🎵 Música') +
       btn('snd', null, '🔊 Som') + btn('zin', null, '＋ Zoom') +
       btn('zout', null, '－ Zoom') + btn('save', null, '💾 Salvar') +
-      btn('reset', null, '🏠 Reiniciar') +
+      btn('reset', null, '🗑️ Zerar progresso') +
       '</div>', 'menu');
   };
 
@@ -138,6 +142,11 @@ var NJ = (window.NJ = window.NJ || {});
       '<p><b>Animais:</b> construa 🔨 um Galinheiro/Celeiro e compre bichos. Compre 🌾 Feno; eles produzem de manhã.</p>' +
       '<p><b>Construir (🔨 ou B):</b> escolha a peça, toque no chão para posicionar. Toque numa peça existente para <b>remover</b>. ESC sai do modo.</p>' +
       '<p><b>Mina:</b> suba ao norte, entre na mina, use a Picareta nas pedras. Desça pelas escadas ▼.</p>' +
+      '<p><b>Cozinhar (🍳):</b> na sua casinha, faça pratos. Coma-os na 🎒 mochila para ganhar efeitos: ⚡ velocidade, 💪 vigor (dia mais devagar) e 🍀 sorte (peixes/minérios melhores).</p>' +
+      '<p><b>Máquinas:</b> construa 🛢️ Barril, 🧈 Laticínio e 🍳 Fogão a lenha no modo 🔨. Coloque ingredientes e espere; toque para recolher o produto.</p>' +
+      '<p><b>Recados (📋):</b> o quadro na praça dá 3 tarefas por dia — complete e recolha as moedas.</p>' +
+      '<p><b>Festival 🎪:</b> a festa é na praça no dia 14 de cada estação, com concurso de pesca e mercado raro.</p>' +
+      '<p><b>Pet:</b> toque no seu bichinho para 💗 carinho, 🍖 petisco, 🎾 brincar, 🛁 banho e 🐾 seguir/parar de seguir.</p>' +
       '<p><b>Presentes:</b> converse com moradores e presenteie para ganhar corações 💗.</p>' +
       '<p><b>Salvar:</b> automático. <b>Z</b> desfaz construção.</p>');
   };
@@ -178,8 +187,9 @@ var NJ = (window.NJ = window.NJ || {});
   UI.hud = function () {
     const s = S(), h = Math.floor(s.min / 60) % 24;
     const loc = NJ.loc === 'cave' ? ' · ⛏️ Mina ' + NJ.mine.depth : '';
+    const b = s.buff, buff = b && b.left > 0 ? ' · ' + D.BUFFS[b.k].e + ' ' + D.BUFFS[b.k].n + ' ' + Math.ceil(b.left) + 's' : '';
     $('#hud').innerHTML = '💰 ' + s.coins + ' · ' + D.SEASON_E[s.season] + ' ' + D.SEASON_PT[s.season] + ' · 📅 Dia ' + s.day + ' · Ano ' + s.year +
-      '<br>🕒 ' + String(h).padStart(2, '0') + ':' + String(Math.floor(s.min % 60)).padStart(2, '0') + ' ' + (s.rain ? '🌧️' : s.ev == 'star' ? '✨' : s.ev == 'market' ? '🎪' : s.ev == 'spirit' ? '🌟' : '') + loc;
+      '<br>🕒 ' + String(h).padStart(2, '0') + ':' + String(Math.floor(s.min % 60)).padStart(2, '0') + ' ' + (s.rain ? '🌧️' : s.ev == 'star' ? '✨' : s.ev == 'market' ? '🎪' : s.ev == 'spirit' ? '🌟' : '') + loc + buff;
   };
   UI.hb = function () {
     const s = S(), tb = $('#hb');

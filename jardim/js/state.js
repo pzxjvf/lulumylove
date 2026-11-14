@@ -10,8 +10,9 @@ var NJ = (window.NJ = window.NJ || {});
     rain: false, ev: '', water: 12, tool: 0, seedSel: null,
     till: {}, crops: {}, fg: [], inv: { S_str: 3 }, st: {}, q: {}, built: {}, houses: [],
     animals: [], fr: {}, frD: {}, greetD: {}, wish: 0, potD: 0, dstat: null,
+    dq: [], dqD: 0, buff: null, mach: {},
     skills: { farming: 0, foraging: 0, fishing: 0, mining: 0 }, ach: {}, seen: {},
-    pet: { k: 0, c: 0, name: '', h: 0, x: 132, y: 182, d: 0, f: 0 },
+    pet: { k: 0, c: 0, name: '', h: 0, x: 132, y: 182, d: 0, f: 0, follow: 0 },
     ch: { skin: 1, hair: 1, hs: 0, out: 0, os: 0, c2: 7, acc: 1 }
   });
 
@@ -25,10 +26,13 @@ var NJ = (window.NJ = window.NJ || {});
     merged.inv = s.inv || f.inv;
     merged.houses = s.houses || []; merged.animals = s.animals || [];
     merged.seen = s.seen || {};
+    merged.pet = Object.assign(f.pet, s.pet || {});
+    merged.dq = s.dq || []; merged.mach = s.mach || {};
     return merged;
   };
-  ST.save = function () { try { localStorage.setItem(D.KEY, JSON.stringify(NJ.S)); } catch (e) {} };
-  ST.reset = function () { try { localStorage.removeItem(D.KEY); } catch (e) {} };
+  // "dead" = o jogador zerou o progresso; a partir daí não salvamos mais nada
+  ST.save = function () { if (ST.dead) return; try { localStorage.setItem(D.KEY, JSON.stringify(NJ.S)); } catch (e) {} };
+  ST.reset = function () { ST.dead = true; try { localStorage.removeItem(D.KEY); } catch (e) {} };
   // foto do início do dia (para o resumo ao dormir)
   ST.snap = function () {
     const S = NJ.S, st = S.st || {};
@@ -81,6 +85,7 @@ var NJ = (window.NJ = window.NJ || {});
     NJ.farm && NJ.farm.onNewDay && NJ.farm.onNewDay();
     NJ.animals && NJ.animals.onNewDay && NJ.animals.onNewDay();
     NJ.prog && NJ.prog.onNewDay && NJ.prog.onNewDay();
+    NJ.extra && NJ.extra.onNewDay && NJ.extra.onNewDay();
     if (S.pet.h >= 60) { S.pet.h = 0; const s = NJ.util.pick(['S_str', 'S_pot', 'S_tom', 'wd']); NJ.econ.add(s, 1); setTimeout(() => NJ.ui.toast('🐾 ' + (S.pet.name || 'Seu pet') + ' trouxe ' + D.IT[s].e + ' ' + D.IT[s].n + '!'), 500); }
     ST.save(); ST.snap();
     NJ.ui.toast(S.rain ? 'Amanheceu chovendo 🌧️ — as plantas agradecem' : S.ev == 'star' ? '✨ Chuva de estrelas hoje à noite!' : S.ev == 'market' ? '🎪 Dia de feira na loja (-20%)!' : S.ev == 'spirit' ? '🌟 Espíritos do vale abençoaram a fazenda!' : 'Um novo dia começou ☀️');

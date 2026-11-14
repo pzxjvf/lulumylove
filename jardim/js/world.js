@@ -68,6 +68,14 @@ var NJ = (window.NJ = window.NJ || {});
     W.LT.push([blx * T + 32, bly * T + 8, 44, '255,200,110']);
     W.libPoint = { x: blx * T + 32, y: (bly + 3) * T };
 
+    // ---------- praça do vale: quadro de recados, barraquinhas e festival ----------
+    for (let y = 13; y <= 14; y++) for (let x = 14; x <= 25; x++) W.gr[ix(x, y)] = 1;
+    W.addE('board', 17 * T + 8, 13 * T + 16, -12, -26, { board: 1 });
+    [[20, 13], [23, 13], [14, 14]].forEach(([x, y]) => W.addE('stall', x * T + 8, y * T + 22, -12, -30, { stall: 1 }));
+    W.boardPoint = { x: 17 * T + 8, y: 13 * T + 16 };
+    W.festPoint = { x: 21 * T + 8, y: 14 * T + 8 };
+    W.LT.push([21 * T + 8, 13 * T + 8, 50, '255,210,150']);
+
     // ---------- pomar ----------
     for (let x = 57; x <= 81; x += 3) for (let y = 7; y <= 16; y += 3) {
       W.sol[ix(x, y)] = 1; W.addE('tree', x * T + 8, y * T + T, -16, -48, { tree: 1, ti: (x + y) % 3, tx: x, ty: y });
