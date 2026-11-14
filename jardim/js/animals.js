@@ -25,8 +25,8 @@ var NJ = (window.NJ = window.NJ || {});
 
   A.collect = function (hi) {
     const s = S(); let n = 0;
-    s.animals.forEach((a) => { if (a.h === hi && a.ready) { const t = D.ANIMMAP[a.id]; NJ.econ.add(t.prod, 1); a.ready = false; a.prog = 0; n++; NJ.fx(a.x, a.y - 14, D.IT[t.prod].e); } });
-    if (n) { NJ.audio.chord([659, 784]); NJ.ui.toast('Coletou ' + n + ' item(ns) 🧺'); } else NJ.ui.toast('Nada pronto ainda — alimente e espere o amanhecer');
+    s.animals.forEach((a) => { if (a.h === hi && a.ready) { const t = D.ANIMMAP[a.id]; NJ.econ.add(t.prod, 1); s.st[t.prod] = (s.st[t.prod] || 0) + 1; a.ready = false; a.prog = 0; n++; NJ.fx(a.x, a.y - 14, D.IT[t.prod].e); } });
+    if (n) { NJ.audio.chord([659, 784]); NJ.ui.toast('Coletou ' + n + ' item(ns) 🧺'); NJ.prog.check(); } else NJ.ui.toast('Nada pronto ainda — alimente e espere o amanhecer');
     NJ.state.save(); A.panel(hi);
   };
 

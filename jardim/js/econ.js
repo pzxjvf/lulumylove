@@ -45,7 +45,9 @@ var NJ = (window.NJ = window.NJ || {});
       const rc = D.RECIPES.find((r) => r.id == k); if (!rc) return;
       if (!Object.keys(rc.need).every((x) => E.have(x, rc.need[x]))) return;
       Object.keys(rc.need).forEach((x) => E.take(x, rc.need[x]));
-      E.add(rc.out, rc.outN); NJ.audio.chord([523, 659]); NJ.ui.toast('Fez ' + rc.e + ' ' + rc.n + '!'); E.craft();
+      E.add(rc.out, rc.outN);
+      const s = S(); s.st[rc.out] = (s.st[rc.out] || 0) + rc.outN; s.st.craft = (s.st.craft || 0) + 1;
+      NJ.audio.chord([523, 659]); NJ.ui.toast('Fez ' + rc.e + ' ' + rc.n + '!'); NJ.prog.check(); E.craft();
     }
   });
 })();

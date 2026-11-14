@@ -11,7 +11,18 @@ var NJ = (window.NJ = window.NJ || {});
   EX.has = (k) => { const b = G().buff; return !!(b && b.k === k && b.left > 0); };
   EX.spd = () => (EX.has('speed') ? 1.35 : 1);        // multiplica a velocidade da personagem
   EX.timeScale = () => (EX.has('vigor') ? 1.5 : 2.2);  // quanto o relógio anda por segundo
-  EX.luck = () => (EX.has('luck') ? 1 : 0);            // melhores peixes e minérios
+  EX.luck = () => (EX.has('luck') || G().wx === 'rainbow' ? 1 : 0); // melhores peixes e minérios
+
+  // clima do dia
+  EX.wx = () => D.WX[G().wx] || D.WX.clear;
+  EX.wxPanel = function () {
+    const s = G(), w = EX.wx();
+    let h = '<h3>' + w.e + ' Clima de hoje</h3><p><b>' + w.n + '</b></p><p><small>' + w.d + '</small></p>';
+    h += '<p><small>' + (s.rain ? '🌧️ A chuva já regou toda a fazenda hoje.' : '☀️ Regue as plantas você mesma hoje.') + '</small></p>';
+    if (s.wx === 'rainbow') h += '<p><small>🍀 Sorte do arco-íris ativa: peixes e minérios melhores!</small></p>';
+    if (s.rain) h += '<p><small>⛈️ Troveja lá fora — cuidado com os clarões!</small></p>';
+    NJ.ui.panel(h, 'wx');
+  };
 
   EX.eat = function (id) {
     const f = D.FOOD.find((x) => x.id === id); if (!f) return;
@@ -66,8 +77,10 @@ var NJ = (window.NJ = window.NJ || {});
   EX.machCollect = function (tx, ty) {
     const k = tx + ',' + ty, st = G().mach[k]; if (!st) return;
     NJ.econ.add(st.out, 1); NJ.fx(tx * T + 8, ty * T, D.IT[st.out].e);
+    G().st[st.out] = (G().st[st.out] || 0) + 1;
+    G().st.craft = (G().st.craft || 0) + 1;
     NJ.audio.chord([659, 880]); NJ.ui.toast('Coletou ' + D.IT[st.out].e + ' ' + D.IT[st.out].n + '!');
-    delete G().mach[k]; NJ.inter.close(); NJ.state.save();
+    NJ.prog.check(); delete G().mach[k]; NJ.inter.close(); NJ.state.save();
   };
 
   // ========== RECADOS DIÁRIOS (quadro na praça) ==========
@@ -163,12 +176,14 @@ var NJ = (window.NJ = window.NJ || {});
       if (!Object.keys(f.need).every((x) => NJ.econ.have(x, f.need[x]))) { NJ.ui.toast('Faltam ingredientes 😕'); return; }
       Object.keys(f.need).forEach((x) => NJ.econ.take(x, f.need[x]));
       NJ.econ.add(f.id, 1);
+      const s = G(); s.st.craft = (s.st.craft || 0) + 1;
       NJ.audio.chord([523, 659]); NJ.ui.toast('🍳 Fez ' + D.IT[f.id].e + ' ' + D.IT[f.id].n + '!');
       NJ.state.save(); EX.cook();
     },
     eat: (b, k) => EX.eat(k),
     dclaim: (b, k) => EX.dailyClaim(k),
     daily: () => EX.dailyPanel(),
+    wx: () => EX.wxPanel(),
     fbuy: (b, k) => {
       const p = EX.festPrice(k), s = G();
       if (s.coins < p) { NJ.ui.toast('Faltam moedas 💰'); NJ.audio.beep(200); return; }

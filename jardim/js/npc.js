@@ -70,15 +70,21 @@ var NJ = (window.NJ = window.NJ || {});
 
   N.gift = function (name) {
     const s = S();
-    const opts = ['str', 'pot', 'tom', 'sun', 'pum', 'gra', 'cab', 'f', 'c', 'a', 'egg', 'milk', 'gem'].filter((k) => (s.inv[k] || 0) > 0);
+    const likes = D.LIKES[name] || [];
+    const opts = Object.keys(s.inv).filter((k) => (s.inv[k] || 0) > 0 && D.IT[k] && k.indexOf('S_') !== 0);
     if (!opts.length) return NJ.ui.say(name + ' ' + N.hearts(s.fr[name]), ['Ai, você não tem nada pra me dar… mas só de te ver já me alegra! 💜']);
-    const best = { gem: 40, milk: 30, egg: 20 }[opts[0]] || 20;
-    const k = opts.reduce((a, b) => ((D.IT[b].s || 0) > (D.IT[a].s || 0) ? b : a));
+    // prefere o presente favorito do morador; senão, dá o item mais valioso
+    const fav = opts.find((k) => likes.indexOf(k) > -1);
+    const k = fav || opts.reduce((a, b) => ((D.IT[b].s || 0) > (D.IT[a].s || 0) ? b : a));
+    const liked = likes.indexOf(k) > -1;
+    const base = k === 'gem' ? 40 : k === 'milk' ? 30 : k === 'egg' ? 20 : 20;
     s.inv[k]--; if (s.inv[k] <= 0) delete s.inv[k];
-    s.fr[name] = (s.fr[name] || 0) + best; s.frD[name] = s.day;
-    NJ.fx(s.px, s.py - 14, D.IT[k].e); NJ.audio.chord([784, 988]);
+    s.fr[name] = (s.fr[name] || 0) + (liked ? base * 2 : base); s.frD[name] = s.day;
+    NJ.fx(s.px, s.py - 14, D.IT[k].e); NJ.audio.chord(liked ? [784, 988, 1175] : [784, 988]);
     NJ.prog.check(); NJ.state.save();
-    NJ.ui.say(name + ' ' + N.hearts(s.fr[name]), ['Ooh! ' + D.IT[k].e + ' ' + D.IT[k].n + ' pra mim? Adorei! 💗']);
+    NJ.ui.say(name + ' ' + N.hearts(s.fr[name]), [liked
+      ? '😍 ' + D.IT[k].e + ' <b>' + D.IT[k].n + '</b>?! É o meu <b>presente favorito</b>! Você me conhece de verdade! 💗💗'
+      : 'Ooh! ' + D.IT[k].e + ' ' + D.IT[k].n + ' pra mim? Adorei! 💗']);
   };
 
   const events = {

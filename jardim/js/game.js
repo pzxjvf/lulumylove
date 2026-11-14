@@ -428,11 +428,13 @@ var NJ = (window.NJ = window.NJ || {});
       } else wt = 0;
     }
     // clima: trovões, clarões e respingos de chuva
-    if (NJ.loc === 'world' && S.rain) {
-      boltT -= dt;
-      if (boltT <= 0) { boltT = U.R(8, 20); flash = 0.55; NJ.audio.thunder(); }
+    if (NJ.loc === 'world' && (S.wx === 'rain' || S.wx === 'storm')) {
       rainT -= dt;
-      if (rainT <= 0) { rainT = U.R(0.03, 0.12); NJ.splash(S.px + U.R(-VW / 2, VW / 2), S.py + U.R(-VH / 2, VH / 2)); }
+      if (rainT <= 0) { rainT = S.wx === 'storm' ? U.R(0.02, 0.07) : U.R(0.05, 0.16); NJ.splash(S.px + U.R(-VW / 2, VW / 2), S.py + U.R(-VH / 2, VH / 2)); }
+    }
+    if (NJ.loc === 'world' && S.wx === 'storm') {
+      boltT -= dt;
+      if (boltT <= 0) { boltT = U.R(6, 16); flash = 0.6; NJ.audio.thunder(); }
     }
     if (flash > 0) flash -= dt;
     if (NJ.loc === 'cave') NJ.mine.step(dt);
@@ -590,8 +592,48 @@ var NJ = (window.NJ = window.NJ || {});
     // pesca
     if (NJ.fish.active) NJ.fish.draw(g, cx, cy);
 
-    // chuva
-    if (!cave && S.rain) { g.fillStyle = '#bcd8ffaa'; for (let i = 0; i < 80; i++) g.fillRect(((i * 47 + t * 40) % VW) | 0, ((i * 31 + t * 220) % VH) | 0, 1, 4); }
+    // clima (chuva, tempestade, neve, neblina e arco-íris)
+    if (!cave) {
+      const wx = S.wx || 'clear';
+      if (wx === 'rain' || wx === 'storm') {
+        const heavy = wx === 'storm', n = heavy ? 170 : 90;
+        g.fillStyle = heavy ? '#a6c6f0cc' : '#bcd8ffaa';
+        for (let i = 0; i < n; i++) {
+          const x = ((i * 47 + t * (heavy ? 90 : 45)) % VW) | 0;
+          const y = ((i * 31 + t * (heavy ? 340 : 240)) % VH) | 0;
+          g.fillRect(x, y, 1, heavy ? 6 : 4);
+        }
+      }
+      if (wx === 'snow') {
+        g.fillStyle = '#ffffffdd';
+        for (let i = 0; i < 100; i++) {
+          const x = ((i * 53 + Math.sin(t * 0.8 + i * 1.7) * 14 + t * 12) % VW) | 0;
+          const y = ((i * 37 + t * 46) % VH) | 0;
+          const s = (i % 3) + 1;
+          g.fillRect(x, y, s, s);
+        }
+      }
+      if (wx === 'fog') {
+        const fg2 = g.createLinearGradient(0, 0, 0, VH);
+        fg2.addColorStop(0, 'rgba(206,214,224,.62)');
+        fg2.addColorStop(0.5, 'rgba(216,222,230,.42)');
+        fg2.addColorStop(1, 'rgba(198,208,220,.68)');
+        g.fillStyle = fg2; g.fillRect(0, 0, VW, VH);
+        g.globalAlpha = 0.1; g.fillStyle = '#fff';
+        for (let i = 0; i < 5; i++) { const yy = ((i * 47 + Math.sin(t * 0.25 + i) * 12 + VH) % VH) | 0; g.fillRect(0, yy, VW, 7); }
+        g.globalAlpha = 1;
+      }
+      if (wx === 'rainbow') {
+        const rcx = VW * 0.5, rcy = VH * 0.98, R = Math.min(VW, VH) * 0.72;
+        const cols = ['#ff5a5a', '#ffa14a', '#ffe14a', '#5ae06a', '#4ab6ff', '#8a6aff'];
+        g.globalAlpha = 0.32; g.lineWidth = Math.max(2, SC);
+        cols.forEach((c, i) => {
+          g.strokeStyle = c; g.beginPath();
+          g.arc(rcx, rcy, R - i * g.lineWidth, Math.PI, 2 * Math.PI); g.stroke();
+        });
+        g.globalAlpha = 1;
+      }
+    }
 
     // dica de interação: ícone flutuante no que está logo à frente
     if (!cave && !UI.dlg && !UI.pOpen && !UI.creating && !NJ.buildMode && !NJ.fish.active && !NJ.inter.isOpen()) {
@@ -619,7 +661,7 @@ var NJ = (window.NJ = window.NJ || {});
     }
 
     // borboletas de dia
-    if (!cave && dkv() < 0.35) for (const f of BF) {
+    if (!cave && dkv() < 0.35 && !S.rain && S.wx !== 'fog') for (const f of BF) {
       const bx = f.x + Math.sin(t * 0.5 + f.p) * 30 - cx, by = f.y + Math.cos(t * 0.4 + f.p * 1.3) * 22 - cy;
       if (bx < -6 || by < -6 || bx > VW + 6 || by > VH + 6) continue;
       const o = Math.abs(Math.sin(t * 10 + f.p)) < 0.5 ? 2 : -2;
@@ -628,7 +670,7 @@ var NJ = (window.NJ = window.NJ || {});
 
     // iluminação / noite
     const hh = hour();
-    const k = cave ? 0.78 : Math.max(dkv(), S.rain ? 0.25 : 0);
+    const k = cave ? 0.78 : Math.max(dkv(), S.rain ? 0.25 : S.wx === 'fog' ? 0.22 : 0);
     // crepúsculo (amanhecer / pôr do sol) aquece a cena
     const dusk = cave ? 0 : (hh >= 16 && hh < 20) ? 1 - Math.abs(hh - 18) / 2 : (hh >= 5 && hh < 8) ? 1 - Math.abs(hh - 6.5) / 1.5 : 0;
     if (k > 0.02) {
@@ -802,12 +844,14 @@ var NJ = (window.NJ = window.NJ || {});
     readBk: (b, k) => {
       const S = NJ.S, bk = D.BOOKS.find((x) => x.id === k);
       if (!bk) return;
+      if (S.bkD === S.day) { NJ.audio.beep(200); UI.toast('📖 Você já leu um livro hoje. Volte amanhã!'); return; }
       const first = !S.st['bk_' + bk.id];
+      S.bkD = S.day;
       S.st['bk_' + bk.id] = 1;
       if (first && bk.sk) NJ.prog.xp(bk.sk, bk.xp);
       NJ.audio.beep(640); NJ.state.save();
       UI.closeP();
-      UI.say(bk.e + ' ' + bk.n, [bk.d + (first && bk.sk ? ' <br><b>(você aprendeu ' + bk.xp + ' de XP!)</b>' : '')]);
+      UI.say(bk.e + ' ' + bk.n, [bk.d + (first && bk.sk ? ' <br><b>(você aprendeu ' + bk.xp + ' de XP!)</b>' : '') + (first ? '' : ' <br><b>(relembrando…)</b>'), '📖 Uma leitura por dia — a próxima fica para amanhã.']);
     },
     save: () => { NJ.state.save(); UI.toast('💾 Jogo salvo'); UI.closeP(); },
     reset: () => {

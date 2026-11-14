@@ -87,7 +87,7 @@ var NJ = (window.NJ = window.NJ || {});
     NJ.econ.add('stone', 1);
     NJ.S.st.stone = (NJ.S.st.stone || 0) + 1;
     NJ.prog.xp('mining', 4);
-    if (rock.ore) { NJ.econ.add(rock.ore, 1); if (rock.ore == 'gem') NJ.S.st.gem = (NJ.S.st.gem || 0) + 1; }
+    if (rock.ore) { NJ.econ.add(rock.ore, 1); NJ.S.st[rock.ore] = (NJ.S.st[rock.ore] || 0) + 1; }
     NJ.fx(tx * T + 8, ty * T, rock.ore ? D.IT[rock.ore].e : '🪨');
     NJ.audio.beep(rock.ore == 'gem' ? 1100 : 260);
     NJ.prog.check(); NJ.state.save();

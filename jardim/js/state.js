@@ -7,10 +7,10 @@ var NJ = (window.NJ = window.NJ || {});
   ST.fresh = () => ({
     v: 2, name: '', px: 152, py: 182, d: 0, coins: 80,
     day: 1, season: 'spring', year: 1, min: 360,
-    rain: false, ev: '', water: 12, tool: 0, seedSel: null,
+    rain: false, ev: '', wx: 'clear', water: 12, tool: 0, seedSel: null,
     till: {}, crops: {}, fg: [], inv: { S_str: 3 }, st: {}, q: {}, built: {}, houses: [],
     animals: [], fr: {}, frD: {}, greetD: {}, wish: 0, potD: 0, dstat: null,
-    dq: [], dqD: 0, buff: null, mach: {},
+    dq: [], dqD: 0, buff: null, mach: {}, bkD: 0,
     skills: { farming: 0, foraging: 0, fishing: 0, mining: 0 }, ach: {}, seen: {},
     pet: { k: 0, c: 0, name: '', h: 0, x: 132, y: 182, d: 0, f: 0, follow: 0 },
     ch: { skin: 1, hair: 1, hs: 0, out: 0, os: 0, c2: 7, acc: 1 }
@@ -28,6 +28,7 @@ var NJ = (window.NJ = window.NJ || {});
     merged.seen = s.seen || {};
     merged.pet = Object.assign(f.pet, s.pet || {});
     merged.dq = s.dq || []; merged.mach = s.mach || {};
+    if (!s.wx) merged.wx = s.rain ? 'rain' : 'clear';
     return merged;
   };
   // "dead" = o jogador zerou o progresso; a partir daí não salvamos mais nada
@@ -75,11 +76,16 @@ var NJ = (window.NJ = window.NJ || {});
       W.spawnFG();
       NJ.audio.chord([392, 523, 659]);
     }
-    // clima e eventos
-    S.rain = Math.random() < (S.season === 'spring' ? 0.28 : S.season === 'winter' ? 0.3 : 0.16);
+    // clima do dia (com pesos por estação) e eventos
+    const WXP = D.WXW[S.season] || D.WXW.spring;
+    const rr = Math.random();
+    let acc = 0, wx = 'clear';
+    for (const id in WXP) { acc += WXP[id]; if (rr <= acc) { wx = id; break; } }
+    S.wx = wx;
+    S.rain = wx === 'rain' || wx === 'storm' || wx === 'snow';
     if (S.rain) for (const k in S.till) S.till[k] = 1;
     const r = Math.random();
-    S.ev = S.rain ? 'rain' : r < 0.1 ? 'star' : r < 0.22 ? 'market' : r < 0.26 ? 'spirit' : '';
+    S.ev = S.rain ? '' : wx === 'rainbow' ? '' : r < 0.1 ? 'star' : r < 0.22 ? 'market' : r < 0.26 ? 'spirit' : '';
     S.min = 360; S.water = S.rain ? 20 : 12; S.wish = 0;
     W.growTree(); W.growTree(); W.spawnFG();
     NJ.farm && NJ.farm.onNewDay && NJ.farm.onNewDay();
@@ -88,7 +94,10 @@ var NJ = (window.NJ = window.NJ || {});
     NJ.extra && NJ.extra.onNewDay && NJ.extra.onNewDay();
     if (S.pet.h >= 60) { S.pet.h = 0; const s = NJ.util.pick(['S_str', 'S_pot', 'S_tom', 'wd']); NJ.econ.add(s, 1); setTimeout(() => NJ.ui.toast('🐾 ' + (S.pet.name || 'Seu pet') + ' trouxe ' + D.IT[s].e + ' ' + D.IT[s].n + '!'), 500); }
     ST.save(); ST.snap();
-    NJ.ui.toast(S.rain ? 'Amanheceu chovendo 🌧️ — as plantas agradecem' : S.ev == 'star' ? '✨ Chuva de estrelas hoje à noite!' : S.ev == 'market' ? '🎪 Dia de feira na loja (-20%)!' : S.ev == 'spirit' ? '🌟 Espíritos do vale abençoaram a fazenda!' : 'Um novo dia começou ☀️');
+    const wxT = D.WX[S.wx] || D.WX.clear;
+    NJ.ui.toast((S.rain ? wxT.e + ' ' + wxT.n + ' — as plantas agradecem' : wxT.e + ' ' + wxT.n)
+      + (S.ev == 'star' ? ' · ✨ Chuva de estrelas hoje!' : S.ev == 'market' ? ' · 🎪 Feira na loja (-20%)!' : S.ev == 'spirit' ? ' · 🌟 Espíritos abençoaram a fazenda!' : ''));
+    if (S.wx === 'heat') setTimeout(() => NJ.ui.toast('🔥 Onda de calor! Regue as plantas com atenção.'), 2600);
     if (auto) NJ.ui.say('Narrador', ['Você adormeceu de cansaço… um novo dia começa. ☀️']);
     else setTimeout(() => NJ.ui.say('🌙 Resumo do dia ' + ended, [recap.length ? recap.join(' · ') : 'Um dia tranquilo no vale. 💜', 'Bom dia! Dia ' + S.day + ' começa agora ☀️']), 350);
   };

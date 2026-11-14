@@ -8,6 +8,23 @@ var NJ = (window.NJ = window.NJ || {});
   D.SEASON_PT = { spring: 'Primavera', summer: 'Verão', fall: 'Outono', winter: 'Inverno' };
   D.SEASON_E = { spring: '🌸', summer: '☀️', fall: '🍂', winter: '❄️' };
 
+  // ---------- clima ----------
+  D.WX = {
+    clear: { n: 'Céu limpo', e: '☀️', d: 'Um dia calmo no vale.' },
+    rain: { n: 'Chuva', e: '🌧️', d: 'A chuva rega a fazenda sozinha.' },
+    storm: { n: 'Tempestade', e: '⛈️', d: 'Chuva forte, trovões e clarões.' },
+    fog: { n: 'Neblina', e: '🌫️', d: 'O vale amanhece enevoado.' },
+    rainbow: { n: 'Arco-íris', e: '🌈', d: 'Dia de sorte — melhores peixes e minérios!' },
+    heat: { n: 'Onda de calor', e: '🔥', d: 'O sol castiga; plantas pedem mais água.' },
+    snow: { n: 'Nevasca', e: '🌨️', d: 'A neve cobre o vale e rega as plantinhas.' }
+  };
+  D.WXW = {
+    spring: { clear: 0.52, rain: 0.26, storm: 0.07, fog: 0.07, rainbow: 0.08 },
+    summer: { clear: 0.56, rain: 0.12, storm: 0.1, heat: 0.14, rainbow: 0.08 },
+    fall: { clear: 0.5, rain: 0.2, storm: 0.06, fog: 0.12, rainbow: 0.12 },
+    winter: { clear: 0.42, snow: 0.3, fog: 0.1, storm: 0.05, rainbow: 0.13 }
+  };
+
   // paletas por estação: g = tons de grama, tree = copa das árvores, snow = neve
   D.PAL = {
     spring: { g: ['#4c9a45', '#489441', '#5fb257', '#3a7d36'], speck: ['#5fb257', '#3a7d36'], flower: 0.07, tree: ['#2f7a3c', '#3f9a4c', '#6ccf6a'], leaf: '#ff9ec8' },
@@ -60,7 +77,11 @@ var NJ = (window.NJ = window.NJ || {});
     { id: 'trig', n: 'Trigo', e: '🌾', color: '#e8c46a', seasons: ['spring', 'summer'], cost: 12, sell: 26, days: 5 },
     { id: 'lav', n: 'Lavanda', e: '💜', color: '#b98ae0', seasons: ['spring', 'summer'], cost: 20, sell: 46, days: 6, flower: 1 },
     { id: 'mel', n: 'Melancia', e: '🍉', color: '#4fb37a', seasons: ['summer'], cost: 24, sell: 56, days: 8 },
-    { id: 'gro', n: 'Groselha', e: '🍒', color: '#c0392b', seasons: ['winter'], cost: 18, sell: 44, days: 7 }
+    { id: 'gro', n: 'Groselha', e: '🍒', color: '#c0392b', seasons: ['winter'], cost: 18, sell: 44, days: 7 },
+    { id: 'man', n: 'Manjericão', e: '🌿', color: '#5fbf6f', seasons: ['spring', 'summer'], cost: 14, sell: 30, days: 4 },
+    { id: 'pep', n: 'Pepino', e: '🥒', color: '#4fae52', seasons: ['summer'], cost: 18, sell: 40, days: 6 },
+    { id: 'sug', n: 'Cana-de-açúcar', e: '🎋', color: '#9acb5a', seasons: ['summer', 'fall'], cost: 22, sell: 50, days: 7 },
+    { id: 'gar', n: 'Alho', e: '🧄', color: '#f0ead8', seasons: ['fall', 'winter'], cost: 14, sell: 34, days: 5 }
   ];
   const CROPMAP = (D.CROPMAP = {});
   D.CROPS.forEach((c) => {
@@ -116,6 +137,13 @@ var NJ = (window.NJ = window.NJ || {});
   it('juice', 'Suco de uva', '🧃', { s: 88 });
   it('butter', 'Manteiga', '🧈', { s: 120 });
   it('oil', 'Óleo de girassol', '🫙', { s: 140 });
+  it('feather', 'Pena', '🪶', { s: 30 });
+  it('gmlk', 'Leite de cabra', '🥛', { s: 96 });
+  it('truffle', 'Trufa', '🍄', { s: 220 });
+  it('flour', 'Farinha', '🥣', { s: 22 });
+  it('gcheese', 'Queijo de cabra', '🧀', { s: 240 });
+  it('perfume', 'Perfume de flores', '🧴', { s: 190 });
+  it('candy', 'Bala de mel', '🍬', { s: 120 });
 
   // pratos cozinhados: comem e dão um efeito temporário (buff)
   it('salad', 'Salada fresca', '🥗', { s: 42 });
@@ -123,6 +151,8 @@ var NJ = (window.NJ = window.NJ || {});
   it('roast', 'Peixe assado', '🍤', { s: 78 });
   it('pie', 'Torta de amora', '🥧', { s: 96 });
   it('tea', 'Chá de lavanda', '🍵', { s: 48 });
+  it('curry', 'Curry de legumes', '🍛', { s: 112 });
+  it('smoothie', 'Smoothie frutado', '🥤', { s: 92 });
 
   D.BUFFS = {
     speed: { n: 'Velocidade', e: '⚡', d: 'anda mais rápido' },
@@ -135,7 +165,9 @@ var NJ = (window.NJ = window.NJ || {});
     { id: 'soup', need: { cab: 2, c: 2 }, buff: { k: 'vigor', t: 240 } },
     { id: 'roast', need: { p1: 2 }, buff: { k: 'luck', t: 180 } },
     { id: 'pie', need: { a: 3, trig: 2 }, buff: { k: 'vigor', t: 300 } },
-    { id: 'tea', need: { lav: 2, f: 1 }, buff: { k: 'luck', t: 240 } }
+    { id: 'tea', need: { lav: 2, f: 1 }, buff: { k: 'luck', t: 240 } },
+    { id: 'curry', need: { pep: 2, gar: 1, tom: 1 }, buff: { k: 'luck', t: 210 } },
+    { id: 'smoothie', need: { sug: 1, str: 2, milk: 1 }, buff: { k: 'speed', t: 260 } }
   ];
 
   // receitas de artesanato (máquina simples)
@@ -148,7 +180,11 @@ var NJ = (window.NJ = window.NJ || {});
     { id: 'cake', n: 'Bolo', e: '🎂', need: { egg: 2, milk: 1, trig: 1 }, out: 'cake', outN: 1, time: 80 },
     { id: 'juice', n: 'Suco de uva', e: '🧃', need: { gra: 2 }, out: 'juice', outN: 1, time: 40 },
     { id: 'butter', n: 'Manteiga', e: '🧈', need: { milk: 2 }, out: 'butter', outN: 1, time: 35 },
-    { id: 'oil', n: 'Óleo de girassol', e: '🫙', need: { sun: 2 }, out: 'oil', outN: 1, time: 45 }
+    { id: 'oil', n: 'Óleo de girassol', e: '🫙', need: { sun: 2 }, out: 'oil', outN: 1, time: 45 },
+    { id: 'flour', n: 'Farinha', e: '🥣', need: { trig: 2 }, out: 'flour', outN: 1, time: 25 },
+    { id: 'gcheese', n: 'Queijo de cabra', e: '🧀', need: { gmlk: 1 }, out: 'gcheese', outN: 1, time: 45 },
+    { id: 'perfume', n: 'Perfume de flores', e: '🧴', need: { f: 4, lav: 1 }, out: 'perfume', outN: 1, time: 50 },
+    { id: 'candy', n: 'Bala de mel', e: '🍬', need: { sug: 2, f: 1 }, out: 'candy', outN: 1, time: 30 }
   ];
 
   // livros da biblioteca: ler rende uma dica e um pouco de experiência (uma vez cada)
@@ -158,15 +194,21 @@ var NJ = (window.NJ = window.NJ || {});
     { id: 'fish', n: 'Segredos do Lago', e: '🎣', sk: 'fishing', xp: 12, d: 'Fique de frente para a água, lance e segure para subir a barra quando o peixe morder. À noite e nas noites de estrela aparecem peixes raros.' },
     { id: 'mine', n: 'Veias da Montanha', e: '⛏️', sk: 'mining', xp: 14, d: 'Na mina ao norte, quebre pedras com a picareta ⚒️. Cada andar mais fundo guarda minérios melhores — cobre, ferro, ouro e até gemas 💎.' },
     { id: 'pet', n: 'Como agradar um pet', e: '🐾', d: 'Seu bichinho adora carinho 💗, petisco 🍖, brincadeira 🎾 e banho 🛁. Quanto mais feliz, mais ele ajuda e traz achadinhos.' },
-    { id: 'valley', n: 'Histórias do Vale', e: '📖', d: 'Há oito moradores pelo vale. Conversar e presentear enche os corações 💗 e abre novas missões, receitas e segredos.' }
+    { id: 'valley', n: 'Histórias do Vale', e: '📖', d: 'Há oito moradores pelo vale. Conversar e presentear enche os corações 💗 e abre novas missões, receitas e segredos.' },
+    { id: 'animals', n: 'Criação de bichos', e: '🐐', sk: 'farming', xp: 14, d: 'Além de galinhas e vacas, você pode criar perus (penas 🪶), cabras (leite de cabra 🥛) e porcos (trufas 🍄). Compre feno, alimente todo dia e recolha de manhã.' },
+    { id: 'weather', n: 'Diário do tempo', e: '🌈', sk: 'foraging', xp: 12, d: 'Chuva, tempestade, neblina, onda de calor, nevasca e arco-íris se revezam no vale. Chuva e neve regam tudo sozinhas; o arco-íris dá sorte o dia inteiro. Olhe o clima no topo da tela!' },
+    { id: 'giftbook', n: 'Linguagem dos presentes', e: '🎁', d: 'Cada morador tem um presente favorito. Acertar o gosto dele dá corações em dobro — converse e descubra o que cada um ama!' }
   ];
 
   // ---------- animais ----------
   D.ANIM = [
     { id: 'chicken', n: 'Galinha', e: '🐔', cost: 800, prod: 'egg', every: 1, house: 'coop', c: ['#f2f2f2', '#e8d0a0', '#c98a4a'] },
     { id: 'duck', n: 'Pato', e: '🦆', cost: 1100, prod: 'egg', every: 1, house: 'coop', c: ['#f4f0e6', '#e8e0c8', '#c9b88a'] },
+    { id: 'turkey', n: 'Peru', e: '🦃', cost: 900, prod: 'feather', every: 1, house: 'coop', c: ['#8a5a3a', '#f2e8e0', '#5a3a22'] },
     { id: 'cow', n: 'Vaca', e: '🐄', cost: 1500, prod: 'milk', every: 1, house: 'barn', c: ['#f4f4f4', '#e0c9a8', '#8a6a4a'] },
-    { id: 'sheep', n: 'Ovelha', e: '🐑', cost: 2400, prod: 'wool', every: 3, house: 'barn', c: ['#f4f0e6', '#e0d8c8', '#c8b8a0'] }
+    { id: 'goat', n: 'Cabra', e: '🐐', cost: 2000, prod: 'gmlk', every: 1, house: 'barn', c: ['#efe6d2', '#c9b58a', '#6b5a3a'] },
+    { id: 'sheep', n: 'Ovelha', e: '🐑', cost: 2400, prod: 'wool', every: 3, house: 'barn', c: ['#f4f0e6', '#e0d8c8', '#c8b8a0'] },
+    { id: 'pig', n: 'Porco', e: '🐷', cost: 2800, prod: 'truffle', every: 2, house: 'barn', c: ['#f2b0b8', '#e89aa4', '#c87a86'] }
   ];
   const ANIMMAP = (D.ANIMMAP = {}); D.ANIM.forEach((a) => (ANIMMAP[a.id] = a));
 
@@ -210,8 +252,9 @@ var NJ = (window.NJ = window.NJ || {});
   const MACH = (D.MACH = []);
   const mach = (id, n, e, o) => { const b = Object.assign({ id, n, e, w: 0, c: 0, solid: 1, machine: 1 }, o); MACH.push(b); BL.push(b); BLM[b.id] = b; return b; };
   mach('keg', 'Barril', '🛢️', { w: 3, c: 10, out: ['wine', 'juice', 'oil'] });
-  mach('dairy', 'Laticínio', '🧈', { w: 4, c: 16, out: ['cheese', 'butter'] });
-  mach('stove', 'Fogão a lenha', '🍳', { w: 4, c: 18, out: ['bread', 'jam', 'cake'] });
+  mach('dairy', 'Laticínio', '🧈', { w: 4, c: 16, out: ['cheese', 'butter', 'gcheese'] });
+  mach('stove', 'Fogão a lenha', '🍳', { w: 4, c: 18, out: ['bread', 'jam', 'cake', 'candy'] });
+  mach('mill', 'Moinho', '🏭', { w: 6, c: 26, out: ['flour'] });
   const MACHMAP = (D.MACHMAP = {}); MACH.forEach((b) => (MACHMAP[b.id] = b));
 
   // ---------- moradores ----------
@@ -223,8 +266,19 @@ var NJ = (window.NJ = window.NJ || {});
     { n: 'Rosa', x: 296, y: 272, o: { skin: 0, hair: 7, hs: 2, out: 8, os: 4, c2: 3, acc: 5 } },
     { n: 'Bento', x: 1344, y: 240, miner: 1, o: { skin: 3, hair: 0, hs: 0, out: 6, os: 1, c2: 6, acc: 0 } },
     { n: 'Ivo', x: 936, y: 480, fish: 1, o: { skin: 2, hair: 3, hs: 0, out: 4, os: 0, c2: 2, acc: 7 } },
-    { n: 'Vera', x: 280, y: 744, o: { skin: 0, hair: 5, hs: 6, out: 1, os: 2, c2: 4, acc: 3 } }
+    { n: 'Vera', x: 280, y: 744, o: { skin: 0, hair: 5, hs: 6, out: 1, os: 2, c2: 4, acc: 3 } },
+    { n: 'Nara', x: 312, y: 232, o: { skin: 1, hair: 4, hs: 1, out: 8, os: 0, c2: 3, acc: 1 } },
+    { n: 'Dora', x: 264, y: 232, o: { skin: 0, hair: 7, hs: 2, out: 11, os: 2, c2: 8, acc: 4 } },
+    { n: 'Zeca', x: 392, y: 232, o: { skin: 2, hair: 3, hs: 5, out: 12, os: 1, c2: 2, acc: 0 } }
   ];
+
+  // presentes favoritos: acertar o gosto rende corações em dobro
+  D.LIKES = {
+    Lia: ['tul', 'sun', 'perfume'], Teo: ['p3', 'p4', 'roast'], Mira: ['f', 'dand', 'lav'],
+    Nino: ['a', 'candy', 'c'], Rosa: ['str', 'tea', 'cake'], Bento: ['gem', 'ir', 'go'],
+    Ivo: ['p2', 'p1', 'juice'], Vera: ['cry', 'lav', 'tul'],
+    Nara: ['candy', 'juice', 'str'], Dora: ['soup', 'pie', 'gcheese'], Zeca: ['wine', 'perfume', 'cheese']
+  };
 
   // ---------- missões ----------
   D.Q = [
@@ -243,7 +297,15 @@ var NJ = (window.NJ = window.NJ || {});
     { id: 12, npc: 'Bento', t: 'Quebrar 10 pedras na mina', k: 'stone', n: 10, r: 160, ask: 'Já foi na mina ao norte? Quebra 10 pedras e me mostra a força!', ok: 'Tá vendo? Você nasceu pra isso!' },
     { id: 13, npc: 'Rosa', t: 'Trazer 3 ferros ⚙️', k: 'ir', n: 3, r: 240, req: 12, ask: 'Meu fogão tá caído… consegue 3 ferros na mina?', ok: 'Que maravilha! Agora posso assar de novo.' },
     { id: 14, npc: 'Mira', t: 'Trazer uma Gema 💎', k: 'gem', n: 1, r: 260, req: 12, ask: 'Uma gema brilharia lindo no meu colar. Acha uma?', ok: 'É a coisa mais bonita que já vi!' },
-    { id: 15, npc: 'Lia', t: 'Colher 10 plantações', k: 'harv', n: 10, r: 300, req: 2, ask: 'Você já é uma fazendeira e tanto! Me prova com 10 colheitas?', ok: 'Inacreditável! Vou fazer um banquete.' }
+    { id: 15, npc: 'Lia', t: 'Colher 10 plantações', k: 'harv', n: 10, r: 300, req: 2, ask: 'Você já é uma fazendeira e tanto! Me prova com 10 colheitas?', ok: 'Inacreditável! Vou fazer um banquete.' },
+    { id: 16, npc: 'Nara', t: 'Colher 3 girassóis 🌻', k: 'h_sun', n: 3, r: 130, ask: 'Oiê! Meu sonho é um buquê de girassóis! Acha 3 pra mim?', ok: 'Uhuu! Meu quarto vai ficar ensolarado!' },
+    { id: 17, npc: 'Dora', t: 'Trazer 5 ovos', k: 'egg', n: 5, r: 180, req: 11, ask: 'Querida, um galinheiro bem cuidado dá ovos que é uma beleza. Traz 5 pra vovó?', ok: 'Que ovos lindos! Já sei o que vou fazer no bolo.' },
+    { id: 18, npc: 'Zeca', t: 'Trazer 2 garrafas de vinho', k: 'wine', n: 2, r: 220, ask: 'Sou o músico do vale! Um vinho da sua fazenda cairia bem no meu violão. 🎻', ok: 'Saúde! Essa noite vai ter serenata no vale!' },
+    { id: 19, npc: 'Nara', t: 'Pescar 4 peixes', k: 'fish', n: 4, r: 140, req: 16, ask: 'Você sabe pescar? Quatro peixinhos e eu te mostro um segredo!', ok: 'Segredo: o seu pet adora peixe! Fala pra ele. 😉' },
+    { id: 20, npc: 'Dora', t: 'Trazer 3 queijos', k: 'cheese', n: 3, r: 230, req: 17, ask: 'Com leite se faz queijo — no laticínio, querida. Traz 3 pra mim?', ok: 'Maravilha! Uma tábua de queijos para a vizinhança inteira!' },
+    { id: 21, npc: 'Zeca', t: 'Achar 2 trufas', k: 'truffle', n: 2, r: 320, req: 18, ask: 'Dizem que um porco bem tratado fareja trufas… topa criar um?', ok: 'Que aroma! Isso é ouro do vale. 🌰' },
+    { id: 22, npc: 'Nara', t: 'Colher 6 forragens', k: 'forage', n: 6, r: 120, req: 19, ask: 'Vamos catar coisinhas pelo mato? Seis já bastam!', ok: 'Olha só que achados! Você é minha heroína!' },
+    { id: 23, npc: 'Dora', t: 'Trazer 4 ferros ⚙️', k: 'ir', n: 4, r: 270, req: 12, ask: 'Minha cozinha precisa de conserto. Consegue 4 ferros na mina?', ok: 'Prontinho! Agora o fogão tá firme e forte.' }
   ];
 
   // ---------- quadro de recados: missões diárias ----------
@@ -253,12 +315,15 @@ var NJ = (window.NJ = window.NJ || {});
     { k: 'fish', t: 'Pescar %n peixes', e: '🎣', min: 2, max: 4, r: 55 },
     { k: 'forage', t: 'Achar %n forragens', e: '🍄', min: 3, max: 7, r: 35 },
     { k: 'stone', t: 'Quebrar %n pedras', e: '⛏️', min: 4, max: 9, r: 55 },
-    { k: 'build', t: 'Construir %n pecinhas', e: '🔨', min: 2, max: 4, r: 65 }
+    { k: 'build', t: 'Construir %n pecinhas', e: '🔨', min: 2, max: 4, r: 65 },
+    { k: 'egg', t: 'Trazer %n ovos', e: '🥚', min: 2, max: 5, r: 60 },
+    { k: 'milk', t: 'Trazer %n leites', e: '🥛', min: 1, max: 3, r: 75 },
+    { k: 'craft', t: 'Fabricar %n produtos', e: '🧑‍🍳', min: 2, max: 4, r: 80 }
   ];
 
   // ---------- festival das estações (na praça, no meio da estação) ----------
   D.FEST_DAY = 14;
-  D.FEST_STOCK = ['S_cry', 'S_sun', 'S_tul', 'S_pum', 'gem', 'wine', 'cake', 'cheese', 'butter'];
+  D.FEST_STOCK = ['S_cry', 'S_sun', 'S_tul', 'S_pum', 'S_sug', 'gem', 'wine', 'cake', 'cheese', 'butter', 'gcheese', 'perfume'];
 
   // ---------- conversas ----------
   D.CH = {
@@ -269,7 +334,10 @@ var NJ = (window.NJ = window.NJ || {});
     Rosa: ['Um chá quentinho resolve quase tudo.', 'Corte madeira com o machado e construa à vontade, querida.'],
     Bento: ['A mina ao norte tem três andares… e mais fundo, coisa boa.', 'Picareta na mão e pedra no chão: é só quebrar!'],
     Ivo: ['O lago grande é fundo, viu? Dizem que tem peixe-lenda lá.', 'Fico na margem norte desde o amanhecer… a luz é linda aqui.'],
-    Vera: ['Cultivei cada uma dessas flores do prado. 🌷', 'Nada acalma mais que um campo cheio de cor, querida.']
+    Vera: ['Cultivei cada uma dessas flores do prado. 🌷', 'Nada acalma mais que um campo cheio de cor, querida.'],
+    Nara: ['Você viu o arco-íris? Eu pedi um desenho pra ele! 🌈', 'Um dia vou ter um girassol do tamanho da minha casa!'],
+    Dora: ['Devagar se vai longe, minha filha. ☕', 'Um chá, um bolo e uma boa conversa: pronto, o dia fica lindo.'],
+    Zeca: ['Toquei violão pra lua ontem — ela nem piscou. 🌙', 'Música boa precisa de vinho bom, eu sempre digo. 🎻']
   };
 
   // ---------- habilidades ----------
@@ -295,6 +363,12 @@ var NJ = (window.NJ = window.NJ || {});
     { id: 'build10', n: 'Arquiteta', d: 'Construa 10 pecinhas', e: '🔨', c: (S) => (S.st.build || 0) >= 10 },
     { id: 'friend', n: 'Alma do vale', d: 'Faça 5 amizades', e: '💗', c: (S) => Object.keys(S.fr || {}).filter((k) => S.fr[k] >= 40).length >= 5 },
     { id: 'season', n: 'Quatro estações', d: 'Viva todas as estações', e: '🍂', c: (S) => (S.st.seen || 0) >= 4 },
-    { id: 'millionaire', n: 'Fazendeira rica', d: 'Junte 5000 moedas', e: '👑', c: (S) => S.coins >= 5000 }
+    { id: 'millionaire', n: 'Fazendeira rica', d: 'Junte 5000 moedas', e: '👑', c: (S) => S.coins >= 5000 },
+    { id: 'goat', n: 'Ordenhadora', d: 'Tenha uma cabra no celeiro', e: '🐐', c: (S) => (S.animals || []).some((a) => a.id === 'goat') },
+    { id: 'cheese', n: 'Mestre queijeira', d: 'Faça um queijo de cabra', e: '🧀', c: (S) => (S.st.gcheese || 0) >= 1 },
+    { id: 'flour', n: 'Padeira do vale', d: 'Produza farinha no moinho', e: '🥣', c: (S) => (S.st.flour || 0) >= 1 },
+    { id: 'sweet', n: 'Dodói de açúcar', d: 'Faça balas de mel', e: '🍬', c: (S) => (S.st.candy || 0) >= 1 },
+    { id: 'bookworm', n: 'Ratinha de biblioteca', d: 'Leia todos os livros', e: '📚', c: (S) => D.BOOKS.every((b) => S.st['bk_' + b.id]) },
+    { id: 'family', n: 'Família do vale', d: 'Faça 8 amizades (40+ 💗)', e: '💞', c: (S) => Object.keys(S.fr || {}).filter((k) => S.fr[k] >= 40).length >= 8 }
   ];
 })();

@@ -63,12 +63,13 @@ var NJ = (window.NJ = window.NJ || {});
 
   // biblioteca: leitura de livros (dica + experiência, uma vez cada)
   UI.books = function () {
-    const s = S();
-    let h = '<h3>📖 Biblioteca</h3><p style="margin:2px 0"><small>Cada livro ensina uma dica e rende experiência na primeira leitura.</small></p>';
+    const s = S(), used = s.bkD === s.day;
+    let h = '<h3>📖 Biblioteca</h3><p style="margin:2px 0"><small>Cada livro ensina uma dica e rende experiência na primeira leitura.</small></p>' +
+      '<p><small>' + (used ? '✅ Você já leu um livro hoje — a biblioteca reabre amanhã. 🌙' : '📖 Você pode ler <b>1 livro</b> hoje.') + '</small></p>';
     D.BOOKS.forEach((b) => {
       const read = !!s.st['bk_' + b.id];
       const sk = b.sk ? D.SKILLS.find((x) => x.id === b.sk) : null;
-      h += '<div class="r"><span>' + b.e + ' <b>' + b.n + '</b><br><small>' + (read ? '✔️ lido' : '📕 não lido') + (sk ? ' · +' + b.xp + ' ' + sk.e + ' ' + sk.n : '') + '</small></span><button data-a="readBk" data-k="' + b.id + '">' + (read ? 'Reler' : 'Ler') + '</button></div>';
+      h += '<div class="r"><span>' + b.e + ' <b>' + b.n + '</b><br><small>' + (read ? '✔️ lido' : '📕 não lido') + (sk ? ' · +' + b.xp + ' ' + sk.e + ' ' + sk.n : '') + '</small></span><button data-a="readBk" data-k="' + b.id + '"' + (used ? ' disabled' : '') + '>' + (read ? 'Reler' : 'Ler') + '</button></div>';
     });
     h += '<div class="r"><span></span><button data-a="lib">📚 Abrir almanaque</button></div>';
     UI.panel(h, 'books');
@@ -120,7 +121,8 @@ var NJ = (window.NJ = window.NJ || {});
     const btn = (a, k, label) => '<button class="mb" data-a="' + a + '"' + (k != null ? ' data-k="' + k + '"' : '') + '>' + label + '</button>';
     UI.panel('<h3>☰ Menu</h3><div class="grid">' +
       btn('inv', null, '🎒 Mochila') + btn('qs', null, '📜 Missões') +
-      btn('daily', null, '📋 Recados') + btn('cook', null, '🍳 Cozinha') +
+      btn('daily', null, '📋 Recados') + btn('wx', null, '🌤️ Clima') +
+      btn('cook', null, '🍳 Cozinha') +
       btn('prog', null, '📈 Progresso') + btn('lib', null, '📚 Biblioteca') +
       btn('cl', null, '👗 Aparência') + btn('bd', null, '🔨 Construir') +
       btn('help', null, '❓ Como jogar') + btn('music', null, '🎵 Música') +
@@ -139,15 +141,17 @@ var NJ = (window.NJ = window.NJ || {});
       '<p><b>Ferramentas (1-7):</b> Enxada are a terra na fazenda; Regador rega; Sementes plantam; Vara pesca na água (minigame); Mão coleta; Machado corta árvore; Picareta só na mina.</p>' +
       '<p><b>Fazenda:</b> are → plante → regue todo dia. Plantas prontas aparecem com bolinhas — encoste e colha.</p>' +
       '<p><b>Estações:</b> cada cultura cresce em certas estações. A cada 28 dias muda a estação.</p>' +
-      '<p><b>Animais:</b> construa 🔨 um Galinheiro/Celeiro e compre bichos. Compre 🌾 Feno; eles produzem de manhã.</p>' +
+      '<p><b>Clima 🌤️:</b> veja no topo da tela. Chuva e neve regam a fazenda sozinhas; a tempestade traz trovões; a neblina cobre o vale; e num dia de 🌈 arco-íris peixes e minérios ficam melhores. Toque em 🌤️ Clima no menu.</p>' +
+      '<p><b>Animais:</b> construa 🔨 um Galinheiro/Celeiro e compre bichos (galinhas, patos, perus, vacas, cabras, ovelhas e porcos). Compre 🌾 Feno; eles produzem de manhã.</p>' +
       '<p><b>Construir (🔨 ou B):</b> escolha a peça, toque no chão para posicionar. Toque numa peça existente para <b>remover</b>. ESC sai do modo.</p>' +
       '<p><b>Mina:</b> suba ao norte, entre na mina, use a Picareta nas pedras. Desça pelas escadas ▼.</p>' +
       '<p><b>Cozinhar (🍳):</b> na sua casinha, faça pratos. Coma-os na 🎒 mochila para ganhar efeitos: ⚡ velocidade, 💪 vigor (dia mais devagar) e 🍀 sorte (peixes/minérios melhores).</p>' +
       '<p><b>Máquinas:</b> construa 🛢️ Barril, 🧈 Laticínio e 🍳 Fogão a lenha no modo 🔨. Coloque ingredientes e espere; toque para recolher o produto.</p>' +
       '<p><b>Recados (📋):</b> o quadro na praça dá 3 tarefas por dia — complete e recolha as moedas.</p>' +
       '<p><b>Festival 🎪:</b> a festa é na praça no dia 14 de cada estação, com concurso de pesca e mercado raro.</p>' +
+      '<p><b>Biblioteca 📖:</b> leia <b>1 livro por dia</b> — cada um ensina uma dica e dá experiência na primeira leitura.</p>' +
       '<p><b>Pet:</b> toque no seu bichinho para 💗 carinho, 🍖 petisco, 🎾 brincar, 🛁 banho e 🐾 seguir/parar de seguir.</p>' +
-      '<p><b>Presentes:</b> converse com moradores e presenteie para ganhar corações 💗.</p>' +
+      '<p><b>Presentes 🎁:</b> converse com moradores e presenteie para ganhar corações 💗. Cada um tem um <b>presente favorito</b> que rende corações em dobro.</p>' +
       '<p><b>Salvar:</b> automático. <b>Z</b> desfaz construção.</p>');
   };
 
@@ -188,8 +192,10 @@ var NJ = (window.NJ = window.NJ || {});
     const s = S(), h = Math.floor(s.min / 60) % 24;
     const loc = NJ.loc === 'cave' ? ' · ⛏️ Mina ' + NJ.mine.depth : '';
     const b = s.buff, buff = b && b.left > 0 ? ' · ' + D.BUFFS[b.k].e + ' ' + D.BUFFS[b.k].n + ' ' + Math.ceil(b.left) + 's' : '';
+    const wx = D.WX[s.wx] || D.WX.clear;
+    const ev = s.ev == 'star' ? ' ✨' : s.ev == 'market' ? ' 🎪' : s.ev == 'spirit' ? ' 🌟' : '';
     $('#hud').innerHTML = '💰 ' + s.coins + ' · ' + D.SEASON_E[s.season] + ' ' + D.SEASON_PT[s.season] + ' · 📅 Dia ' + s.day + ' · Ano ' + s.year +
-      '<br>🕒 ' + String(h).padStart(2, '0') + ':' + String(Math.floor(s.min % 60)).padStart(2, '0') + ' ' + (s.rain ? '🌧️' : s.ev == 'star' ? '✨' : s.ev == 'market' ? '🎪' : s.ev == 'spirit' ? '🌟' : '') + loc + buff;
+      '<br>🕒 ' + String(h).padStart(2, '0') + ':' + String(Math.floor(s.min % 60)).padStart(2, '0') + ' · ' + wx.e + ' ' + wx.n + ev + loc + buff;
   };
   UI.hb = function () {
     const s = S(), tb = $('#hb');
