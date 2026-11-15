@@ -386,6 +386,256 @@
         line-height: 1.4;
     }
 
+    /* ====== Botão de Parabéns (reabre a homenagem) ====== */
+    .congrats-reopen {
+        position: fixed;
+        top: 22px;
+        left: 22px;
+        z-index: 50;
+        background: linear-gradient(135deg, #ffd166, #ef476f);
+        color: #fff;
+        border: 1.5px solid rgba(255,255,255,0.4);
+        border-radius: 24px;
+        padding: 9px 16px;
+        font-family: "Nunito", sans-serif;
+        font-weight: 800;
+        font-size: 0.8em;
+        letter-spacing: 0.5px;
+        cursor: pointer;
+        box-shadow: 0 10px 26px rgba(90, 20, 100, 0.45);
+        transition: transform 0.2s, box-shadow 0.2s;
+    }
+    .congrats-reopen:hover {
+        transform: translateY(-2px) scale(1.03);
+        box-shadow: 0 14px 34px rgba(90, 20, 100, 0.55);
+    }
+
+    /* ====== Modal de Parabéns (TCC) ====== */
+    .congrats-overlay {
+        position: fixed;
+        inset: 0;
+        z-index: 21000;
+        display: none;
+        align-items: center;
+        justify-content: center;
+        padding: 24px;
+        background: radial-gradient(circle at center, rgba(122, 0, 255, 0.72), rgba(10, 0, 30, 0.94));
+        backdrop-filter: blur(14px);
+        animation: fadeIn 0.4s ease;
+        overflow: hidden;
+    }
+    .congrats-overlay.open { display: flex; }
+
+    .confetti { position: absolute; inset: 0; overflow: hidden; pointer-events: none; z-index: 1; }
+    .confetti span {
+        position: absolute;
+        top: -8%;
+        font-size: 1.5rem;
+        animation: confettiFall linear infinite;
+        opacity: 0.9;
+    }
+    @keyframes confettiFall {
+        0%   { transform: translateY(-10%) rotate(0deg); opacity: 0; }
+        10%  { opacity: 1; }
+        100% { transform: translateY(112vh) rotate(540deg); opacity: 0.85; }
+    }
+
+    .congrats-modal {
+        position: relative;
+        z-index: 2;
+        background: linear-gradient(160deg, #fffdf5 0%, #ffeef8 45%, #f0e6ff 100%);
+        border: 3px solid rgba(255, 209, 102, 0.85);
+        border-radius: 30px;
+        max-width: 560px;
+        width: 100%;
+        max-height: 88vh;
+        box-shadow:
+            0 35px 90px rgba(70, 10, 110, 0.6),
+            0 0 0 8px rgba(255, 255, 255, 0.12);
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+        animation: congratsPop 0.7s cubic-bezier(.2,1.3,.5,1) both;
+    }
+    @keyframes congratsPop {
+        from { opacity: 0; transform: scale(0.8) translateY(26px); }
+        to   { opacity: 1; transform: scale(1) translateY(0); }
+    }
+
+    .congrats-close {
+        position: absolute;
+        top: 14px;
+        right: 16px;
+        width: 38px;
+        height: 38px;
+        border-radius: 50%;
+        background: rgba(255,255,255,0.85);
+        border: 1.5px solid rgba(199,125,255,0.35);
+        color: #7b2cbf;
+        font-size: 1.1em;
+        cursor: pointer;
+        transition: 0.22s;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 5;
+    }
+    .congrats-close:hover {
+        background: #ef476f;
+        color: #fff;
+        border-color: #ef476f;
+        transform: rotate(90deg);
+    }
+
+    .congrats-header {
+        text-align: center;
+        padding: 30px 28px 18px 28px;
+        background: linear-gradient(135deg, rgba(255,209,102,0.3), rgba(239,71,111,0.18) 45%, rgba(199,125,255,0.28));
+        border-bottom: 2px dashed rgba(199,125,255,0.3);
+    }
+    .congrats-cap {
+        font-size: 3.6em;
+        line-height: 1;
+        display: inline-block;
+        animation: capBounce 1.8s ease-in-out infinite;
+        filter: drop-shadow(0 6px 12px rgba(199,125,255,0.45));
+    }
+    @keyframes capBounce {
+        0%, 100% { transform: translateY(0) rotate(-4deg); }
+        50%      { transform: translateY(-9px) rotate(4deg); }
+    }
+    .congrats-title {
+        font-family: "Dancing Script", cursive;
+        font-size: 2.5em;
+        line-height: 1.05;
+        margin-top: 6px;
+        background: linear-gradient(135deg, #ef476f, #9d4edd);
+        -webkit-background-clip: text;
+        background-clip: text;
+        -webkit-text-fill-color: transparent;
+        font-weight: 700;
+    }
+    .congrats-sub {
+        font-family: "Nunito", sans-serif;
+        font-size: 0.72em;
+        font-weight: 800;
+        letter-spacing: 2.6px;
+        text-transform: uppercase;
+        color: #a06cd5;
+        margin-top: 8px;
+    }
+
+    .congrats-body {
+        padding: 22px 28px;
+        overflow-y: auto;
+        scrollbar-width: thin;
+        scrollbar-color: rgba(199,125,255,0.45) transparent;
+    }
+    .congrats-body::-webkit-scrollbar { width: 8px; }
+    .congrats-body::-webkit-scrollbar-thumb { background: rgba(199,125,255,0.5); border-radius: 8px; }
+
+    .congrats-line {
+        font-family: "Nunito", sans-serif;
+        font-size: 1.02em;
+        line-height: 1.6;
+        color: #3a2a1a;
+        font-weight: 600;
+        margin: 0 0 14px 0;
+    }
+    .congrats-line b { color: #7b2cbf; }
+    .congrats-highlight {
+        background: linear-gradient(135deg, rgba(255,235,59,0.38), rgba(255,209,102,0.24));
+        border-left: 4px solid #ffd166;
+        border-radius: 14px;
+        padding: 13px 16px;
+        font-weight: 800;
+        color: #5a1f8a;
+    }
+
+    .voucher {
+        position: relative;
+        margin-top: 18px;
+        padding: 18px 20px;
+        text-align: center;
+        border: 2.5px dashed #ef476f;
+        border-radius: 20px;
+        background: linear-gradient(160deg, #fff7fb, #ffeaf5);
+        box-shadow: 0 10px 26px rgba(239, 71, 111, 0.16);
+    }
+    .voucher::before, .voucher::after {
+        content: "";
+        position: absolute;
+        top: 50%;
+        width: 22px;
+        height: 22px;
+        background: #f0e6ff;
+        border-radius: 50%;
+        transform: translateY(-50%);
+    }
+    .voucher::before { left: -13px; border-right: 2.5px dashed #ef476f; }
+    .voucher::after  { right: -13px; border-left: 2.5px dashed #ef476f; }
+    .voucher-tag {
+        display: inline-block;
+        padding: 4px 12px;
+        border-radius: 10px;
+        background: linear-gradient(135deg, #ef476f, #c9184a);
+        color: #fff;
+        font-family: "Nunito", sans-serif;
+        font-weight: 800;
+        font-size: 0.68em;
+        letter-spacing: 2px;
+    }
+    .voucher-value {
+        font-family: "Dancing Script", cursive;
+        font-size: 2.4em;
+        line-height: 1.1;
+        color: #5a1f8a;
+        margin: 8px 0 2px 0;
+    }
+    .voucher-desc {
+        font-family: "Nunito", sans-serif;
+        font-size: 0.92em;
+        font-weight: 600;
+        color: #5a4030;
+    }
+    .voucher-code {
+        display: inline-block;
+        margin-top: 10px;
+        padding: 7px 16px;
+        border-radius: 10px;
+        background: #2e1f10;
+        color: #ffd166;
+        font-family: "Courier New", monospace;
+        font-weight: 700;
+        font-size: 0.9em;
+        letter-spacing: 3px;
+    }
+
+    .congrats-footer {
+        padding: 16px 28px 26px 28px;
+        background: linear-gradient(180deg, transparent, rgba(199, 125, 255, 0.14));
+        border-top: 2px dashed rgba(199,125,255,0.28);
+    }
+    .congrats-btn {
+        width: 100%;
+        padding: 15px 28px;
+        border: none;
+        border-radius: 20px;
+        background: linear-gradient(135deg, #ef476f 0%, #c9184a 40%, #9d4edd 100%);
+        color: #fff;
+        font-family: "Nunito", sans-serif;
+        font-weight: 800;
+        font-size: 1em;
+        letter-spacing: 1px;
+        cursor: pointer;
+        box-shadow: 0 12px 30px rgba(157, 78, 221, 0.45);
+        transition: transform 0.22s, box-shadow 0.22s;
+    }
+    .congrats-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 16px 36px rgba(157, 78, 221, 0.58);
+    }
+
     @keyframes fadeIn { from {opacity:0;} to {opacity:1;} }
 
     @media (max-width: 600px) {
@@ -454,6 +704,11 @@
     </div>
 </div>
 
+<!-- Botão de Parabéns (canto superior esquerdo) -->
+<button class="congrats-reopen" id="congratsReopen" onclick="openCongrats()">
+  🎓 Ver parabéns
+</button>
+
 <!-- Botão de Novidades (canto superior direito) -->
 <button class="news-btn" id="newsBtn" onclick="openPatchNotes(true)">
   <span class="news-dot" id="newsDot"></span>
@@ -481,6 +736,55 @@
   </div>
 </div>
 
+<!-- Modal de Parabéns (TCC) -->
+<div class="congrats-overlay" id="congratsOverlay">
+  <div class="confetti" id="confettiBox"></div>
+  <div class="congrats-modal">
+    <button class="congrats-close" onclick="closeCongrats()">✕</button>
+
+    <div class="congrats-header">
+      <div class="congrats-cap">🎓</div>
+      <div class="congrats-title">Parabéns, amor! 🎉</div>
+      <div class="congrats-sub">Aprovada no TCC</div>
+    </div>
+
+    <div class="congrats-body">
+      <p class="congrats-line">
+        TU conseguiu! <b>Teu TCC foi aprovadíssimo</b>eu sabia que ia dar certo,
+        sempre soube. Que orgulho de ti. 💜
+      </p>
+
+      <p class="congrats-line">
+        E isso é só o começo: a <b>próxima conquista</b> vai ser a sua
+        <b>aprovação na faculdade</b>. Bora, que tu vai arrasar de novo!
+      </p>
+
+      <p class="congrats-line congrats-highlight">
+         E eu já tenho o privilégio de dizer: tu é a <b>minha futura psicóloga</b>.
+      </p>
+
+      <p class="congrats-line">
+        Por isso, deixa eu te dar um mimo pra comemorar essa vitória:
+      </p>
+
+      <div class="voucher">
+        <div class="voucher-tag">VALE PRESENTE</div>
+        <div class="voucher-value">Vale Lanche</div>
+        <div class="voucher-desc">
+          Vale um lanche de até <b>R$22,00</b>, escolhido por ti!
+        </div>
+        <div class="voucher-code">VALE-LANCHE-22</div>
+      </div>
+    </div>
+
+    <div class="congrats-footer">
+      <button class="congrats-btn" onclick="closeCongrats()">
+        💖 Receber o vale lanche
+      </button>
+    </div>
+  </div>
+</div>
+
 <script>
 /* =========================================================
    📰 PATCH NOTES GLOBAL DO CANTINHO
@@ -489,10 +793,22 @@
    ========================================================= */
 const PATCHES = [
   {
+    id: "v2.17.0",
+    date: "16 de Novembro de 2026",
+    title: "Uma homenagem especial: aprovada no TCC! 🎓",
+    latest: true,
+    items: [
+      { type: "feat", text: "🎓 Tela de parabéns nova: assim que você entra no cantinho, aparece uma homenagem pra comemorar a sua aprovação no TCC, com confete caindo e tudo. 💜" },
+      { type: "feat", text: "🧠✨ E o recado mais lindo: a próxima conquista vai ser a aprovação na faculdade — e eu já tenho o privilégio de dizer que você é a minha futura psicóloga." },
+      { type: "feat", text: "🍔🎁 Vale Lanche de até R$22,00: uma lembrancinha pra comemorar essa vitória, escolhida por você." },
+      { type: "update", text: "🔁 Quiser rever? O botão 🎓 Ver parabéns, no cantinho de cima da tela, abre a homenagem de novo quando você quiser." }
+    ]
+  },
+  {
     id: "v2.16.0",
     date: "1 de Novembro de 2026",
     title: "Cozinha da Lulu: quanto de óleo? 🫗",
-    latest: true,
+    latest: false,
     items: [
       { type: "feat", text: "🫗 Derramar virou segurar-e-soltar: dentro da frigideira e da panela agora tem um botão 🫗. É só manter o dedo pressionado — o líquido escorre com animação (o frasco inclina, cai o fio e respinga) e você solta quando quiser. Acabou o toque duplo." },
       { type: "feat", text: "📏 Quanto caiu? Um anel em volta do botão mostra a quantidade em tempo real, e a etiqueta do lado diz o nível: muito pouco, pouco, na medida, muito ou demais. O nome do líquido aparece embaixo (óleo, azeite, água, shoyu, vinagre, balsâmico)." },
@@ -813,7 +1129,8 @@ function openPage(page) {
 (function initPatch() {
   updateNewsBadge();
   const novos = countNewPatches();
-  if (novos > 0) {
+  // Se o parabéns ainda não foi visto, ele abre primeiro (initCongrats cuida disso).
+  if (novos > 0 && localStorage.getItem("cantinho_congrats_seen_v1")) {
     setTimeout(() => openPatchNotes(false), 650);
   }
 })();
@@ -822,6 +1139,66 @@ function openPage(page) {
 document.getElementById("patchOverlay").addEventListener("click", function(e){
   if (e.target === this) closePatchNotes(false);
 });
+</script>
+
+<script>
+/* =========================================================
+   🎓 PARABÉNS — Aprovação no TCC
+   Abre sozinho depois do login (1ª vez) e pode ser reaberto
+   pelo botão "🎓 Ver parabéns".
+   ========================================================= */
+const CONGRATS_SEEN_KEY = "cantinho_congrats_seen_v1";
+
+const CONFETTI_EMOJIS = ["🎉", "🎊", "💜", "💖", "✨", "🎓", "⭐", "🥳", "🌟", "💕"];
+
+function spawnConfetti(amount = 42) {
+  const box = document.getElementById("confettiBox");
+  if (!box) return;
+  box.innerHTML = "";
+  for (let i = 0; i < amount; i++) {
+    const span = document.createElement("span");
+    span.textContent = CONFETTI_EMOJIS[Math.floor(Math.random() * CONFETTI_EMOJIS.length)];
+    span.style.left = Math.random() * 100 + "%";
+    span.style.fontSize = (0.9 + Math.random() * 1.4) + "rem";
+    span.style.animationDuration = (3.5 + Math.random() * 4) + "s";
+    span.style.animationDelay = (Math.random() * 2.5) + "s";
+    box.appendChild(span);
+  }
+}
+
+function openCongrats() {
+  const overlay = document.getElementById("congratsOverlay");
+  if (!overlay) return;
+  spawnConfetti();
+  overlay.classList.add("open");
+  document.body.style.overflow = "hidden";
+}
+
+function closeCongrats() {
+  const overlay = document.getElementById("congratsOverlay");
+  if (!overlay) return;
+  overlay.classList.remove("open");
+  document.body.style.overflow = "";
+  const eraPrimeiraVez = !localStorage.getItem(CONGRATS_SEEN_KEY);
+  localStorage.setItem(CONGRATS_SEEN_KEY, "1");
+  // Na primeira visita, depois do parabéns, mostra as novidades se houver.
+  if (eraPrimeiraVez && countNewPatches() > 0) {
+    setTimeout(() => openPatchNotes(false), 400);
+  }
+}
+
+/* Clicar fora do card fecha o parabéns */
+document.getElementById("congratsOverlay").addEventListener("click", function(e){
+  if (e.target === this) closeCongrats();
+});
+
+/* Auto-abre na primeira vez que entra depois do login */
+(function initCongrats() {
+  const jaViu = localStorage.getItem(CONGRATS_SEEN_KEY);
+  if (!jaViu) {
+    setTimeout(() => openCongrats(), 900);
+  }
+})();
 </script>
 
 </body>
