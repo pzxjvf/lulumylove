@@ -28,6 +28,7 @@ var NJ = (window.NJ = window.NJ || {});
     if (s.greetD[n.n] === s.day) return;
     s.greetD[n.n] = s.day;
     N.gain(n.n);
+    if (N.gift40(n.n)) return;
     if (NJ.float) NJ.float(n.n, U.pick(D.CH[n.n] || ['Oi!']));
     NJ.state.save();
   };
@@ -68,6 +69,24 @@ var NJ = (window.NJ = window.NJ || {});
     s.frD[name] = s.day; s.fr[name] = (s.fr[name] || 0) + 6;
   };
 
+  // presente especial quando a amizade chega a 40 corações 💗
+  N.gift40 = function (name) {
+    const s = S();
+    if ((s.fr[name] || 0) < 40) return false;
+    s.g40 = s.g40 || {};
+    if (s.g40[name]) return false;
+    s.g40[name] = 1;
+    const pool = (D.LIKES[name] || []).filter((k) => D.IT[k]);
+    const item = pool.length ? U.pick(pool) : 'f';
+    NJ.econ.add(item, 2); s.coins += 50;
+    NJ.audio.chord([659, 880, 1046]); NJ.fx(s.px, s.py - 20, '💗');
+    NJ.state.save();
+    NJ.ui.say(name + ' ' + N.hearts(s.fr[name]), ['<b>40 corações!</b> 💗 Você é uma das minhas pessoas favoritas no vale.',
+      'Toma, é um presentinho meu pra você: ' + D.IT[item].e + ' <b>' + D.IT[item].n + '</b> ×2 e 50 💰!']);
+    NJ.prog.check();
+    return true;
+  };
+
   N.gift = function (name) {
     const s = S();
     const likes = D.LIKES[name] || [];
@@ -82,6 +101,7 @@ var NJ = (window.NJ = window.NJ || {});
     s.fr[name] = (s.fr[name] || 0) + (liked ? base * 2 : base); s.frD[name] = s.day;
     NJ.fx(s.px, s.py - 14, D.IT[k].e); NJ.audio.chord(liked ? [784, 988, 1175] : [784, 988]);
     NJ.prog.check(); NJ.state.save();
+    if (N.gift40(name)) return;
     NJ.ui.say(name + ' ' + N.hearts(s.fr[name]), [liked
       ? '😍 ' + D.IT[k].e + ' <b>' + D.IT[k].n + '</b>?! É o meu <b>presente favorito</b>! Você me conhece de verdade! 💗💗'
       : 'Ooh! ' + D.IT[k].e + ' ' + D.IT[k].n + ' pra mim? Adorei! 💗']);
@@ -101,6 +121,7 @@ var NJ = (window.NJ = window.NJ || {});
   N.talk = function (name) {
     const s = S();
     N.gain(name);
+    if (N.gift40(name)) return;
     const nm = name + ' ' + N.hearts(s.fr[name] || 0);
     const gb = ['🎁 Presentear', () => N.gift(name)];
 

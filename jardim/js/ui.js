@@ -121,6 +121,7 @@ var NJ = (window.NJ = window.NJ || {});
     const btn = (a, k, label) => '<button class="mb" data-a="' + a + '"' + (k != null ? ' data-k="' + k + '"' : '') + '>' + label + '</button>';
     UI.panel('<h3>☰ Menu</h3><div class="grid">' +
       btn('inv', null, '🎒 Mochila') + btn('qs', null, '📜 Missões') +
+      btn('worldmap', null, '🗺️ Mapa do vale') + btn('run', null, '🏃 Correr') +
       btn('daily', null, '📋 Recados') + btn('wx', null, '🌤️ Clima') +
       btn('cook', null, '🍳 Cozinha') +
       btn('prog', null, '📈 Progresso') + btn('lib', null, '📚 Biblioteca') +
@@ -134,10 +135,11 @@ var NJ = (window.NJ = window.NJ || {});
 
   UI.help = function () {
     UI.panel('<h3>❓ Como jogar</h3>' +
-      '<p><b>Mover:</b> setas/WASD, joystick ou toque no chão. <b>Ação:</b> Espaço/E ou botão A.</p>' +
-      '<p><b>Interagir:</b> toque num objeto, animal ou morador — a personagem anda até lá e abre um <b>balão de ações</b> (estilo The Sims). Toque no chão para só andar.</p>' +
+      '<p><b>Mover:</b> setas/WASD, joystick ou toque no chão. <b>Ação:</b> Espaço/E ou botão A. <b>Correr:</b> botão 🏃 ou tecla R (segure Shift para correr também).</p>' +
+      '<p><b>Mapa 🗺️:</b> o minimapa fica no canto da tela. Toque nele (ou em 🗺️ no menu) para abrir o <b>Mapa do vale</b> e <b>viajar na hora</b> para os lugares que você já descobriu — novos lugares aparecem quando você chega perto deles.</p>' +
+      '<p><b>Interagir:</b> toque num objeto, animal ou morador e o <b>balão de ações</b> abre na hora (estilo The Sims) — ela caminha até lá enquanto você escolhe o que fazer. Toque no chão para só andar. Tudo dá para fazer no toque/clique; no computador, as teclas 1-7, B, I, Q, M e Espaço/E são atalhos.</p>' +
       '<p><b>Mochila (🎒):</b> toque numa ferramenta para deixá-la <b>na mão</b>. Ela aparece equipada na personagem.</p>' +
-      '<p><b>Menu (☰ ou M):</b> mochila, missões, aparência, música, som, zoom, salvar e reiniciar.</p>' +
+      '<p><b>Menu (☰ ou M):</b> mochila, missões, 🗺️ mapa do vale, aparência, música, som, zoom, salvar e reiniciar.</p>' +
       '<p><b>Ferramentas (1-7):</b> Enxada are a terra na fazenda; Regador rega; Sementes plantam; Vara pesca na água (minigame); Mão coleta; Machado corta árvore; Picareta só na mina.</p>' +
       '<p><b>Fazenda:</b> are → plante → regue todo dia. Plantas prontas aparecem com bolinhas — encoste e colha.</p>' +
       '<p><b>Estações:</b> cada cultura cresce em certas estações. A cada 28 dias muda a estação.</p>' +
@@ -148,10 +150,11 @@ var NJ = (window.NJ = window.NJ || {});
       '<p><b>Cozinhar (🍳):</b> na sua casinha, faça pratos. Coma-os na 🎒 mochila para ganhar efeitos: ⚡ velocidade, 💪 vigor (dia mais devagar) e 🍀 sorte (peixes/minérios melhores).</p>' +
       '<p><b>Máquinas:</b> construa 🛢️ Barril, 🧈 Laticínio e 🍳 Fogão a lenha no modo 🔨. Coloque ingredientes e espere; toque para recolher o produto.</p>' +
       '<p><b>Recados (📋):</b> o quadro na praça dá 3 tarefas por dia — complete e recolha as moedas.</p>' +
-      '<p><b>Festival 🎪:</b> a festa é na praça no dia 14 de cada estação, com concurso de pesca e mercado raro.</p>' +
+      '<p><b>Festival 🎪:</b> festa na praça no <b>dia 14</b> de cada estação (concurso de pesca e mercado raro) e <b>festa do fim da estação</b> no <b>dia 28</b>, com um presente da vila. 🎊</p>' +
+      '<p><b>Loja 🛍️:</b> além de sementes, compre <b>⭐ melhorias</b> permanentes — 💧 Regador largo (molha 3×3), 🪓 Machado afiado (+madeira) e 🧺 Barraca de vendas (+10% ao vender).</p>' +
       '<p><b>Biblioteca 📖:</b> leia <b>1 livro por dia</b> — cada um ensina uma dica e dá experiência na primeira leitura.</p>' +
       '<p><b>Pet:</b> toque no seu bichinho para 💗 carinho, 🍖 petisco, 🎾 brincar, 🛁 banho e 🐾 seguir/parar de seguir.</p>' +
-      '<p><b>Presentes 🎁:</b> converse com moradores e presenteie para ganhar corações 💗. Cada um tem um <b>presente favorito</b> que rende corações em dobro.</p>' +
+      '<p><b>Presentes 🎁:</b> converse com moradores e presenteie para ganhar corações 💗. Cada um tem um <b>presente favorito</b> que rende corações em dobro. Ao chegar a <b>40 corações</b>, o morador te dá um presente especial. 💞</p>' +
       '<p><b>Salvar:</b> automático. <b>Z</b> desfaz construção.</p>');
   };
 

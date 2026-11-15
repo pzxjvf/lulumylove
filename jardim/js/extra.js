@@ -125,16 +125,34 @@ var NJ = (window.NJ = window.NJ || {});
 
   // ========== FESTIVAL DAS ESTAÇÕES (praça) ==========
   EX.festDay = () => G().day === D.FEST_DAY;
+  // festa do fim da estação (dia 28): a vila agradece o ciclo — uma vez por estação
+  EX.eveDay = () => G().day === D.EVE_DAY;
+  EX.eveDone = () => G().eveD === G().year + '-' + G().season;
+  EX.festEve = function () {
+    const s = G();
+    if (EX.eveDone()) { NJ.ui.say('Festa do fim da estação 🎊', ['Você já festejou a virada desta estação 💜 A próxima festa chega no <b>dia ' + D.EVE_DAY + '</b>.']); return; }
+    s.eveD = s.year + '-' + s.season;
+    const coins = 120 + U.I(0, 80), seed = U.pick(D.seedsFor(s.season));
+    s.coins += coins; NJ.econ.add('S_' + seed.id, 3);
+    NJ.audio.chord([523, 659, 784, 1046]); NJ.fx(s.px, s.py - 20, '🎊');
+    NJ.ui.say('Festa do fim da estação 🎊', ['A estação vai virar e a vila te agradece por mais um ciclo! 🎉',
+      'Presente da comunidade: <b>+' + coins + ' 💰</b> e 3× ' + seed.e + ' sementes de ' + seed.n.toLowerCase() + '.',
+      'Volte no <b>dia ' + D.EVE_DAY + '</b> da próxima estação para festejar de novo! 💐']);
+    NJ.prog.check(); NJ.state.save();
+  };
   EX.festTarget = function () {
     const acts = [];
     if (EX.festDay()) {
       acts.push({ e: '🎣', l: 'Concurso de pesca', fn: EX.festFish });
       acts.push({ e: '🛍️', l: 'Mercado raro', fn: EX.festShop });
+    } else if (EX.eveDay()) {
+      acts.push({ e: '🎊', l: EX.eveDone() ? 'Festa (já festejada)' : 'Festa do fim da estação', fn: EX.festEve });
     } else {
-      acts.push({ e: '📅', l: 'Quando?', fn: () => NJ.ui.say('Festival das estações 🎪', ['A grande festa acontece no <b>dia ' + D.FEST_DAY + '</b> de cada estação. Hoje é dia ' + G().day + '. Volte lá! 🎉']) });
+      acts.push({ e: '📅', l: 'Quando?', fn: () => NJ.ui.say('Festival das estações 🎪', ['A grande festa acontece no <b>dia ' + D.FEST_DAY + '</b> de cada estação, e a <b>festa do fim da estação</b> no <b>dia ' + D.EVE_DAY + '</b>. Hoje é dia ' + G().day + '. Volte lá! 🎉']) });
       acts.push({ e: '🎪', l: 'Barraquinhas', fn: () => NJ.ui.say('Praça do vale', ['As barraquinhas esperam a festa… mas a praça é ótima para um passeio! 🌳']) });
     }
-    return { x: W.festPoint.x, y: W.festPoint.y - 24, name: EX.festDay() ? 'Festival das estações 🎉' : 'Praça do vale', acts };
+    const nm = EX.festDay() ? 'Festival das estações 🎉' : EX.eveDay() ? 'Festa do fim da estação 🎊' : 'Praça do vale';
+    return { x: W.festPoint.x, y: W.festPoint.y - 24, name: nm, acts };
   };
   EX.festShop = function () {
     const s = G();

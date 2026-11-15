@@ -324,6 +324,15 @@ var NJ = (window.NJ = window.NJ || {});
   // ---------- festival das estações (na praça, no meio da estação) ----------
   D.FEST_DAY = 14;
   D.FEST_STOCK = ['S_cry', 'S_sun', 'S_tul', 'S_pum', 'S_sug', 'gem', 'wine', 'cake', 'cheese', 'butter', 'gcheese', 'perfume'];
+  // festa do fim da estação (dia 28) — a vila agradece o ciclo que passou
+  D.EVE_DAY = 28;
+
+  // ---------- melhorias da loja (compras permanentes) ----------
+  D.UP = [
+    { id: 'can3', n: 'Regador largo', e: '💧', d: 'Molha uma área 3×3 de terra de uma vez só', c: 700 },
+    { id: 'axe2', n: 'Machado afiado', e: '🪓', d: 'Cada árvore derrubada rende +2 de madeira', c: 500 },
+    { id: 'sell10', n: 'Barraca de vendas', e: '🧺', d: '+10% de moedas em tudo que você vender', c: 900 }
+  ];
 
   // ---------- conversas ----------
   D.CH = {
@@ -369,6 +378,9 @@ var NJ = (window.NJ = window.NJ || {});
     { id: 'flour', n: 'Padeira do vale', d: 'Produza farinha no moinho', e: '🥣', c: (S) => (S.st.flour || 0) >= 1 },
     { id: 'sweet', n: 'Dodói de açúcar', d: 'Faça balas de mel', e: '🍬', c: (S) => (S.st.candy || 0) >= 1 },
     { id: 'bookworm', n: 'Ratinha de biblioteca', d: 'Leia todos os livros', e: '📚', c: (S) => D.BOOKS.every((b) => S.st['bk_' + b.id]) },
-    { id: 'family', n: 'Família do vale', d: 'Faça 8 amizades (40+ 💗)', e: '💞', c: (S) => Object.keys(S.fr || {}).filter((k) => S.fr[k] >= 40).length >= 8 }
+    { id: 'family', n: 'Família do vale', d: 'Faça 8 amizades (40+ 💗)', e: '💞', c: (S) => Object.keys(S.fr || {}).filter((k) => S.fr[k] >= 40).length >= 8 },
+    { id: 'explorer', n: 'Exploradora do vale', d: 'Descubra todos os lugares do mapa', e: '🗺️', c: (S) => (NJ.minimap ? Object.keys(S.found || {}).length >= NJ.minimap.siteCount() : false) },
+    { id: 'upgrade', n: 'Investidora', d: 'Compre uma melhoria na loja', e: '⭐', c: (S) => Object.keys(S.up || {}).length >= 1 },
+    { id: 'eve', n: 'Festeira', d: 'Festeje o fim de uma estação', e: '🎊', c: (S) => !!S.eveD }
   ];
 })();

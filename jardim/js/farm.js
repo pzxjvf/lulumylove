@@ -25,7 +25,18 @@ var NJ = (window.NJ = window.NJ || {});
       else NJ.ui.toast('Não dá para arar aqui');
     } else if (tool == 'can') {
       if (gr == 2 || gr == 3) { s.water = s.rain ? 20 : 12; NJ.fx(tx * 16 + 8, ty * 16, '💧'); NJ.ui.toast('Regador cheio 💧'); NJ.audio.beep(500); }
-      else if (k in s.till) { if (s.water <= 0) { NJ.ui.toast('Regador vazio — encha no lago'); return; } s.water--; s.till[k] = 1; NJ.fx(tx * 16 + 8, ty * 16, '💧'); NJ.audio.beep(520); }
+      else if (k in s.till) {
+        if (s.water <= 0) { NJ.ui.toast('Regador vazio — encha no lago'); return; }
+        // com o "Regador largo", molha uma área 3×3 de terra de uma vez
+        const wide = s.up && s.up.can3;
+        const cells = wide ? [[0, 0], [1, 0], [-1, 0], [0, 1], [0, -1], [1, 1], [1, -1], [-1, 1], [-1, -1]] : [[0, 0]];
+        let n = 0;
+        for (const [dx, dy] of cells) {
+          const kk = (tx + dx) + ',' + (ty + dy);
+          if (kk in s.till && s.till[kk] != 1 && s.water > 0) { s.till[kk] = 1; s.water--; n++; NJ.fx((tx + dx) * 16 + 8, (ty + dy) * 16, '💧'); }
+        }
+        if (n) NJ.audio.beep(520); else NJ.ui.toast('Já está tudo regado por aqui 💧');
+      }
     } else if (tool == 'seed') {
       if (!(k in s.till)) { NJ.ui.toast('Are o chão primeiro ⛏️'); return; }
       if (s.crops[k]) { NJ.ui.toast('Já tem algo plantado 🌱'); return; }
@@ -41,7 +52,7 @@ var NJ = (window.NJ = window.NJ || {});
       const e = W.ents.find((o) => o.tree && o.tx == tx && o.ty == ty);
       if (e) {
         W.ents.splice(W.ents.indexOf(e), 1); W.sol[W.ix(tx, ty)] = 0;
-        const nw = U.I(2, 4) + (NJ.prog.level('foraging') >= 3 ? 1 : 0);
+        const nw = U.I(2, 4) + (NJ.prog.level('foraging') >= 3 ? 1 : 0) + (s.up && s.up.axe2 ? 2 : 0);
         NJ.econ.add('wd', nw); NJ.fx(tx * 16 + 8, ty * 16 + 4, '🪵');
         NJ.ui.toast('+' + nw + ' madeira 🪵'); NJ.audio.beep(240); NJ.prog.xp('foraging', 5); NJ.state.save();
       } else NJ.ui.toast('Fique de frente para uma árvore 🪓');

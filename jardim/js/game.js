@@ -8,7 +8,7 @@ var NJ = (window.NJ = window.NJ || {});
   const DX = [0, 0, -1, 1], DY = [1, -1, 0, 0];
 
   NJ.loc = 'world';
-  NJ.buildMode = false; NJ.bsel = 0; NJ.vw = 0; NJ.vh = 0;
+  NJ.buildMode = false; NJ.bsel = 0; NJ.vw = 0; NJ.vh = 0; NJ.run = false;
   NJ.actions = NJ.actions || {};
 
   let SC, VW, VH, DK, dk, zoom = 1;
@@ -17,6 +17,9 @@ var NJ = (window.NJ = window.NJ || {});
   let swingT = 0, swingTool = null, SWING = 0.34;   // animação do golpe da ferramenta
   let FX = [], undoStack = [];
   let ints = [];
+  let intTap = false;   // o toque atual começou num alvo de interação (não vira andar-arrastando)
+  // limpa o destino de caminhada (usado pela viagem rápida do minimapa)
+  NJ.clearDest = () => { destination = null; NJ.inter.walking = false; };
 
   const rr = (a, b, w, h, c) => { g.fillStyle = c; g.fillRect(a, b, w, h); };
   SP.ctx = g; SP.rr = rr;
@@ -280,9 +283,9 @@ var NJ = (window.NJ = window.NJ || {});
     const S = NJ.S;
     const tx = Math.floor(px / T), ty = Math.floor(py / T);
     if (Math.hypot(S.pet.x - px, S.pet.y - py) < 15) return petTarget();
-    const n = NJ.npc.nearest(px, py, 22);
+    const n = NJ.npc.nearest(px, py, 24);
     if (n) return npcTarget(n);
-    let best = null, bd = 26;
+    let best = null, bd = 30;
     ints.forEach((i) => { const d = Math.hypot(i.x - px, i.y - py); if (d < bd) { bd = d; best = i; } });
     if (best) return { x: best.x, y: best.y - 26, name: best.n, acts: best.acts };
     const hi = S.houses.findIndex((h) => tx >= h.x && tx < h.x + h.w && ty >= h.y && ty < h.y + h.h);
@@ -299,7 +302,7 @@ var NJ = (window.NJ = window.NJ || {});
   // alvo logo à frente da personagem (para a dica flutuante e o botão A)
   function findTarget() {
     const S = NJ.S;
-    return targetAt(S.px + DX[S.d] * 12, S.py - 4 + DY[S.d] * 12);
+    return targetAt(S.px + DX[S.d] * 16, S.py - 4 + DY[S.d] * 16);
   }
 
   // inicia a animação do golpe com a ferramenta na mão
@@ -314,7 +317,7 @@ var NJ = (window.NJ = window.NJ || {});
     if (UI.pOpen || UI.creating) return;
     if (UI.dlg) { UI.dnext(); return; }
     if (NJ.fish.active) return;
-    const f = { x: S.px + DX[S.d] * 10, y: S.py - 4 + DY[S.d] * 10 };
+    const f = { x: S.px + DX[S.d] * 16, y: S.py - 4 + DY[S.d] * 16 };
     const tx = Math.floor(f.x / T), ty = Math.floor(f.y / T);
 
     if (NJ.loc === 'cave') {
@@ -407,23 +410,21 @@ var NJ = (window.NJ = window.NJ || {});
       let vy = (K.arrowdown || K.s ? 1 : 0) - (K.arrowup || K.w ? 1 : 0) + jy;
       if (destination) {
         const dx = destination.x - S.px, dy = destination.y - S.py, dist = Math.hypot(dx, dy);
-        if (dist < 9) {
-          const d = destination; destination = null;
-          // se o destino era um alvo de interação, abre o balão ao chegar
-          if (d.rt) { const tg = NJ.loc === 'world' ? targetAt(d.rt[0], d.rt[1]) : null; if (tg) NJ.inter.open(tg); }
-        } else { vx = dx / dist; vy = dy / dist; }
+        if (dist < 9) { destination = null; NJ.inter.walking = false; }
+        else { vx = dx / dist; vy = dy / dist; }
       }
       const l = Math.hypot(vx, vy);
       if (l > 0.2) {
         if (l > 1) { vx /= l; vy /= l; }
-        const spd = (K.shift ? 92 : 58) * NJ.extra.spd();
+        const sprint = NJ.run || K.shift;
+        const spd = (sprint ? 92 : 58) * NJ.extra.spd();
         const nx = S.px + vx * spd * dt, ny = S.py + vy * spd * dt;
         if (!W.blk(nx, S.py)) S.px = nx;
         if (!W.blk(S.px, ny)) S.py = ny;
         S.d = Math.abs(vx) > Math.abs(vy) ? (vx < 0 ? 2 : 3) : (vy < 0 ? 1 : 0);
-        wt += dt * (K.shift ? 14 : 9);
+        wt += dt * (sprint ? 14 : 9);
         stepT -= dt;
-        if (stepT <= 0) { stepT = K.shift ? 0.2 : 0.3; NJ.audio.foot(0); if (S.rain) NJ.splash(S.px, S.py + 3); }
+        if (stepT <= 0) { stepT = sprint ? 0.2 : 0.3; NJ.audio.foot(0); if (S.rain) NJ.splash(S.px, S.py + 3); }
         if (NJ.fish.active) { NJ.fish.active = false; UI.toast('Você se afastou da água'); }
       } else wt = 0;
     }
@@ -736,6 +737,7 @@ var NJ = (window.NJ = window.NJ || {});
     else if (k === 'i' && !UI.creating) { UI.pOpen ? UI.closeP() : UI.inv(); }
     else if (k === 'q' && !UI.creating) { UI.pOpen ? UI.closeP() : UI.quests(); }
     else if (k === 'm' && !UI.creating) { UI.pOpen ? UI.closeP() : UI.menu(); }
+    else if (k === 'r' && !UI.pOpen && !UI.creating) NJ.actions.run();
     else if (k === 'escape') {
       if (NJ.inter.isOpen()) NJ.inter.close();
       else if (UI.pOpen && !UI.creating) UI.closeP();
@@ -776,20 +778,29 @@ var NJ = (window.NJ = window.NJ || {});
     if (NJ.fish.active) { e.preventDefault(); fishHold = true; return; }
     if (UI.pOpen || UI.dlg || UI.creating) return;
     e.preventDefault(); paint = 1;
-    if (NJ.inter.isOpen()) NJ.inter.close();   // tocar no chão fecha o balão
     const p = pointAt(e);
     const tx = Math.floor(p.x / T), ty = Math.floor(p.y / T);
-    if (NJ.buildMode) { lastPaint = [tx, ty]; doBuild(tx, ty); return; }
+    if (NJ.buildMode) { NJ.inter.close(); lastPaint = [tx, ty]; doBuild(tx, ty); return; }
     const dx = p.x - NJ.S.px, dy = p.y - NJ.S.py, dist = Math.hypot(dx, dy) || 1;
     NJ.S.d = Math.abs(dx) > Math.abs(dy) ? (dx < 0 ? 2 : 3) : (dy < 0 ? 1 : 0);
     downPt = { cx: e.clientX, cy: e.clientY };
     const off = Math.min(14, dist * 0.5);
-    // toque simples: só anda. Se havia um alvo no ponto, caminha até ele e abre o balão ao chegar.
+    // toque num objeto/animal/morador: abre o balão de ações na hora (um clique só) e caminha até lá
+    const tg = NJ.loc === 'world' ? targetAt(p.x, p.y) : null;
+    if (tg) {
+      intTap = true;
+      NJ.inter.walking = true;
+      NJ.inter.open(tg);
+      destination = { x: p.x - dx / dist * off, y: p.y - dy / dist * off };
+      return;
+    }
+    // toque no chão: fecha o balão e só anda
+    if (NJ.inter.isOpen()) NJ.inter.close();
     destination = { x: p.x - dx / dist * off, y: p.y - dy / dist * off };
-    if (targetAt(p.x, p.y)) destination.rt = [p.x, p.y];
   });
   cv.addEventListener('pointermove', (e) => {
     if (UI.pOpen || UI.dlg || UI.creating || !paint) return;
+    if (intTap) return;   // toque começou num alvo: mantém a interação (não vira andar-arrastando)
     const p = pointAt(e);
     if (NJ.buildMode) { const tx = Math.floor(p.x / T), ty = Math.floor(p.y / T); if (tx != lastPaint[0] || ty != lastPaint[1]) { lastPaint = [tx, ty]; doBuild(tx, ty); } return; }
     // ignora o tremor do toque logo após encostar o dedo
@@ -799,13 +810,13 @@ var NJ = (window.NJ = window.NJ || {});
     NJ.S.d = Math.abs(dx) > Math.abs(dy) ? (dx < 0 ? 2 : 3) : (dy < 0 ? 1 : 0);
     destination = { x: p.x, y: p.y };
   });
-  ['pointerup', 'pointercancel'].forEach((n) => cv.addEventListener(n, () => { paint = 0; fishHold = false; downPt = null; }));
+  ['pointerup', 'pointercancel'].forEach((n) => cv.addEventListener(n, () => { paint = 0; fishHold = false; downPt = null; intTap = false; }));
 
   // rede de segurança: soltar o dedo/mouse em QUALQUER lugar (ou trocar de app) libera todos os controles
   // — mas se foi outro dedo (ex.: botão A) que soltou, o joystick continua firme
   const releaseAll = (e) => {
     if (!e || jpid == null || e.pointerId === jpid) jzero();
-    paint = 0; fishHold = false; abDown = false; downPt = null;
+    paint = 0; fishHold = false; abDown = false; downPt = null; intTap = false;
   };
   ['pointerup', 'pointercancel'].forEach((n) => window.addEventListener(n, releaseAll));
   window.addEventListener('blur', () => releaseAll(null));
@@ -821,6 +832,7 @@ var NJ = (window.NJ = window.NJ || {});
     bd: () => {
       if (NJ.loc === 'cave') { UI.toast('Não dá para construir na mina ⛏️'); return; }
       if (UI.pOpen && !UI.creating) UI.closeP();
+      NJ.inter.close();
       NJ.buildMode = !NJ.buildMode; destination = null;
       const e = $('#bbtn'); if (e) e.classList.toggle('on', NJ.buildMode);
       UI.toast(NJ.buildMode ? '🔨 Toque no chão para posicionar · toque numa peça para remover · ESC sai' : '🌾 De volta ao modo fazenda');
@@ -864,6 +876,19 @@ var NJ = (window.NJ = window.NJ || {});
     zin: () => { zoom = Math.min(1.8, zoom + 0.15); rs(); },
     zout: () => { zoom = Math.max(0.65, zoom - 0.15); rs(); },
     mineExit: () => NJ.mine.exit(),
+    // minimapa, mapa do vale (viagem rápida) e corrida
+    worldmap: () => NJ.minimap.panel(),
+    mmtoggle: () => {
+      NJ.minimap.on = !NJ.minimap.on;
+      NJ.minimap.panel();
+      UI.toast(NJ.minimap.on ? '🧭 Minimapa ligado' : '🧭 Minimapa escondido');
+    },
+    travel: (b, k) => NJ.minimap.travel(k),
+    run: () => {
+      NJ.run = !NJ.run;
+      const e = $('#rb'); if (e) e.classList.toggle('on', NJ.run);
+      UI.toast(NJ.run ? '🏃 Correndo!' : '🚶 Andando');
+    },
     pickSeed: (b, k) => { NJ.S.seedSel = 'S_' + k; UI.closeP(); UI.hb(); UI.toast('🌱 ' + D.CROPMAP[k].n + ' selecionada'); },
     inv: () => UI.inv(),
     qs: () => UI.quests(),
@@ -902,6 +927,7 @@ var NJ = (window.NJ = window.NJ || {});
     if (!NJ.S.fg || !NJ.S.fg.length) W.spawnFG();
     buildInts();
     NJ.extra.ensure();
+    NJ.minimap.init();
     rs();
     UI.hb(); UI.hud();
     if (first) UI.creator(true);

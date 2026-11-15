@@ -7,10 +7,12 @@ var NJ = (window.NJ = window.NJ || {});
   let open_ = false, target = null, refs = null;
 
   I.isOpen = () => open_;
+  I.RANGE = 132;      // distância máxima em que o balão fica aberto
+  I.walking = false;  // true enquanto a personagem caminha até o alvo que ela clicou
 
   I.close = function () {
     if (!open_) return;
-    open_ = false; target = null; refs = null;
+    open_ = false; target = null; refs = null; I.walking = false;
     const e = $('#ib');
     if (e) { e.classList.remove('on'); e.innerHTML = ''; }
   };
@@ -57,7 +59,7 @@ var NJ = (window.NJ = window.NJ || {});
   I.tick = function () {
     if (!open_ || !target || !refs || !NJ.w2s) return;
     const S = NJ.S;
-    if (Math.hypot(target.x - S.px, target.y - S.py) > 132) { I.close(); return; }
+    if (!I.walking && Math.hypot(target.x - S.px, target.y - S.py) > I.RANGE) { I.close(); return; }
     const p = NJ.w2s(target.x, target.y);
     const n = refs.btns.length;
     const R = 62 + (n > 3 ? (n - 3) * 10 : 0);

@@ -17,11 +17,15 @@ button.on{background:#ffd166}
 .sl.on{background:#ffd166;transform:translateY(-4px)}.sl small{position:absolute;right:2px;bottom:-1px;font-size:10px}
 #js{position:fixed;left:14px;bottom:calc(96px + env(safe-area-inset-bottom,0px));width:110px;height:110px;border-radius:50%;background:#ffffff2e;border:3px solid #ffffff66;display:none;z-index:4;touch-action:none}
 #kn{position:absolute;left:32px;top:32px;width:46px;height:46px;border-radius:50%;background:#ffffffe0;border:3px solid var(--ink);box-shadow:0 3px 0 #0003;pointer-events:none}
-#ab{position:fixed;right:16px;bottom:calc(150px + env(safe-area-inset-bottom,0px));width:72px;height:72px;border-radius:50%;font-size:24px;display:none;background:#8a4fd6;color:#fff;z-index:4;box-shadow:0 4px 0 #4a2a7a}
+#ab{position:fixed;right:16px;bottom:calc(180px + env(safe-area-inset-bottom,0px));width:72px;height:72px;border-radius:50%;font-size:24px;display:block;background:#8a4fd6;color:#fff;z-index:4;box-shadow:0 4px 0 #4a2a7a}
+#rb{position:fixed;right:24px;bottom:calc(262px + env(safe-area-inset-bottom,0px));width:56px;height:56px;border-radius:50%;font-size:22px;padding:0;display:block;background:#4fb37a;color:#fff;z-index:4;box-shadow:0 4px 0 #2c6b4a}
+#rb.on{background:#ffd166;color:var(--ink);box-shadow:0 4px 0 #b8860b}
+#mm{position:fixed;top:calc(92px + env(safe-area-inset-top,0px));left:8px;padding:3px;line-height:0;cursor:pointer;z-index:3}
+#mmc{width:150px;height:112px;image-rendering:pixelated;border-radius:4px;display:block}
 #zoom{position:fixed;right:10px;bottom:calc(76px + env(safe-area-inset-bottom,0px));display:flex;flex-direction:column;gap:6px}
 #zoom button{width:42px;height:42px;font-size:20px;padding:0;background:#fff3dc}
 #movehint{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(76px + env(safe-area-inset-bottom,0px));padding:6px 10px;pointer-events:none;font-size:11px;white-space:nowrap}
-@media (pointer:coarse){#js{display:block}#ab{display:block}}
+@media (pointer:coarse){#js{display:block}}
 #dg{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(72px + env(safe-area-inset-bottom,0px));width:min(560px,94vw);padding:10px 14px;display:none;z-index:5}
 #dg p{margin:4px 0 6px}#dg i{float:right}#dg button{margin-right:6px}
 #pn{position:fixed;inset:0;display:none;align-items:center;justify-content:center;background:#0008;padding:12px;z-index:9}
@@ -46,7 +50,7 @@ input{font:inherit;padding:6px;border:3px solid var(--ink);border-radius:6px;wid
 @keyframes ibpop{from{opacity:0;transform:translate(-50%,-50%) scale(.5)}to{opacity:1;transform:translate(-50%,-50%) scale(1)}}
 h3{margin:12px 0 6px;font-family:'Press Start 2P',monospace;font-size:11px;line-height:1.5;color:#4a2f6a}
 </style></head><body>
-<canvas id="c"></canvas><div id="hud" class="b"></div><div id="tb"><button data-a="menu" title="Menu">☰</button><button data-a="inv">🎒</button><button data-a="qs">📜</button><button data-a="cl">👗</button><button data-a="pet">🐾</button><button data-a="prog">📈</button><button id="bbtn" data-a="bd">🔨</button><button data-a="music">🎵</button><button data-a="snd">🔊</button></div><div id="ts" class="b"></div><div id="dg" class="b"></div><div id="hb" class="b"></div><div id="js"><div id="kn"></div></div><button id="ab">A</button><div id="zoom"><button id="zin" aria-label="Aproximar">＋</button><button id="zout" aria-label="Afastar">－</button></div><div id="movehint" class="b">Toque/clique no chão para andar · toque num objeto para interagir</div><div id="ib"></div><div id="pn"><div class="b"></div></div>
+<canvas id="c"></canvas><div id="hud" class="b"></div><div id="tb"><button data-a="menu" title="Menu">☰</button><button data-a="inv">🎒</button><button data-a="qs">📜</button><button data-a="cl">👗</button><button data-a="pet">🐾</button><button data-a="prog">📈</button><button id="bbtn" data-a="bd">🔨</button><button data-a="music">🎵</button><button data-a="snd">🔊</button></div><div id="ts" class="b"></div><div id="dg" class="b"></div><div id="hb" class="b"></div><div id="js"><div id="kn"></div></div><button id="ab" title="Ação (interagir / usar ferramenta) — mesma função das teclas Espaço/E">A</button><div id="zoom"><button id="zin" aria-label="Aproximar">＋</button><button id="zout" aria-label="Afastar">－</button></div><div id="movehint" class="b">Toque/clique no chão para andar · toque num objeto para interagir</div><div id="mm" class="b" data-a="worldmap" title="Mapa do vale — toque para ver e viajar"><canvas id="mmc" width="192" height="144"></canvas></div><button id="rb" data-a="run" title="Correr (tecla R) — anda mais rápido">🏃</button><div id="ib"></div><div id="pn"><div class="b"></div></div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/howler/2.2.4/howler.min.js"></script>
 <script src="js/util.js"></script>
 <script src="js/data.js"></script>
@@ -64,5 +68,6 @@ h3{margin:12px 0 6px;font-family:'Press Start 2P',monospace;font-size:11px;line-
 <script src="js/ui.js"></script>
 <script src="js/inter.js"></script>
 <script src="js/extra.js"></script>
+<script src="js/minimap.js"></script>
 <script src="js/game.js"></script>
 </body></html>
