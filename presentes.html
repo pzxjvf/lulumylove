@@ -1,0 +1,241 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#742b91">
+  <title>Cantinho dos Presentes 💐</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@600;700&family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      color-scheme: light;
+      --plum: #54236e;
+      --pink: #d64f87;
+      --lilac: #a86dd0;
+      --cream: #fffaf2;
+      --ink: #46304f;
+      --muted: #806d84;
+      --line: #eadced;
+      font-family: "Nunito", sans-serif;
+      color: var(--ink);
+      background: #fff8fc;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background:
+        radial-gradient(ellipse at 12% 0%, #ffe5ef 0, transparent 34rem),
+        radial-gradient(ellipse at 100% 30%, #eee0ff 0, transparent 32rem),
+        linear-gradient(145deg, #fff9f2, #fff6fc 55%, #f5efff);
+    }
+    button, input, select, textarea { font: inherit; }
+    button { cursor: pointer; }
+    .page { width: min(1220px, 100%); margin: auto; padding: 22px 26px 48px; }
+    .topline { display: flex; justify-content: space-between; align-items: center; gap: 16px; }
+    .back {
+      display: inline-flex; align-items: center; gap: 8px; min-height: 46px;
+      min-height: 58px; padding: 8px 16px; border: 1px solid #e9d8ee; border-radius: 999px;
+      color: var(--plum); background: #ffffffc9; text-decoration: none;
+      font-weight: 800; box-shadow: 0 5px 18px #643c6c12;
+    }
+    .eyebrow { color: #9c72a7; font-size: .76rem; font-weight: 900; letter-spacing: .16em; text-transform: uppercase; }
+    h1 { margin: 20px 0 4px; color: var(--plum); font: 700 clamp(2.4rem, 6vw, 4.35rem)/1 "Dancing Script", cursive; }
+    .intro { margin: 9px 0 25px; color: var(--muted); font-size: 1.02rem; max-width: 700px; line-height: 1.6; }
+    .layout { display: grid; grid-template-columns: minmax(0, 1.55fr) minmax(295px, .82fr); align-items: start; gap: 22px; }
+    .panel {
+      overflow: hidden; border: 1px solid #eadceb; border-radius: 25px;
+      background: #ffffffd9; box-shadow: 0 18px 50px #65326f13;
+    }
+    .stage-wrap { padding: 12px; }
+    .stage {
+      height: min(67vh, 650px); min-height: 470px; position: relative; overflow: hidden;
+      border-radius: 19px; background:
+        radial-gradient(ellipse at 50% 43%, #ffffff 0, #fff9ef 39%, #f5e9f4 76%, #e8dff1 100%);
+      touch-action: none; cursor: grab;
+    }
+    .stage:active { cursor: grabbing; }
+    #bouquetCanvas { display: block; width: 100%; height: 100%; }
+    .stage-glow {
+      position: absolute; width: min(70%, 440px); aspect-ratio: 1;
+      left: 50%; top: 42%; transform: translate(-50%, -50%);
+      border-radius: 50%; pointer-events: none;
+      background: radial-gradient(circle, #ffffffa6 0, #fffaf000 70%);
+    }
+    .stage-caption {
+      position: absolute; left: 18px; right: 18px; bottom: 15px;
+      display: flex; justify-content: space-between; align-items: end; gap: 12px;
+      pointer-events: none;
+    }
+    .stage-caption span {
+      padding: 7px 12px; border: 1px solid #ffffffba; border-radius: 99px;
+      color: #725878; background: #fffaf2d9; font-size: .82rem; font-weight: 800;
+      box-shadow: 0 4px 14px #6d4a7018;
+    }
+    .scene-message {
+      position: absolute; inset: 0; display: none; place-items: center;
+      padding: 28px; text-align: center; background: #fffaf2b8; backdrop-filter: blur(5px);
+    }
+    .scene-message.on { display: grid; }
+    .scene-message div { max-width: 320px; padding: 23px; border-radius: 22px; background: #fff; box-shadow: 0 12px 35px #54236e18; }
+    .scene-message strong { display: block; margin: 7px 0; color: var(--plum); font-size: 1.12rem; }
+    .scene-message p { margin: 0; color: var(--muted); line-height: 1.5; }
+    .controls {
+      display: flex; flex-wrap: wrap; justify-content: center; gap: 10px;
+      padding: 15px 8px 5px;
+    }
+    .action {
+      min-width: 142px; min-height: 58px; padding: 11px 20px;
+      border: 0; border-radius: 999px; color: white; font-weight: 900;
+      background: linear-gradient(135deg, #bd68bf, #8648a8);
+      box-shadow: 0 7px 18px #84489935; transition: transform .18s, filter .18s;
+    }
+    .action:hover { transform: translateY(-2px); filter: brightness(1.06); }
+    .action.water { background: linear-gradient(135deg, #62b9d5, #438cc1); box-shadow: 0 7px 18px #438cc133; }
+    .action:disabled { opacity: .65; cursor: wait; }
+    .drag-tip { padding: 8px 0 3px; text-align: center; color: #98859a; font-size: .85rem; }
+    .side { display: grid; gap: 16px; }
+    .side-card { padding: 19px; }
+    .side h2 { margin: 0 0 4px; color: var(--plum); font-size: 1.18rem; }
+    .side .sub { margin: 0 0 15px; color: var(--muted); font-size: .88rem; line-height: 1.45; }
+    .gift-list { display: grid; gap: 9px; max-height: 300px; overflow-y: auto; padding: 2px 4px 2px 0; }
+    .gift-entry {
+      display: grid; grid-template-columns: 46px minmax(0, 1fr) auto; align-items: center; gap: 10px;
+      width: 100%; padding: 10px; border: 1px solid var(--line); border-radius: 15px;
+      text-align: left; color: var(--ink); background: #fff; transition: border .2s, background .2s;
+    }
+    .gift-entry:hover, .gift-entry.selected { border-color: #ce9dd0; background: #fff7fc; }
+    .gift-entry.selected { box-shadow: inset 0 0 0 1px #ce9dd0; }
+    .gift-icon { display: grid; place-items: center; width: 44px; height: 44px; border-radius: 13px; background: #f8edf8; font-size: 1.55rem; }
+    .gift-name { display: block; overflow: hidden; color: var(--plum); font-size: .94rem; font-weight: 900; text-overflow: ellipsis; white-space: nowrap; }
+    .gift-meta { display: block; margin-top: 2px; color: var(--muted); font-size: .75rem; }
+    .gift-entry .arrow { color: #a17ba9; font-size: 1.2rem; }
+    .empty { padding: 16px; border: 1px dashed #dbc5df; border-radius: 14px; color: var(--muted); text-align: center; }
+    .form-grid { display: grid; gap: 10px; }
+    label { display: grid; gap: 5px; color: var(--plum); font-size: .84rem; font-weight: 900; }
+    input, select, textarea {
+      width: 100%; min-height: 46px; padding: 10px 12px; border: 1px solid #dfcde4;
+      border-radius: 12px; outline: 0; color: var(--ink); background: white;
+    }
+    textarea { min-height: 76px; resize: vertical; }
+    input:focus, select:focus, textarea:focus { border-color: #ab70b7; box-shadow: 0 0 0 3px #ab70b726; }
+    .save-gift {
+      min-height: 58px; border: 0; border-radius: 13px; color: white;
+      background: linear-gradient(135deg, #e26e9d, #a34eb1); font-weight: 900;
+      box-shadow: 0 6px 15px #aa4e962e;
+    }
+    .form-note { min-height: 20px; margin: 0; color: #6c8f65; font-size: .8rem; font-weight: 800; }
+    .delete-gift {
+      display: none; min-height: 58px; margin-top: 12px; padding: 8px 14px;
+      border: 1px solid #f0c9d5; border-radius: 11px; color: #a54464; background: #fff7f9; font-weight: 800;
+    }
+    .delete-gift.on { display: inline-block; }
+    .scent {
+      position: absolute; z-index: 3; pointer-events: none; font-size: 24px;
+      animation: scent-rise 2.3s ease-out forwards;
+    }
+    @keyframes scent-rise {
+      0% { opacity: 0; transform: translateY(12px) scale(.5) rotate(-10deg); }
+      20% { opacity: 1; }
+      100% { opacity: 0; transform: translateY(-120px) translateX(var(--drift, 20px)) scale(1.35) rotate(18deg); }
+    }
+    .toast {
+      position: fixed; z-index: 9; left: 50%; bottom: 24px; transform: translate(-50%, 18px);
+      padding: 11px 18px; border-radius: 99px; color: #fff; background: #50335f;
+      box-shadow: 0 8px 24px #30203a40; font-weight: 800; opacity: 0; pointer-events: none;
+      transition: opacity .2s, transform .2s;
+    }
+    .toast.on { opacity: 1; transform: translate(-50%, 0); }
+    footer { padding: 24px 0 0; color: #a18da4; font-size: .78rem; text-align: center; }
+    @media (max-width: 850px) {
+      .layout { grid-template-columns: minmax(0, 1fr); }
+      .stage { height: min(67vw, 570px); min-height: 400px; }
+      .side { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); align-items: start; }
+    }
+    @media (max-width: 560px) {
+      .page { padding: 14px 13px 32px; }
+      .topline .eyebrow { font-size: .62rem; text-align: right; }
+      h1 { margin-top: 17px; }
+      .intro { margin-bottom: 18px; font-size: .94rem; }
+      .layout { gap: 14px; }
+      .stage-wrap { padding: 8px; }
+      .stage { height: 112vw; min-height: 340px; max-height: 500px; }
+      .stage-caption { left: 10px; right: 10px; bottom: 10px; }
+      .stage-caption span { padding: 6px 9px; font-size: .72rem; }
+      .controls { gap: 8px; padding-top: 11px; }
+      .action { min-width: min(42vw, 170px); min-height: 58px; padding: 10px 14px; }
+      .side { grid-template-columns: minmax(0, 1fr); }
+      .side-card { padding: 16px; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { scroll-behavior: auto !important; animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; }
+    }
+  </style>
+</head>
+<body>
+  <main class="page">
+    <div class="topline">
+      <a class="back" href="menu.html" aria-label="Voltar ao Nosso Cantinho">← Nosso Cantinho</a>
+      <span class="eyebrow">pequenas coisas, grandes lembranças</span>
+    </div>
+    <h1>Cantinho dos Presentes <span aria-hidden="true">💝</span></h1>
+    <p class="intro">Um lugarzinho para guardar tudo o que você escolhe com carinho pra ela. O primeiro presente é aquele buquê de lírios brancos que você deu pra Lulu. 🌼</p>
+
+    <div class="layout">
+      <section class="panel stage-wrap" aria-label="Visualizador 3D do buquê">
+        <div class="stage" id="stage">
+          <div class="stage-glow"></div>
+          <canvas id="bouquetCanvas" aria-label="Buquê 3D interativo. Arraste para girar."></canvas>
+          <div class="stage-caption"><span>💐 Arraste para girar</span><span>🌷 Modelo 3D</span></div>
+          <div class="scene-message" id="sceneMessage"></div>
+        </div>
+        <div class="controls">
+          <button class="action" id="smellButton" type="button">🌸 Cheirar</button>
+          <button class="action water" id="waterButton" type="button">💧 Regar</button>
+        </div>
+        <div class="drag-tip">Use o mouse ou o dedo para olhar o buquê por todos os lados. Role ou use o gesto de pinça para aproximar.</div>
+      </section>
+
+      <aside class="side">
+        <section class="panel side-card">
+          <h2>💝 Nossa coleção</h2>
+          <p class="sub">Cada coisinha que você der pra ela pode morar aqui.</p>
+          <div class="gift-list" id="giftList" aria-live="polite"></div>
+          <button class="delete-gift" id="deleteGift" type="button">Remover esta lembrança</button>
+        </section>
+
+        <section class="panel side-card">
+          <h2>Guardar outro presente</h2>
+          <p class="sub">Anote um mimo, um bichinho ou qualquer lembrança especial.</p>
+          <form class="form-grid" id="giftForm">
+            <label for="giftName">O que foi o presente?
+              <input id="giftName" name="name" maxlength="48" placeholder="Ex.: nosso próximo buquê" required>
+            </label>
+            <label for="giftCategory">Tipo de lembrança
+              <select id="giftCategory" name="category">
+                <option value="flowers">💐 Flores</option>
+                <option value="pet">🐾 Bichinho</option>
+                <option value="jewel">💎 Joia ou acessório</option>
+                <option value="date">🎟️ Passeio ou encontro</option>
+                <option value="other">🎁 Outro mimo</option>
+              </select>
+            </label>
+            <label for="giftNote">Uma notinha (opcional)
+              <textarea id="giftNote" name="note" maxlength="180" placeholder="Por que esse presente foi tão especial?"></textarea>
+            </label>
+            <button class="save-gift" type="submit">💌 Guardar na coleção</button>
+            <p class="form-note" id="formNote" role="status"></p>
+          </form>
+        </section>
+      </aside>
+    </div>
+    <footer>As lembranças ficam salvas neste navegador. O modelo do buquê foi criado em 3D especialmente para este cantinho. 💜</footer>
+  </main>
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <script src="presentes.js"></script>
+</body>
+</html>

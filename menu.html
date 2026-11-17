@@ -640,7 +640,8 @@
 
     @media (max-width: 600px) {
         h1 { font-size: 1.9rem; }
-        .card { width: 110px; height: 110px; }
+        .cards { max-width: 356px; gap: 12px; }
+        .card { width: 104px; height: 104px; }
         .icon { font-size: 2.1rem; }
         .patch-title { font-size: 1.9em; }
         .patch-entry-title { margin-left: 0; font-size: 1.35em; }
@@ -684,6 +685,11 @@
         <div class="card" onclick="openPage('loja.html')">
             <div class="icon">🛒</div>
             <span>Loja</span>
+        </div>
+
+        <div class="card card-special" onclick="openPage('presentes.html')">
+            <div class="icon">💝</div>
+            <span>Presentes</span>
         </div>
 
         <!-- <div class="card card-special" onclick="openPage('ranking.html')">
@@ -792,6 +798,18 @@
    Ordem: o item 0 é sempre o mais novo.
    ========================================================= */
 const PATCHES = [
+  {
+    id: "v2.18.0",
+    date: "17 de Novembro de 2026",
+    title: "Cantinho dos Presentes: um buquê em 3D 💐",
+    latest: true,
+    items: [
+      { type: "feat", text: "💝 Um lugar novo para guardar os presentes e lembranças que você dá pra Lulu. O primeiro é o buquê de lírios brancos com mosquitinho, folhagens, papel amarelo e Ferrero Rocher." },
+      { type: "feat", text: "🌷 O buquê tem um modelo 3D grande: arraste com o dedo ou mouse para girar, e use o gesto de pinça ou a rodinha para aproximar." },
+      { type: "feat", text: "🌸 Botões Cheirar e Regar, com perfume, flores flutuando e animação de regador e gotinhas." },
+      { type: "update", text: "💌 Guarde outros mimos, bichinhos, passeios e lembranças na coleção. Tudo fica salvo neste navegador." }
+    ]
+  },
   {
     id: "v2.17.0",
     date: "16 de Novembro de 2026",
