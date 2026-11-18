@@ -1,0 +1,100 @@
+/* ====================================================================
+   🎄🎅  TEMA NATALINO DO NOSSO CANTINHO  ❄️🔔
+   Folha de estilo global. É carregada por último em cada página para
+   vestir TODO o site com o clima de Natal.
+   ==================================================================== */
+
+/* ---------- Fundo natalino (páginas de fundo escuro) ---------- */
+html,
+body {
+  background:
+    radial-gradient(circle at 12% 6%, rgba(23, 158, 92, 0.55) 0, transparent 42%),
+    radial-gradient(circle at 90% 98%, rgba(196, 30, 46, 0.55) 0, transparent 44%),
+    linear-gradient(150deg, #04271a 0%, #0b4a2c 42%, #7d0e1d 100%) !important;
+  background-attachment: fixed !important;
+}
+
+/* ---------- Fundo natalino suave (páginas de fundo claro) ---------- */
+body.natal-claro {
+  --plum: #5a1220;
+  --plum2: #a3232f;
+  background:
+    radial-gradient(circle at 10% 0%, rgba(23, 158, 92, 0.20) 0, transparent 38%),
+    radial-gradient(circle at 100% 100%, rgba(196, 30, 46, 0.18) 0, transparent 40%),
+    linear-gradient(160deg, #fff7ec 0%, #eefaf1 48%, #ffedee 100%) !important;
+  background-attachment: fixed !important;
+}
+
+/* ---------- Modo noturno (ex.: Nosso Quartinho): fundo natalino escuro ---------- */
+/* Fica depois das regras acima para vencer também nas páginas de fundo claro. */
+body.n {
+  background:
+    radial-gradient(circle at 12% 6%, rgba(23, 158, 92, 0.50) 0, transparent 42%),
+    radial-gradient(circle at 90% 98%, rgba(196, 30, 46, 0.50) 0, transparent 44%),
+    linear-gradient(150deg, #04271a 0%, #0b4a2c 42%, #7d0e1d 100%) !important;
+  background-attachment: fixed !important;
+}
+
+/* ---------- Titulos com brilho natalino ---------- */
+h1 {
+  text-shadow: 0 0 18px rgba(245, 197, 66, 0.55) !important;
+}
+
+/* ---------- Camada de neve ---------- */
+.natal-neve {
+  position: fixed;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+  z-index: 9000;
+}
+.natal-neve span {
+  position: absolute;
+  top: -8vh;
+  color: #ffffff;
+  text-shadow: 0 0 6px rgba(255, 255, 255, 0.45);
+  user-select: none;
+  will-change: transform;
+  animation: natalCai linear infinite;
+}
+body.natal-claro .natal-neve span {
+  color: #cfeaff;
+  text-shadow: 0 1px 3px rgba(90, 150, 210, 0.6);
+}
+@keyframes natalCai {
+  0%   { transform: translate3d(0, -10vh, 0) rotate(0deg); }
+  100% { transform: translate3d(var(--deriva, 20px), 114vh, 0) rotate(360deg); }
+}
+
+/* ---------- Guirlanda no topo ---------- */
+.natal-guirlanda {
+  position: fixed;
+  top: 1px;
+  left: 0;
+  right: 0;
+  height: 14px;
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  pointer-events: none;
+  z-index: 9999;
+  font-size: 12px;
+  line-height: 1;
+  opacity: 0.75;
+  filter: drop-shadow(0 2px 3px rgba(0, 0, 0, 0.35));
+}
+.natal-guirlanda span {
+  animation: natalPisca 2s ease-in-out infinite;
+}
+.natal-guirlanda span:nth-child(2n) { animation-delay: 0.4s; }
+.natal-guirlanda span:nth-child(3n) { animation-delay: 0.8s; }
+@keyframes natalPisca {
+  0%, 100% { transform: translateY(0) scale(1);    opacity: 0.85; }
+  50%      { transform: translateY(1px) scale(1.15); opacity: 1; }
+}
+
+/* ---------- Acessibilidade: respeita quem prefere menos movimento ---------- */
+@media (prefers-reduced-motion: reduce) {
+  .natal-neve span,
+  .natal-guirlanda span { animation: none !important; }
+}

@@ -49,7 +49,10 @@ input{font:inherit;padding:6px;border:3px solid var(--ink);border-radius:6px;wid
 .ib-c:active{transform:translate(-50%,-50%) scale(.9)}
 @keyframes ibpop{from{opacity:0;transform:translate(-50%,-50%) scale(.5)}to{opacity:1;transform:translate(-50%,-50%) scale(1)}}
 h3{margin:12px 0 6px;font-family:'Press Start 2P',monospace;font-size:11px;line-height:1.5;color:#4a2f6a}
-</style></head><body>
+</style>
+<link rel="stylesheet" href="../natal.css">
+<script src="../natal.js" defer></script>
+</head><body>
 <canvas id="c"></canvas><div id="hud" class="b"></div><div id="tb"><button data-a="menu" title="Menu">☰</button><button data-a="inv">🎒</button><button data-a="qs">📜</button><button data-a="cl">👗</button><button data-a="pet">🐾</button><button data-a="prog">📈</button><button id="bbtn" data-a="bd">🔨</button><button data-a="music">🎵</button><button data-a="snd">🔊</button></div><div id="ts" class="b"></div><div id="dg" class="b"></div><div id="hb" class="b"></div><div id="js"><div id="kn"></div></div><button id="ab" title="Ação (interagir / usar ferramenta) — mesma função das teclas Espaço/E">A</button><div id="zoom"><button id="zin" aria-label="Aproximar">＋</button><button id="zout" aria-label="Afastar">－</button></div><div id="movehint" class="b">Toque/clique no chão para andar · toque num objeto para interagir</div><div id="mm" class="b" data-a="worldmap" title="Mapa do vale — toque para ver e viajar"><canvas id="mmc" width="192" height="144"></canvas></div><button id="rb" data-a="run" title="Correr (tecla R) — anda mais rápido">🏃</button><div id="ib"></div><div id="pn"><div class="b"></div></div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/howler/2.2.4/howler.min.js"></script>
 <script src="js/util.js"></script>

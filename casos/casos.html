@@ -100,7 +100,10 @@ h1{font-size:clamp(2.2rem,6.5vw,3.6rem)}
 .timer{font-family:monospace;font-weight:800;background:#00000088;border:2px solid #555;border-radius:20px;padding:6px 14px}
 .help{color:#a99;font-size:.82rem;text-align:center;margin-top:6px;line-height:1.5}
 @media(max-width:640px){.stage{height:min(340px,46vh)}.sp2{font-size:2rem}.sp2 small{font-size:.55rem}}
-</style></head><body>
+</style>
+<link rel="stylesheet" href="../natal.css">
+<script src="../natal.js" defer></script>
+</head><body>
 <div id="g"><div class="w" id="app"></div></div><div id="md"></div><div id="fd"></div><div id="ts"></div>
 <svg style="position:fixed;top:-100vh"><filter id="rough"><feTurbulence type="fractalNoise" baseFrequency="0.04" numOctaves="2" result="noise"/><feDisplacementMap in="SourceGraphic" in2="noise" scale="2"/></filter></svg>
 <script>
